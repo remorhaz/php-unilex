@@ -19,7 +19,7 @@ class SymbolBuffer implements SymbolBufferInterface
 
     private $previewPosition = 0;
 
-    protected function __construct(SplFixedArray $data)
+    public function __construct(SplFixedArray $data)
     {
         $this->data = $data;
         $this->length = $data->count();

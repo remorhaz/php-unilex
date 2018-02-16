@@ -27,7 +27,6 @@ class Utf8LexemeMatcherTest extends TestCase
     ): void
     {
         $buffer = SymbolBuffer::fromString($text);
-        /** @var MockObject $match */
         $match = $this
             ->createMock(LexemeListenerInterface::class);
         $lexemeInfo = new SymbolBufferLexemeInfo($buffer, 0, $expectedFinishOffset);
