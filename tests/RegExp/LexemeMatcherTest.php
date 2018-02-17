@@ -9,21 +9,13 @@ use Remorhaz\UniLex\RegExp\LexemeMatcher;
 use Remorhaz\UniLex\RegExp\TokenType;
 use Remorhaz\UniLex\SymbolBuffer;
 use Remorhaz\UniLex\SymbolBufferLexemeInfo;
-use Remorhaz\UniLex\Unicode\Scanner;
-use Remorhaz\UniLex\Unicode\Utf8LexemeMatcher;
 
 class LexemeMatcherTest extends TestCase
 {
 
-    /**
-     * @throws \Remorhaz\UniLex\Exception
-     */
-    public function testMatch_ValidText_CallsOnTokenWithFirstSymbolLexeme()
+    public function testMatch_ValidBuffer_CallsOnTokenWithFirstSymbolLexeme()
     {
-        $byteBuffer = SymbolBuffer::fromString("a");
-        $scanner = new Scanner($byteBuffer, new Utf8LexemeMatcher);
-        $symbol = $scanner->read();
-        $symbolBuffer = new SymbolBuffer($symbol->getInfo()->extract());
+        $symbolBuffer = SymbolBuffer::fromString('a');
         $matcher = new LexemeMatcher;
         $match = $this
             ->createMock(LexemeListenerInterface::class);
@@ -32,6 +24,23 @@ class LexemeMatcherTest extends TestCase
         $match
             ->expects($this->once())
             ->method('onToken')
+            ->with($this->equalTo($lexeme));
+
+        /** @var LexemeListenerInterface $match */
+        $matcher->match($symbolBuffer, $match);
+    }
+
+    public function testMatch_InalidBuffer_CallsOnInvalidTokenWithFirstSymbolLexeme()
+    {
+        $symbolBuffer = SymbolBuffer::fromArray([0x110000]);
+        $matcher = new LexemeMatcher;
+        $match = $this
+            ->createMock(LexemeListenerInterface::class);
+        $lexemeInfo = new SymbolBufferLexemeInfo($symbolBuffer, 0, 1);
+        $lexeme = new Lexeme($lexemeInfo, TokenType::INVALID, 0x110000);
+        $match
+            ->expects($this->once())
+            ->method('onInvalidToken')
             ->with($this->equalTo($lexeme));
 
         /** @var LexemeListenerInterface $match */
