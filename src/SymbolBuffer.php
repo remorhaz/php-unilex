@@ -35,6 +35,15 @@ class SymbolBuffer implements SymbolBufferInterface
         return new self($data);
     }
 
+    public static function fromArray(array $array): self
+    {
+
+        $data = SplFixedArray::fromArray(
+            array_map('intval', array_values($array))
+        );
+        return new self($data);
+    }
+
     public function isLexemeEnd(): bool
     {
         return $this->previewPosition == $this->length;
