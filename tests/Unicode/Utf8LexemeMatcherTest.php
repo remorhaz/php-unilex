@@ -24,8 +24,7 @@ class Utf8LexemeMatcherTest extends TestCase
         string $text,
         int $expectedFinishOffset,
         int $expectedSymbol
-    ): void
-    {
+    ): void {
         $buffer = SymbolBuffer::fromString($text);
         $match = $this
             ->createMock(LexemeListenerInterface::class);
@@ -60,8 +59,7 @@ class Utf8LexemeMatcherTest extends TestCase
     public function testMatch_InvalidFirstByteText_CallsOnInvalidByteWithFirstByte(
         string $text,
         int $expectedFinishOffset
-    ): void
-    {
+    ): void {
         $buffer = SymbolBuffer::fromString($text);
         /** @var MockObject $match */
         $match = $this

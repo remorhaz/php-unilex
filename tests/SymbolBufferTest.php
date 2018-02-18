@@ -94,7 +94,6 @@ class SymbolBufferTest extends TestCase
 
     /**
      * @param string $text
-     * @throws \Remorhaz\UniLex\Exception
      * @dataProvider providerSingleSymbolLexeme
      */
     public function testExtractLexeme_SingleSymbolLexemePreviewed_ReturnsBufferOfMatchingSize(string $text): void
