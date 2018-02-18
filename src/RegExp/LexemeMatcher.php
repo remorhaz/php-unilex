@@ -142,7 +142,7 @@ class LexemeMatcher
             $type = TokenType::SMALL_P;
             goto valid_symbol;
         }
-        if ($symbol >= 0x72 && $symbol <= 0x74) {
+        if ($symbol >= 0x71 && $symbol <= 0x74) {
             $type = TokenType::OTHER_ASCII_LETTER;
             goto valid_symbol;
         }
