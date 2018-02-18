@@ -35,12 +35,10 @@ class SymbolBuffer implements SymbolBufferInterface
         return new self($data);
     }
 
-    public static function fromArray(array $array): self
+    public static function fromSymbols(int ...$array): self
     {
 
-        $data = SplFixedArray::fromArray(
-            array_map('intval', array_values($array))
-        );
+        $data = SplFixedArray::fromArray($array);
         return new self($data);
     }
 
