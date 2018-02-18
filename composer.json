@@ -1,4 +1,22 @@
 {
+  "name": "remorhaz/php-unilex",
+  "description": "Unilex: lexical analyzer generator with Unicode support written in PHP",
+  "keywords": [
+    "lex",
+    "lexical analyzer",
+    "lexical analyzer generator",
+    "tokenizer",
+    "tokenizer generator"
+  ],
+  "homepage": "https://github.com/remorhaz/php-json-pointer",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Edward Surov",
+      "email": "zoohie@gmail.com",
+      "role": "Developer"
+    }
+  ],
   "require": {
     "php": "~7.1"
   },
