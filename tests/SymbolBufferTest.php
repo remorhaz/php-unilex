@@ -8,15 +8,15 @@ use Remorhaz\UniLex\SymbolBuffer;
 class SymbolBufferTest extends TestCase
 {
 
-    public function testIsLexemeEnd_EmptyString_ReturnsTrue(): void
+    public function testIsEnd_EmptyString_ReturnsTrue(): void
     {
-        $actualValue = SymbolBuffer::fromString('')->isLexemeEnd();
+        $actualValue = SymbolBuffer::fromString('')->isEnd();
         self::assertTrue($actualValue);
     }
 
-    public function testIsLexemeEnd_NotEmptyString_ReturnsFalse(): void
+    public function testIsEnd_NotEmptyString_ReturnsFalse(): void
     {
-        $actualValue = SymbolBuffer::fromString('a')->isLexemeEnd();
+        $actualValue = SymbolBuffer::fromString('a')->isEnd();
         self::assertFalse($actualValue);
     }
 

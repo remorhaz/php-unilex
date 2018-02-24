@@ -5,7 +5,7 @@ namespace Remorhaz\UniLex;
 interface SymbolBufferInterface
 {
 
-    public function isLexemeEnd(): bool;
+    public function isEnd(): bool;
 
     public function nextSymbol(): void;
 

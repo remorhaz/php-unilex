@@ -12,4 +12,6 @@ interface LexemeInfoInterface
     public function getFinishOffset(): int;
 
     public function extract(): SplFixedArray;
+
+    public function getParentInfo(): ?LexemeInfoInterface;
 }

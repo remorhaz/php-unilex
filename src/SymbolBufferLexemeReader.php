@@ -23,7 +23,7 @@ class SymbolBufferLexemeReader implements LexemeReaderInterface
      */
     public function read(): Lexeme
     {
-        return $this->buffer->isLexemeEnd()
+        return $this->buffer->isEnd()
             ? $this->readEofLexeme()
             : $this->readSymbolLexeme();
     }

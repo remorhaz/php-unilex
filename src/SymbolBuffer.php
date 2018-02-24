@@ -42,7 +42,7 @@ class SymbolBuffer implements SymbolBufferInterface
         return new self($data);
     }
 
-    public function isLexemeEnd(): bool
+    public function isEnd(): bool
     {
         return $this->previewPosition == $this->length;
     }
