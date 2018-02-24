@@ -2,21 +2,21 @@
 
 namespace Remorhaz\UniLex\Unicode;
 
+use Remorhaz\UniLex\Lexeme;
+use Remorhaz\UniLex\LexemeMatcherInterface;
 use Remorhaz\UniLex\SymbolBufferInterface;
 
 class Utf8LexemeMatcher implements LexemeMatcherInterface
 {
 
-    public function match(SymbolBufferInterface $buffer, LexemeListenerInterface $lexemeListener): void
+    public function match(SymbolBufferInterface $buffer): Lexeme
     {
         $symbol = null;
         $firstByte = $buffer->getSymbol();
         if ($firstByte >= 0 && $firstByte <= 0x7F) { // 1-byte symbol
             $symbol = $firstByte;
             $buffer->nextSymbol();
-            $lexeme = new SymbolLexeme($buffer->getLexemeInfo(), $symbol);
-            $lexemeListener->onSymbol($lexeme);
-            goto finish;
+            return new SymbolLexeme($buffer->getLexemeInfo(), $symbol);
         }
         if ($firstByte >= 0xC0 && $firstByte <= 0xDF) { // 2-byte symbol
             $symbol = ($firstByte & 0x1F) << 6;
@@ -86,18 +86,12 @@ class Utf8LexemeMatcher implements LexemeMatcherInterface
         if ($tailByte >= 0x80 && $tailByte <= 0xBF) {
             $symbol |= ($tailByte & 0x3F);
             $buffer->nextSymbol();
-            $lexeme = new SymbolLexeme($buffer->getLexemeInfo(), $symbol);
-            $lexemeListener->onSymbol($lexeme);
-            goto finish;
+            return new SymbolLexeme($buffer->getLexemeInfo(), $symbol);
         }
         goto invalid_byte;
 
         invalid_byte:
         $buffer->nextSymbol();
-        $lexeme = new InvalidBytesLexeme($buffer->getLexemeInfo());
-        $lexemeListener->onInvalidBytes($lexeme);
-        goto finish;
-
-        finish:
+        return new InvalidBytesLexeme($buffer->getLexemeInfo());
     }
 }

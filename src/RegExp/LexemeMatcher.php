@@ -2,12 +2,14 @@
 
 namespace Remorhaz\UniLex\RegExp;
 
+use Remorhaz\UniLex\Lexeme;
+use Remorhaz\UniLex\LexemeMatcherInterface;
 use Remorhaz\UniLex\SymbolBufferInterface;
 
-class LexemeMatcher
+class LexemeMatcher implements LexemeMatcherInterface
 {
 
-    public function match(SymbolBufferInterface $buffer, LexemeListenerInterface $listener): void
+    public function match(SymbolBufferInterface $buffer): Lexeme
     {
         $symbol = $buffer->getSymbol();
         if ($symbol >= 0x00 && $symbol <= 0x1F) {
@@ -192,16 +194,10 @@ class LexemeMatcher
 
         valid_symbol:
         $buffer->nextSymbol();
-        $lexeme = new Lexeme($buffer->getLexemeInfo(), $type, $symbol);
-        $listener->onToken($lexeme);
-        goto finish;
+        return new SymbolLexeme($buffer->getLexemeInfo(), $type, $symbol);
 
         invalid_symbol:
         $buffer->nextSymbol();
-        $lexeme = new Lexeme($buffer->getLexemeInfo(), $type, $symbol);
-        $listener->onInvalidToken($lexeme);
-        goto finish;
-
-        finish:
+        return new SymbolLexeme($buffer->getLexemeInfo(), $type, $symbol);
     }
 }

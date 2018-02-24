@@ -4,7 +4,7 @@ namespace Remorhaz\UniLex\RegExp;
 
 use Remorhaz\UniLex\LexemeInfoInterface;
 
-class Lexeme extends \Remorhaz\UniLex\Lexeme
+class SymbolLexeme extends \Remorhaz\UniLex\Lexeme
 {
     private $type;
 

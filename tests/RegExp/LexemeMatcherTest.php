@@ -3,8 +3,7 @@
 namespace Remorhaz\UniLex\Test\RegExp;
 
 use PHPUnit\Framework\TestCase;
-use Remorhaz\UniLex\RegExp\Lexeme;
-use Remorhaz\UniLex\RegExp\LexemeListenerInterface;
+use Remorhaz\UniLex\RegExp\SymbolLexeme;
 use Remorhaz\UniLex\RegExp\LexemeMatcher;
 use Remorhaz\UniLex\RegExp\TokenType;
 use Remorhaz\UniLex\SymbolBuffer;
@@ -18,21 +17,14 @@ class LexemeMatcherTest extends TestCase
      * @param int $symbol
      * @dataProvider providerValidLexeme
      */
-    public function testMatch_ValidBuffer_CallsOnTokenWithFirstSymbolLexeme(int $type, int $symbol): void
+    public function testMatch_ValidBuffer_ReturnsMatchingSymbolLexeme(int $type, int $symbol): void
     {
         $buffer = SymbolBuffer::fromSymbols($symbol);
         $matcher = new LexemeMatcher;
-        $match = $this
-            ->createMock(LexemeListenerInterface::class);
         $info = new SymbolBufferLexemeInfo($buffer, 0, 1);
-        $expectedLexeme = new Lexeme($info, $type, $symbol);
-        $match
-            ->expects($this->once())
-            ->method('onToken')
-            ->with($this->equalTo($expectedLexeme));
-
-        /** @var LexemeListenerInterface $match */
-        $matcher->match($buffer, $match);
+        $expectedLexeme = new SymbolLexeme($info, $type, $symbol);
+        $actual = $matcher->match($buffer);
+        self::assertEquals($expectedLexeme, $actual);
     }
 
     public function providerValidLexeme(): array
@@ -85,20 +77,13 @@ class LexemeMatcherTest extends TestCase
         ];
     }
 
-    public function testMatch_InalidBuffer_CallsOnInvalidTokenWithFirstSymbolLexeme(): void
+    public function testMatch_InvalidBuffer_ReturnsMatchingSymbolLexeme(): void
     {
         $buffer = SymbolBuffer::fromSymbols(0x110000);
         $matcher = new LexemeMatcher;
-        $match = $this
-            ->createMock(LexemeListenerInterface::class);
         $info = new SymbolBufferLexemeInfo($buffer, 0, 1);
-        $lexeme = new Lexeme($info, TokenType::INVALID, 0x110000);
-        $match
-            ->expects($this->once())
-            ->method('onInvalidToken')
-            ->with($this->equalTo($lexeme));
-
-        /** @var LexemeListenerInterface $match */
-        $matcher->match($buffer, $match);
+        $expectedLexeme = new SymbolLexeme($info, TokenType::INVALID, 0x110000);
+        $actual = $matcher->match($buffer);
+        self::assertEquals($expectedLexeme, $actual);
     }
 }

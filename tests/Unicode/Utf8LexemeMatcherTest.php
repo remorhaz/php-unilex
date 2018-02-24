@@ -2,14 +2,12 @@
 
 namespace Remorhaz\UniLex\Test\Unicode;
 
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Unicode\InvalidBytesLexeme;
 use Remorhaz\UniLex\SymbolBuffer;
 use Remorhaz\UniLex\SymbolBufferLexemeInfo;
 use Remorhaz\UniLex\Unicode\SymbolLexeme;
 use Remorhaz\UniLex\Unicode\Utf8LexemeMatcher;
-use Remorhaz\UniLex\Unicode\LexemeListenerInterface;
 
 class Utf8LexemeMatcherTest extends TestCase
 {
@@ -20,22 +18,16 @@ class Utf8LexemeMatcherTest extends TestCase
      * @param int $expectedSymbol
      * @dataProvider providerValidSymbolList
      */
-    public function testMatch_ValidText_CallsOnSymbolWithFirstSymbol(
+    public function testMatch_ValidText_ReturnsMatchingSymbolLexeme(
         string $text,
         int $expectedFinishOffset,
         int $expectedSymbol
     ): void {
         $buffer = SymbolBuffer::fromString($text);
-        $match = $this
-            ->createMock(LexemeListenerInterface::class);
         $lexemeInfo = new SymbolBufferLexemeInfo($buffer, 0, $expectedFinishOffset);
         $lexeme = new SymbolLexeme($lexemeInfo, $expectedSymbol);
-        $match
-            ->expects($this->once())
-            ->method('onSymbol')
-            ->with($this->equalTo($lexeme));
-        /** @var LexemeListenerInterface $match */
-        (new Utf8LexemeMatcher)->match($buffer, $match);
+        $actual = (new Utf8LexemeMatcher)->match($buffer);
+        self::assertEquals($lexeme, $actual);
     }
 
     public function providerValidSymbolList(): array
@@ -56,22 +48,15 @@ class Utf8LexemeMatcherTest extends TestCase
      * @param int $expectedFinishOffset
      * @dataProvider providerInvalidFirstByteList
      */
-    public function testMatch_InvalidFirstByteText_CallsOnInvalidByteWithFirstByte(
+    public function testMatch_InvalidFirstByteText_ReturnsMatchingInvalidBytesLexeme(
         string $text,
         int $expectedFinishOffset
     ): void {
         $buffer = SymbolBuffer::fromString($text);
-        /** @var MockObject $match */
-        $match = $this
-            ->createMock(LexemeListenerInterface::class);
         $lexemeInfo = new SymbolBufferLexemeInfo($buffer, 0, $expectedFinishOffset);
         $lexeme = new InvalidBytesLexeme($lexemeInfo);
-        $match
-            ->expects($this->once())
-            ->method('onInvalidBytes')
-            ->with($this->equalTo($lexeme));
-        /** @var LexemeListenerInterface $match */
-        (new Utf8LexemeMatcher)->match($buffer, $match);
+        $actual = (new Utf8LexemeMatcher)->match($buffer);
+        self::assertEquals($lexeme, $actual);
     }
 
     public function providerInvalidFirstByteList(): array

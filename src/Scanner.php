@@ -1,10 +1,8 @@
 <?php
 
-namespace Remorhaz\UniLex\Unicode;
+namespace Remorhaz\UniLex;
 
-use Remorhaz\UniLex\Exception;
-use Remorhaz\UniLex\Lexeme;
-use Remorhaz\UniLex\SymbolBufferInterface;
+use Remorhaz\UniLex\LexemeMatcherInterface;
 
 class Scanner
 {
@@ -12,8 +10,6 @@ class Scanner
     private $buffer;
 
     private $matcher;
-
-    private $lexemeListener;
 
     private $isEnd = false;
 
@@ -34,14 +30,6 @@ class Scanner
             : $this->readSymbolLexeme();
     }
 
-    private function getLexemeListener(): ScannerLexemeListener
-    {
-        if (!isset($this->lexemeListener)) {
-            $this->lexemeListener = new ScannerLexemeListener;
-        }
-        return $this->lexemeListener;
-    }
-
     /**
      * @return EofLexeme
      * @throws Exception
@@ -57,10 +45,8 @@ class Scanner
 
     private function readSymbolLexeme(): Lexeme
     {
-        $lexemeListener = $this->getLexemeListener();
-        $lexemeListener->resetLexeme();
-        $this->matcher->match($this->buffer, $lexemeListener);
+        $lexeme = $this->matcher->match($this->buffer);
         $this->buffer->finishLexeme();
-        return $lexemeListener->getLexeme();
+        return $lexeme;
     }
 }

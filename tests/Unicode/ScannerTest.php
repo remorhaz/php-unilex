@@ -5,9 +5,9 @@ namespace Remorhaz\UniLex\Test\Unicode;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\SymbolBuffer;
 use Remorhaz\UniLex\SymbolBufferLexemeInfo;
-use Remorhaz\UniLex\Unicode\EofLexeme;
+use Remorhaz\UniLex\EofLexeme;
 use Remorhaz\UniLex\Unicode\InvalidBytesLexeme;
-use Remorhaz\UniLex\Unicode\Scanner;
+use Remorhaz\UniLex\Scanner;
 use Remorhaz\UniLex\Unicode\SymbolLexeme;
 use Remorhaz\UniLex\Unicode\Utf8LexemeMatcher;
 
