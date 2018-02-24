@@ -2,9 +2,7 @@
 
 namespace Remorhaz\UniLex;
 
-use Remorhaz\UniLex\LexemeMatcherInterface;
-
-class Scanner
+class SymbolBufferLexemeReader implements LexemeReaderInterface
 {
 
     private $buffer;
