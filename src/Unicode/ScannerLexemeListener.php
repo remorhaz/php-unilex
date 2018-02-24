@@ -1,10 +1,8 @@
 <?php
 
-namespace Remorhaz\UniLex;
+namespace Remorhaz\UniLex\Unicode;
 
-use Remorhaz\UniLex\Unicode\InvalidBytesLexeme;
-use Remorhaz\UniLex\Unicode\LexemeListenerInterface;
-use Remorhaz\UniLex\Unicode\SymbolLexeme;
+use Remorhaz\UniLex\Lexeme;
 
 class ScannerLexemeListener implements LexemeListenerInterface
 {
