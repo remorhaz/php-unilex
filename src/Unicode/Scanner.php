@@ -4,7 +4,6 @@ namespace Remorhaz\UniLex\Unicode;
 
 use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\Lexeme;
-use Remorhaz\UniLex\Unicode\ScannerLexemeListener;
 use Remorhaz\UniLex\SymbolBufferInterface;
 
 class Scanner
