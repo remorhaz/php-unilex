@@ -5,7 +5,7 @@ namespace Remorhaz\UniLex;
 
 use SplFixedArray;
 
-class SymbolBuffer implements SymbolBufferInterface
+class SymbolBuffer implements SymbolBufferInterface, LexemeExtractInterface
 {
 
     /**
@@ -80,9 +80,10 @@ class SymbolBuffer implements SymbolBufferInterface
         $this->startPosition = $this->previewPosition;
     }
 
-    public function extractLexeme(int $startOffset, int $finishOffset): SplFixedArray
+    public function extractLexeme(LexemePosition $position): SplFixedArray
     {
-        $lexemeLength = $finishOffset - $startOffset;
+        $startOffset = $position->getStartOffset();
+        $lexemeLength = $position->getSize();
         $lexeme = new SplFixedArray($lexemeLength);
         for ($i = 0; $i < $lexemeLength; $i++) {
             $symbol = $this->data->offsetGet($startOffset + $i);

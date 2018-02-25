@@ -3,6 +3,7 @@
 namespace Remorhaz\UniLex\Test;
 
 use PHPUnit\Framework\TestCase;
+use Remorhaz\UniLex\LexemePosition;
 use Remorhaz\UniLex\SymbolBuffer;
 
 class SymbolBufferTest extends TestCase
@@ -88,7 +89,7 @@ class SymbolBufferTest extends TestCase
     public function testExtractLexeme_NoLexemePreviewed_ReturnsEmptyBuffer(): void
     {
         $buffer = SymbolBuffer::fromString('a');
-        $lexeme = $buffer->extractLexeme(0, 0);
+        $lexeme = $buffer->extractLexeme(new LexemePosition(0, 0));
         self::assertEquals(0, $lexeme->count());
     }
 
@@ -99,7 +100,7 @@ class SymbolBufferTest extends TestCase
     public function testExtractLexeme_SingleSymbolLexemePreviewed_ReturnsBufferOfMatchingSize(string $text): void
     {
         $buffer = SymbolBuffer::fromString($text);
-        $lexeme = $buffer->extractLexeme(0, 1);
+        $lexeme = $buffer->extractLexeme(new LexemePosition(0, 1));
         self::assertEquals(1, $lexeme->count());
     }
 

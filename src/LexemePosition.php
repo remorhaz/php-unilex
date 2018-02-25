@@ -24,4 +24,9 @@ class LexemePosition
     {
         return $this->finishOffset;
     }
+
+    public function getSize(): int
+    {
+        return $this->finishOffset - $this->startOffset;
+    }
 }

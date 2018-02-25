@@ -11,7 +11,7 @@ class SymbolBufferLexemeInfo implements LexemeInfoInterface
 
     private $position;
 
-    public function __construct(SymbolBuffer $buffer, LexemePosition $position)
+    public function __construct(LexemeExtractInterface $buffer, LexemePosition $position)
     {
         $this->buffer = $buffer;
         $this->position = $position;
@@ -25,6 +25,6 @@ class SymbolBufferLexemeInfo implements LexemeInfoInterface
     public function extract(): SplFixedArray
     {
         $position = $this->getPosition();
-        return $this->buffer->extractLexeme($position->getStartOffset(), $position->getFinishOffset());
+        return $this->buffer->extractLexeme($position);
     }
 }

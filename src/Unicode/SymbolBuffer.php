@@ -3,33 +3,33 @@
 namespace Remorhaz\UniLex\Unicode;
 
 use Remorhaz\UniLex\Exception;
+use Remorhaz\UniLex\LexemeExtractInterface;
 use Remorhaz\UniLex\LexemeInfoInterface;
 use Remorhaz\UniLex\LexemePosition;
-use Remorhaz\UniLex\SymbolBuffer as ByteSymbolBuffer;
 use Remorhaz\UniLex\SymbolBufferInterface;
+use SplFixedArray;
 
-class SymbolBuffer implements SymbolBufferInterface
+class SymbolBuffer implements SymbolBufferInterface, LexemeExtractInterface
 {
 
     private $source;
 
     private $matcher;
 
-    private $startPosition = 0;
+    private $startOffset = 0;
 
-    private $previewPosition = 0;
+    private $previewOffset = 0;
 
-    private $data;
+    private $data = [];
 
-    private $sourceStartPosition = 0;
+    private $sourceStartOffset = 0;
 
-    private $sourcePreviewPosition = 0;
+    private $sourcePreviewOffset = 0;
 
     public function __construct(SymbolBufferInterface $source, LexemeMatcherInterface $matcher)
     {
         $this->source = $source;
         $this->matcher = $matcher;
-        $this->data = new \SplFixedArray;
     }
 
     public function isEnd(): bool
@@ -43,11 +43,11 @@ class SymbolBuffer implements SymbolBufferInterface
     public function nextSymbol(): void
     {
         if ($this->source->isEnd()) {
-            throw new Exception("Unexpected end of buffer at index {$this->previewPosition}");
+            throw new Exception("Unexpected end of buffer at index {$this->previewOffset}");
         }
         $this->cachePreviewLexeme();
-        $this->previewPosition++;
-        $this->sourcePreviewPosition = $this
+        $this->previewOffset++;
+        $this->sourcePreviewOffset = $this
             ->source
             ->getLexemeInfo()
             ->getPosition()
@@ -56,14 +56,14 @@ class SymbolBuffer implements SymbolBufferInterface
 
     public function resetLexeme(): void
     {
-        $this->previewPosition = $this->startPosition;
-        $this->sourcePreviewPosition = $this->sourceStartPosition;
+        $this->previewOffset = $this->startOffset;
+        $this->sourcePreviewOffset = $this->sourceStartOffset;
     }
 
     public function finishLexeme(): void
     {
-        $this->startPosition = $this->previewPosition;
-        $this->sourceStartPosition = $this->sourcePreviewPosition;
+        $this->startOffset = $this->previewOffset;
+        $this->sourceStartOffset = $this->sourcePreviewOffset;
     }
 
     /**
@@ -73,23 +73,34 @@ class SymbolBuffer implements SymbolBufferInterface
     public function getSymbol(): int
     {
         if ($this->source->isEnd()) {
-            throw new Exception("No symbol to preview at index {$this->previewPosition}");
+            throw new Exception("No symbol to preview at index {$this->previewOffset}");
         }
         $this->cachePreviewLexeme();
-        return $this->data->offsetGet($this->previewPosition);
+        return $this->data[$this->previewOffset];
     }
 
     /**
      * @return LexemeInfoInterface
-     * @todo Critical performance pitfall
      */
     public function getLexemeInfo(): LexemeInfoInterface
     {
         return new LexemeInfo(
-            new ByteSymbolBuffer($this->data), // @todo Get rid of this ugly thing
-            new LexemePosition($this->startPosition, $this->previewPosition),
-            new LexemePosition($this->sourceStartPosition, $this->sourcePreviewPosition)
+            $this,
+            new LexemePosition($this->startOffset, $this->previewOffset),
+            new LexemePosition($this->sourceStartOffset, $this->sourcePreviewOffset)
         );
+    }
+
+    public function extractLexeme(LexemePosition $position): SplFixedArray
+    {
+        $startOffset = $position->getStartOffset();
+        $length = $position->getSize();
+        $lexeme = new SplFixedArray($length);
+        for ($i = 0; $i < $length; $i++) {
+            $symbol = $this->data[$startOffset + $i];
+            $lexeme->offsetSet($i, $symbol);
+        }
+        return $lexeme;
     }
 
     /**
@@ -97,13 +108,13 @@ class SymbolBuffer implements SymbolBufferInterface
      */
     private function cachePreviewLexeme(): void
     {
-        if ($this->data->offsetExists($this->previewPosition)) {
+        if (isset($this->data[$this->previewOffset])) {
             return;
         }
         $lexeme = $this->matcher->match($this->source);
         if (!($lexeme instanceof SymbolLexeme)) {
-            throw new Exception("Invalid lexeme at index {$this->previewPosition}");
+            throw new Exception("Invalid lexeme at index {$this->previewOffset}");
         }
-        $this->data->offsetSet($this->previewPosition, $lexeme->getSymbol());
+        $this->data[$this->previewOffset] = $lexeme->getSymbol();
     }
 }
