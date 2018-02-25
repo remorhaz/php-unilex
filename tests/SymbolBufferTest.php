@@ -86,6 +86,9 @@ class SymbolBufferTest extends TestCase
         self::assertSame(0x62, $actualValue);
     }
 
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
     public function testExtractLexeme_NoLexemePreviewed_ReturnsEmptyBuffer(): void
     {
         $buffer = SymbolBuffer::fromString('a');
@@ -96,6 +99,7 @@ class SymbolBufferTest extends TestCase
     /**
      * @param string $text
      * @dataProvider providerSingleSymbolLexeme
+     * @throws \Remorhaz\UniLex\Exception
      */
     public function testExtractLexeme_SingleSymbolLexemePreviewed_ReturnsBufferOfMatchingSize(string $text): void
     {

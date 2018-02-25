@@ -10,6 +10,9 @@ use Remorhaz\UniLex\SymbolBufferLexemeInfo;
 class SymbolBufferLexemeInfoTest extends TestCase
 {
 
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
     public function testGetPosition_ConstructWithValue_ReturnsPositionWithSameStartOffset(): void
     {
         $buffer = SymbolBuffer::fromString('a');
@@ -19,6 +22,9 @@ class SymbolBufferLexemeInfoTest extends TestCase
         self::assertSame(0, $actualValue->getStartOffset());
     }
 
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
     public function testGetPosition_ConstructWithValue_ReturnsPositionWithSameFinishOffset(): void
     {
         $buffer = SymbolBuffer::fromString('a');
@@ -28,6 +34,9 @@ class SymbolBufferLexemeInfoTest extends TestCase
         self::assertSame(1, $actualValue->getFinishOffset());
     }
 
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
     public function testExtractLexeme_ConstructWithValue_ReturnsEqualValue(): void
     {
         $buffer = SymbolBuffer::fromString('a');

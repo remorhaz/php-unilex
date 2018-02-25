@@ -12,6 +12,9 @@ use Remorhaz\UniLex\Lexeme;
 class LexemeTest extends TestCase
 {
 
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
     public function testGetInfo_ConstructWithValue_ReturnsSameValue(): void
     {
         $buffer = SymbolBuffer::fromString('a');

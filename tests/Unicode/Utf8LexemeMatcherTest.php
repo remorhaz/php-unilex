@@ -18,6 +18,7 @@ class Utf8LexemeMatcherTest extends TestCase
      * @param int $expectedFinishOffset
      * @param int $expectedSymbol
      * @dataProvider providerValidSymbolList
+     * @throws \Remorhaz\UniLex\Exception
      */
     public function testMatch_ValidText_ReturnsMatchingSymbolLexeme(
         string $text,
@@ -48,6 +49,7 @@ class Utf8LexemeMatcherTest extends TestCase
      * @param string $text
      * @param int $expectedFinishOffset
      * @dataProvider providerInvalidFirstByteList
+     * @throws \Remorhaz\UniLex\Exception
      */
     public function testMatch_InvalidFirstByteText_ReturnsMatchingInvalidBytesLexeme(
         string $text,

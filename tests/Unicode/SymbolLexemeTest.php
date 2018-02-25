@@ -11,6 +11,9 @@ use Remorhaz\UniLex\Unicode\SymbolLexeme;
 class SymbolLexemeTest extends TestCase
 {
 
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
     public function testGetSymbol_ConstructWithValue_ReturnsSameValue(): void
     {
         $buffer = SymbolBuffer::fromString('a');

@@ -17,6 +17,7 @@ class LexemeMatcherTest extends TestCase
      * @param int $type
      * @param int $symbol
      * @dataProvider providerValidLexeme
+     * @throws \Remorhaz\UniLex\Exception
      */
     public function testMatch_ValidBuffer_ReturnsMatchingSymbolLexeme(int $type, int $symbol): void
     {
@@ -78,6 +79,9 @@ class LexemeMatcherTest extends TestCase
         ];
     }
 
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
     public function testMatch_InvalidBuffer_ReturnsMatchingSymbolLexeme(): void
     {
         $buffer = SymbolBuffer::fromSymbols(0x110000);

@@ -12,6 +12,9 @@ use Remorhaz\UniLex\SymbolBufferLexemeInfo;
 class LexemeTest extends TestCase
 {
 
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
     public function testGetType_ConstructWithValue_ReturnsSameValue(): void
     {
         $buffer = SymbolBuffer::fromString('a');
@@ -21,6 +24,9 @@ class LexemeTest extends TestCase
         self::assertSame(TokenType::OTHER_HEX_LETTER, $actual);
     }
 
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
     public function testGetSymbol_ConstructWithValue_ReturnsSameValue(): void
     {
         $buffer = SymbolBuffer::fromString('a');
