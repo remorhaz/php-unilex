@@ -3,6 +3,7 @@
 namespace Remorhaz\UniLex\Test;
 
 use PHPUnit\Framework\TestCase;
+use Remorhaz\UniLex\LexemePosition;
 use Remorhaz\UniLex\SymbolBuffer;
 use Remorhaz\UniLex\SymbolBufferLexemeInfo;
 use Remorhaz\UniLex\EofLexeme;
@@ -20,7 +21,7 @@ class SymbolBufferLexemeReaderTest extends TestCase
     public function testRead_NotEmptyValidBufferStart_ReturnsMatchingSymbolLexeme(): void
     {
         $buffer = SymbolBuffer::fromString('a');
-        $lexemeInfo = new SymbolBufferLexemeInfo($buffer, 0, 1);
+        $lexemeInfo = new SymbolBufferLexemeInfo($buffer, new LexemePosition(0, 1));
         $expectedValue = new SymbolLexeme($lexemeInfo, 0x00000061);
         $scanner = new SymbolBufferLexemeReader($buffer, new Utf8LexemeMatcher);
         $actualValue = $scanner->read();
@@ -33,7 +34,7 @@ class SymbolBufferLexemeReaderTest extends TestCase
     public function testRead_NotEmptyValidBufferMiddle_ReturnsMatchingSymbolLexeme(): void
     {
         $buffer = SymbolBuffer::fromString('ab');
-        $lexemeInfo = new SymbolBufferLexemeInfo($buffer, 1, 2);
+        $lexemeInfo = new SymbolBufferLexemeInfo($buffer, new LexemePosition(1, 2));
         $expectedValue = new SymbolLexeme($lexemeInfo, 0x00000062);
         $scanner = new SymbolBufferLexemeReader($buffer, new Utf8LexemeMatcher);
         $scanner->read();
@@ -47,7 +48,7 @@ class SymbolBufferLexemeReaderTest extends TestCase
     public function testRead_NotEmptyBufferEnd_ReturnsEofLexeme(): void
     {
         $buffer = SymbolBuffer::fromString('a');
-        $lexemeInfo = new SymbolBufferLexemeInfo($buffer, 1, 1);
+        $lexemeInfo = new SymbolBufferLexemeInfo($buffer, new LexemePosition(1, 1));
         $expectedValue = new EofLexeme($lexemeInfo);
         $scanner = new SymbolBufferLexemeReader($buffer, new Utf8LexemeMatcher);
         $scanner->read();
@@ -61,7 +62,7 @@ class SymbolBufferLexemeReaderTest extends TestCase
     public function testRead_EmptyBuffer_ReturnsEofLexeme(): void
     {
         $buffer = SymbolBuffer::fromString('');
-        $lexemeInfo = new SymbolBufferLexemeInfo($buffer, 0, 0);
+        $lexemeInfo = new SymbolBufferLexemeInfo($buffer, new LexemePosition(0, 0));
         $expectedValue = new EofLexeme($lexemeInfo);
         $scanner = new SymbolBufferLexemeReader($buffer, new Utf8LexemeMatcher);
         $actualValue = $scanner->read();
@@ -87,7 +88,7 @@ class SymbolBufferLexemeReaderTest extends TestCase
     public function testRead_NotEmptyInvalidBufferStart_ReturnsMatch(): void
     {
         $buffer = SymbolBuffer::fromString("\x80");
-        $lexemeInfo = new SymbolBufferLexemeInfo($buffer, 0, 1);
+        $lexemeInfo = new SymbolBufferLexemeInfo($buffer, new LexemePosition(0, 1));
         $expectedValue = new InvalidBytesLexeme($lexemeInfo);
         $scanner = new SymbolBufferLexemeReader($buffer, new Utf8LexemeMatcher);
         $actualValue = $scanner->read();

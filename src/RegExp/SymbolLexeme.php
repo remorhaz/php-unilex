@@ -2,9 +2,10 @@
 
 namespace Remorhaz\UniLex\RegExp;
 
+use Remorhaz\UniLex\Lexeme;
 use Remorhaz\UniLex\LexemeInfoInterface;
 
-class SymbolLexeme extends \Remorhaz\UniLex\Lexeme
+class SymbolLexeme extends Lexeme
 {
     private $type;
 

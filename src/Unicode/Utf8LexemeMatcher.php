@@ -3,7 +3,6 @@
 namespace Remorhaz\UniLex\Unicode;
 
 use Remorhaz\UniLex\Lexeme;
-use Remorhaz\UniLex\LexemeMatcherInterface;
 use Remorhaz\UniLex\SymbolBufferInterface;
 
 class Utf8LexemeMatcher implements LexemeMatcherInterface

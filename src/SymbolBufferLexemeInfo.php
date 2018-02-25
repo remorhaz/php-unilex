@@ -9,41 +9,22 @@ class SymbolBufferLexemeInfo implements LexemeInfoInterface
 
     private $buffer;
 
-    private $startOffset;
+    private $position;
 
-    private $finishOffset;
-
-    private $parentInfo;
-
-    public function __construct(
-        SymbolBuffer $buffer,
-        int $startOffset,
-        int $finishOffset,
-        LexemeInfoInterface $parentInfo = null
-    ) {
+    public function __construct(SymbolBuffer $buffer, LexemePosition $position)
+    {
         $this->buffer = $buffer;
-        $this->startOffset = $startOffset;
-        $this->finishOffset = $finishOffset;
-        $this->parentInfo = $parentInfo;
+        $this->position = $position;
     }
 
-    public function getStartOffset(): int
+    public function getPosition(): LexemePosition
     {
-        return $this->startOffset;
-    }
-
-    public function getFinishOffset(): int
-    {
-        return $this->finishOffset;
+        return $this->position;
     }
 
     public function extract(): SplFixedArray
     {
-        return $this->buffer->extractLexeme($this->startOffset, $this->finishOffset);
-    }
-
-    public function getParentInfo(): ?LexemeInfoInterface
-    {
-        return $this->parentInfo;
+        $position = $this->getPosition();
+        return $this->buffer->extractLexeme($position->getStartOffset(), $position->getFinishOffset());
     }
 }

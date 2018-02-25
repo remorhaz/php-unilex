@@ -3,6 +3,7 @@
 namespace Remorhaz\UniLex\Test\Unicode;
 
 use PHPUnit\Framework\TestCase;
+use Remorhaz\UniLex\LexemePosition;
 use Remorhaz\UniLex\SymbolBuffer;
 use Remorhaz\UniLex\SymbolBufferLexemeInfo;
 use Remorhaz\UniLex\Unicode\SymbolLexeme;
@@ -13,7 +14,7 @@ class SymbolLexemeTest extends TestCase
     public function testGetSymbol_ConstructWithValue_ReturnsSameValue(): void
     {
         $buffer = SymbolBuffer::fromString('a');
-        $lexemeInfo = new SymbolBufferLexemeInfo($buffer, 0, 1);
+        $lexemeInfo = new SymbolBufferLexemeInfo($buffer, new LexemePosition(0, 1));
         $expectedValue = 0x00000061;
         $lexeme = new SymbolLexeme($lexemeInfo, $expectedValue);
         $actualValue = $lexeme->getSymbol();

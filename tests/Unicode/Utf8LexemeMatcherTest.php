@@ -3,6 +3,7 @@
 namespace Remorhaz\UniLex\Test\Unicode;
 
 use PHPUnit\Framework\TestCase;
+use Remorhaz\UniLex\LexemePosition;
 use Remorhaz\UniLex\Unicode\InvalidBytesLexeme;
 use Remorhaz\UniLex\SymbolBuffer;
 use Remorhaz\UniLex\SymbolBufferLexemeInfo;
@@ -24,7 +25,7 @@ class Utf8LexemeMatcherTest extends TestCase
         int $expectedSymbol
     ): void {
         $buffer = SymbolBuffer::fromString($text);
-        $lexemeInfo = new SymbolBufferLexemeInfo($buffer, 0, $expectedFinishOffset);
+        $lexemeInfo = new SymbolBufferLexemeInfo($buffer, new LexemePosition(0, $expectedFinishOffset));
         $lexeme = new SymbolLexeme($lexemeInfo, $expectedSymbol);
         $actual = (new Utf8LexemeMatcher)->match($buffer);
         self::assertEquals($lexeme, $actual);
@@ -53,7 +54,7 @@ class Utf8LexemeMatcherTest extends TestCase
         int $expectedFinishOffset
     ): void {
         $buffer = SymbolBuffer::fromString($text);
-        $lexemeInfo = new SymbolBufferLexemeInfo($buffer, 0, $expectedFinishOffset);
+        $lexemeInfo = new SymbolBufferLexemeInfo($buffer, new LexemePosition(0, $expectedFinishOffset));
         $lexeme = new InvalidBytesLexeme($lexemeInfo);
         $actual = (new Utf8LexemeMatcher)->match($buffer);
         self::assertEquals($lexeme, $actual);

@@ -93,6 +93,9 @@ class SymbolBuffer implements SymbolBufferInterface
 
     public function getLexemeInfo(): LexemeInfoInterface
     {
-        return new SymbolBufferLexemeInfo($this, $this->startPosition, $this->previewPosition);
+        return new SymbolBufferLexemeInfo(
+            $this,
+            new LexemePosition($this->startPosition, $this->previewPosition)
+        );
     }
 }

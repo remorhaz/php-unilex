@@ -4,15 +4,14 @@ namespace Remorhaz\UniLex\Unicode;
 
 use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\LexemeInfoInterface;
-use Remorhaz\UniLex\LexemeMatcherInterface;
-use Remorhaz\UniLex\SymbolBuffer;
+use Remorhaz\UniLex\LexemePosition;
+use Remorhaz\UniLex\SymbolBuffer as ByteSymbolBuffer;
 use Remorhaz\UniLex\SymbolBufferInterface;
-use Remorhaz\UniLex\SymbolBufferLexemeInfo;
 
-class Buffer implements SymbolBufferInterface
+class SymbolBuffer implements SymbolBufferInterface
 {
 
-    private $parentBuffer;
+    private $source;
 
     private $matcher;
 
@@ -20,21 +19,22 @@ class Buffer implements SymbolBufferInterface
 
     private $previewPosition = 0;
 
-    private $previewBuffer = [];
+    private $data;
 
-    private $startLexemeInfo;
+    private $sourceStartPosition = 0;
 
-    private $previewLexemeInfo;
+    private $sourcePreviewPosition = 0;
 
-    public function __construct(SymbolBufferInterface $parentBuffer, LexemeMatcherInterface $matcher)
+    public function __construct(SymbolBufferInterface $source, LexemeMatcherInterface $matcher)
     {
-        $this->parentBuffer = $parentBuffer;
+        $this->source = $source;
         $this->matcher = $matcher;
+        $this->data = new \SplFixedArray;
     }
 
     public function isEnd(): bool
     {
-        return $this->parentBuffer->isEnd();
+        return $this->source->isEnd();
     }
 
     /**
@@ -42,23 +42,28 @@ class Buffer implements SymbolBufferInterface
      */
     public function nextSymbol(): void
     {
-        if ($this->parentBuffer->isEnd()) {
+        if ($this->source->isEnd()) {
             throw new Exception("Unexpected end of buffer at index {$this->previewPosition}");
         }
         $this->cachePreviewLexeme();
         $this->previewPosition++;
+        $this->sourcePreviewPosition = $this
+            ->source
+            ->getLexemeInfo()
+            ->getPosition()
+            ->getFinishOffset();
     }
 
     public function resetLexeme(): void
     {
         $this->previewPosition = $this->startPosition;
-        unset($this->startLexemeInfo, $this->previewLexemeInfo);
+        $this->sourcePreviewPosition = $this->sourceStartPosition;
     }
 
     public function finishLexeme(): void
     {
         $this->startPosition = $this->previewPosition;
-        unset($this->startLexemeInfo, $this->previewLexemeInfo);
+        $this->sourceStartPosition = $this->sourcePreviewPosition;
     }
 
     /**
@@ -67,11 +72,11 @@ class Buffer implements SymbolBufferInterface
      */
     public function getSymbol(): int
     {
-        if ($this->parentBuffer->isEnd()) {
+        if ($this->source->isEnd()) {
             throw new Exception("No symbol to preview at index {$this->previewPosition}");
         }
         $this->cachePreviewLexeme();
-        return $this->previewBuffer[$this->previewPosition];
+        return $this->data->offsetGet($this->previewPosition);
     }
 
     /**
@@ -80,12 +85,10 @@ class Buffer implements SymbolBufferInterface
      */
     public function getLexemeInfo(): LexemeInfoInterface
     {
-        $symbols = array_slice($this->previewBuffer, $this->startPosition, $this->previewPosition, true);
-        return new SymbolBufferLexemeInfo(
-            SymbolBuffer::fromSymbols(...$symbols),
-            $this->startPosition,
-            $this->previewPosition,
-            $this->parentBuffer->getLexemeInfo()
+        return new LexemeInfo(
+            new ByteSymbolBuffer($this->data), // @todo Get rid of this ugly thing
+            new LexemePosition($this->startPosition, $this->previewPosition),
+            new LexemePosition($this->sourceStartPosition, $this->sourcePreviewPosition)
         );
     }
 
@@ -94,19 +97,13 @@ class Buffer implements SymbolBufferInterface
      */
     private function cachePreviewLexeme(): void
     {
-        if (isset($this->previewBuffer[$this->previewPosition])) {
+        if ($this->data->offsetExists($this->previewPosition)) {
             return;
         }
-        $lexeme = $this->matcher->match($this->parentBuffer);
+        $lexeme = $this->matcher->match($this->source);
         if (!($lexeme instanceof SymbolLexeme)) {
             throw new Exception("Invalid lexeme at index {$this->previewPosition}");
         }
-        $this->previewBuffer[$this->previewPosition] = $lexeme->getSymbol();
-        if (!isset($this->startLexemeInfo)) {
-            $this->startLexemeInfo = $lexeme->getInfo();
-        }
-        if (!isset($this->previewLexemeInfo)) {
-            $this->previewLexemeInfo = $lexeme->getInfo();
-        }
+        $this->data->offsetSet($this->previewPosition, $lexeme->getSymbol());
     }
 }

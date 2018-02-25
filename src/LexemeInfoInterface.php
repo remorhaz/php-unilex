@@ -7,11 +7,7 @@ use SplFixedArray;
 interface LexemeInfoInterface
 {
 
-    public function getStartOffset(): int;
-
-    public function getFinishOffset(): int;
-
     public function extract(): SplFixedArray;
 
-    public function getParentInfo(): ?LexemeInfoInterface;
+    public function getPosition(): LexemePosition;
 }

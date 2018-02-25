@@ -3,6 +3,7 @@
 namespace Remorhaz\UniLex\Test\RegExp;
 
 use PHPUnit\Framework\TestCase;
+use Remorhaz\UniLex\LexemePosition;
 use Remorhaz\UniLex\RegExp\SymbolLexeme;
 use Remorhaz\UniLex\RegExp\LexemeMatcher;
 use Remorhaz\UniLex\RegExp\TokenType;
@@ -21,7 +22,7 @@ class LexemeMatcherTest extends TestCase
     {
         $buffer = SymbolBuffer::fromSymbols($symbol);
         $matcher = new LexemeMatcher;
-        $info = new SymbolBufferLexemeInfo($buffer, 0, 1);
+        $info = new SymbolBufferLexemeInfo($buffer, new LexemePosition(0, 1));
         $expectedLexeme = new SymbolLexeme($info, $type, $symbol);
         $actual = $matcher->match($buffer);
         self::assertEquals($expectedLexeme, $actual);
@@ -81,7 +82,7 @@ class LexemeMatcherTest extends TestCase
     {
         $buffer = SymbolBuffer::fromSymbols(0x110000);
         $matcher = new LexemeMatcher;
-        $info = new SymbolBufferLexemeInfo($buffer, 0, 1);
+        $info = new SymbolBufferLexemeInfo($buffer, new LexemePosition(0, 1));
         $expectedLexeme = new SymbolLexeme($info, TokenType::INVALID, 0x110000);
         $actual = $matcher->match($buffer);
         self::assertEquals($expectedLexeme, $actual);
