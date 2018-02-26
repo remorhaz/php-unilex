@@ -92,13 +92,25 @@ class SymbolBuffer implements SymbolBufferInterface, LexemeExtractInterface
         );
     }
 
+    /**
+     * @param LexemePosition $position
+     * @return SplFixedArray
+     * @throws Exception
+     */
     public function extractLexeme(LexemePosition $position): SplFixedArray
     {
         $startOffset = $position->getStartOffset();
         $length = $position->getLength();
+        if (0 == $length && $startOffset > $this->previewOffset) {
+            throw new Exception("No symbol to extract at offset {$startOffset}");
+        }
         $lexeme = new SplFixedArray($length);
         for ($i = 0; $i < $length; $i++) {
-            $symbol = $this->data[$startOffset + $i];
+            $offset = $startOffset + $i;
+            if (!isset($this->data[$offset])) {
+                throw new Exception("No symbol to extract at offset {$offset}");
+            }
+            $symbol = $this->data[$offset];
             $lexeme->offsetSet($i, $symbol);
         }
         return $lexeme;
