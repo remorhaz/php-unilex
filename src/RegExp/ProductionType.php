@@ -105,6 +105,5 @@ abstract class ProductionType
     const OPT_OCT                   = 0x5D;
     const OPT_DEC                   = 0x5E;
     const OPT_HEX                   = 0x5F;
-    const EPSILON                   = 0xFE;
     const EOF                       = 0xFF;
 }

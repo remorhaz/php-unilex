@@ -40,5 +40,6 @@ abstract class TokenType
     const PRINTABLE_ASCII_OTHER = 0x1D;
     const OTHER_ASCII           = 0x1F;
     const NOT_ASCII             = 0x20;
-    const INVALID               = 0xFF;
+    const INVALID               = 0xFE;
+    const EOF                   = 0xFF;
 }

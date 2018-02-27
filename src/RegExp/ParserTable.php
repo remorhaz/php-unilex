@@ -2,6 +2,8 @@
 
 namespace Remorhaz\UniLex\RegExp;
 
+use Remorhaz\UniLex\Exception;
+
 class ParserTable
 {
 
@@ -222,6 +224,7 @@ class ParserTable
             TokenType::OTHER_HEX_LETTER,
         ],
         ProductionType::PRINTABLE_ASCII_OTHER => [TokenType::PRINTABLE_ASCII_OTHER],
+        ProductionType::EOF => [TokenType::EOF],
     ];
 
     /**
@@ -437,6 +440,10 @@ class ParserTable
         ],
     ];
 
+    private $first;
+
+    private $firstContainsEpsilon;
+
     public function isTerminal(int $productionType): bool
     {
         return isset($this->terminalProductionMap[$productionType]);
@@ -445,5 +452,44 @@ class ParserTable
     public function isNonTerminal(int $productionType): bool
     {
         return isset($this->nonTerminalProductionMap[$productionType]);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function build(): void
+    {
+        $this->first = [];
+        $this->firstContainsEpsilon = [];
+        foreach ($this->terminalProductionMap as $nonTerminalId => $terminalIdList) {
+            foreach ($terminalIdList as $terminalId) {
+                $this->first[$nonTerminalId][] = $terminalId;
+            }
+        }
+        foreach ($this->nonTerminalProductionMap as $nonTerminalId => $productionList) {
+            if ($this->isTerminal($nonTerminalId)) {
+                throw new Exception("Production {$nonTerminalId} is a terminal");
+            }
+            foreach ($productionList as $production) {
+                if (empty($production)) {
+                    $this->firstContainsEpsilon[$nonTerminalId] = true;
+                }
+            }
+        }
+        $insertCount = 0;
+        do {
+            foreach ($this->nonTerminalProductionMap as $nonTerminalId => $productionList) {
+                foreach ($productionList as $production) {
+                    foreach ($production as $productionId) {
+                        if (empty($this->first[$productionId])) {
+                            continue;
+                        }
+                        if (empty($this->firstContainsEpsilon[$productionId])) {
+                            continue;
+                        }
+                    }
+                }
+            }
+        } while ($insertCount > 0);
     }
 }
