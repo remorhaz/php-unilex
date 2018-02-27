@@ -82,7 +82,7 @@ class ParserTable
         ProductionType::ESC_HEX_MARKER => [TokenType::SMALL_X],
         ProductionType::ESC_UNICODE_MARKER => [TokenType::SMALL_U],
         ProductionType::ESC_PROP_MARKER => [TokenType::SMALL_P],
-        ProductionType::ESC_PROP_NOT_MARKER => [TokenType::CAPITAL_P],
+        ProductionType::ESC_NOT_PROP_MARKER => [TokenType::CAPITAL_P],
         ProductionType::PROP_START => [TokenType::LEFT_CURLY_BRACKET],
         ProductionType::PROP_FINISH => [TokenType::RIGHT_CURLY_BRACKET],
         ProductionType::NOT_PROP_START => [
@@ -231,6 +231,9 @@ class ParserTable
      * @var array
      */
     private $nonTerminalProductionMap = [
+        ProductionType::START => [
+            [ProductionType::PARTS, ProductionType::EOF],
+        ],
         ProductionType::PARTS => [
             [ProductionType::PART, ProductionType::ALT_PARTS],
         ],
@@ -362,14 +365,85 @@ class ParserTable
                 ProductionType::HEX_DIGIT
             ],
         ],
-        ProductionType::ITEM_QUANT => [
-            // ...
+        ProductionType::ESC_PROP => [
+            [ProductionType::ESC_PROP_MARKER, ProductionType::PROP],
+        ],
+        ProductionType::ESC_NOT_PROP => [
+            [ProductionType::ESC_NOT_PROP_MARKER, ProductionType::PROP],
+        ],
+        ProductionType::PROP => [
+            [ProductionType::PROP_SHORT],
+            [ProductionType::PROP_FULL],
+        ],
+        ProductionType::PROP_SHORT => [
+            [ProductionType::NOT_PROP_START],
+        ],
+        ProductionType::PROP_FULL => [
+            [ProductionType::PROP_START, ProductionType::PROP_NAME, ProductionType::PROP_FINISH],
+        ],
+        ProductionType::PROP_NAME => [
+            [ProductionType::PROP_NAME_PART],
+        ],
+        ProductionType::PROP_NAME_PART => [
+            [ProductionType::NOT_PROP_FINISH, ProductionType::PROP_NAME_PART],
             [],
+        ],
+        ProductionType::ITEM_QUANT => [
+            [ProductionType::ITEM_OPT],
+            [ProductionType::ITEM_QUANT_STAR],
+            [ProductionType::ITEM_QUANT_PLUS],
+            [ProductionType::LIMIT],
+            [],
+        ],
+        ProductionType::LIMIT => [
+            [ProductionType::LIMIT_START, ProductionType::MIN, ProductionType::OPT_MAX, ProductionType::LIMIT_END],
+        ],
+        ProductionType::OPT_MAX => [
+            [ProductionType::LIMIT_SEPARATOR, ProductionType::MAX],
+            [],
+        ],
+        ProductionType::MIN => [
+            [ProductionType::DEC],
+        ],
+        ProductionType::MAX => [
+            [ProductionType::DEC],
+        ],
+        ProductionType::OCT => [
+            [ProductionType::OCT_DIGIT, ProductionType::OPT_OCT]
+        ],
+        ProductionType::OPT_OCT => [
+            [ProductionType::OCT_DIGIT, ProductionType::OPT_OCT],
+            [],
+        ],
+        ProductionType::DEC => [
+            [ProductionType::DEC_DIGIT, ProductionType::OPT_DEC]
+        ],
+        ProductionType::OPT_DEC => [
+            [ProductionType::DEC_DIGIT, ProductionType::OPT_DEC],
+            [],
+        ],
+        ProductionType::HEX => [
+            [ProductionType::HEX_DIGIT, ProductionType::OPT_HEX]
+        ],
+        ProductionType::OPT_HEX => [
+            [ProductionType::HEX_DIGIT, ProductionType::OPT_HEX],
+            [],
+        ],
+        ProductionType::PRINTABLE_ASCII => [
+            [ProductionType::META_CHAR],
+            [ProductionType::DEC_DIGIT],
+            [ProductionType::ASCII_LETTER],
+            [ProductionType::PRINTABLE_ASCII_OTHER],
         ],
     ];
 
     public function isTerminal(int $productionType): bool
     {
         return isset($this->terminalProductionMap[$productionType]);
+    }
+
+    public function isNonTerminal(int $productionType): bool
+    {
+        return isset($this->nonTerminalProductionMap[$productionType]);
     }
 }

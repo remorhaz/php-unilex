@@ -20,4 +20,16 @@ class ParserTableTest extends TestCase
         $actualValue = (new ParserTable)->isTerminal(ProductionType::GROUP);
         self::assertFalse($actualValue);
     }
+
+    public function testIsNonTerminal_NonTerminalProduction_ReturnsTrue(): void
+    {
+        $actualValue = (new ParserTable)->isNonTerminal(ProductionType::GROUP);
+        self::assertTrue($actualValue);
+    }
+
+    public function testIsNonTerminal_TerminalProduction_ReturnsFalse(): void
+    {
+        $actualValue = (new ParserTable)->isNonTerminal(ProductionType::GROUP_START);
+        self::assertFalse($actualValue);
+    }
 }

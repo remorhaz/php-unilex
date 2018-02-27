@@ -9,6 +9,7 @@ namespace Remorhaz\UniLex\RegExp;
  */
 abstract class ProductionType
 {
+    const START                     = 0x00;
     const PARTS                     = 0x01;
     const ALT_PARTS                 = 0x02;
     const ALT_SEPARATOR             = 0x03;
@@ -66,7 +67,7 @@ abstract class ProductionType
     const ESC_PROP                  = 0x37;
     const ESC_NOT_PROP              = 0x38;
     const ESC_PROP_MARKER           = 0x39;
-    const ESC_PROP_NOT_MARKER       = 0x3A;
+    const ESC_NOT_PROP_MARKER       = 0x3A;
     const PROP                      = 0x3B;
     const PROP_SHORT                = 0x3C;
     const PROP_FULL                 = 0x3D;
@@ -98,7 +99,12 @@ abstract class ProductionType
     const CLASS_END                 = 0x57;
     const PRINTABLE_ASCII_OTHER     = 0x58;
     const CLASS_ITEMS               = 0x59;
-    const ESC_OCT_SHORT_NUM_LAST   = 0x5A;
+    const ESC_OCT_SHORT_NUM_LAST    = 0x5A;
+    const PROP_NAME_PART            = 0x5B;
+    const OPT_MAX                   = 0x5C;
+    const OPT_OCT                   = 0x5D;
+    const OPT_DEC                   = 0x5E;
+    const OPT_HEX                   = 0x5F;
     const EPSILON                   = 0xFE;
     const EOF                       = 0xFF;
 }
