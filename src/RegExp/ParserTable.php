@@ -226,6 +226,7 @@ class ParserTable
 
     /**
      * Map of non-terminal productions. Key is production ID, value is list of lists of production IDs.
+     * Empty list of production IDs means ε-production.
      *
      * @var array
      */
@@ -235,8 +236,136 @@ class ParserTable
         ],
         ProductionType::ALT_PARTS => [
             [ProductionType::ALT_SEPARATOR, ProductionType::PARTS],
-            [ProductionType::EPSILON],
-        ]
+            [],
+        ],
+        ProductionType::PART => [
+            [ProductionType::ITEM, ProductionType::PART],
+            [],
+        ],
+        ProductionType::ITEM => [
+            [ProductionType::ASSERT],
+            [ProductionType::ITEM_BODY, ProductionType::ITEM_QUANT],
+        ],
+        ProductionType::ASSERT => [
+            [ProductionType::ASSERT_LINE_START],
+            [ProductionType::ASSERT_LINE_FINISH],
+        ],
+        ProductionType::ITEM_BODY => [
+            [ProductionType::GROUP],
+            [ProductionType::CLASS_],
+            [ProductionType::SYMBOL],
+        ],
+        ProductionType::GROUP => [
+            [ProductionType::GROUP_START, ProductionType::PARTS, ProductionType::GROUP_END],
+        ],
+        ProductionType::CLASS_ => [
+            [ProductionType::CLASS_START, ProductionType::CLASS_BODY, ProductionType::CLASS_END],
+        ],
+        ProductionType::CLASS_BODY => [
+            [ProductionType::CLASS_INVERTOR, ProductionType::FIRST_CLASS_ITEM, ProductionType::CLASS_ITEMS],
+            [ProductionType::FIRST_CLASS_ITEM, ProductionType::CLASS_ITEMS],
+        ],
+        ProductionType::CLASS_ITEMS => [
+            [ProductionType::CLASS_ITEM, ProductionType::CLASS_ITEMS],
+            [],
+        ],
+        ProductionType::FIRST_CLASS_ITEM => [
+            [ProductionType::FIRST_UNESC_CLASS_SYMBOL, ProductionType::RANGE],
+            [ProductionType::CLASS_SYMBOL, ProductionType::RANGE],
+        ],
+        ProductionType::CLASS_ITEM => [
+            [ProductionType::CLASS_SYMBOL, ProductionType::RANGE],
+        ],
+        ProductionType::CLASS_SYMBOL => [
+            [ProductionType::ESC_CLASS_SYMBOL],
+            [ProductionType::UNESC_CLASS_SYMBOL],
+        ],
+        ProductionType::ESC_CLASS_SYMBOL => [
+            [ProductionType::ESC, ProductionType::CLASS_ESC_SEQUENCE],
+        ],
+        ProductionType::CLASS_ESC_SEQUENCE => [
+            [ProductionType::ESC_SEQUENCE],
+        ],
+        ProductionType::RANGE => [
+            [ProductionType::RANGE_SEPARATOR, ProductionType::CLASS_SYMBOL],
+            [],
+        ],
+        ProductionType::SYMBOL => [
+            [ProductionType::SYMBOL_ANY],
+            [ProductionType::ESC_SYMBOL],
+            [ProductionType::UNESC_SYMBOL],
+        ],
+        ProductionType::ESC_SYMBOL => [
+            [ProductionType::ESC, ProductionType::ESC_SEQUENCE],
+        ],
+        ProductionType::ESC_SEQUENCE => [
+            [ProductionType::ESC_SIMPLE],
+            [ProductionType::ESC_SPECIAL],
+            [ProductionType::ESC_NON_PRINTABLE],
+            [ProductionType::ESC_PROP],
+            [ProductionType::ESC_NOT_PROP],
+        ],
+        ProductionType::ESC_NON_PRINTABLE => [
+            [ProductionType::ESC_CTL],
+            [ProductionType::ESC_OCT],
+            [ProductionType::ESC_HEX],
+            [ProductionType::ESC_UNICODE],
+        ],
+        ProductionType::ESC_CTL => [
+            [ProductionType::ESC_CTL_MARKER, ProductionType::ESC_CTL_CODE],
+        ],
+        ProductionType::ESC_CTL_CODE => [
+            [ProductionType::PRINTABLE_ASCII],
+        ],
+        ProductionType::ESC_OCT => [
+            [ProductionType::ESC_OCT_SHORT],
+            [ProductionType::ESC_OCT_LONG],
+        ],
+        ProductionType::ESC_OCT_SHORT => [
+            [ProductionType::ESC_OCT_SHORT_MARKER, ProductionType::ESC_OCT_SHORT_NUM],
+        ],
+        ProductionType::ESC_OCT_SHORT_NUM => [
+            [ProductionType::OCT_DIGIT, ProductionType::ESC_OCT_SHORT_NUM_LAST],
+            [],
+        ],
+        ProductionType::ESC_OCT_SHORT_NUM_LAST => [
+            [ProductionType::OCT_DIGIT],
+            [],
+        ],
+        ProductionType::ESC_OCT_LONG => [
+            [ProductionType::ESC_OCT_LONG_MARKER, ProductionType::ESC_OCT_LONG_NUM],
+        ],
+        ProductionType::ESC_OCT_LONG_NUM => [
+            [ProductionType::ESC_NUM_START, ProductionType::OCT, ProductionType::ESC_NUM_FINISH],
+        ],
+        ProductionType::ESC_HEX => [
+            [ProductionType::ESC_HEX_MARKER, ProductionType::ESC_HEX_NUM],
+        ],
+        ProductionType::ESC_HEX_NUM => [
+            [ProductionType::ESC_HEX_SHORT_NUM],
+            [ProductionType::ESC_HEX_LONG_NUM],
+        ],
+        ProductionType::ESC_HEX_SHORT_NUM => [
+            [ProductionType::HEX_DIGIT, ProductionType::HEX_DIGIT]
+        ],
+        ProductionType::ESC_HEX_LONG_NUM => [
+            [ProductionType::ESC_NUM_START, ProductionType::HEX, ProductionType::ESC_NUM_FINISH],
+        ],
+        ProductionType::ESC_UNICODE => [
+            [ProductionType::ESC_UNICODE_MARKER, ProductionType::ESC_UNICODE_NUM],
+        ],
+        ProductionType::ESC_UNICODE_NUM => [
+            [
+                ProductionType::HEX_DIGIT,
+                ProductionType::HEX_DIGIT,
+                ProductionType::HEX_DIGIT,
+                ProductionType::HEX_DIGIT
+            ],
+        ],
+        ProductionType::ITEM_QUANT => [
+            // ...
+            [],
+        ],
     ];
 
     public function isTerminal(int $productionType): bool

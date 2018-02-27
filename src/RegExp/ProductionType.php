@@ -97,6 +97,8 @@ abstract class ProductionType
     const PRINTABLE_ASCII           = 0x56;
     const CLASS_END                 = 0x57;
     const PRINTABLE_ASCII_OTHER     = 0x58;
+    const CLASS_ITEMS               = 0x59;
+    const ESC_OCT_SHORT_NUM_LAST   = 0x5A;
     const EPSILON                   = 0xFE;
     const EOF                       = 0xFF;
 }
