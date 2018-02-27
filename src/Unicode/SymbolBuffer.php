@@ -85,11 +85,9 @@ class SymbolBuffer implements SymbolBufferInterface, LexemeExtractInterface
      */
     public function getLexemeInfo(): LexemeInfoInterface
     {
-        return new LexemeInfo(
-            $this,
-            new LexemePosition($this->startOffset, $this->previewOffset),
-            new LexemePosition($this->sourceStartOffset, $this->sourcePreviewOffset)
-        );
+        $position = new LexemePosition($this->startOffset, $this->previewOffset);
+        $sourcePosition = new LexemePosition($this->sourceStartOffset, $this->sourcePreviewOffset);
+        return new LexemeInfo($this, $position, $sourcePosition);
     }
 
     /**

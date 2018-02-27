@@ -95,5 +95,8 @@ abstract class ProductionType
     const META_CHAR                 = 0x54;
     const ASCII_LETTER              = 0x55;
     const PRINTABLE_ASCII           = 0x56;
+    const CLASS_END                 = 0x57;
+    const PRINTABLE_ASCII_OTHER     = 0x58;
+    const EPSILON                   = 0xFE;
     const EOF                       = 0xFF;
 }
