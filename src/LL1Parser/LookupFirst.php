@@ -81,12 +81,17 @@ class LookupFirst
     /**
      * Reports presence of ε-production in FIRST(X) set.
      *
-     * @param int $productionId
+     * @param int[] $productionIdList
      * @return bool
      */
-    public function hasEpsilon(int $productionId): bool
+    public function hasEpsilon(int ...$productionIdList): bool
     {
-        return $this->epsilonMap[$productionId] ?? false;
+        foreach ($productionIdList as $productionId) {
+            if (!($this->epsilonMap[$productionId] ?? false)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**

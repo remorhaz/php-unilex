@@ -11,10 +11,6 @@ class LookupTableBuilder
 
     private $nonTerminalMap;
 
-    private $first = [];
-
-    private $firstHasEpsilon = [];
-
     /**
      * Constructor. Accepts non-empty maps of terminal and non-terminal productions separately.
      *
@@ -44,6 +40,45 @@ class LookupTableBuilder
         if (!empty($mapIntersection)) {
             $keyList = implode(", ", array_keys($mapIntersection));
             throw new Exception("Productions marked both as terminals and non-terminals: {$keyList}");
+        }
+    }
+
+    public function build(): void
+    {
+        $first = new LookupFirst;
+        $this->addTerminalsToFirst($first);
+        do {
+            $first->resetChangeCount();
+            $this->addNonTerminalsToFirst($first);
+        } while ($first->getChangeCount() > 0);
+    }
+
+    private function addTerminalsToFirst(LookupFirst $first): void
+    {
+        foreach ($this->terminalMap as $terminalId => $tokenIdList) {
+            $first->add($terminalId, ...$tokenIdList);
+        }
+    }
+
+    private function addNonTerminalsToFirst(LookupFirst $first): void
+    {
+        foreach ($this->nonTerminalMap as $nonTerminalId => $productionList) {
+            foreach ($productionList as $production) {
+                $this->addProductionToFirst($first, $nonTerminalId, $production);
+            }
+        }
+    }
+
+    private function addProductionToFirst(LookupFirst $first, int $nonTerminalId, array $production): void
+    {
+        if (empty($production) || $first->hasEpsilon(...$production)) {
+            $first->addEpsilon($nonTerminalId);
+        }
+        foreach ($production as $i => $productionId) {
+            $first->merge($productionId, $nonTerminalId);
+            if (!$first->hasEpsilon($productionId)) {
+                break;
+            }
         }
     }
 }
