@@ -140,4 +140,39 @@ class LookupFirstTest extends TestCase
         $actualValue = $lookupFirst->getChangeCount();
         self::assertSame(0, $actualValue);
     }
+
+    /**
+     * @dataProvider providerMergeTokens
+     * @param int $sourceProductionId
+     * @param array $sourceTokenIdList
+     * @param int $targetProductionId
+     * @param array $targetTokenIdList
+     * @param array $expectedValue
+     */
+    public function testMerge_TokensSet_TargetGetReturnsMergedTokens(
+        int $sourceProductionId,
+        array $sourceTokenIdList,
+        int $targetProductionId,
+        array $targetTokenIdList,
+        array $expectedValue
+    ): void {
+        $lookupFirst = new LookupFirst;
+        $lookupFirst->add($sourceProductionId, ...$sourceTokenIdList);
+        $lookupFirst->add($targetProductionId, ...$targetTokenIdList);
+        $lookupFirst->merge($sourceProductionId, $targetProductionId);
+        $actualValue = $lookupFirst->get($targetProductionId);
+        sort($actualValue);
+        self::assertSame($expectedValue, $actualValue);
+    }
+
+    public function providerMergeTokens(): array
+    {
+        return [
+            "Both sets are empty" => [1, [], 2, [], []],
+            "Both sets are non-empty" => [1, [2, 4], 3, [4, 5], [2, 4, 5]],
+            "Source set is empty" => [1, [], 2, [3, 4], [3, 4]],
+            "Target set is empty" => [1, [3, 2], 4, [], [2, 3]],
+            "Target same as source" => [1, [2, 3], 1, [3, 4], [2, 3, 4]],
+        ];
+    }
 }

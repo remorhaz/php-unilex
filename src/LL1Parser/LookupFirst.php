@@ -106,4 +106,18 @@ class LookupFirst
     {
         $this->changeCount = 0;
     }
+
+    /**
+     * Adds all tokens from source production's FIRST(X) to target production's FIRST(Y).
+     *
+     * @param int $sourceProductionId
+     * @param int $targetProductionId
+     */
+    public function merge(int $sourceProductionId, int $targetProductionId): void
+    {
+        if ($sourceProductionId == $targetProductionId) {
+            return;
+        }
+        $this->add($targetProductionId, ...$this->get($sourceProductionId));
+    }
 }
