@@ -79,7 +79,7 @@ class LookupFirst
     }
 
     /**
-     * Reports presence of ε-production in FIRST(X) set.
+     * Reports presence of ε-production in FIRST(X) sets for all given X.
      *
      * @param int[] $productionIdList
      * @return bool
