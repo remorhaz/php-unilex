@@ -5,7 +5,11 @@ namespace Remorhaz\UniLex\LL1Parser;
 abstract class LookupSet
 {
 
-    private $tokenMap = [];
+    /**
+     * @var array
+     * @todo Make private again
+     */
+    public $tokenMap = [];
 
     /**
      * This counter increases each time changes are made to set.
@@ -31,10 +35,11 @@ abstract class LookupSet
             return;
         }
         $newTokenIdList = array_diff($tokenIdList, $this->tokenMap[$symbolId]);
-        if (!empty($newTokenIdList)) {
-            $this->tokenMap[$symbolId] = array_merge($this->tokenMap[$symbolId], $newTokenIdList);
-            $this->increaseChangeCount(count($newTokenIdList));
+        if (empty($newTokenIdList)) {
+            return;
         }
+        $this->tokenMap[$symbolId] = array_merge($this->tokenMap[$symbolId], $newTokenIdList);
+        $this->increaseChangeCount(count($newTokenIdList));
     }
 
     protected function increaseChangeCount(int $amount = 1): void

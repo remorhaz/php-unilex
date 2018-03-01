@@ -22,7 +22,6 @@ class LookupFollowBuilder
         if (!isset($this->follow)) {
             $follow = new LookupFollow();
             $this->addStartSymbol($follow);
-            // @todo Extract repeatUntilNoChanges(Callable $func)
             do {
                 $follow->resetChangeCount();
                 $this->mergeProductionsFromNonTerminalMap($follow);
@@ -39,9 +38,9 @@ class LookupFollowBuilder
 
     private function mergeProductionsFromNonTerminalMap(LookupFollow $follow): void
     {
-        foreach ($this->grammar->getNonTerminalMap() as $nonTerminalId => $productionList) {
-            foreach ($productionList as $nonTerminalIdList) {
-                $this->mergeProduction($follow, $nonTerminalId, ...$nonTerminalIdList);
+        foreach ($this->grammar->getNonTerminalMap() as $symbolId => $productionList) {
+            foreach ($productionList as $symbolIdList) {
+                $this->mergeProduction($follow, $symbolId, ...$symbolIdList);
             }
         }
     }
@@ -50,8 +49,9 @@ class LookupFollowBuilder
     {
         while (!empty($nonTerminalIdList)) {
             $symbolId = array_shift($nonTerminalIdList);
-            $follow->addToken($symbolId, ...$this->first->getProductionTokens(...$nonTerminalIdList));
-            if ($this->first->productionHasEpsilon($nonTerminalIdList)) {
+            $rightPartFirst = $this->first->getProductionTokens(...$nonTerminalIdList);
+            $follow->addToken($symbolId, ...$rightPartFirst);
+            if ($this->first->productionHasEpsilon(...$nonTerminalIdList)) {
                 $follow->mergeTokens($symbolId, $nonTerminalId);
             }
         };

@@ -2,9 +2,6 @@
 
 namespace Remorhaz\UniLex\LL1Parser;
 
-/**
- * @todo Move to Grammar?
- */
 class LookupFirstBuilder
 {
 
