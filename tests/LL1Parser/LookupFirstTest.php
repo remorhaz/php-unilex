@@ -17,18 +17,18 @@ class LookupFirstTest extends TestCase
 
     /**
      * @param array $tokenIdList
-     * @dataProvider providerAddFirstCalledOnce
+     * @dataProvider providerAddTokenCalledOnce
      */
-    public function testAdd_CalledOnce_GetReturnsAddedTokens(array $tokenIdList): void
+    public function testAddToken_CalledOnce_GetReturnsAddedTokens(array $tokenIdList): void
     {
         $lookupFirst = new LookupFirst;
-        $lookupFirst->add(1, ...$tokenIdList);
+        $lookupFirst->addToken(1, ...$tokenIdList);
         $actualValue = $lookupFirst->get(1);
         sort($actualValue);
         self::assertSame($tokenIdList, $actualValue);
     }
 
-    public function providerAddFirstCalledOnce(): array
+    public function providerAddTokenCalledOnce(): array
     {
         return [
             "No tokens" => [[]],
@@ -41,16 +41,16 @@ class LookupFirstTest extends TestCase
      * @param array $firstTokenIdList
      * @param array $secondTokenIdList
      * @param array $expectedValue
-     * @dataProvider providerAddCalledTwice
+     * @dataProvider providerAddTokenCalledTwice
      */
-    public function testAdd_CalledTwice_GetReturnsMergedTokens(
+    public function testAddToken_CalledTwice_GetReturnsMergedTokens(
         array $firstTokenIdList,
         array $secondTokenIdList,
         array $expectedValue
     ): void {
         $lookupFirst = new LookupFirst;
-        $lookupFirst->add(1, ...$firstTokenIdList);
-        $lookupFirst->add(1, ...$secondTokenIdList);
+        $lookupFirst->addToken(1, ...$firstTokenIdList);
+        $lookupFirst->addToken(1, ...$secondTokenIdList);
         $actualValue = $lookupFirst->get(1);
         sort($actualValue);
         self::assertEquals($expectedValue, $actualValue);
@@ -60,22 +60,22 @@ class LookupFirstTest extends TestCase
      * @param array $firstTokenIdList
      * @param array $secondTokenIdList
      * @param array $mergedList
-     * @dataProvider providerAddCalledTwice
+     * @dataProvider providerAddTokenCalledTwice
      */
-    public function testAdd_CalledTwice_GetChangeCountReturnsMergedTokensAmount(
+    public function testAddToken_CalledTwice_GetChangeCountReturnsMergedTokensAmount(
         array $firstTokenIdList,
         array $secondTokenIdList,
         array $mergedList
     ): void {
         $lookupFirst = new LookupFirst;
-        $lookupFirst->add(1, ...$firstTokenIdList);
-        $lookupFirst->add(1, ...$secondTokenIdList);
+        $lookupFirst->addToken(1, ...$firstTokenIdList);
+        $lookupFirst->addToken(1, ...$secondTokenIdList);
         $expectedValue = count($mergedList);
         $actualValue = $lookupFirst->getChangeCount();
         self::assertEquals($expectedValue, $actualValue);
     }
 
-    public function providerAddCalledTwice(): array
+    public function providerAddTokenCalledTwice(): array
     {
         return [
             "Non-crossing sets" => [[2, 3], [4], [2, 3, 4]],
@@ -86,10 +86,16 @@ class LookupFirstTest extends TestCase
         ];
     }
 
-    public function testHasEpsilon_Constructed_ReturnsFalse(): void
+    public function testHasEpsilon_NoEpsilonsAdded_ReturnsFalse(): void
     {
         $actualValue = (new LookupFirst)->hasEpsilon(1);
         self::assertFalse($actualValue);
+    }
+
+    public function testHasEpsilon_EmptyTerminalList_ReturnsTrue(): void
+    {
+        $actualValue = (new LookupFirst)->hasEpsilon();
+        self::assertTrue($actualValue);
     }
 
     public function testAddEpsilon_Constructed_HasEpsilonReturnsTrue(): void
@@ -149,7 +155,7 @@ class LookupFirstTest extends TestCase
      * @param array $targetTokenIdList
      * @param array $expectedValue
      */
-    public function testMerge_TokensSet_TargetGetReturnsMergedTokens(
+    public function testMergeTokens_TokensSet_TargetGetReturnsMergedTokens(
         int $sourceProductionId,
         array $sourceTokenIdList,
         int $targetProductionId,
@@ -157,9 +163,9 @@ class LookupFirstTest extends TestCase
         array $expectedValue
     ): void {
         $lookupFirst = new LookupFirst;
-        $lookupFirst->add($sourceProductionId, ...$sourceTokenIdList);
-        $lookupFirst->add($targetProductionId, ...$targetTokenIdList);
-        $lookupFirst->merge($sourceProductionId, $targetProductionId);
+        $lookupFirst->addToken($sourceProductionId, ...$sourceTokenIdList);
+        $lookupFirst->addToken($targetProductionId, ...$targetTokenIdList);
+        $lookupFirst->mergeTokens($targetProductionId, $sourceProductionId);
         $actualValue = $lookupFirst->get($targetProductionId);
         sort($actualValue);
         self::assertSame($expectedValue, $actualValue);
@@ -174,5 +180,22 @@ class LookupFirstTest extends TestCase
             "Target set is empty" => [1, [3, 2], 4, [], [2, 3]],
             "Target same as source" => [1, [2, 3], 1, [3, 4], [2, 3, 4]],
         ];
+    }
+
+    public function testMergeEpsilons_AllMergedNonTerminalsHaveEpsilons_HasEpsilonReturnsFalse(): void
+    {
+        $lookupFirst = new LookupFirst;
+        $lookupFirst->addEpsilon(1);
+        $lookupFirst->addEpsilon(2);
+        $lookupFirst->mergeEpsilons(3, 1, 2);
+        self::assertTrue($lookupFirst->hasEpsilon(3));
+    }
+
+    public function testMergeEpsilons_NotAllMergedNonTerminalsHaveEpsilons_HasEpsilonReturnsFalse(): void
+    {
+        $lookupFirst = new LookupFirst;
+        $lookupFirst->addEpsilon(1);
+        $lookupFirst->mergeEpsilons(3, 1, 2);
+        self::assertFalse($lookupFirst->hasEpsilon(3));
     }
 }

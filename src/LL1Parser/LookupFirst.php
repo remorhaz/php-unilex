@@ -6,22 +6,9 @@ namespace Remorhaz\UniLex\LL1Parser;
  * Helper to calculate FIRST() sets. It's a part of LL(1) lookup table generation algorithm. FIRST(X) set
  * contains terminals (and, optionally, ε-production) that can occur as a starting token in production X.
  */
-class LookupFirst
+class LookupFirst implements LookupFirstInfoInterface
 {
 
-    /**
-     * FIRST(X) sets map. Key is production ID, value is list of token IDs.
-     *
-     * @var array[]
-     */
-    private $tokenMap = [];
-
-    /**
-     * FIRST(X) ε-production presence marker. Key is production ID, value is true.
-     *
-     * @var true[]
-     */
-    private $epsilonMap = [];
 
     /**
      * This counter increases each time a single token or ε-production is added to FIRST(X).
@@ -33,22 +20,22 @@ class LookupFirst
     /**
      * Adds list of productions to FIRST(X) set.
      *
-     * @param int $productionId
+     * @param int $nonTerminalId
      * @param int[] ...$tokenIdList
      */
-    public function add(int $productionId, int ...$tokenIdList): void
+    public function addToken(int $nonTerminalId, int ...$tokenIdList): void
     {
         if (empty($tokenIdList)) {
             return;
         }
-        if (!isset($this->tokenMap[$productionId])) {
-            $this->tokenMap[$productionId] = $tokenIdList;
+        if (!isset($this->tokenMap[$nonTerminalId])) {
+            $this->tokenMap[$nonTerminalId] = $tokenIdList;
             $this->changeCount += count($tokenIdList);
             return;
         }
-        $newTokenIdList = array_diff($tokenIdList, $this->tokenMap[$productionId]);
+        $newTokenIdList = array_diff($tokenIdList, $this->tokenMap[$nonTerminalId]);
         if (!empty($newTokenIdList)) {
-            $this->tokenMap[$productionId] = array_merge($this->tokenMap[$productionId], $newTokenIdList);
+            $this->tokenMap[$nonTerminalId] = array_merge($this->tokenMap[$nonTerminalId], $newTokenIdList);
             $this->changeCount += count($newTokenIdList);
         }
     }
@@ -56,37 +43,47 @@ class LookupFirst
     /**
      * Returns FIRST(X) set.
      *
-     * @param int $productionId
+     * @param int[] ...$nonTerminalIdList
      * @return array
      */
-    public function get(int $productionId): array
+    public function get(int ...$nonTerminalIdList): array
     {
-        return $this->tokenMap[$productionId] ?? [];
+        $first = [];
+        foreach ($nonTerminalIdList as $nonTerminalId) {
+            $first = array_merge($first, $this->tokenMap[$nonTerminalId] ?? []);
+            if (!$this->hasEpsilon($nonTerminalId)) {
+                break;
+            }
+        }
+        return $first;
     }
 
     /**
      * Adds ε-production to FIRST(X) set.
      *
-     * @param int $productionId
+     * @param int $nonTerminalId
      */
-    public function addEpsilon(int $productionId): void
+    public function addEpsilon(int $nonTerminalId): void
     {
-        if ($this->hasEpsilon($productionId)) {
+        if ($this->hasEpsilon($nonTerminalId)) {
             return;
         }
-        $this->epsilonMap[$productionId] = true;
+        $this->epsilonMap[$nonTerminalId] = true;
         $this->changeCount++;
     }
 
     /**
      * Reports presence of ε-production in FIRST(X) sets for all given X.
      *
-     * @param int[] $productionIdList
+     * @param int[] ...$nonTerminalIdList
      * @return bool
      */
-    public function hasEpsilon(int ...$productionIdList): bool
+    public function hasEpsilon(int ...$nonTerminalIdList): bool
     {
-        foreach ($productionIdList as $productionId) {
+        if (empty($nonTerminalIdList)) {
+            return true;
+        }
+        foreach ($nonTerminalIdList as $productionId) {
             if (!($this->epsilonMap[$productionId] ?? false)) {
                 return false;
             }
@@ -115,14 +112,18 @@ class LookupFirst
     /**
      * Adds all tokens from source production's FIRST(X) to target production's FIRST(Y).
      *
-     * @param int $sourceProductionId
-     * @param int $targetProductionId
+     * @param int $targetNonTerminalId
+     * @param int[] ...$sourceNonTerminalIdList
      */
-    public function merge(int $sourceProductionId, int $targetProductionId): void
+    public function mergeTokens(int $targetNonTerminalId, int ...$sourceNonTerminalIdList): void
     {
-        if ($sourceProductionId == $targetProductionId) {
-            return;
+        $this->addToken($targetNonTerminalId, ...$this->get(...$sourceNonTerminalIdList));
+    }
+
+    public function mergeEpsilons(int $targetNonTerminalId, int ...$sourceNonTerminalIdList): void
+    {
+        if ($this->hasEpsilon(...$sourceNonTerminalIdList)) {
+            $this->addEpsilon($targetNonTerminalId);
         }
-        $this->add($targetProductionId, ...$this->get($sourceProductionId));
     }
 }
