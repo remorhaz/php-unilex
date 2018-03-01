@@ -15,24 +15,24 @@ abstract class LookupSet
     private $changeCount = 0;
 
     /**
-     * Adds list of productions to FIRST(X) set.
+     * Adds list of tokens to the set.
      *
-     * @param int $nonTerminalId
+     * @param int $symbolId
      * @param int[] ...$tokenIdList
      */
-    public function addToken(int $nonTerminalId, int ...$tokenIdList): void
+    public function addToken(int $symbolId, int ...$tokenIdList): void
     {
         if (empty($tokenIdList)) {
             return;
         }
-        if (!isset($this->tokenMap[$nonTerminalId])) {
-            $this->tokenMap[$nonTerminalId] = $tokenIdList;
+        if (!isset($this->tokenMap[$symbolId])) {
+            $this->tokenMap[$symbolId] = $tokenIdList;
             $this->increaseChangeCount(count($tokenIdList));
             return;
         }
-        $newTokenIdList = array_diff($tokenIdList, $this->tokenMap[$nonTerminalId]);
+        $newTokenIdList = array_diff($tokenIdList, $this->tokenMap[$symbolId]);
         if (!empty($newTokenIdList)) {
-            $this->tokenMap[$nonTerminalId] = array_merge($this->tokenMap[$nonTerminalId], $newTokenIdList);
+            $this->tokenMap[$symbolId] = array_merge($this->tokenMap[$symbolId], $newTokenIdList);
             $this->increaseChangeCount(count($newTokenIdList));
         }
     }
@@ -42,8 +42,13 @@ abstract class LookupSet
         $this->changeCount += $amount;
     }
 
+    public function getTokens(int $symbolId): array
+    {
+        return $this->tokenMap[$symbolId] ?? [];
+    }
+
     /**
-     * Returns amount of changes in all FIRST(X) sets since last reset.
+     * Returns amount of changes since last reset.
      *
      * @return int
      */
@@ -53,15 +58,21 @@ abstract class LookupSet
     }
 
     /**
-     * Resets FIRST(X) changes counter.
+     * Resets changes counter.
      */
     public function resetChangeCount(): void
     {
         $this->changeCount = 0;
     }
 
-    protected function getOne(int $nonTerminalId): array
+    /**
+     * Merges token sets.
+     *
+     * @param int $targetSymbolId
+     * @param int $sourceSymbolId
+     */
+    public function mergeTokens(int $targetSymbolId, int $sourceSymbolId): void
     {
-        return $this->tokenMap[$nonTerminalId] ?? [];
+        $this->addToken($targetSymbolId, ...$this->getTokens($sourceSymbolId));
     }
 }

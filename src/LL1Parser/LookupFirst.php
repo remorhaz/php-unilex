@@ -14,15 +14,15 @@ class LookupFirst extends LookupSet implements LookupFirstInfoInterface
     /**
      * Returns FIRST(X) set.
      *
-     * @param int[] ...$nonTerminalIdList
+     * @param int[] ...$symbolIdList
      * @return array
      */
-    public function get(int ...$nonTerminalIdList): array
+    public function getProductionTokens(int ...$symbolIdList): array
     {
         $first = [];
-        foreach ($nonTerminalIdList as $nonTerminalId) {
-            $first = array_merge($first, $this->getOne($nonTerminalId));
-            if (!$this->hasEpsilon($nonTerminalId)) {
+        foreach ($symbolIdList as $symbolId) {
+            $first = array_merge($first, $this->getTokens($symbolId));
+            if (!$this->productionHasEpsilon($symbolId)) {
                 break;
             }
         }
@@ -32,51 +32,56 @@ class LookupFirst extends LookupSet implements LookupFirstInfoInterface
     /**
      * Adds ε-production to FIRST(X) set.
      *
-     * @param int $nonTerminalId
+     * @param int $symbolId
      */
-    public function addEpsilon(int $nonTerminalId): void
+    public function addEpsilon(int $symbolId): void
     {
-        if ($this->hasEpsilon($nonTerminalId)) {
+        if ($this->hasEpsilon($symbolId)) {
             return;
         }
-        $this->epsilonMap[$nonTerminalId] = true;
+        $this->epsilonMap[$symbolId] = true;
         $this->increaseChangeCount();
     }
 
     /**
      * Reports presence of ε-production in FIRST(X) sets for all given X.
      *
-     * @param int[] ...$nonTerminalIdList
+     * @param int[] ...$symbolIdList
      * @return bool
      */
-    public function hasEpsilon(int ...$nonTerminalIdList): bool
+    public function productionHasEpsilon(int ...$symbolIdList): bool
     {
-        if (empty($nonTerminalIdList)) {
+        if (empty($symbolIdList)) {
             return true;
         }
-        foreach ($nonTerminalIdList as $productionId) {
-            if (!($this->epsilonMap[$productionId] ?? false)) {
+        foreach ($symbolIdList as $symbolId) {
+            if (!$this->hasEpsilon($symbolId)) {
                 return false;
             }
         }
         return true;
     }
 
+    public function hasEpsilon(int $symbolId)
+    {
+        return $this->epsilonMap[$symbolId] ?? false;
+    }
+
     /**
      * Adds all tokens from source production's FIRST(X) to target production's FIRST(Y).
      *
-     * @param int $targetNonTerminalId
-     * @param int[] ...$sourceNonTerminalIdList
+     * @param int $targetSymbolId
+     * @param int[] ...$sourceSymbolIdList
      */
-    public function mergeTokens(int $targetNonTerminalId, int ...$sourceNonTerminalIdList): void
+    public function mergeProductionTokens(int $targetSymbolId, int ...$sourceSymbolIdList): void
     {
-        $this->addToken($targetNonTerminalId, ...$this->get(...$sourceNonTerminalIdList));
+        $this->addToken($targetSymbolId, ...$this->getProductionTokens(...$sourceSymbolIdList));
     }
 
-    public function mergeEpsilons(int $targetNonTerminalId, int ...$sourceNonTerminalIdList): void
+    public function mergeProductionEpsilons(int $targetSymbolId, int ...$sourceSymbolIdList): void
     {
-        if ($this->hasEpsilon(...$sourceNonTerminalIdList)) {
-            $this->addEpsilon($targetNonTerminalId);
+        if ($this->productionHasEpsilon(...$sourceSymbolIdList)) {
+            $this->addEpsilon($targetSymbolId);
         }
     }
 }

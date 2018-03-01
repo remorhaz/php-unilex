@@ -15,7 +15,7 @@ class LookupFirstBuilderTest extends TestCase
         $nonTerminalMap = [2 => [[4, 7]], 4 => [[5], []]];
         $grammar = new Grammar($terminalMap, $nonTerminalMap, 2, 7);
         $first = (new LookupFirstBuilder($grammar))->getFirst();
-        $actualValue = $first->get(2);
+        $actualValue = $first->getProductionTokens(2);
         sort($actualValue);
         self::assertEquals([6, 8], $actualValue);
     }

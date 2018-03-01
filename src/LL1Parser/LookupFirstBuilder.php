@@ -33,17 +33,17 @@ class LookupFirstBuilder
 
     private function addTokensFromTerminalMap(LookupFirst $first): void
     {
-        foreach ($this->grammar->getTerminalMap() as $nonTerminalId => $tokenIdList) {
-            $first->addToken($nonTerminalId, ...$tokenIdList);
+        foreach ($this->grammar->getTerminalMap() as $symbolId => $tokenIdList) {
+            $first->addToken($symbolId, ...$tokenIdList);
         }
     }
 
     private function mergeProductionsFromNonTerminalMap(LookupFirst $first): void
     {
-        foreach ($this->grammar->getNonTerminalMap() as $nonTerminalId => $productionList) {
+        foreach ($this->grammar->getNonTerminalMap() as $symbolId => $productionList) {
             foreach ($productionList as $production) {
-                $first->mergeEpsilons($nonTerminalId, ...$production);
-                $first->mergeTokens($nonTerminalId, ...$production);
+                $first->mergeProductionEpsilons($symbolId, ...$production);
+                $first->mergeProductionTokens($symbolId, ...$production);
             }
         }
     }

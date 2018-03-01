@@ -2,22 +2,22 @@
 
 namespace Remorhaz\UniLex\LL1Parser;
 
-interface LookupFirstInfoInterface
+interface LookupFirstInfoInterface extends LookupSetInterface
 {
 
     /**
-     * Returns FIRST(X) set.
+     * Returns FIRST(X1..XN) set.
      *
-     * @param int[] ...$nonTerminalIdList
+     * @param int[] ...$symbolIdList
      * @return array
      */
-    public function get(int ...$nonTerminalIdList): array;
+    public function getProductionTokens(int ...$symbolIdList): array;
 
     /**
-     * Reports presence of ε-production in FIRST(X) sets for all given X.
+     * Reports presence of ε-production in FIRST(X1..XN) sets for all given X.
      *
-     * @param int[] ...$nonTerminalIdList
+     * @param int[] ...$symbolIdList
      * @return bool
      */
-    public function hasEpsilon(int ...$nonTerminalIdList): bool;
+    public function productionHasEpsilon(int ...$symbolIdList): bool;
 }

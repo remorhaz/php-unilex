@@ -20,7 +20,7 @@ class LookupFollowBuilder
     public function getFollow(): LookupFollow
     {
         if (!isset($this->follow)) {
-            $follow = new LookupFollow($this->first);
+            $follow = new LookupFollow();
             $this->addStartSymbol($follow);
             // @todo Extract repeatUntilNoChanges(Callable $func)
             do {
@@ -50,8 +50,8 @@ class LookupFollowBuilder
     {
         while (!empty($nonTerminalIdList)) {
             $symbolId = array_shift($nonTerminalIdList);
-            $follow->mergeTokensFromFirst($this->first, $symbolId, $nonTerminalIdList);
-            if ($this->first->hasEpsilon($nonTerminalIdList)) {
+            $follow->addToken($symbolId, ...$this->first->getProductionTokens(...$nonTerminalIdList));
+            if ($this->first->productionHasEpsilon($nonTerminalIdList)) {
                 $follow->mergeTokens($symbolId, $nonTerminalId);
             }
         };
