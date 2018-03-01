@@ -234,9 +234,6 @@ class ParserTable
      * @var array
      */
     private $nonTerminalProductionMap = [
-        ProductionType::START => [
-            [ProductionType::PARTS, ProductionType::EOF],
-        ],
         ProductionType::PARTS => [
             [ProductionType::PART, ProductionType::ALT_PARTS],
         ],

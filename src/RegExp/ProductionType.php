@@ -9,7 +9,6 @@ namespace Remorhaz\UniLex\RegExp;
  */
 abstract class ProductionType
 {
-    const START                     = 0x00;
     const PARTS                     = 0x01;
     const ALT_PARTS                 = 0x02;
     const ALT_SEPARATOR             = 0x03;

@@ -44,7 +44,7 @@ class Grammar
         return $this->startSymbol;
     }
 
-    public function getEofSymbol(): int
+    public function getEofToken(): int
     {
         return $this->eofSymbol;
     }
