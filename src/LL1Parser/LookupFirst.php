@@ -9,6 +9,9 @@ namespace Remorhaz\UniLex\LL1Parser;
 class LookupFirst implements LookupFirstInfoInterface
 {
 
+    private $tokenMap = [];
+
+    private $epsilonMap = [];
 
     /**
      * This counter increases each time a single token or ε-production is added to FIRST(X).
