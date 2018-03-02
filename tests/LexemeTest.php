@@ -26,7 +26,7 @@ class LexemeTest extends TestCase
 
     private function createLexeme(LexemeInfoInterface $lexemeInfo): Lexeme
     {
-        return new class($lexemeInfo) extends Lexeme
+        return new class($lexemeInfo, 0) extends Lexeme
         {
         };
     }

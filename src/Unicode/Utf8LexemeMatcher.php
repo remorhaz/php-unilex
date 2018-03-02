@@ -90,7 +90,8 @@ class Utf8LexemeMatcher implements LexemeMatcherInterface
         goto invalid_byte;
 
         invalid_byte:
+        $lastInvalidByte = $buffer->getSymbol();
         $buffer->nextSymbol();
-        return new InvalidBytesLexeme($buffer->getLexemeInfo());
+        return new InvalidBytesLexeme($buffer->getLexemeInfo(), $lastInvalidByte);
     }
 }

@@ -11,7 +11,7 @@ class ContextFreeGrammar
 
     private $startSymbol;
 
-    private $eofSymbol;
+    private $eoiSymbol;
 
     /**
      * Constructor. Accepts non-empty maps of terminal and non-terminal productions separately.
@@ -19,14 +19,14 @@ class ContextFreeGrammar
      * @param array $terminalMap Production IDs as keys, non-empty arrays of token IDs as values.
      * @param array $nonTerminalMap Production IDs as keys, non-empty arrays of arrays of production IDs as values.
      * @param int $startSymbol
-     * @param int $eofSymbol
+     * @param int $eoiSymbol
      */
-    public function __construct(array $terminalMap, array $nonTerminalMap, int $startSymbol, int $eofSymbol)
+    public function __construct(array $terminalMap, array $nonTerminalMap, int $startSymbol, int $eoiSymbol)
     {
         $this->terminalMap = $terminalMap;
         $this->nonTerminalMap = $nonTerminalMap;
         $this->startSymbol = $startSymbol;
-        $this->eofSymbol = $eofSymbol;
+        $this->eoiSymbol = $eoiSymbol;
     }
 
     public function getTerminalMap(): array
@@ -44,8 +44,8 @@ class ContextFreeGrammar
         return $this->startSymbol;
     }
 
-    public function getEofToken(): int
+    public function getEoiSymbol(): int
     {
-        return $this->eofSymbol;
+        return $this->eoiSymbol;
     }
 }

@@ -40,7 +40,7 @@ class ContextFreeGrammarTest extends TestCase
         $terminalMap = [1 => [2], 3 => [4], 5 => [6], 7 => [8]];
         $nonTerminalMap = [2 => [[4, 7]], 4 => [[5], []]];
         $grammar = new ContextFreeGrammar($terminalMap, $nonTerminalMap, 2, 7);
-        $actualValue = $grammar->getEofToken();
+        $actualValue = $grammar->getEoiSymbol();
         self::assertEquals(7, $actualValue);
     }
 }

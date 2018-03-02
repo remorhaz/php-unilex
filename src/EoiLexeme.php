@@ -2,6 +2,6 @@
 
 namespace Remorhaz\UniLex;
 
-class EofLexeme extends Lexeme
+class EoiLexeme extends Lexeme
 {
 }

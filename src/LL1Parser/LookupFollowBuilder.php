@@ -35,7 +35,7 @@ class LookupFollowBuilder
 
     private function addStartSymbol(LookupFollow $follow): void
     {
-        $follow->addToken($this->grammar->getStartSymbol(), $this->grammar->getEofToken());
+        $follow->addToken($this->grammar->getStartSymbol(), $this->grammar->getEoiSymbol());
     }
 
     private function mergeProductionsFromNonTerminalMap(LookupFollow $follow): void

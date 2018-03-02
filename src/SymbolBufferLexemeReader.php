@@ -11,10 +11,13 @@ class SymbolBufferLexemeReader implements LexemeReaderInterface
 
     private $isEnd = false;
 
-    public function __construct(SymbolBufferInterface $buffer, LexemeMatcherInterface $matcher)
+    private $eoiLexemeType;
+
+    public function __construct(SymbolBufferInterface $buffer, LexemeMatcherInterface $matcher, int $eoiLexemeType)
     {
         $this->buffer = $buffer;
         $this->matcher = $matcher;
+        $this->eoiLexemeType = $eoiLexemeType;
     }
 
     /**
@@ -29,16 +32,16 @@ class SymbolBufferLexemeReader implements LexemeReaderInterface
     }
 
     /**
-     * @return EofLexeme
+     * @return EoiLexeme
      * @throws Exception
      */
-    private function readEofLexeme(): EofLexeme
+    private function readEofLexeme(): EoiLexeme
     {
         if ($this->isEnd) {
             throw new Exception("Buffer end reached");
         }
         $this->isEnd = true;
-        return new EofLexeme($this->buffer->getLexemeInfo());
+        return new EoiLexeme($this->buffer->getLexemeInfo(), $this->eoiLexemeType);
     }
 
     private function readSymbolLexeme(): Lexeme

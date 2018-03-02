@@ -405,7 +405,7 @@ class SymbolBufferTest extends TestCase
             public function match(SymbolBufferInterface $buffer): Lexeme
             {
                 $buffer->nextSymbol();
-                $lexeme = new class($buffer->getLexemeInfo()) extends Lexeme
+                $lexeme = new class($buffer->getLexemeInfo(), 0) extends Lexeme
                 {
                 };
                 return $lexeme;
