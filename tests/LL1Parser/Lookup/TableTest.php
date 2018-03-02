@@ -5,6 +5,9 @@ namespace Remorhaz\UniLex\Test\LL1Parser\Lookup;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\LL1Parser\Lookup\Table;
 
+/**
+ * @covers \Remorhaz\UniLex\LL1Parser\Lookup\Table
+ */
 class TableTest extends TestCase
 {
 

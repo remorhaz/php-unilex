@@ -14,6 +14,9 @@ use Remorhaz\UniLex\SymbolBufferLexemeReader;
 use Remorhaz\UniLex\Unicode\SymbolLexeme;
 use SplFixedArray;
 
+/**
+ * @covers \Remorhaz\UniLex\LL1Parser\Parser
+ */
 class ParserTest extends TestCase
 {
 
@@ -26,7 +29,6 @@ class ParserTest extends TestCase
      * @dataProvider providerValidGrammarStrings
      * @throws \Remorhaz\UniLex\Exception
      * @throws \ReflectionException
-     * @covers \Remorhaz\UniLex\LL1Parser\Parser
      */
     public function testParse_ValidBuffer_OnLexemeTriggeredForEachToken(
         array $terminalMap,
@@ -55,10 +57,10 @@ class ParserTest extends TestCase
         $examples = new ExampleGrammar;
         $data = [];
         $inputList = [
-            [5, 2, 5, 1, 5],
+            "id+id*id" => [5, 2, 5, 1, 5],
         ];
-        foreach ($inputList as $input) {
-            $data["Classic example 4.14 from Dragonbook: {$input}"] =
+        foreach ($inputList as $inputText => $input) {
+            $data["Classic example 4.14 from Dragonbook: {$inputText}"] =
                 array_merge(
                     $examples->getDragonBook414Grammar(),
                     [$input]

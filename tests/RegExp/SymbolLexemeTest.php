@@ -9,7 +9,10 @@ use Remorhaz\UniLex\RegExp\TokenType;
 use Remorhaz\UniLex\SymbolBuffer;
 use Remorhaz\UniLex\SymbolBufferLexemeInfo;
 
-class LexemeTest extends TestCase
+/**
+ * @covers \Remorhaz\UniLex\RegExp\SymbolLexeme
+ */
+class SymbolLexemeTest extends TestCase
 {
 
     /**

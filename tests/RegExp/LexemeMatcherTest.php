@@ -10,6 +10,9 @@ use Remorhaz\UniLex\RegExp\TokenType;
 use Remorhaz\UniLex\SymbolBuffer;
 use Remorhaz\UniLex\SymbolBufferLexemeInfo;
 
+/**
+ * @covers \Remorhaz\UniLex\RegExp\LexemeMatcher
+ */
 class LexemeMatcherTest extends TestCase
 {
 

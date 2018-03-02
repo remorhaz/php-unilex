@@ -7,6 +7,9 @@ use Remorhaz\UniLex\LexemePosition;
 use Remorhaz\UniLex\SymbolBuffer;
 use Remorhaz\UniLex\SymbolBufferLexemeInfo;
 
+/**
+ * @covers \Remorhaz\UniLex\SymbolBufferLexemeInfo
+ */
 class SymbolBufferLexemeInfoTest extends TestCase
 {
 

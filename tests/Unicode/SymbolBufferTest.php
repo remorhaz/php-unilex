@@ -12,6 +12,9 @@ use Remorhaz\UniLex\Unicode\SymbolBuffer;
 use Remorhaz\UniLex\Unicode\Utf8LexemeMatcher;
 use SplFixedArray;
 
+/**
+ * @covers \Remorhaz\UniLex\Unicode\SymbolBuffer
+ */
 class SymbolBufferTest extends TestCase
 {
 

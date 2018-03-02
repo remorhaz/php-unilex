@@ -6,6 +6,9 @@ use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\LexemePosition;
 use Remorhaz\UniLex\SymbolBuffer;
 
+/**
+ * @covers \Remorhaz\UniLex\SymbolBuffer
+ */
 class SymbolBufferTest extends TestCase
 {
 

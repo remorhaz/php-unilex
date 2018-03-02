@@ -10,6 +10,9 @@ use Remorhaz\UniLex\SymbolBufferLexemeInfo;
 use Remorhaz\UniLex\Unicode\SymbolLexeme;
 use Remorhaz\UniLex\Unicode\Utf8LexemeMatcher;
 
+/**
+ * @covers \Remorhaz\UniLex\Unicode\Utf8LexemeMatcher
+ */
 class Utf8LexemeMatcherTest extends TestCase
 {
 

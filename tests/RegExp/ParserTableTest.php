@@ -6,6 +6,9 @@ use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\RegExp\ParserTable;
 use Remorhaz\UniLex\RegExp\ProductionType;
 
+/**
+ * @coversNothing
+ */
 class ParserTableTest extends TestCase
 {
 

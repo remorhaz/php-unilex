@@ -5,6 +5,9 @@ namespace Remorhaz\UniLex\Test;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\LexemePosition;
 
+/**
+ * @covers \Remorhaz\UniLex\LexemePosition
+ */
 class LexemePositionTest extends TestCase
 {
 

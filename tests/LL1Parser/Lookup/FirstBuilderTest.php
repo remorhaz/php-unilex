@@ -7,6 +7,9 @@ use Remorhaz\UniLex\Grammar\ContextFreeGrammar;
 use Remorhaz\UniLex\LL1Parser\Lookup\FirstBuilder;
 use Remorhaz\UniLex\Test\LL1Parser\ExampleGrammar;
 
+/**
+ * @covers \Remorhaz\UniLex\LL1Parser\Lookup\FirstBuilder
+ */
 class FirstBuilderTest extends TestCase
 {
 

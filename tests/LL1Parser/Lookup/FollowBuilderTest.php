@@ -8,6 +8,9 @@ use Remorhaz\UniLex\LL1Parser\Lookup\FirstBuilder;
 use Remorhaz\UniLex\LL1Parser\Lookup\FollowBuilder;
 use Remorhaz\UniLex\Test\LL1Parser\ExampleGrammar;
 
+/**
+ * @covers \Remorhaz\UniLex\LL1Parser\Lookup\FollowBuilder
+ */
 class FollowBuilderTest extends TestCase
 {
 

@@ -8,6 +8,9 @@ use Remorhaz\UniLex\SymbolBuffer;
 use Remorhaz\UniLex\SymbolBufferLexemeInfo;
 use Remorhaz\UniLex\Unicode\SymbolLexeme;
 
+/**
+ * @covers \Remorhaz\UniLex\Unicode\SymbolLexeme
+ */
 class SymbolLexemeTest extends TestCase
 {
 

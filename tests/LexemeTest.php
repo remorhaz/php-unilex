@@ -9,6 +9,9 @@ use Remorhaz\UniLex\SymbolBuffer;
 use Remorhaz\UniLex\SymbolBufferLexemeInfo;
 use Remorhaz\UniLex\Lexeme;
 
+/**
+ * @covers \Remorhaz\UniLex\Lexeme
+ */
 class LexemeTest extends TestCase
 {
 

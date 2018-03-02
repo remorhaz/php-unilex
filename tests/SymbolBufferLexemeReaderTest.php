@@ -12,6 +12,9 @@ use Remorhaz\UniLex\SymbolBufferLexemeReader;
 use Remorhaz\UniLex\Unicode\SymbolLexeme;
 use Remorhaz\UniLex\Unicode\Utf8LexemeMatcher;
 
+/**
+ * @covers \Remorhaz\UniLex\SymbolBufferLexemeReader
+ */
 class SymbolBufferLexemeReaderTest extends TestCase
 {
 
