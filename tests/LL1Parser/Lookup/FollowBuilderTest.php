@@ -1,13 +1,14 @@
 <?php
 
-namespace Remorhaz\UniLex\Test\LL1Parser;
+namespace Remorhaz\UniLex\Test\LL1Parser\Lookup;
 
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Grammar\ContextFreeGrammar;
-use Remorhaz\UniLex\LL1Parser\LookupFirstBuilder;
-use Remorhaz\UniLex\LL1Parser\LookupFollowBuilder;
+use Remorhaz\UniLex\LL1Parser\Lookup\FirstBuilder;
+use Remorhaz\UniLex\LL1Parser\Lookup\FollowBuilder;
+use Remorhaz\UniLex\Test\LL1Parser\ExampleGrammar;
 
-class LookupFollowBuilderTest extends TestCase
+class FollowBuilderTest extends TestCase
 {
 
     /**
@@ -28,8 +29,8 @@ class LookupFollowBuilderTest extends TestCase
         array $expectedFollow
     ): void {
         $grammar = new ContextFreeGrammar($terminalMap, $nonTerminalMap, $startSymbolId, $eofTokenId);
-        $first = (new LookupFirstBuilder($grammar))->getFirst();
-        $follow = (new LookupFollowBuilder($grammar, $first))->getFollow();
+        $first = (new FirstBuilder($grammar))->getFirst();
+        $follow = (new FollowBuilder($grammar, $first))->getFollow();
         $actualValue = $follow->getTokens($symbolId);
         sort($actualValue);
         self::assertEquals($expectedFollow, $actualValue);

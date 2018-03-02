@@ -1,10 +1,10 @@
 <?php
 
-namespace Remorhaz\UniLex\LL1Parser;
+namespace Remorhaz\UniLex\LL1Parser\Lookup;
 
 use Remorhaz\UniLex\Grammar\ContextFreeGrammar;
 
-class LookupFirstBuilder
+class FirstBuilder
 {
 
     private $grammar;
@@ -16,10 +16,10 @@ class LookupFirstBuilder
         $this->grammar = $grammar;
     }
 
-    public function getFirst(): LookupFirstInterface
+    public function getFirst(): FirstInterface
     {
         if (!isset($this->first)) {
-            $first = new LookupFirst;
+            $first = new First;
             $this->addTokensFromTerminalMap($first);
             do {
                 $first->resetChangeCount();
@@ -30,14 +30,14 @@ class LookupFirstBuilder
         return $this->first;
     }
 
-    private function addTokensFromTerminalMap(LookupFirst $first): void
+    private function addTokensFromTerminalMap(First $first): void
     {
         foreach ($this->grammar->getTerminalMap() as $symbolId => $tokenIdList) {
             $first->addToken($symbolId, ...$tokenIdList);
         }
     }
 
-    private function mergeProductionsFromNonTerminalMap(LookupFirst $first): void
+    private function mergeProductionsFromNonTerminalMap(First $first): void
     {
         foreach ($this->grammar->getNonTerminalMap() as $symbolId => $productionList) {
             foreach ($productionList as $production) {

@@ -1,10 +1,10 @@
 <?php
 
-namespace Remorhaz\UniLex\LL1Parser;
+namespace Remorhaz\UniLex\LL1Parser\Lookup;
 
 use Remorhaz\UniLex\Grammar\ContextFreeGrammar;
 
-class LookupFollowBuilder
+class FollowBuilder
 {
 
     private $grammar;
@@ -13,16 +13,16 @@ class LookupFollowBuilder
 
     private $follow;
 
-    public function __construct(ContextFreeGrammar $grammar, LookupFirstInterface $first)
+    public function __construct(ContextFreeGrammar $grammar, FirstInterface $first)
     {
         $this->grammar = $grammar;
         $this->first = $first;
     }
 
-    public function getFollow(): LookupFollow
+    public function getFollow(): Follow
     {
         if (!isset($this->follow)) {
-            $follow = new LookupFollow();
+            $follow = new Follow();
             $this->addStartSymbol($follow);
             do {
                 $follow->resetChangeCount();
@@ -33,12 +33,12 @@ class LookupFollowBuilder
         return $this->follow;
     }
 
-    private function addStartSymbol(LookupFollow $follow): void
+    private function addStartSymbol(Follow $follow): void
     {
         $follow->addToken($this->grammar->getStartSymbol(), $this->grammar->getEoiSymbol());
     }
 
-    private function mergeProductionsFromNonTerminalMap(LookupFollow $follow): void
+    private function mergeProductionsFromNonTerminalMap(Follow $follow): void
     {
         foreach ($this->grammar->getNonTerminalMap() as $symbolId => $productionList) {
             foreach ($productionList as $symbolIdList) {
@@ -47,7 +47,7 @@ class LookupFollowBuilder
         }
     }
 
-    private function mergeProduction(LookupFollow $follow, int $nonTerminalId, int ...$nonTerminalIdList): void
+    private function mergeProduction(Follow $follow, int $nonTerminalId, int ...$nonTerminalIdList): void
     {
         while (!empty($nonTerminalIdList)) {
             $symbolId = array_shift($nonTerminalIdList);

@@ -1,16 +1,16 @@
 <?php
 
-namespace Remorhaz\UniLex\Test\LL1Parser;
+namespace Remorhaz\UniLex\Test\LL1Parser\Lookup;
 
 use PHPUnit\Framework\TestCase;
-use Remorhaz\UniLex\LL1Parser\LookupFollow;
+use Remorhaz\UniLex\LL1Parser\Lookup\Follow;
 
-class LookupFollowTest extends TestCase
+class FollowTest extends TestCase
 {
 
     public function testGetTokens_Constructed_ReturnsEmptyArray(): void
     {
-        $actualValue = (new LookupFollow)->getTokens(1);
+        $actualValue = (new Follow)->getTokens(1);
         self::assertSame([], $actualValue);
     }
 
@@ -20,7 +20,7 @@ class LookupFollowTest extends TestCase
      */
     public function testAddToken_CalledOnce_GetTokenReturnsAddedTokens(array $tokenIdList): void
     {
-        $lookupFirst = new LookupFollow;
+        $lookupFirst = new Follow;
         $lookupFirst->addToken(1, ...$tokenIdList);
         $actualValue = $lookupFirst->getTokens(1);
         sort($actualValue);
@@ -47,7 +47,7 @@ class LookupFollowTest extends TestCase
         array $secondTokenIdList,
         array $expectedValue
     ): void {
-        $lookupFirst = new LookupFollow();
+        $lookupFirst = new Follow();
         $lookupFirst->addToken(1, ...$firstTokenIdList);
         $lookupFirst->addToken(1, ...$secondTokenIdList);
         $actualValue = $lookupFirst->getTokens(1);
@@ -66,7 +66,7 @@ class LookupFollowTest extends TestCase
         array $secondTokenIdList,
         array $mergedList
     ): void {
-        $lookupFirst = new LookupFollow;
+        $lookupFirst = new Follow;
         $lookupFirst->addToken(1, ...$firstTokenIdList);
         $lookupFirst->addToken(1, ...$secondTokenIdList);
         $expectedValue = count($mergedList);
@@ -87,13 +87,13 @@ class LookupFollowTest extends TestCase
 
     public function testGetChangeCount_Constructed_ReturnsZero(): void
     {
-        $actualValue = (new LookupFollow)->getChangeCount();
+        $actualValue = (new Follow)->getChangeCount();
         self::assertSame(0, $actualValue);
     }
 
     public function testResetChangeCount_CounterTriggered_GetChangeCountReturnsZero(): void
     {
-        $lookupFirst = new LookupFollow;
+        $lookupFirst = new Follow;
         $lookupFirst->addToken(1, 2);
         $lookupFirst->resetChangeCount();
         $actualValue = $lookupFirst->getChangeCount();
@@ -115,7 +115,7 @@ class LookupFollowTest extends TestCase
         array $targetTokenIdList,
         array $expectedValue
     ): void {
-        $lookupFirst = new LookupFollow;
+        $lookupFirst = new Follow;
         $lookupFirst->addToken($sourceProductionId, ...$sourceTokenIdList);
         $lookupFirst->addToken($targetProductionId, ...$targetTokenIdList);
         $lookupFirst->mergeTokens($targetProductionId, $sourceProductionId);

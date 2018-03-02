@@ -1,11 +1,11 @@
 <?php
 
-namespace Remorhaz\UniLex\LL1Parser;
+namespace Remorhaz\UniLex\LL1Parser\Lookup;
 
 use Remorhaz\UniLex\Grammar\ContextFreeGrammar;
 use Remorhaz\UniLex\Exception;
 
-class LookupTableBuilder
+class TableBuilder
 {
 
     private $grammar;
@@ -22,42 +22,42 @@ class LookupTableBuilder
     }
 
     /**
-     * @return LookupTable
+     * @return Table
      * @throws Exception
      */
-    public function getTable(): LookupTableInterface
+    public function getTable(): TableInterface
     {
         if (!isset($this->table)) {
-            $table = new LookupTable;
+            $table = new Table;
             $this->addProductionsFromNonTerminalMap($table);
             $this->table = $table;
         }
         return $this->table;
     }
 
-    private function getFirst(): LookupFirstInterface
+    private function getFirst(): FirstInterface
     {
         if (!isset($this->first)) {
-            $builder = new LookupFirstBuilder($this->grammar);
+            $builder = new FirstBuilder($this->grammar);
             $this->first = $builder->getFirst();
         }
         return $this->first;
     }
 
-    private function getFollow(): LookupFollowInterface
+    private function getFollow(): FollowInterface
     {
         if (!isset($this->follow)) {
-            $builder = new LookupFollowBuilder($this->grammar, $this->getFirst());
+            $builder = new FollowBuilder($this->grammar, $this->getFirst());
             $this->follow = $builder->getFollow();
         }
         return $this->follow;
     }
 
     /**
-     * @param LookupTable $table
+     * @param Table $table
      * @throws Exception
      */
-    private function addProductionsFromNonTerminalMap(LookupTable $table): void
+    private function addProductionsFromNonTerminalMap(Table $table): void
     {
         foreach ($this->grammar->getNonTerminalMap() as $productionId => $productionList) {
             foreach ($productionList as $symbolId => $symbolIdList) {
@@ -68,12 +68,12 @@ class LookupTableBuilder
     }
 
     /**
-     * @param LookupTable $table
+     * @param Table $table
      * @param int $symbolId
      * @param int[] ...$symbolIdList
      * @throws Exception
      */
-    private function addProductionFirsts(LookupTable $table, int $symbolId, int ...$symbolIdList): void
+    private function addProductionFirsts(Table $table, int $symbolId, int ...$symbolIdList): void
     {
         $productionFirsts = $this->getFirst()->getProductionTokens(...$symbolIdList);
         foreach ($productionFirsts as $tokenId) {
@@ -82,12 +82,12 @@ class LookupTableBuilder
     }
 
     /**
-     * @param LookupTable $table
+     * @param Table $table
      * @param int $symbolId
      * @param int[] ...$symbolIdList
      * @throws Exception
      */
-    private function addProductionFollows(LookupTable $table, int $symbolId, int ...$symbolIdList): void
+    private function addProductionFollows(Table $table, int $symbolId, int ...$symbolIdList): void
     {
         if (!$this->getFirst()->productionHasEpsilon(...$symbolIdList)) {
             return;

@@ -1,8 +1,8 @@
 <?php
 
-namespace Remorhaz\UniLex\LL1Parser;
+namespace Remorhaz\UniLex\LL1Parser\Lookup;
 
-interface LookupFirstInterface extends LookupSetInterface
+interface FirstInterface extends SetInterface
 {
 
     /**

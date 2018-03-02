@@ -1,10 +1,10 @@
 <?php
 
-namespace Remorhaz\UniLex\LL1Parser;
+namespace Remorhaz\UniLex\LL1Parser\Lookup;
 
 use Remorhaz\UniLex\Exception;
 
-class LookupTable implements LookupTableInterface
+class Table implements TableInterface
 {
 
     private $map = [];

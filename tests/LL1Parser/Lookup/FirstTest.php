@@ -1,35 +1,35 @@
 <?php
 
-namespace Remorhaz\UniLex\Test\LL1Parser;
+namespace Remorhaz\UniLex\Test\LL1Parser\Lookup;
 
 use PHPUnit\Framework\TestCase;
-use Remorhaz\UniLex\LL1Parser\LookupFirst;
+use Remorhaz\UniLex\LL1Parser\Lookup\First;
 
-class LookupFirstTest extends TestCase
+class FirstTest extends TestCase
 {
 
     public function testGetProductionTokens_Constructed_ReturnsEmptyArray(): void
     {
         $expectedValue = [];
-        $actualValue = (new LookupFirst)->getProductionTokens(1, 2);
+        $actualValue = (new First)->getProductionTokens(1, 2);
         self::assertSame($expectedValue, $actualValue);
     }
 
     public function testHasEpsilon_NoEpsilonsAdded_ReturnsFalse(): void
     {
-        $actualValue = (new LookupFirst)->hasEpsilon(1);
+        $actualValue = (new First)->hasEpsilon(1);
         self::assertFalse($actualValue);
     }
 
     public function testProductionHasEpsilon_EmptyTerminalList_ReturnsTrue(): void
     {
-        $actualValue = (new LookupFirst)->productionHasEpsilon();
+        $actualValue = (new First)->productionHasEpsilon();
         self::assertTrue($actualValue);
     }
 
     public function testAddEpsilon_Constructed_HasEpsilonReturnsTrue(): void
     {
-        $lookupFirst = new LookupFirst;
+        $lookupFirst = new First;
         $lookupFirst->addEpsilon(1);
         $actualValue = $lookupFirst->hasEpsilon(1);
         self::assertTrue($actualValue);
@@ -37,7 +37,7 @@ class LookupFirstTest extends TestCase
 
     public function testAddEpsilon_CalledOnce_CounterTriggeredOnce(): void
     {
-        $lookupFirst = new LookupFirst;
+        $lookupFirst = new First;
         $lookupFirst->addEpsilon(1);
         $actualValue = $lookupFirst->getChangeCount();
         self::assertSame(1, $actualValue);
@@ -45,7 +45,7 @@ class LookupFirstTest extends TestCase
 
     public function testAddEpsilon_CalledTwiceForSameProduction_CounterTriggeredOnce(): void
     {
-        $lookupFirst = new LookupFirst;
+        $lookupFirst = new First;
         $lookupFirst->addEpsilon(1);
         $lookupFirst->addEpsilon(1);
         $actualValue = $lookupFirst->getChangeCount();
@@ -54,7 +54,7 @@ class LookupFirstTest extends TestCase
 
     public function testAddEpsilon_CalledTwiceForDifferentProductions_CounterTriggeredTwice(): void
     {
-        $lookupFirst = new LookupFirst;
+        $lookupFirst = new First;
         $lookupFirst->addEpsilon(1);
         $lookupFirst->addEpsilon(2);
         $actualValue = $lookupFirst->getChangeCount();
@@ -76,7 +76,7 @@ class LookupFirstTest extends TestCase
         array $targetTokenIdList,
         array $expectedValue
     ): void {
-        $lookupFirst = new LookupFirst;
+        $lookupFirst = new First;
         $lookupFirst->addToken($sourceProductionId, ...$sourceTokenIdList);
         $lookupFirst->addToken($targetProductionId, ...$targetTokenIdList);
         $lookupFirst->mergeProductionTokens($targetProductionId, $sourceProductionId);
@@ -98,7 +98,7 @@ class LookupFirstTest extends TestCase
 
     public function testMergeEpsilons_AllMergedNonTerminalsHaveEpsilons_HasEpsilonReturnsFalse(): void
     {
-        $lookupFirst = new LookupFirst;
+        $lookupFirst = new First;
         $lookupFirst->addEpsilon(1);
         $lookupFirst->addEpsilon(2);
         $lookupFirst->mergeProductionEpsilons(3, 1, 2);
@@ -107,7 +107,7 @@ class LookupFirstTest extends TestCase
 
     public function testMergeEpsilons_NotAllMergedNonTerminalsHaveEpsilons_HasEpsilonReturnsFalse(): void
     {
-        $lookupFirst = new LookupFirst;
+        $lookupFirst = new First;
         $lookupFirst->addEpsilon(1);
         $lookupFirst->mergeProductionEpsilons(3, 1, 2);
         self::assertFalse($lookupFirst->productionHasEpsilon(3));

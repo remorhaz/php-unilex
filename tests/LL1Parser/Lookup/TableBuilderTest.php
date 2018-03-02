@@ -1,12 +1,13 @@
 <?php
 
-namespace Remorhaz\UniLex\Test\LL1Parser;
+namespace Remorhaz\UniLex\Test\LL1Parser\Lookup;
 
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Grammar\ContextFreeGrammar;
-use Remorhaz\UniLex\LL1Parser\LookupTableBuilder;
+use Remorhaz\UniLex\LL1Parser\Lookup\TableBuilder;
+use Remorhaz\UniLex\Test\LL1Parser\ExampleGrammar;
 
-class LookupTableBuilderTest extends TestCase
+class TableBuilderTest extends TestCase
 {
 
     /**
@@ -26,7 +27,7 @@ class LookupTableBuilderTest extends TestCase
         array $expectedTable
     ): void {
         $grammar = new ContextFreeGrammar($terminalMap, $nonTerminalMap, $startSymbolId, $eofTokenId);
-        $actualValue = (new LookupTableBuilder($grammar))->getTable()->exportMap();
+        $actualValue = (new TableBuilder($grammar))->getTable()->exportMap();
         self::assertEquals($expectedTable, $actualValue);
     }
 

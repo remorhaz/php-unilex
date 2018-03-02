@@ -1,8 +1,8 @@
 <?php
 
-namespace Remorhaz\UniLex\LL1Parser;
+namespace Remorhaz\UniLex\LL1Parser\Lookup;
 
-abstract class LookupSet
+abstract class Set
 {
 
     /**

@@ -1,12 +1,12 @@
 <?php
 
-namespace Remorhaz\UniLex\LL1Parser;
+namespace Remorhaz\UniLex\LL1Parser\Lookup;
 
 /**
  * Helper to calculate FIRST() sets. It's a part of LL(1) lookup table generation algorithm. FIRST(X) set
  * contains terminals (and, optionally, ε-production) that can occur as a starting token in production X.
  */
-class LookupFirst extends LookupSet implements LookupFirstInterface
+class First extends Set implements FirstInterface
 {
 
     private $epsilonMap = [];

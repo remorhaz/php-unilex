@@ -7,6 +7,8 @@ use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\Grammar\ContextFreeGrammar;
 use Remorhaz\UniLex\Lexeme;
 use Remorhaz\UniLex\LexemeReaderInterface;
+use Remorhaz\UniLex\LL1Parser\Lookup\TableInterface;
+use Remorhaz\UniLex\LL1Parser\Lookup\TableBuilder;
 
 class Parser
 {
@@ -112,13 +114,13 @@ class Parser
     }
 
     /**
-     * @return LookupTableInterface
+     * @return TableInterface
      * @throws Exception
      */
-    private function getLookupTable(): LookupTableInterface
+    private function getLookupTable(): TableInterface
     {
         if (!isset($this->lookupTable)) {
-            $builder = new LookupTableBuilder($this->grammar);
+            $builder = new TableBuilder($this->grammar);
             $this->lookupTable = $builder->getTable();
         }
         return $this->lookupTable;

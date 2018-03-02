@@ -1,8 +1,8 @@
 <?php
 
-namespace Remorhaz\UniLex\LL1Parser;
+namespace Remorhaz\UniLex\LL1Parser\Lookup;
 
-interface LookupTableInterface
+interface TableInterface
 {
 
     public function getProduction(int $symbolId, int $tokenId): array;
