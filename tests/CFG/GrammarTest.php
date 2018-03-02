@@ -1,9 +1,9 @@
 <?php
 
-namespace Remorhaz\UniLex\Test\LL1Parser;
+namespace Remorhaz\UniLex\Test\CFG;
 
 use PHPUnit\Framework\TestCase;
-use Remorhaz\UniLex\LL1Parser\Grammar;
+use Remorhaz\UniLex\CFG\Grammar;
 
 class GrammarTest extends TestCase
 {

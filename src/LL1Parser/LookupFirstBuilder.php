@@ -2,6 +2,8 @@
 
 namespace Remorhaz\UniLex\LL1Parser;
 
+use Remorhaz\UniLex\CFG\Grammar;
+
 class LookupFirstBuilder
 {
 

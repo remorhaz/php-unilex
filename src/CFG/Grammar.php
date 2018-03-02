@@ -1,6 +1,6 @@
 <?php
 
-namespace Remorhaz\UniLex\LL1Parser;
+namespace Remorhaz\UniLex\CFG;
 
 class Grammar
 {

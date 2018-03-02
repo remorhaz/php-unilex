@@ -3,7 +3,7 @@
 namespace Remorhaz\UniLex\Test\LL1Parser;
 
 use PHPUnit\Framework\TestCase;
-use Remorhaz\UniLex\LL1Parser\Grammar;
+use Remorhaz\UniLex\CFG\Grammar;
 use Remorhaz\UniLex\LL1Parser\LookupFirstBuilder;
 
 class LookupFirstBuilderTest extends TestCase
