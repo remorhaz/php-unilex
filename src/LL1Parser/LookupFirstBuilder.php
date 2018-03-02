@@ -2,7 +2,7 @@
 
 namespace Remorhaz\UniLex\LL1Parser;
 
-use Remorhaz\UniLex\CFG\Grammar;
+use Remorhaz\UniLex\Grammar\ContextFreeGrammar;
 
 class LookupFirstBuilder
 {
@@ -11,7 +11,7 @@ class LookupFirstBuilder
 
     private $first;
 
-    public function __construct(Grammar $grammar)
+    public function __construct(ContextFreeGrammar $grammar)
     {
         $this->grammar = $grammar;
     }

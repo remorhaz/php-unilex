@@ -3,7 +3,7 @@
 namespace Remorhaz\UniLex\Test\LL1Parser;
 
 use PHPUnit\Framework\TestCase;
-use Remorhaz\UniLex\CFG\Grammar;
+use Remorhaz\UniLex\Grammar\ContextFreeGrammar;
 use Remorhaz\UniLex\LL1Parser\LookupFirstBuilder;
 use Remorhaz\UniLex\LL1Parser\LookupFollowBuilder;
 
@@ -27,7 +27,7 @@ class LookupFollowBuilderTest extends TestCase
         int $symbolId,
         array $expectedFollow
     ): void {
-        $grammar = new Grammar($terminalMap, $nonTerminalMap, $startSymbolId, $eofTokenId);
+        $grammar = new ContextFreeGrammar($terminalMap, $nonTerminalMap, $startSymbolId, $eofTokenId);
         $first = (new LookupFirstBuilder($grammar))->getFirst();
         $follow = (new LookupFollowBuilder($grammar, $first))->getFollow();
         $actualValue = $follow->getTokens($symbolId);

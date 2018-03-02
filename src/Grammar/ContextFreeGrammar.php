@@ -1,8 +1,8 @@
 <?php
 
-namespace Remorhaz\UniLex\CFG;
+namespace Remorhaz\UniLex\Grammar;
 
-class Grammar
+class ContextFreeGrammar
 {
 
     private $terminalMap;

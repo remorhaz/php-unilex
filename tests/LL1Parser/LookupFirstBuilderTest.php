@@ -3,7 +3,7 @@
 namespace Remorhaz\UniLex\Test\LL1Parser;
 
 use PHPUnit\Framework\TestCase;
-use Remorhaz\UniLex\CFG\Grammar;
+use Remorhaz\UniLex\Grammar\ContextFreeGrammar;
 use Remorhaz\UniLex\LL1Parser\LookupFirstBuilder;
 
 class LookupFirstBuilderTest extends TestCase
@@ -26,7 +26,7 @@ class LookupFirstBuilderTest extends TestCase
         int $symbolId,
         array $expectedFollow
     ): void {
-        $grammar = new Grammar($terminalMap, $nonTerminalMap, $startSymbolId, $eofTokenId);
+        $grammar = new ContextFreeGrammar($terminalMap, $nonTerminalMap, $startSymbolId, $eofTokenId);
         $first = (new LookupFirstBuilder($grammar))->getFirst();
         $actualValue = $first->getTokens($symbolId);
         sort($actualValue);
@@ -61,7 +61,7 @@ class LookupFirstBuilderTest extends TestCase
         int $symbolId,
         bool $expectedValue
     ): void {
-        $grammar = new Grammar($terminalMap, $nonTerminalMap, $startSymbolId, $eofTokenId);
+        $grammar = new ContextFreeGrammar($terminalMap, $nonTerminalMap, $startSymbolId, $eofTokenId);
         $first = (new LookupFirstBuilder($grammar))->getFirst();
         $actualValue = $first->productionHasEpsilon($symbolId);
         self::assertEquals($expectedValue, $actualValue);

@@ -3,7 +3,7 @@
 namespace Remorhaz\UniLex\Test\LL1Parser;
 
 use PHPUnit\Framework\TestCase;
-use Remorhaz\UniLex\CFG\Grammar;
+use Remorhaz\UniLex\Grammar\ContextFreeGrammar;
 use Remorhaz\UniLex\LL1Parser\LookupTableBuilder;
 
 class LookupTableBuilderTest extends TestCase
@@ -25,7 +25,7 @@ class LookupTableBuilderTest extends TestCase
         int $eofTokenId,
         array $expectedTable
     ): void {
-        $grammar = new Grammar($terminalMap, $nonTerminalMap, $startSymbolId, $eofTokenId);
+        $grammar = new ContextFreeGrammar($terminalMap, $nonTerminalMap, $startSymbolId, $eofTokenId);
         $actualValue = (new LookupTableBuilder($grammar))->getTable()->exportMap();
         self::assertEquals($expectedTable, $actualValue);
     }

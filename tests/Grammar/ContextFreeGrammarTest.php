@@ -1,18 +1,18 @@
 <?php
 
-namespace Remorhaz\UniLex\Test\CFG;
+namespace Remorhaz\UniLex\Test\Grammar;
 
 use PHPUnit\Framework\TestCase;
-use Remorhaz\UniLex\CFG\Grammar;
+use Remorhaz\UniLex\Grammar\ContextFreeGrammar;
 
-class GrammarTest extends TestCase
+class ContextFreeGrammarTest extends TestCase
 {
 
     public function testGetTerminalMap_ConstructWithValue_ReturnsSameValue(): void
     {
         $terminalMap = [1 => [2], 3 => [4], 5 => [6], 7 => [8]];
         $nonTerminalMap = [2 => [[4, 7]], 4 => [[5], []]];
-        $grammar = new Grammar($terminalMap, $nonTerminalMap, 2, 7);
+        $grammar = new ContextFreeGrammar($terminalMap, $nonTerminalMap, 2, 7);
         $actualValue = $grammar->getTerminalMap();
         self::assertEquals($terminalMap, $actualValue);
     }
@@ -21,7 +21,7 @@ class GrammarTest extends TestCase
     {
         $terminalMap = [1 => [2], 3 => [4], 5 => [6], 7 => [8]];
         $nonTerminalMap = [2 => [[4, 7]], 4 => [[5], []]];
-        $grammar = new Grammar($terminalMap, $nonTerminalMap, 2, 7);
+        $grammar = new ContextFreeGrammar($terminalMap, $nonTerminalMap, 2, 7);
         $actualValue = $grammar->getNonTerminalMap();
         self::assertEquals($nonTerminalMap, $actualValue);
     }
@@ -30,7 +30,7 @@ class GrammarTest extends TestCase
     {
         $terminalMap = [1 => [2], 3 => [4], 5 => [6], 7 => [8]];
         $nonTerminalMap = [2 => [[4, 7]], 4 => [[5], []]];
-        $grammar = new Grammar($terminalMap, $nonTerminalMap, 2, 7);
+        $grammar = new ContextFreeGrammar($terminalMap, $nonTerminalMap, 2, 7);
         $actualValue = $grammar->getStartSymbol();
         self::assertEquals(2, $actualValue);
     }
@@ -39,7 +39,7 @@ class GrammarTest extends TestCase
     {
         $terminalMap = [1 => [2], 3 => [4], 5 => [6], 7 => [8]];
         $nonTerminalMap = [2 => [[4, 7]], 4 => [[5], []]];
-        $grammar = new Grammar($terminalMap, $nonTerminalMap, 2, 7);
+        $grammar = new ContextFreeGrammar($terminalMap, $nonTerminalMap, 2, 7);
         $actualValue = $grammar->getEofToken();
         self::assertEquals(7, $actualValue);
     }
