@@ -27,10 +27,6 @@ class LookupTableBuilderTest extends TestCase
     ): void {
         $grammar = new Grammar($terminalMap, $nonTerminalMap, $startSymbolId, $eofTokenId);
         $actualValue = (new LookupTableBuilder($grammar))->getTable()->exportMap();
-        ksort($actualValue);
-        foreach ($actualValue as $symbolId => &$tokenIdList) {
-            ksort($tokenIdList);
-        }
         self::assertEquals($expectedTable, $actualValue);
     }
 
