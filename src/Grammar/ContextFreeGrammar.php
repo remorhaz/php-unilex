@@ -2,6 +2,7 @@
 
 namespace Remorhaz\UniLex\Grammar;
 
+use Generator;
 use Remorhaz\UniLex\Exception;
 
 class ContextFreeGrammar
@@ -102,5 +103,18 @@ class ContextFreeGrammar
             throw new Exception("Symbol {$symbolId} is terminal and has no productions");
         }
         return $this->nonTerminalMap[$symbolId];
+    }
+
+    /**
+     * @return Generator
+     * @throws Exception
+     */
+    public function getFullProductionList(): Generator
+    {
+        foreach ($this->getNonTerminalList() as $symbolId) {
+            foreach ($this->getProductionList($symbolId) as $production) {
+                yield [$symbolId, $production];
+            }
+        }
     }
 }

@@ -35,6 +35,10 @@ class TableBuilder
         return $this->table;
     }
 
+    /**
+     * @return FirstInterface
+     * @throws Exception
+     */
     private function getFirst(): FirstInterface
     {
         if (!isset($this->first)) {
@@ -44,6 +48,10 @@ class TableBuilder
         return $this->first;
     }
 
+    /**
+     * @return FollowInterface
+     * @throws Exception
+     */
     private function getFollow(): FollowInterface
     {
         if (!isset($this->follow)) {
@@ -59,11 +67,9 @@ class TableBuilder
      */
     private function addProductionsFromNonTerminalMap(Table $table): void
     {
-        foreach ($this->grammar->getNonTerminalList() as $productionId) {
-            foreach ($this->grammar->getProductionList($productionId) as  $symbolIdList) {
-                $this->addProductionFirsts($table, $productionId, ...$symbolIdList);
-                $this->addProductionFollows($table, $productionId, ...$symbolIdList);
-            }
+        foreach ($this->grammar->getFullProductionList() as [$symbolId, $production]) {
+            $this->addProductionFirsts($table, $symbolId, ...$production);
+            $this->addProductionFollows($table, $symbolId, ...$production);
         }
     }
 
