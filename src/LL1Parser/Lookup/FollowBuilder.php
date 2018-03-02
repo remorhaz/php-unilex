@@ -19,6 +19,10 @@ class FollowBuilder
         $this->first = $first;
     }
 
+    /**
+     * @return Follow
+     * @throws \Remorhaz\UniLex\Exception
+     */
     public function getFollow(): Follow
     {
         if (!isset($this->follow)) {
@@ -38,10 +42,14 @@ class FollowBuilder
         $follow->addToken($this->grammar->getStartSymbol(), $this->grammar->getEoiSymbol());
     }
 
+    /**
+     * @param Follow $follow
+     * @throws \Remorhaz\UniLex\Exception
+     */
     private function mergeProductionsFromNonTerminalMap(Follow $follow): void
     {
-        foreach ($this->grammar->getNonTerminalMap() as $symbolId => $productionList) {
-            foreach ($productionList as $symbolIdList) {
+        foreach ($this->grammar->getNonTerminalList() as $symbolId) {
+            foreach ($this->grammar->getProductionList($symbolId) as $symbolIdList) {
                 $this->mergeProduction($follow, $symbolId, ...$symbolIdList);
             }
         }

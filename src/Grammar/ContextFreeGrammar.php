@@ -2,6 +2,8 @@
 
 namespace Remorhaz\UniLex\Grammar;
 
+use Remorhaz\UniLex\Exception;
+
 class ContextFreeGrammar
 {
 
@@ -29,16 +31,6 @@ class ContextFreeGrammar
         $this->eoiSymbol = $eoiSymbol;
     }
 
-    public function getTerminalMap(): array
-    {
-        return $this->terminalMap;
-    }
-
-    public function getNonTerminalMap(): array
-    {
-        return $this->nonTerminalMap;
-    }
-
     public function getStartSymbol(): int
     {
         return $this->startSymbol;
@@ -47,5 +39,68 @@ class ContextFreeGrammar
     public function getEoiSymbol(): int
     {
         return $this->eoiSymbol;
+    }
+
+    /**
+     * @param int $symbolId
+     * @return bool
+     * @throws Exception
+     */
+    public function isTerminal(int $symbolId): bool
+    {
+        if (isset($this->terminalMap[$symbolId])) {
+            return true;
+        };
+        if (isset($this->nonTerminalMap[$symbolId])) {
+            return false;
+        }
+        throw new Exception("Symbol {$symbolId} is undefined");
+    }
+
+    /**
+     * @param int $symbolId
+     * @param int $tokenId
+     * @return bool
+     * @throws Exception
+     */
+    public function tokenMatchesTerminal(int $symbolId, int $tokenId): bool
+    {
+        return in_array($tokenId, $this->getTerminalTokenList($symbolId));
+    }
+
+    /**
+     * @param int $symbolId
+     * @return array
+     * @throws Exception
+     */
+    public function getTerminalTokenList(int $symbolId): array
+    {
+        if (!$this->isTerminal($symbolId)) {
+            throw new Exception("Symbol {$symbolId} is not defined as terminal");
+        }
+        return $this->terminalMap[$symbolId];
+    }
+
+    public function getTerminalList(): array
+    {
+        return array_keys($this->terminalMap);
+    }
+
+    public function getNonTerminalList(): array
+    {
+        return array_keys($this->nonTerminalMap);
+    }
+
+    /**
+     * @param int $symbolId
+     * @return array
+     * @throws Exception
+     */
+    public function getProductionList(int $symbolId): array
+    {
+        if ($this->isTerminal($symbolId)) {
+            throw new Exception("Symbol {$symbolId} is terminal and has no productions");
+        }
+        return $this->nonTerminalMap[$symbolId];
     }
 }

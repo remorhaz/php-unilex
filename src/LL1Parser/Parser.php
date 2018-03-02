@@ -42,9 +42,9 @@ class Parser
     public function run(): void
     {
         $this->initStack();
-        while (!$this->symbolStack->isEmpty()) {
+        while ($this->hasSymbolInStack()) {
             $symbolId = $this->popSymbol();
-            $this->isTerminal($symbolId)
+            $this->isTerminalSymbol($symbolId)
                 ? $this->readSymbolLexeme($symbolId)
                 : $this->pushSymbolProduction($symbolId);
         }
@@ -61,18 +61,22 @@ class Parser
         return [$this->grammar->getStartSymbol(), $this->grammar->getEoiSymbol()];
     }
 
+    private function hasSymbolInStack(): bool
+    {
+        return !$this->symbolStack->isEmpty();
+    }
+
+    private function isTerminalSymbol(int $symbolId): bool
+    {
+        return $this->grammar->isTerminal($symbolId);
+    }
+
     private function previewLexeme(): Lexeme
     {
         if (!isset($this->lexeme)) {
             $this->lexeme = $this->lexemeReader->read();
         }
         return $this->lexeme;
-    }
-
-    private function isTerminal(int $symbolId): bool
-    {
-        $terminalMap = $this->grammar->getTerminalMap();
-        return isset($terminalMap[$symbolId]);
     }
 
     /**
@@ -94,7 +98,7 @@ class Parser
     private function readSymbolLexeme(int $symbolId): void
     {
         $lexeme = $this->previewLexeme();
-        if (!in_array($lexeme->getType(), $this->grammar->getTerminalMap()[$symbolId])) {
+        if (!$this->grammar->tokenMatchesTerminal($symbolId, $lexeme->getType())) {
             throw new Exception("Unexpected token {$lexeme->getType()} for symbol {$symbolId}");
         }
         ($lexeme instanceof EoiLexeme)
@@ -109,7 +113,8 @@ class Parser
      */
     private function pushSymbolProduction(int $symbolId): void
     {
-        $symbolIdList = $this->getLookupTable()->getProduction($symbolId, $this->previewLexeme()->getType());
+        $tokenId = $this->previewLexeme()->getType();
+        $symbolIdList = $this->getLookupTable()->getProduction($symbolId, $tokenId);
         $this->symbolStack->push(...$symbolIdList);
     }
 

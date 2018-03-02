@@ -16,6 +16,10 @@ class FirstBuilder
         $this->grammar = $grammar;
     }
 
+    /**
+     * @return FirstInterface
+     * @throws \Remorhaz\UniLex\Exception
+     */
     public function getFirst(): FirstInterface
     {
         if (!isset($this->first)) {
@@ -30,17 +34,26 @@ class FirstBuilder
         return $this->first;
     }
 
+    /**
+     * @param First $first
+     * @throws \Remorhaz\UniLex\Exception
+     */
     private function addTokensFromTerminalMap(First $first): void
     {
-        foreach ($this->grammar->getTerminalMap() as $symbolId => $tokenIdList) {
+        foreach ($this->grammar->getTerminalList() as $symbolId) {
+            $tokenIdList = $this->grammar->getTerminalTokenList($symbolId);
             $first->addToken($symbolId, ...$tokenIdList);
         }
     }
 
+    /**
+     * @param First $first
+     * @throws \Remorhaz\UniLex\Exception
+     */
     private function mergeProductionsFromNonTerminalMap(First $first): void
     {
-        foreach ($this->grammar->getNonTerminalMap() as $symbolId => $productionList) {
-            foreach ($productionList as $production) {
+        foreach ($this->grammar->getNonTerminalList() as $symbolId) {
+            foreach ($this->grammar->getProductionList($symbolId) as $production) {
                 $first->mergeProductionEpsilons($symbolId, ...$production);
                 $first->mergeProductionTokens($symbolId, ...$production);
             }
