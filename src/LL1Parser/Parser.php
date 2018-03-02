@@ -15,7 +15,7 @@ class Parser
 
     private $lookupTable;
 
-    private $symbolStack = [];
+    private $symbolStack;
 
     private $lexeme;
 
@@ -31,6 +31,7 @@ class Parser
         $this->grammar = $grammar;
         $this->lexemeReader = $lexemeReader;
         $this->listener = $listener;
+        $this->symbolStack = new SymbolStack;
     }
 
     /**
@@ -38,46 +39,24 @@ class Parser
      */
     public function run(): void
     {
-        $this->prepareSymbolStack();
-        while (!empty($this->symbolStack)) {
-            $symbolId = $this->readSymbolId();
-            $tokenId = $this->previewLexeme()->getType();
-            if ($this->isTerminal($symbolId)) {
-                if (!in_array($tokenId, $this->grammar->getTerminalMap()[$symbolId])) {
-                    throw new Exception("Unexpected token {$tokenId} for symbol {$symbolId}");
-                }
-                $this->readLexeme();
-                continue;
-            }
-            $symbolIdList = $this->getLookupTable()->getProduction($symbolId, $tokenId);
-            $this->pushSymbols(...$symbolIdList);
+        $this->initStack();
+        while (!$this->symbolStack->isEmpty()) {
+            $symbolId = $this->popSymbol();
+            $this->isTerminal($symbolId)
+                ? $this->readSymbolLexeme($symbolId)
+                : $this->pushSymbolProduction($symbolId);
         }
     }
 
-    private function prepareSymbolStack(): void
+    private function initStack(): void
     {
-        $this->symbolStack = [];
-        $this->pushSymbols($this->grammar->getStartSymbol(), $this->grammar->getEoiSymbol());
+        $this->symbolStack->reset();
+        $this->symbolStack->push(...$this->getInitSymbols());
     }
 
-    private function pushSymbols(int ...$symbolIdList): void
+    private function getInitSymbols(): array
     {
-        if (empty($symbolIdList)) {
-            return;
-        }
-        array_push($this->symbolStack, ...array_reverse($symbolIdList));
-    }
-
-    /**
-     * @return int
-     * @throws Exception
-     */
-    private function readSymbolId(): int
-    {
-        if (empty($this->symbolStack)) {
-            throw new Exception("Unexpected end of stack");
-        }
-        return array_pop($this->symbolStack);
+        return [$this->grammar->getStartSymbol(), $this->grammar->getEoiSymbol()];
     }
 
     private function previewLexeme(): Lexeme
@@ -94,13 +73,42 @@ class Parser
         return isset($terminalMap[$symbolId]);
     }
 
-    private function readLexeme(): void
+    /**
+     * @return int
+     * @throws Exception
+     */
+    private function popSymbol(): int
+    {
+        $symbolId = $this->symbolStack->pop();
+        $lexeme = $this->previewLexeme();
+        $this->listener->onSymbol($symbolId, $lexeme);
+        return $symbolId;
+    }
+
+    /**
+     * @param int $symbolId
+     * @throws Exception
+     */
+    private function readSymbolLexeme(int $symbolId): void
     {
         $lexeme = $this->previewLexeme();
+        if (!in_array($lexeme->getType(), $this->grammar->getTerminalMap()[$symbolId])) {
+            throw new Exception("Unexpected token {$lexeme->getType()} for symbol {$symbolId}");
+        }
         ($lexeme instanceof EoiLexeme)
             ? $this->listener->onEoi($lexeme)
             : $this->listener->onLexeme($lexeme);
         unset($this->lexeme);
+    }
+
+    /**
+     * @param int $symbolId
+     * @throws Exception
+     */
+    private function pushSymbolProduction(int $symbolId): void
+    {
+        $symbolIdList = $this->getLookupTable()->getProduction($symbolId, $this->previewLexeme()->getType());
+        $this->symbolStack->push(...$symbolIdList);
     }
 
     /**
