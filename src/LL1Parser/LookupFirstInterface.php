@@ -2,7 +2,7 @@
 
 namespace Remorhaz\UniLex\LL1Parser;
 
-interface LookupFirstInfoInterface extends LookupSetInterface
+interface LookupFirstInterface extends LookupSetInterface
 {
 
     /**

@@ -2,6 +2,6 @@
 
 namespace Remorhaz\UniLex\LL1Parser;
 
-class LookupFollow extends LookupSet implements LookupFollowInfoInterface
+class LookupFollow extends LookupSet implements LookupFollowInterface
 {
 }

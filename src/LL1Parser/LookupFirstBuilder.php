@@ -16,7 +16,7 @@ class LookupFirstBuilder
         $this->grammar = $grammar;
     }
 
-    public function getFirst(): LookupFirstInfoInterface
+    public function getFirst(): LookupFirstInterface
     {
         if (!isset($this->first)) {
             $first = new LookupFirst;

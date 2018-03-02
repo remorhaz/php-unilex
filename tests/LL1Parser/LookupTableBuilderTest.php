@@ -16,6 +16,7 @@ class LookupTableBuilderTest extends TestCase
      * @param int $eofTokenId
      * @param array $expectedTable
      * @dataProvider providerValidGrammarTables
+     * @throws \Remorhaz\UniLex\Exception
      */
     public function testGetFirst_ValidGrammar_ResultGetTokensReturnsMatchingValue(
         array $terminalMap,
@@ -25,8 +26,11 @@ class LookupTableBuilderTest extends TestCase
         array $expectedTable
     ): void {
         $grammar = new Grammar($terminalMap, $nonTerminalMap, $startSymbolId, $eofTokenId);
-        $actualValue = (new LookupTableBuilder($grammar))->getTable();
+        $actualValue = (new LookupTableBuilder($grammar))->getTable()->exportMap();
         ksort($actualValue);
+        foreach ($actualValue as $symbolId => &$tokenIdList) {
+            ksort($tokenIdList);
+        }
         self::assertEquals($expectedTable, $actualValue);
     }
 

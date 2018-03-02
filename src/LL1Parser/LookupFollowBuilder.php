@@ -13,7 +13,7 @@ class LookupFollowBuilder
 
     private $follow;
 
-    public function __construct(Grammar $grammar, LookupFirstInfoInterface $first)
+    public function __construct(Grammar $grammar, LookupFirstInterface $first)
     {
         $this->grammar = $grammar;
         $this->first = $first;
