@@ -26,6 +26,7 @@ class ParserTest extends TestCase
      * @dataProvider providerValidGrammarStrings
      * @throws \Remorhaz\UniLex\Exception
      * @throws \ReflectionException
+     * @covers \Remorhaz\UniLex\LL1Parser\Parser
      */
     public function testParse_ValidBuffer_OnLexemeTriggeredForEachToken(
         array $terminalMap,
