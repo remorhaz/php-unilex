@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\LL1Parser\Lookup\Follow;
 
 /**
- * @covers \Remorhaz\UniLex\LL1Parser\Lookup\Follow
+ * @covers \Remorhaz\UniLex\LL1Parser\Lookup\Follow<extended>
  */
 class FollowTest extends TestCase
 {
