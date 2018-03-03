@@ -18,7 +18,6 @@ class FirstBuilder
 
     /**
      * @return FirstInterface
-     * @throws \Remorhaz\UniLex\Exception
      */
     public function getFirst(): FirstInterface
     {

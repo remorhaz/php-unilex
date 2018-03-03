@@ -9,15 +9,22 @@ class SymbolLexeme extends Lexeme
 {
 
     private $symbol;
+    private $info;
 
     public function __construct(LexemeInfoInterface $info, int $type, int $symbol)
     {
-        parent::__construct($info, $type);
+        parent::__construct($type);
+        $this->info = $info;
         $this->symbol = $symbol;
     }
 
     public function getSymbol(): int
     {
         return $this->symbol;
+    }
+
+    public function getInfo(): LexemeInfoInterface
+    {
+        return $this->info;
     }
 }

@@ -37,7 +37,6 @@ class TableBuilder
 
     /**
      * @return FirstInterface
-     * @throws Exception
      */
     private function getFirst(): FirstInterface
     {
@@ -50,7 +49,6 @@ class TableBuilder
 
     /**
      * @return FollowInterface
-     * @throws Exception
      */
     private function getFollow(): FollowInterface
     {

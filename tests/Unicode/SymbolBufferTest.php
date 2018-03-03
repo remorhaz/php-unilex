@@ -4,6 +4,7 @@ namespace Remorhaz\UniLex\Test\Unicode;
 
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Lexeme;
+use Remorhaz\UniLex\LexemeInfoInterface;
 use Remorhaz\UniLex\LexemePosition;
 use Remorhaz\UniLex\SymbolBufferInterface;
 use Remorhaz\UniLex\Unicode\LexemeInfo;
@@ -408,8 +409,14 @@ class SymbolBufferTest extends TestCase
             public function match(SymbolBufferInterface $buffer): Lexeme
             {
                 $buffer->nextSymbol();
-                $lexeme = new class($buffer->getLexemeInfo(), 0) extends Lexeme
+                $lexeme = new class(0) extends Lexeme
                 {
+                    private $info;
+
+                    public function getInfo(): LexemeInfoInterface
+                    {
+                        return $this->info;
+                    }
                 };
                 return $lexeme;
             }

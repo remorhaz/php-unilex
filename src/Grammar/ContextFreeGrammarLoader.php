@@ -38,7 +38,12 @@ abstract class ContextFreeGrammarLoader
      */
     public static function loadFile(string $fileName): ContextFreeGrammar
     {
-        return self::loadConfig(include $fileName);
+        /** @noinspection PhpIncludeInspection */
+        $config = @include $fileName;
+        if (false === $config) {
+            throw new Exception("Config file {$fileName} not found");
+        }
+        return self::loadConfig($config);
     }
 
     /**
