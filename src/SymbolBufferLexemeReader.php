@@ -27,7 +27,7 @@ class SymbolBufferLexemeReader implements LexemeReaderInterface
     public function read(): Lexeme
     {
         return $this->buffer->isEnd()
-            ? $this->readEofLexeme()
+            ? $this->readEoiLexeme()
             : $this->readSymbolLexeme();
     }
 
@@ -35,7 +35,7 @@ class SymbolBufferLexemeReader implements LexemeReaderInterface
      * @return Lexeme
      * @throws Exception
      */
-    private function readEofLexeme(): Lexeme
+    private function readEoiLexeme(): Lexeme
     {
         if ($this->isEnd) {
             throw new Exception("Buffer end reached");

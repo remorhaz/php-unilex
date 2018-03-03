@@ -15,7 +15,7 @@ class ContextFreeGrammarTest extends TestCase
         self::assertEquals(1, $actualValue);
     }
 
-    public function testGetEofSymbol_ConstructWithValue_ReturnsSameValue(): void
+    public function testGetEoiSymbol_ConstructWithValue_ReturnsSameValue(): void
     {
         $grammar = new ContextFreeGrammar(1, 2);
         $actualValue = $grammar->getEoiSymbol();

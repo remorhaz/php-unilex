@@ -224,7 +224,7 @@ class ParserTable
             TokenType::OTHER_HEX_LETTER,
         ],
         ProductionType::PRINTABLE_ASCII_OTHER => [TokenType::PRINTABLE_ASCII_OTHER],
-        ProductionType::EOF => [TokenType::EOF],
+        ProductionType::EOI => [TokenType::EOI],
     ];
 
     /**
