@@ -4,7 +4,7 @@ namespace Remorhaz\UniLex;
 
 use Remorhaz\UniLex\Grammar\ContextFreeGrammarInterface;
 
-class LexemeFactory
+class LexemeFactory implements LexemeFactoryInterface
 {
 
     private $grammar;
