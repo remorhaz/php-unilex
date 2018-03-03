@@ -43,4 +43,6 @@ interface ContextFreeGrammarInterface
      * @return Generator
      */
     public function getFullProductionList(): Generator;
+
+    public function isEoiToken(int $tokenId): bool;
 }
