@@ -5,7 +5,7 @@ namespace Remorhaz\UniLex\Grammar;
 use Generator;
 use Remorhaz\UniLex\Exception;
 
-class ContextFreeGrammar
+class ContextFreeGrammar implements ContextFreeGrammarInterface
 {
 
     private $terminalMap = [];

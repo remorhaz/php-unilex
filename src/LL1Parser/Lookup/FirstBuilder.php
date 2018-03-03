@@ -2,7 +2,7 @@
 
 namespace Remorhaz\UniLex\LL1Parser\Lookup;
 
-use Remorhaz\UniLex\Grammar\ContextFreeGrammar;
+use Remorhaz\UniLex\Grammar\ContextFreeGrammarInterface;
 
 class FirstBuilder
 {
@@ -11,7 +11,7 @@ class FirstBuilder
 
     private $first;
 
-    public function __construct(ContextFreeGrammar $grammar)
+    public function __construct(ContextFreeGrammarInterface $grammar)
     {
         $this->grammar = $grammar;
     }
@@ -36,7 +36,6 @@ class FirstBuilder
 
     /**
      * @param First $first
-     * @throws \Remorhaz\UniLex\Exception
      */
     private function addTokensFromTerminalMap(First $first): void
     {
@@ -48,7 +47,6 @@ class FirstBuilder
 
     /**
      * @param First $first
-     * @throws \Remorhaz\UniLex\Exception
      */
     private function mergeProductionsFromNonTerminalMap(First $first): void
     {

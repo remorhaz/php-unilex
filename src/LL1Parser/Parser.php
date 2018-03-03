@@ -4,7 +4,7 @@ namespace Remorhaz\UniLex\LL1Parser;
 
 use Remorhaz\UniLex\EoiLexeme;
 use Remorhaz\UniLex\Exception;
-use Remorhaz\UniLex\Grammar\ContextFreeGrammar;
+use Remorhaz\UniLex\Grammar\ContextFreeGrammarInterface;
 use Remorhaz\UniLex\Lexeme;
 use Remorhaz\UniLex\LexemeReaderInterface;
 use Remorhaz\UniLex\LL1Parser\Lookup\TableInterface;
@@ -26,7 +26,7 @@ class Parser
     private $listener;
 
     public function __construct(
-        ContextFreeGrammar $grammar,
+        ContextFreeGrammarInterface $grammar,
         LexemeReaderInterface $lexemeReader,
         ParserListenerInterface $listener
     ) {

@@ -2,7 +2,7 @@
 
 namespace Remorhaz\UniLex\LL1Parser\Lookup;
 
-use Remorhaz\UniLex\Grammar\ContextFreeGrammar;
+use Remorhaz\UniLex\Grammar\ContextFreeGrammarInterface;
 
 class FollowBuilder
 {
@@ -13,7 +13,7 @@ class FollowBuilder
 
     private $follow;
 
-    public function __construct(ContextFreeGrammar $grammar, FirstInterface $first)
+    public function __construct(ContextFreeGrammarInterface $grammar, FirstInterface $first)
     {
         $this->grammar = $grammar;
         $this->first = $first;
@@ -21,7 +21,6 @@ class FollowBuilder
 
     /**
      * @return Follow
-     * @throws \Remorhaz\UniLex\Exception
      */
     public function getFollow(): Follow
     {
@@ -44,7 +43,6 @@ class FollowBuilder
 
     /**
      * @param Follow $follow
-     * @throws \Remorhaz\UniLex\Exception
      */
     private function mergeProductionsFromNonTerminalMap(Follow $follow): void
     {
