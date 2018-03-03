@@ -22,6 +22,7 @@ class FollowBuilderTest extends TestCase
      * @param int $eofTokenId
      * @param int $symbolId
      * @param array $expectedFollow
+     * @throws \Remorhaz\UniLex\Exception
      */
     public function testGetFollow_ValidGrammar_ResultGetReturnsMatchingValue(
         array $terminalMap,
@@ -31,7 +32,7 @@ class FollowBuilderTest extends TestCase
         int $symbolId,
         array $expectedFollow
     ): void {
-        $grammar = new ContextFreeGrammar($terminalMap, $nonTerminalMap, $startSymbolId, $eofTokenId);
+        $grammar = ContextFreeGrammar::loadFromMaps($terminalMap, $nonTerminalMap, $startSymbolId, $eofTokenId);
         $first = (new FirstBuilder($grammar))->getFirst();
         $follow = (new FollowBuilder($grammar, $first))->getFollow();
         $actualValue = $follow->getTokens($symbolId);

@@ -29,7 +29,7 @@ class TableBuilderTest extends TestCase
         int $eofTokenId,
         array $expectedTable
     ): void {
-        $grammar = new ContextFreeGrammar($terminalMap, $nonTerminalMap, $startSymbolId, $eofTokenId);
+        $grammar = ContextFreeGrammar::loadFromMaps($terminalMap, $nonTerminalMap, $startSymbolId, $eofTokenId);
         $actualValue = (new TableBuilder($grammar))->getTable()->exportMap();
         self::assertEquals($expectedTable, $actualValue);
     }

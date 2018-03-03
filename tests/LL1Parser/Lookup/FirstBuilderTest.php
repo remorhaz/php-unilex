@@ -21,6 +21,7 @@ class FirstBuilderTest extends TestCase
      * @param int $symbolId
      * @param array $expectedFollow
      * @dataProvider providerValidGrammarFirsts
+     * @throws \Remorhaz\UniLex\Exception
      */
     public function testGetFirst_ValidGrammar_ResultGetTokensReturnsMatchingValue(
         array $terminalMap,
@@ -30,7 +31,7 @@ class FirstBuilderTest extends TestCase
         int $symbolId,
         array $expectedFollow
     ): void {
-        $grammar = new ContextFreeGrammar($terminalMap, $nonTerminalMap, $startSymbolId, $eofTokenId);
+        $grammar = ContextFreeGrammar::loadFromMaps($terminalMap, $nonTerminalMap, $startSymbolId, $eofTokenId);
         $first = (new FirstBuilder($grammar))->getFirst();
         $actualValue = $first->getTokens($symbolId);
         sort($actualValue);
@@ -56,6 +57,7 @@ class FirstBuilderTest extends TestCase
      * @param int $symbolId
      * @param bool $expectedValue
      * @dataProvider providerValidGrammarEpsilons
+     * @throws \Remorhaz\UniLex\Exception
      */
     public function testGetFirst_ValidGrammar_ResultHasEpsilonReturnsMatchingValue(
         array $terminalMap,
@@ -65,7 +67,7 @@ class FirstBuilderTest extends TestCase
         int $symbolId,
         bool $expectedValue
     ): void {
-        $grammar = new ContextFreeGrammar($terminalMap, $nonTerminalMap, $startSymbolId, $eofTokenId);
+        $grammar = ContextFreeGrammar::loadFromMaps($terminalMap, $nonTerminalMap, $startSymbolId, $eofTokenId);
         $first = (new FirstBuilder($grammar))->getFirst();
         $actualValue = $first->productionHasEpsilon($symbolId);
         self::assertEquals($expectedValue, $actualValue);

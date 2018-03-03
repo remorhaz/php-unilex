@@ -37,7 +37,7 @@ class ParserTest extends TestCase
         int $eoiTokenId,
         array $input
     ): void {
-        $grammar = new ContextFreeGrammar($terminalMap, $nonTerminalMap, $startSymbolId, $eoiTokenId);
+        $grammar = ContextFreeGrammar::loadFromMaps($terminalMap, $nonTerminalMap, $startSymbolId, $eoiTokenId);
         $buffer = new SymbolBuffer(SplFixedArray::fromArray($input));
         $matcher = $this->createLexemeMatcher();
         $reader = new SymbolBufferLexemeReader($buffer, $matcher, $grammar->getEoiSymbol());

@@ -8,9 +8,9 @@ use Remorhaz\UniLex\Exception;
 class ContextFreeGrammar
 {
 
-    private $terminalMap;
+    private $terminalMap = [];
 
-    private $nonTerminalMap;
+    private $nonTerminalMap = [];
 
     private $startSymbol;
 
@@ -19,17 +19,52 @@ class ContextFreeGrammar
     /**
      * Constructor. Accepts non-empty maps of terminal and non-terminal productions separately.
      *
-     * @param array $terminalMap Production IDs as keys, non-empty arrays of token IDs as values.
-     * @param array $nonTerminalMap Production IDs as keys, non-empty arrays of arrays of production IDs as values.
      * @param int $startSymbol
      * @param int $eoiSymbol
      */
-    public function __construct(array $terminalMap, array $nonTerminalMap, int $startSymbol, int $eoiSymbol)
+    public function __construct(int $startSymbol, int $eoiSymbol)
     {
-        $this->terminalMap = $terminalMap;
-        $this->nonTerminalMap = $nonTerminalMap;
         $this->startSymbol = $startSymbol;
         $this->eoiSymbol = $eoiSymbol;
+    }
+
+    public static function loadFromMaps(
+        array $terminalMap,
+        array $nonTerminalMap,
+        int $startSymbol,
+        int $eoiSymbol
+    ): self {
+        $grammar = new self($startSymbol, $eoiSymbol);
+        foreach ($terminalMap as $symbolId => $tokenIdList) {
+            $grammar->addToken($symbolId, ...$tokenIdList);
+        }
+        foreach ($nonTerminalMap as $symbolId => $productionList) {
+            $grammar->addProduction($symbolId, ...$productionList);
+        }
+        return $grammar;
+    }
+
+    /**
+     * @param int $symbolId
+     * @param int[] ...$tokenIdList
+     */
+    public function addToken(int $symbolId, int ...$tokenIdList): void
+    {
+        if (empty($tokenIdList)) {
+            return;
+        }
+        $this->terminalMap[$symbolId] = array_merge(
+            $this->terminalMap[$symbolId] ?? [],
+            $tokenIdList
+        );
+    }
+
+    public function addProduction(int $symbolId, array ...$production): void
+    {
+        $this->nonTerminalMap[$symbolId] = array_merge(
+            $this->nonTerminalMap[$symbolId] ?? [],
+            $production
+        );
     }
 
     public function getStartSymbol(): int

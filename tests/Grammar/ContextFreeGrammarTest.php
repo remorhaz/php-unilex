@@ -12,7 +12,7 @@ class ContextFreeGrammarTest extends TestCase
     {
         $terminalMap = [1 => [2], 3 => [4], 5 => [6], 7 => [8]];
         $nonTerminalMap = [2 => [[4, 7]], 4 => [[5], []]];
-        $grammar = new ContextFreeGrammar($terminalMap, $nonTerminalMap, 2, 7);
+        $grammar = ContextFreeGrammar::loadFromMaps($terminalMap, $nonTerminalMap, 2, 7);
         $actualValue = $grammar->getStartSymbol();
         self::assertEquals(2, $actualValue);
     }
@@ -21,7 +21,7 @@ class ContextFreeGrammarTest extends TestCase
     {
         $terminalMap = [1 => [2], 3 => [4], 5 => [6], 7 => [8]];
         $nonTerminalMap = [2 => [[4, 7]], 4 => [[5], []]];
-        $grammar = new ContextFreeGrammar($terminalMap, $nonTerminalMap, 2, 7);
+        $grammar = ContextFreeGrammar::loadFromMaps($terminalMap, $nonTerminalMap, 2, 7);
         $actualValue = $grammar->getEoiSymbol();
         self::assertEquals(7, $actualValue);
     }
