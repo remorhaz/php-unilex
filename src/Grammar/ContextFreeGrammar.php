@@ -28,22 +28,6 @@ class ContextFreeGrammar implements ContextFreeGrammarInterface
         $this->eoiSymbol = $eoiSymbol;
     }
 
-    public static function loadFromMaps(
-        array $terminalMap,
-        array $nonTerminalMap,
-        int $startSymbol,
-        int $eoiSymbol
-    ): self {
-        $grammar = new self($startSymbol, $eoiSymbol);
-        foreach ($terminalMap as $symbolId => $tokenIdList) {
-            $grammar->addToken($symbolId, ...$tokenIdList);
-        }
-        foreach ($nonTerminalMap as $symbolId => $productionList) {
-            $grammar->addProduction($symbolId, ...$productionList);
-        }
-        return $grammar;
-    }
-
     /**
      * @param int $symbolId
      * @param int[] ...$tokenIdList
