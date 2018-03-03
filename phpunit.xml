@@ -7,12 +7,14 @@
     <testsuites>
         <testsuite name="Full Test Suite">
             <directory>tests/</directory>
+            <directory>examples/tests/</directory>
         </testsuite>
     </testsuites>
     <filter>
         <whitelist
                 processUncoveredFilesFromWhitelist="true">
             <directory suffix=".php">src/</directory>
+            <directory suffix=".php">examples/</directory>
         </whitelist>
     </filter>
     <logging>
