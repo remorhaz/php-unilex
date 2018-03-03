@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Example\SimpleExpr\Grammar\ConfigFile;
 use Remorhaz\UniLex\Example\SimpleExpr\Grammar\ProductionType;
 use Remorhaz\UniLex\Example\SimpleExpr\Grammar\TokenType;
-use Remorhaz\UniLex\Grammar\ContextFreeGrammarLoader;
+use Remorhaz\UniLex\Grammar\ContextFree\GrammarLoader;
 use Remorhaz\UniLex\LL1Parser\Lookup\FirstBuilder;
 
 /**
@@ -27,7 +27,7 @@ class FirstBuilderTest extends TestCase
         int $symbolId,
         array $expectedValue
     ): void {
-        $grammar = ContextFreeGrammarLoader::loadFile($configFile);
+        $grammar = GrammarLoader::loadFile($configFile);
         $first = (new FirstBuilder($grammar))->getFirst();
         $actualValue = $first->getTokens($symbolId);
         sort($actualValue);
@@ -74,7 +74,7 @@ class FirstBuilderTest extends TestCase
         int $symbolId,
         bool $expectedValue
     ): void {
-        $grammar = ContextFreeGrammarLoader::loadFile($configFile);
+        $grammar = GrammarLoader::loadFile($configFile);
         $first = (new FirstBuilder($grammar))->getFirst();
         $actualValue = $first->productionHasEpsilon($symbolId);
         self::assertEquals($expectedValue, $actualValue);

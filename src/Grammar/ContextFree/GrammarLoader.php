@@ -1,10 +1,10 @@
 <?php
 
-namespace Remorhaz\UniLex\Grammar;
+namespace Remorhaz\UniLex\Grammar\ContextFree;
 
 use Remorhaz\UniLex\Exception;
 
-abstract class ContextFreeGrammarLoader
+abstract class GrammarLoader
 {
 
     public const TOKEN_MAP_KEY = 'tokens';
@@ -17,26 +17,26 @@ abstract class ContextFreeGrammarLoader
 
     /**
      * @param array $config
-     * @return ContextFreeGrammar
+     * @return Grammar
      * @throws Exception
      */
-    public static function loadConfig(array $config): ContextFreeGrammar
+    public static function loadConfig(array $config): Grammar
     {
         $tokenMap = self::getConfigValue($config, self::TOKEN_MAP_KEY);
         $productionMap = self::getConfigValue($config, self::PRODUCTION_MAP_KEY);
         $startSymbol = self::getConfigValue($config, self::START_SYMBOL_KEY);
         $eoiSymbol = self::getConfigValue($config, self::EOI_SYMBOL_KEY);
-        $grammar = new ContextFreeGrammar($startSymbol, $eoiSymbol);
+        $grammar = new Grammar($startSymbol, $eoiSymbol);
         self::loadFromMaps($grammar, $tokenMap, $productionMap);
         return $grammar;
     }
 
     /**
      * @param string $fileName
-     * @return ContextFreeGrammar
+     * @return Grammar
      * @throws Exception
      */
-    public static function loadFile(string $fileName): ContextFreeGrammar
+    public static function loadFile(string $fileName): Grammar
     {
         /** @noinspection PhpIncludeInspection */
         $config = @include $fileName;
@@ -63,7 +63,7 @@ abstract class ContextFreeGrammarLoader
         return $config[$key];
     }
 
-    private static function loadFromMaps(ContextFreeGrammar $grammar, array $tokenMap, array $productionMap): void
+    private static function loadFromMaps(Grammar $grammar, array $tokenMap, array $productionMap): void
     {
         foreach ($tokenMap as $symbolId => $tokenIdList) {
             $grammar->addToken($symbolId, ...$tokenIdList);

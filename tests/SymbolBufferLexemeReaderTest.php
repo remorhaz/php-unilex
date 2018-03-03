@@ -3,8 +3,8 @@
 namespace Remorhaz\UniLex\Test;
 
 use PHPUnit\Framework\TestCase;
-use Remorhaz\UniLex\Grammar\ContextFreeGrammar;
-use Remorhaz\UniLex\LexemeFactory;
+use Remorhaz\UniLex\Grammar\ContextFree\Grammar;
+use Remorhaz\UniLex\Grammar\ContextFree\LexemeFactory;
 use Remorhaz\UniLex\LexemePosition;
 use Remorhaz\UniLex\SymbolBuffer;
 use Remorhaz\UniLex\SymbolBufferLexemeInfo;
@@ -25,7 +25,7 @@ class SymbolBufferLexemeReaderTest extends TestCase
     public function testRead_NotEmptyValidBufferStart_ReturnsMatchingSymbolLexeme(): void
     {
         $buffer = SymbolBuffer::fromString('a');
-        $grammar = new ContextFreeGrammar(1, 2);
+        $grammar = new Grammar(1, 2);
         $lexemeFactory = new LexemeFactory($grammar);
         $lexemeInfo = new SymbolBufferLexemeInfo($buffer, new LexemePosition(0, 1));
         $expectedValue = new SymbolLexeme($lexemeInfo, 0x00000061);
@@ -40,7 +40,7 @@ class SymbolBufferLexemeReaderTest extends TestCase
     public function testRead_NotEmptyValidBufferMiddle_ReturnsMatchingSymbolLexeme(): void
     {
         $buffer = SymbolBuffer::fromString('ab');
-        $grammar = new ContextFreeGrammar(1, 2);
+        $grammar = new Grammar(1, 2);
         $lexemeFactory = new LexemeFactory($grammar);
         $lexemeInfo = new SymbolBufferLexemeInfo($buffer, new LexemePosition(1, 2));
         $expectedValue = new SymbolLexeme($lexemeInfo, 0x00000062);
@@ -56,7 +56,7 @@ class SymbolBufferLexemeReaderTest extends TestCase
     public function testRead_NotEmptyBufferEnd_ReturnsEoiLexeme(): void
     {
         $buffer = SymbolBuffer::fromString('a');
-        $grammar = new ContextFreeGrammar(1, 2);
+        $grammar = new Grammar(1, 2);
         $grammar->addToken($grammar->getEoiSymbol(), 1);
         $lexemeFactory = new LexemeFactory($grammar);
         $scanner = new SymbolBufferLexemeReader($buffer, new Utf8LexemeMatcher, $lexemeFactory);
@@ -71,7 +71,7 @@ class SymbolBufferLexemeReaderTest extends TestCase
     public function testRead_EmptyBuffer_ReturnsEoiLexeme(): void
     {
         $buffer = SymbolBuffer::fromString('');
-        $grammar = new ContextFreeGrammar(1, 2);
+        $grammar = new Grammar(1, 2);
         $grammar->addToken($grammar->getEoiSymbol(), 1);
         $lexemeFactory = new LexemeFactory($grammar);
         $scanner = new SymbolBufferLexemeReader($buffer, new Utf8LexemeMatcher, $lexemeFactory);
@@ -87,7 +87,7 @@ class SymbolBufferLexemeReaderTest extends TestCase
     public function testRead_AfterBufferEnd_ThrowsException(): void
     {
         $buffer = SymbolBuffer::fromString('');
-        $grammar = new ContextFreeGrammar(1, 2);
+        $grammar = new Grammar(1, 2);
         $grammar->addToken($grammar->getEoiSymbol(), 1);
         $lexemeFactory = new LexemeFactory($grammar);
         $scanner = new SymbolBufferLexemeReader($buffer, new Utf8LexemeMatcher, $lexemeFactory);
@@ -101,7 +101,7 @@ class SymbolBufferLexemeReaderTest extends TestCase
     public function testRead_NotEmptyInvalidBufferStart_ReturnsMatch(): void
     {
         $buffer = SymbolBuffer::fromString("\x80");
-        $grammar = new ContextFreeGrammar(1, 2);
+        $grammar = new Grammar(1, 2);
         $lexemeFactory = new LexemeFactory($grammar);
         $lexemeInfo = new SymbolBufferLexemeInfo($buffer, new LexemePosition(0, 1));
         $expectedValue = new InvalidBytesLexeme($lexemeInfo, 0x80);

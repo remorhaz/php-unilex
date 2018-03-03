@@ -3,7 +3,7 @@
 namespace Remorhaz\UniLex\LL1Parser\Lookup;
 
 use Remorhaz\UniLex\Exception;
-use Remorhaz\UniLex\Grammar\ContextFreeGrammarInterface;
+use Remorhaz\UniLex\Grammar\ContextFree\GrammarInterface;
 
 class TableBuilder
 {
@@ -16,7 +16,7 @@ class TableBuilder
 
     private $table;
 
-    public function __construct(ContextFreeGrammarInterface $grammar)
+    public function __construct(GrammarInterface $grammar)
     {
         $this->grammar = $grammar;
     }

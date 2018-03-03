@@ -2,7 +2,7 @@
 
 namespace Remorhaz\UniLex\LL1Parser\Lookup;
 
-use Remorhaz\UniLex\Grammar\ContextFreeGrammarInterface;
+use Remorhaz\UniLex\Grammar\ContextFree\GrammarInterface;
 
 class FollowBuilder
 {
@@ -13,7 +13,7 @@ class FollowBuilder
 
     private $follow;
 
-    public function __construct(ContextFreeGrammarInterface $grammar, FirstInterface $first)
+    public function __construct(GrammarInterface $grammar, FirstInterface $first)
     {
         $this->grammar = $grammar;
         $this->first = $first;

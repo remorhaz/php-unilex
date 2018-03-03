@@ -3,8 +3,8 @@
 namespace Remorhaz\UniLex\Test\Unicode;
 
 use PHPUnit\Framework\TestCase;
-use Remorhaz\UniLex\Grammar\ContextFreeGrammar;
-use Remorhaz\UniLex\LexemeFactory;
+use Remorhaz\UniLex\Grammar\ContextFree\Grammar;
+use Remorhaz\UniLex\Grammar\ContextFree\LexemeFactory;
 use Remorhaz\UniLex\LexemePosition;
 use Remorhaz\UniLex\Unicode\InvalidBytesLexeme;
 use Remorhaz\UniLex\SymbolBuffer;
@@ -33,7 +33,7 @@ class Utf8LexemeMatcherTest extends TestCase
         $buffer = SymbolBuffer::fromString($text);
         $lexemeInfo = new SymbolBufferLexemeInfo($buffer, new LexemePosition(0, $expectedFinishOffset));
         $lexeme = new SymbolLexeme($lexemeInfo, $expectedSymbol);
-        $grammar = new ContextFreeGrammar(1, 2);
+        $grammar = new Grammar(1, 2);
         $lexemeFactory = new LexemeFactory($grammar);
         $actual = (new Utf8LexemeMatcher)->match($buffer, $lexemeFactory);
         self::assertEquals($lexeme, $actual);
@@ -67,7 +67,7 @@ class Utf8LexemeMatcherTest extends TestCase
         $buffer = SymbolBuffer::fromString($text);
         $lexemeInfo = new SymbolBufferLexemeInfo($buffer, new LexemePosition(0, $expectedFinishOffset));
         $lexeme = new InvalidBytesLexeme($lexemeInfo, $invalidByte);
-        $grammar = new ContextFreeGrammar(1, 2);
+        $grammar = new Grammar(1, 2);
         $lexemeFactory = new LexemeFactory($grammar);
         $actual = (new Utf8LexemeMatcher)->match($buffer, $lexemeFactory);
         self::assertEquals($lexeme, $actual);

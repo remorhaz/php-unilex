@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Example\SimpleExpr\Grammar\ConfigFile;
 use Remorhaz\UniLex\Example\SimpleExpr\Grammar\ProductionType;
 use Remorhaz\UniLex\Example\SimpleExpr\Grammar\TokenType;
-use Remorhaz\UniLex\Grammar\ContextFreeGrammarLoader;
+use Remorhaz\UniLex\Grammar\ContextFree\GrammarLoader;
 use Remorhaz\UniLex\LL1Parser\Lookup\FirstBuilder;
 use Remorhaz\UniLex\LL1Parser\Lookup\FollowBuilder;
 
@@ -28,7 +28,7 @@ class FollowBuilderTest extends TestCase
         int $symbolId,
         array $expectedValue
     ): void {
-        $grammar = ContextFreeGrammarLoader::loadFile($configFile);
+        $grammar = GrammarLoader::loadFile($configFile);
         $first = (new FirstBuilder($grammar))->getFirst();
         $follow = (new FollowBuilder($grammar, $first))->getFollow();
         $actualValue = $follow->getTokens($symbolId);

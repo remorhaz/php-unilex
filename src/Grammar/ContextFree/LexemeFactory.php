@@ -1,15 +1,16 @@
 <?php
 
-namespace Remorhaz\UniLex;
+namespace Remorhaz\UniLex\Grammar\ContextFree;
 
-use Remorhaz\UniLex\Grammar\ContextFreeGrammarInterface;
+use Remorhaz\UniLex\Lexeme;
+use Remorhaz\UniLex\LexemeFactoryInterface;
 
 class LexemeFactory implements LexemeFactoryInterface
 {
 
     private $grammar;
 
-    public function __construct(ContextFreeGrammarInterface $grammar)
+    public function __construct(GrammarInterface $grammar)
     {
         $this->grammar = $grammar;
     }

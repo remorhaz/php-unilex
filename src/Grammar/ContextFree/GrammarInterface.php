@@ -1,10 +1,10 @@
 <?php
 
-namespace Remorhaz\UniLex\Grammar;
+namespace Remorhaz\UniLex\Grammar\ContextFree;
 
 use Generator;
 
-interface ContextFreeGrammarInterface
+interface GrammarInterface
 {
     public function getStartSymbol(): int;
 

@@ -2,7 +2,7 @@
 
 use Remorhaz\UniLex\Example\SimpleExpr\Grammar\ProductionType;
 use Remorhaz\UniLex\Example\SimpleExpr\Grammar\TokenType;
-use Remorhaz\UniLex\Grammar\ContextFreeGrammarLoader;
+use Remorhaz\UniLex\Grammar\ContextFree\GrammarLoader;
 
 return [
 
@@ -11,7 +11,7 @@ return [
      * Format:
      *      terminal symbol ID => [token 1 ID, token 2 ID, ...]
      */
-    ContextFreeGrammarLoader::TOKEN_MAP_KEY => [
+    GrammarLoader::TOKEN_MAP_KEY => [
         ProductionType::T_PLUS => [TokenType::PLUS], // +
         ProductionType::T_STAR => [TokenType::STAR], // *
         ProductionType::T_L_PARENTHESIS => [TokenType::L_PARENTHESIS], // (
@@ -28,7 +28,7 @@ return [
      *          [], // empty array defines ε-production
      *      ]
      */
-    ContextFreeGrammarLoader::PRODUCTION_MAP_KEY => [
+    GrammarLoader::PRODUCTION_MAP_KEY => [
         ProductionType::NT_E0 => [
             // E  →  T E'
             [ProductionType::NT_T0, ProductionType::NT_E1],
@@ -60,10 +60,10 @@ return [
     /**
      * Starting symbol.
      */
-    ContextFreeGrammarLoader::START_SYMBOL_KEY => ProductionType::NT_E0,
+    GrammarLoader::START_SYMBOL_KEY => ProductionType::NT_E0,
 
     /**
      * Symbol that marks end of input.
      */
-    ContextFreeGrammarLoader::EOI_SYMBOL_KEY => ProductionType::T_EOI,
+    GrammarLoader::EOI_SYMBOL_KEY => ProductionType::T_EOI,
 ];

@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Example\SimpleExpr\Grammar\ConfigFile;
 use Remorhaz\UniLex\Example\SimpleExpr\Grammar\ProductionType;
 use Remorhaz\UniLex\Example\SimpleExpr\Grammar\TokenType;
-use Remorhaz\UniLex\Grammar\ContextFreeGrammarLoader;
+use Remorhaz\UniLex\Grammar\ContextFree\GrammarLoader;
 use Remorhaz\UniLex\LL1Parser\Lookup\TableBuilder;
 
 /**
@@ -25,7 +25,7 @@ class TableBuilderTest extends TestCase
         string $configFile,
         array $expectedValue
     ): void {
-        $grammar = ContextFreeGrammarLoader::loadFile($configFile);
+        $grammar = GrammarLoader::loadFile($configFile);
         $actualValue = (new TableBuilder($grammar))->getTable()->exportMap();
         self::assertEquals($expectedValue, $actualValue);
     }

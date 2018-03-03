@@ -1,11 +1,11 @@
 <?php
 
-namespace Remorhaz\UniLex\Grammar;
+namespace Remorhaz\UniLex\Grammar\ContextFree;
 
 use Generator;
 use Remorhaz\UniLex\Exception;
 
-class ContextFreeGrammar implements ContextFreeGrammarInterface
+class Grammar implements GrammarInterface
 {
 
     private $terminalMap = [];
