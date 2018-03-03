@@ -6,14 +6,11 @@ use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Example\SimpleExpr\Grammar\ConfigFile;
 use Remorhaz\UniLex\Example\SimpleExpr\Grammar\TokenType;
 use Remorhaz\UniLex\Grammar\ContextFreeGrammarLoader;
-use Remorhaz\UniLex\Lexeme;
-use Remorhaz\UniLex\LexemeMatcherInterface;
 use Remorhaz\UniLex\LL1Parser\AbstractParserListener;
 use Remorhaz\UniLex\LL1Parser\Parser;
 use Remorhaz\UniLex\SymbolBuffer;
-use Remorhaz\UniLex\SymbolBufferInterface;
 use Remorhaz\UniLex\SymbolBufferLexemeReader;
-use Remorhaz\UniLex\Unicode\SymbolLexeme;
+use Remorhaz\UniLex\TypeLexemeMatcher;
 use SplFixedArray;
 
 /**
@@ -33,7 +30,7 @@ class ParserTest extends TestCase
     {
         $grammar = ContextFreeGrammarLoader::loadFile($configFile);
         $buffer = new SymbolBuffer(SplFixedArray::fromArray($input));
-        $matcher = $this->createLexemeMatcher();
+        $matcher = new TypeLexemeMatcher;
         $reader = new SymbolBufferLexemeReader($buffer, $matcher, $grammar->getEoiSymbol());
         $listener = $this
             ->createMock(AbstractParserListener::class);
@@ -63,22 +60,5 @@ class ParserTest extends TestCase
                 [ConfigFile::getPath(), $input];
         }
         return $data;
-    }
-
-    /**
-     * @return LexemeMatcherInterface
-     * @todo Move to examples and refactor the way of getting example data.
-     */
-    private function createLexemeMatcher(): LexemeMatcherInterface
-    {
-        return new class implements LexemeMatcherInterface {
-
-            public function match(SymbolBufferInterface $buffer): Lexeme
-            {
-                $lexeme = new SymbolLexeme($buffer->getLexemeInfo(), $buffer->getSymbol());
-                $buffer->nextSymbol();
-                return $lexeme;
-            }
-        };
     }
 }
