@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Remorhaz\UniLex;
 
 use SplFixedArray;
