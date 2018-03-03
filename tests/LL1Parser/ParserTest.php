@@ -3,7 +3,9 @@
 namespace Remorhaz\UniLex\Test\LL1Parser;
 
 use PHPUnit\Framework\TestCase;
-use Remorhaz\UniLex\Grammar\ContextFreeGrammar;
+use Remorhaz\UniLex\Example\SimpleExpr\Grammar\ConfigFile;
+use Remorhaz\UniLex\Example\SimpleExpr\Grammar\TokenType;
+use Remorhaz\UniLex\Grammar\ContextFreeGrammarLoader;
 use Remorhaz\UniLex\Lexeme;
 use Remorhaz\UniLex\LexemeMatcherInterface;
 use Remorhaz\UniLex\LL1Parser\AbstractParserListener;
@@ -21,23 +23,15 @@ class ParserTest extends TestCase
 {
 
     /**
-     * @param array $terminalMap
-     * @param array $nonTerminalMap
-     * @param int $startSymbolId
-     * @param int $eoiTokenId
-     * @param array $input
-     * @dataProvider providerValidGrammarStrings
-     * @throws \Remorhaz\UniLex\Exception
+     * @param string $configFile
+     * @param int[] $input
      * @throws \ReflectionException
+     * @throws \Remorhaz\UniLex\Exception
+     * @dataProvider providerValidGrammarInput
      */
-    public function testParse_ValidBuffer_OnLexemeTriggeredForEachToken(
-        array $terminalMap,
-        array $nonTerminalMap,
-        int $startSymbolId,
-        int $eoiTokenId,
-        array $input
-    ): void {
-        $grammar = ContextFreeGrammar::loadFromMaps($terminalMap, $nonTerminalMap, $startSymbolId, $eoiTokenId);
+    public function testParse_ValidBuffer_OnLexemeTriggeredForEachToken(string $configFile, array $input): void
+    {
+        $grammar = ContextFreeGrammarLoader::loadFile($configFile);
         $buffer = new SymbolBuffer(SplFixedArray::fromArray($input));
         $matcher = $this->createLexemeMatcher();
         $reader = new SymbolBufferLexemeReader($buffer, $matcher, $grammar->getEoiSymbol());
@@ -52,19 +46,21 @@ class ParserTest extends TestCase
         $parser->run();
     }
 
-    public function providerValidGrammarStrings(): array
+    public function providerValidGrammarInput(): array
     {
-        $examples = new ExampleGrammar;
         $data = [];
         $inputList = [
-            "id+id*id" => [5, 2, 5, 1, 5],
+            "id+id*id" => [
+                TokenType::ID,
+                TokenType::PLUS,
+                TokenType::ID,
+                TokenType::STAR,
+                TokenType::ID,
+            ],
         ];
         foreach ($inputList as $inputText => $input) {
-            $data["Classic example 4.14 from Dragonbook: {$inputText}"] =
-                array_merge(
-                    $examples->getDragonBook414Grammar(),
-                    [$input]
-                );
+            $data["SimpleExpr example: {$inputText}"] =
+                [ConfigFile::getPath(), $input];
         }
         return $data;
     }

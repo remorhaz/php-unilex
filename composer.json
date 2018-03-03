@@ -31,6 +31,7 @@
   },
   "autoload-dev": {
     "psr-4": {
+      "Remorhaz\\UniLex\\Example\\": "examples/",
       "Remorhaz\\UniLex\\Test\\": "tests/"
     }
   }

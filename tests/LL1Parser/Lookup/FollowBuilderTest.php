@@ -3,10 +3,12 @@
 namespace Remorhaz\UniLex\Test\LL1Parser\Lookup;
 
 use PHPUnit\Framework\TestCase;
-use Remorhaz\UniLex\Grammar\ContextFreeGrammar;
+use Remorhaz\UniLex\Example\SimpleExpr\Grammar\ConfigFile;
+use Remorhaz\UniLex\Example\SimpleExpr\Grammar\ProductionType;
+use Remorhaz\UniLex\Example\SimpleExpr\Grammar\TokenType;
+use Remorhaz\UniLex\Grammar\ContextFreeGrammarLoader;
 use Remorhaz\UniLex\LL1Parser\Lookup\FirstBuilder;
 use Remorhaz\UniLex\LL1Parser\Lookup\FollowBuilder;
-use Remorhaz\UniLex\Test\LL1Parser\ExampleGrammar;
 
 /**
  * @covers \Remorhaz\UniLex\LL1Parser\Lookup\FollowBuilder
@@ -15,39 +17,52 @@ class FollowBuilderTest extends TestCase
 {
 
     /**
-     * @dataProvider providerValidGrammars
-     * @param array $terminalMap
-     * @param array $nonTerminalMap
-     * @param int $startSymbolId
-     * @param int $eofTokenId
+     * @param string $configFile
      * @param int $symbolId
-     * @param array $expectedFollow
+     * @param array $expectedValue
      * @throws \Remorhaz\UniLex\Exception
+     * @dataProvider providerValidGrammars
      */
     public function testGetFollow_ValidGrammar_ResultGetReturnsMatchingValue(
-        array $terminalMap,
-        array $nonTerminalMap,
-        int $startSymbolId,
-        int $eofTokenId,
+        string $configFile,
         int $symbolId,
-        array $expectedFollow
+        array $expectedValue
     ): void {
-        $grammar = ContextFreeGrammar::loadFromMaps($terminalMap, $nonTerminalMap, $startSymbolId, $eofTokenId);
+        $grammar = ContextFreeGrammarLoader::loadFile($configFile);
         $first = (new FirstBuilder($grammar))->getFirst();
         $follow = (new FollowBuilder($grammar, $first))->getFollow();
         $actualValue = $follow->getTokens($symbolId);
         sort($actualValue);
-        self::assertEquals($expectedFollow, $actualValue);
+        self::assertEquals($expectedValue, $actualValue);
     }
 
     public function providerValidGrammars(): array
     {
-        $examples = new ExampleGrammar;
         $data = [];
-        foreach ($examples->getDragonBook414Follows() as $key => $follows) {
-            $data["Classic example 4.14 from Dragonbook: {$key}"] =
-                array_merge($examples->getDragonBook414Grammar(), $follows);
+        foreach ($this->getSimpleExprGrammarFollowList() as $key => $follows) {
+            [$symbolId, $expectedFollows] = $follows;
+            $data["Grammar from SimpleExpr example, symbol {$key}"] =
+                [ConfigFile::getPath(), $symbolId, $expectedFollows];
         }
         return $data;
+    }
+
+    private function getSimpleExprGrammarFollowList(): array
+    {
+        return [
+            "NT_E0" => [ProductionType::NT_E0, [TokenType::R_PARENTHESIS, TokenType::EOI]],
+            "NT_E1" => [ProductionType::NT_E1, [TokenType::R_PARENTHESIS, TokenType::EOI]],
+            "NT_T0" => [ProductionType::NT_T0, [TokenType::PLUS, TokenType::R_PARENTHESIS, TokenType::EOI]],
+            "NT_T1" => [ProductionType::NT_T1, [TokenType::PLUS, TokenType::R_PARENTHESIS, TokenType::EOI]],
+            "NT_F"  => [
+                ProductionType::NT_F,
+                [
+                    TokenType::PLUS,
+                    TokenType::STAR,
+                    TokenType::R_PARENTHESIS,
+                    TokenType::EOI,
+                ]
+            ],
+        ];
     }
 }
