@@ -2,7 +2,6 @@
 
 namespace Remorhaz\UniLex\LL1Parser;
 
-use Remorhaz\UniLex\EoiLexeme;
 use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\Grammar\ContextFreeGrammarInterface;
 use Remorhaz\UniLex\Lexeme;
@@ -101,7 +100,7 @@ class Parser
         if (!$this->grammar->tokenMatchesTerminal($symbolId, $lexeme->getType())) {
             throw new Exception("Unexpected token {$lexeme->getType()} for symbol {$symbolId}");
         }
-        ($lexeme instanceof EoiLexeme)
+        $lexeme->isEoi()
             ? $this->listener->onEoi($lexeme)
             : $this->listener->onLexeme($lexeme);
         unset($this->lexeme);

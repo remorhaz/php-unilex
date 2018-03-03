@@ -3,10 +3,10 @@
 namespace Remorhaz\UniLex\Test;
 
 use PHPUnit\Framework\TestCase;
+use Remorhaz\UniLex\Lexeme;
 use Remorhaz\UniLex\LexemePosition;
 use Remorhaz\UniLex\SymbolBuffer;
 use Remorhaz\UniLex\SymbolBufferLexemeInfo;
-use Remorhaz\UniLex\EoiLexeme;
 use Remorhaz\UniLex\Unicode\InvalidBytesLexeme;
 use Remorhaz\UniLex\SymbolBufferLexemeReader;
 use Remorhaz\UniLex\Unicode\SymbolLexeme;
@@ -51,8 +51,7 @@ class SymbolBufferLexemeReaderTest extends TestCase
     public function testRead_NotEmptyBufferEnd_ReturnsEofLexeme(): void
     {
         $buffer = SymbolBuffer::fromString('a');
-        $lexemeInfo = new SymbolBufferLexemeInfo($buffer, new LexemePosition(1, 1));
-        $expectedValue = new EoiLexeme($lexemeInfo, 0);
+        $expectedValue = new Lexeme(0, true);
         $scanner = new SymbolBufferLexemeReader($buffer, new Utf8LexemeMatcher, 0);
         $scanner->read();
         $actualValue = $scanner->read();
@@ -65,8 +64,7 @@ class SymbolBufferLexemeReaderTest extends TestCase
     public function testRead_EmptyBuffer_ReturnsEofLexeme(): void
     {
         $buffer = SymbolBuffer::fromString('');
-        $lexemeInfo = new SymbolBufferLexemeInfo($buffer, new LexemePosition(0, 0));
-        $expectedValue = new EoiLexeme($lexemeInfo, 0);
+        $expectedValue = new Lexeme(0, true);
         $scanner = new SymbolBufferLexemeReader($buffer, new Utf8LexemeMatcher, 0);
         $actualValue = $scanner->read();
         self::assertEquals($expectedValue, $actualValue);

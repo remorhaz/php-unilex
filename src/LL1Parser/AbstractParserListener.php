@@ -2,7 +2,6 @@
 
 namespace Remorhaz\UniLex\LL1Parser;
 
-use Remorhaz\UniLex\EoiLexeme;
 use Remorhaz\UniLex\Lexeme;
 
 abstract class AbstractParserListener implements ParserListenerInterface
@@ -16,7 +15,7 @@ abstract class AbstractParserListener implements ParserListenerInterface
     {
     }
 
-    public function onEoi(EoiLexeme $lexeme): void
+    public function onEoi(Lexeme $lexeme): void
     {
     }
 }
