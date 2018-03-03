@@ -19,6 +19,11 @@ class LexemeFactory implements LexemeFactoryInterface
         return new Lexeme($tokenId, $this->isEoi($tokenId));
     }
 
+    public function createEoiLexeme(): Lexeme
+    {
+        return $this->createLexeme($this->grammar->getEoiToken());
+    }
+
     protected function isEoi(int $tokenId): bool
     {
         return $this->grammar->isEoiToken($tokenId);

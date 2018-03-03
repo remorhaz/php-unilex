@@ -62,6 +62,17 @@ class ContextFreeGrammar implements ContextFreeGrammarInterface
     }
 
     /**
+     * @return int
+     * @throws Exception
+     */
+    public function getEoiToken(): int
+    {
+        $eoiTokenList = $this->getTerminalTokenList($this->getEoiSymbol());
+        [$eoiToken] = $eoiTokenList;
+        return $eoiToken;
+    }
+
+    /**
      * @param int $symbolId
      * @return bool
      * @throws Exception

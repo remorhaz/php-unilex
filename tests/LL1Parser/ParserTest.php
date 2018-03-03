@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Example\SimpleExpr\Grammar\ConfigFile;
 use Remorhaz\UniLex\Example\SimpleExpr\Grammar\TokenType;
 use Remorhaz\UniLex\Grammar\ContextFreeGrammarLoader;
+use Remorhaz\UniLex\LexemeFactory;
 use Remorhaz\UniLex\LL1Parser\AbstractParserListener;
 use Remorhaz\UniLex\LL1Parser\Parser;
 use Remorhaz\UniLex\SymbolBuffer;
@@ -29,9 +30,10 @@ class ParserTest extends TestCase
     public function testParse_ValidBuffer_OnLexemeTriggeredForEachToken(string $configFile, array $input): void
     {
         $grammar = ContextFreeGrammarLoader::loadFile($configFile);
+        $lexemeFactory = new LexemeFactory($grammar);
         $buffer = new SymbolBuffer(SplFixedArray::fromArray($input));
         $matcher = new TypeLexemeMatcher;
-        $reader = new SymbolBufferLexemeReader($buffer, $matcher, $grammar->getEoiSymbol());
+        $reader = new SymbolBufferLexemeReader($buffer, $matcher, $lexemeFactory);
         $listener = $this
             ->createMock(AbstractParserListener::class);
         $listener

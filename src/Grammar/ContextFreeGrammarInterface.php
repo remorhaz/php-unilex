@@ -10,6 +10,8 @@ interface ContextFreeGrammarInterface
 
     public function getEoiSymbol(): int;
 
+    public function getEoiToken(): int;
+
     /**
      * @param int $symbolId
      * @return bool
