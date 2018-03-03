@@ -3,11 +3,19 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/7.0/phpunit.xsd"
         backupGlobals="true"
-        cacheTokens="false">
+        cacheTokens="false"
+        defaultTestSuite="all">
     <testsuites>
-        <testsuite name="Full Test Suite">
+        <testsuite name="all">
             <directory>tests/</directory>
             <directory>examples/tests/</directory>
+        </testsuite>
+        <testsuite name="examples">
+            <directory>tests/</directory>
+            <directory>examples/tests/</directory>
+        </testsuite>
+        <testsuite name="library">
+            <directory>tests/</directory>
         </testsuite>
     </testsuites>
     <filter>
