@@ -3,12 +3,13 @@
 namespace Remorhaz\UniLex\Unicode;
 
 use Remorhaz\UniLex\Lexeme;
+use Remorhaz\UniLex\LexemeFactoryInterface;
 use Remorhaz\UniLex\SymbolBufferInterface;
 
 class Utf8LexemeMatcher implements LexemeMatcherInterface
 {
 
-    public function match(SymbolBufferInterface $buffer): Lexeme
+    public function match(SymbolBufferInterface $buffer, LexemeFactoryInterface $lexemeFactory): Lexeme
     {
         $symbol = null;
         $firstByte = $buffer->getSymbol();

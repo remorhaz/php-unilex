@@ -49,7 +49,7 @@ class SymbolBufferLexemeReader implements LexemeReaderInterface
 
     private function readSymbolLexeme(): Lexeme
     {
-        $lexeme = $this->matcher->match($this->buffer);
+        $lexeme = $this->matcher->match($this->buffer, $this->lexemeFactory);
         $this->buffer->finishLexeme();
         return $lexeme;
     }

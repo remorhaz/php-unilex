@@ -3,13 +3,14 @@
 namespace Remorhaz\UniLex\RegExp;
 
 use Remorhaz\UniLex\Lexeme;
+use Remorhaz\UniLex\LexemeFactoryInterface;
 use Remorhaz\UniLex\LexemeMatcherInterface;
 use Remorhaz\UniLex\SymbolBufferInterface;
 
 class LexemeMatcher implements LexemeMatcherInterface
 {
 
-    public function match(SymbolBufferInterface $buffer): Lexeme
+    public function match(SymbolBufferInterface $buffer, LexemeFactoryInterface $lexemeFactory): Lexeme
     {
         $symbol = $buffer->getSymbol();
         if ($symbol >= 0x00 && $symbol <= 0x1F) {

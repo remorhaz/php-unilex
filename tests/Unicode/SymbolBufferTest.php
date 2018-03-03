@@ -3,7 +3,10 @@
 namespace Remorhaz\UniLex\Test\Unicode;
 
 use PHPUnit\Framework\TestCase;
+use Remorhaz\UniLex\Grammar\ContextFreeGrammar;
 use Remorhaz\UniLex\Lexeme;
+use Remorhaz\UniLex\LexemeFactory;
+use Remorhaz\UniLex\LexemeFactoryInterface;
 use Remorhaz\UniLex\LexemePosition;
 use Remorhaz\UniLex\SymbolBufferInterface;
 use Remorhaz\UniLex\Unicode\LexemeInfo;
@@ -378,7 +381,9 @@ class SymbolBufferTest extends TestCase
         if (!isset($matcher)) {
             $matcher = new Utf8LexemeMatcher;
         }
-        return new SymbolBuffer($source, $matcher);
+        $grammar = new ContextFreeGrammar(1, 2);
+        $lexemeFactory = new LexemeFactory($grammar);
+        return new SymbolBuffer($source, $matcher, $lexemeFactory);
     }
 
     /**
@@ -405,7 +410,7 @@ class SymbolBufferTest extends TestCase
     {
         return new class implements LexemeMatcherInterface {
 
-            public function match(SymbolBufferInterface $buffer): Lexeme
+            public function match(SymbolBufferInterface $buffer, LexemeFactoryInterface $lexemeFactory): Lexeme
             {
                 $buffer->nextSymbol();
                 $lexeme = new class(0) extends Lexeme

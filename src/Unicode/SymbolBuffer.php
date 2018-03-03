@@ -4,6 +4,7 @@ namespace Remorhaz\UniLex\Unicode;
 
 use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\LexemeExtractInterface;
+use Remorhaz\UniLex\LexemeFactoryInterface;
 use Remorhaz\UniLex\LexemeInfoInterface;
 use Remorhaz\UniLex\LexemePosition;
 use Remorhaz\UniLex\SymbolBufferInterface;
@@ -26,10 +27,16 @@ class SymbolBuffer implements SymbolBufferInterface, LexemeExtractInterface
 
     private $sourcePreviewOffset = 0;
 
-    public function __construct(SymbolBufferInterface $source, LexemeMatcherInterface $matcher)
-    {
+    private $lexemeFactory;
+
+    public function __construct(
+        SymbolBufferInterface $source,
+        LexemeMatcherInterface $matcher,
+        LexemeFactoryInterface $lexemeFactory
+    ) {
         $this->source = $source;
         $this->matcher = $matcher;
+        $this->lexemeFactory = $lexemeFactory;
     }
 
     public function isEnd(): bool
@@ -122,7 +129,7 @@ class SymbolBuffer implements SymbolBufferInterface, LexemeExtractInterface
         if (isset($this->data[$this->previewOffset])) {
             return;
         }
-        $lexeme = $this->matcher->match($this->source);
+        $lexeme = $this->matcher->match($this->source, $this->lexemeFactory);
         if (!($lexeme instanceof SymbolLexeme)) {
             throw new Exception("Invalid lexeme at index {$this->previewOffset}");
         }

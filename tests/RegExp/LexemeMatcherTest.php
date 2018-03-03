@@ -3,6 +3,8 @@
 namespace Remorhaz\UniLex\Test\RegExp;
 
 use PHPUnit\Framework\TestCase;
+use Remorhaz\UniLex\Grammar\ContextFreeGrammar;
+use Remorhaz\UniLex\LexemeFactory;
 use Remorhaz\UniLex\LexemePosition;
 use Remorhaz\UniLex\RegExp\SymbolLexeme;
 use Remorhaz\UniLex\RegExp\LexemeMatcher;
@@ -28,7 +30,9 @@ class LexemeMatcherTest extends TestCase
         $matcher = new LexemeMatcher;
         $info = new SymbolBufferLexemeInfo($buffer, new LexemePosition(0, 1));
         $expectedLexeme = new SymbolLexeme($info, $type, $symbol);
-        $actual = $matcher->match($buffer);
+        $grammar = new ContextFreeGrammar(1, 2);
+        $lexemeFactory = new LexemeFactory($grammar);
+        $actual = $matcher->match($buffer, $lexemeFactory);
         self::assertEquals($expectedLexeme, $actual);
     }
 
@@ -91,7 +95,9 @@ class LexemeMatcherTest extends TestCase
         $matcher = new LexemeMatcher;
         $info = new SymbolBufferLexemeInfo($buffer, new LexemePosition(0, 1));
         $expectedLexeme = new SymbolLexeme($info, TokenType::INVALID, 0x110000);
-        $actual = $matcher->match($buffer);
+        $grammar = new ContextFreeGrammar(1, 2);
+        $lexemeFactory = new LexemeFactory($grammar);
+        $actual = $matcher->match($buffer, $lexemeFactory);
         self::assertEquals($expectedLexeme, $actual);
     }
 }

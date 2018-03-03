@@ -5,10 +5,10 @@ namespace Remorhaz\UniLex;
 class TypeLexemeMatcher implements LexemeMatcherInterface
 {
 
-    public function match(SymbolBufferInterface $buffer): Lexeme
+    public function match(SymbolBufferInterface $buffer, LexemeFactoryInterface $lexemeFactory): Lexeme
     {
-        $type = $buffer->getSymbol();
-        $lexeme = new Lexeme($type);
+        $tokenId = $buffer->getSymbol();
+        $lexeme = $lexemeFactory->createLexeme($tokenId);
         $buffer->nextSymbol();
         return $lexeme;
     }

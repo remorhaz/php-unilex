@@ -5,5 +5,5 @@ namespace Remorhaz\UniLex;
 interface LexemeMatcherInterface
 {
 
-    public function match(SymbolBufferInterface $buffer): Lexeme;
+    public function match(SymbolBufferInterface $buffer, LexemeFactoryInterface $lexemeFactory): Lexeme;
 }
