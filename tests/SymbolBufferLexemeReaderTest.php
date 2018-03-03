@@ -3,7 +3,6 @@
 namespace Remorhaz\UniLex\Test;
 
 use PHPUnit\Framework\TestCase;
-use Remorhaz\UniLex\Lexeme;
 use Remorhaz\UniLex\LexemePosition;
 use Remorhaz\UniLex\SymbolBuffer;
 use Remorhaz\UniLex\SymbolBufferLexemeInfo;
@@ -48,26 +47,24 @@ class SymbolBufferLexemeReaderTest extends TestCase
     /**
      * @throws \Remorhaz\UniLex\Exception
      */
-    public function testRead_NotEmptyBufferEnd_ReturnsEofLexeme(): void
+    public function testRead_NotEmptyBufferEnd_ReturnsEoiLexeme(): void
     {
         $buffer = SymbolBuffer::fromString('a');
-        $expectedValue = new Lexeme(0, true);
         $scanner = new SymbolBufferLexemeReader($buffer, new Utf8LexemeMatcher, 0);
         $scanner->read();
-        $actualValue = $scanner->read();
-        self::assertEquals($expectedValue, $actualValue);
+        $actualValue = $scanner->read()->isEoi();
+        self::assertTrue($actualValue);
     }
 
     /**
      * @throws \Remorhaz\UniLex\Exception
      */
-    public function testRead_EmptyBuffer_ReturnsEofLexeme(): void
+    public function testRead_EmptyBuffer_ReturnsEoiLexeme(): void
     {
         $buffer = SymbolBuffer::fromString('');
-        $expectedValue = new Lexeme(0, true);
         $scanner = new SymbolBufferLexemeReader($buffer, new Utf8LexemeMatcher, 0);
-        $actualValue = $scanner->read();
-        self::assertEquals($expectedValue, $actualValue);
+        $actualValue = $scanner->read()->isEoi();
+        self::assertTrue($actualValue);
     }
 
     /**
