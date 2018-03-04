@@ -10,6 +10,7 @@ use Remorhaz\UniLex\SymbolBuffer;
 use Remorhaz\UniLex\SymbolBufferLexemeInfo;
 use Remorhaz\UniLex\Unicode\InvalidBytesLexeme;
 use Remorhaz\UniLex\SymbolBufferLexemeReader;
+use Remorhaz\UniLex\Unicode\SymbolInfo;
 use Remorhaz\UniLex\Unicode\SymbolLexeme;
 use Remorhaz\UniLex\Unicode\Utf8LexemeMatcher;
 
@@ -28,8 +29,10 @@ class SymbolBufferLexemeReaderTest extends TestCase
         $grammar = new Grammar(1, 2);
         $lexemeFactory = new LexemeFactory($grammar);
         $lexemeInfo = new SymbolBufferLexemeInfo($buffer, new LexemePosition(0, 1));
-        $expectedValue = new SymbolLexeme($lexemeInfo, 0x00000061);
+        $matcherInfo = new SymbolInfo(0x00000061);
+        $expectedValue = new SymbolLexeme($lexemeInfo, $matcherInfo->getCode());
         $expectedValue->setBufferInfo($lexemeInfo);
+        $expectedValue->setMatcherInfo($matcherInfo);
         $scanner = new SymbolBufferLexemeReader($buffer, new Utf8LexemeMatcher, $lexemeFactory);
         $actualValue = $scanner->read();
         self::assertEquals($expectedValue, $actualValue);
@@ -44,8 +47,10 @@ class SymbolBufferLexemeReaderTest extends TestCase
         $grammar = new Grammar(1, 2);
         $lexemeFactory = new LexemeFactory($grammar);
         $lexemeInfo = new SymbolBufferLexemeInfo($buffer, new LexemePosition(1, 2));
-        $expectedValue = new SymbolLexeme($lexemeInfo, 0x00000062);
+        $matcherInfo = new SymbolInfo(0x00000062);
+        $expectedValue = new SymbolLexeme($lexemeInfo, $matcherInfo->getCode());
         $expectedValue->setBufferInfo($lexemeInfo);
+        $expectedValue->setMatcherInfo($matcherInfo);
         $scanner = new SymbolBufferLexemeReader($buffer, new Utf8LexemeMatcher, $lexemeFactory);
         $scanner->read();
         $actualValue = $scanner->read();

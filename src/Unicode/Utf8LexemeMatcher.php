@@ -14,9 +14,11 @@ class Utf8LexemeMatcher implements LexemeMatcherInterface
         $symbol = null;
         $firstByte = $buffer->getSymbol();
         if ($firstByte >= 0 && $firstByte <= 0x7F) { // 1-byte symbol
-            $symbol = $firstByte;
+            $symbolInfo = new SymbolInfo($firstByte);
             $buffer->nextSymbol();
-            return new SymbolLexeme($buffer->getLexemeInfo(), $symbol);
+            $lexeme = new SymbolLexeme($buffer->getLexemeInfo(), $symbolInfo->getCode());
+            $lexeme->setMatcherInfo($symbolInfo);
+            return $lexeme;
         }
         if ($firstByte >= 0xC0 && $firstByte <= 0xDF) { // 2-byte symbol
             $symbol = ($firstByte & 0x1F) << 6;
@@ -85,8 +87,11 @@ class Utf8LexemeMatcher implements LexemeMatcherInterface
         $tailByte = $buffer->getSymbol();
         if ($tailByte >= 0x80 && $tailByte <= 0xBF) {
             $symbol |= ($tailByte & 0x3F);
+            $symbolInfo = new SymbolInfo($symbol);
             $buffer->nextSymbol();
-            return new SymbolLexeme($buffer->getLexemeInfo(), $symbol);
+            $lexeme = new SymbolLexeme($buffer->getLexemeInfo(), $symbolInfo->getCode());
+            $lexeme->setMatcherInfo($symbolInfo);
+            return $lexeme;
         }
         goto invalid_byte;
 

@@ -8,6 +8,7 @@ use Remorhaz\UniLex\SymbolBuffer;
 use Remorhaz\UniLex\SymbolBufferLexemeInfo;
 use Remorhaz\UniLex\Unicode\LexemeFactory;
 use Remorhaz\UniLex\Unicode\InvalidBytesLexeme;
+use Remorhaz\UniLex\Unicode\SymbolInfo;
 use Remorhaz\UniLex\Unicode\SymbolLexeme;
 use Remorhaz\UniLex\Unicode\Utf8LexemeMatcher;
 
@@ -31,7 +32,9 @@ class Utf8LexemeMatcherTest extends TestCase
     ): void {
         $buffer = SymbolBuffer::fromString($text);
         $lexemeInfo = new SymbolBufferLexemeInfo($buffer, new LexemePosition(0, $expectedFinishOffset));
-        $lexeme = new SymbolLexeme($lexemeInfo, $expectedSymbol);
+        $matcherInfo = new SymbolInfo($expectedSymbol);
+        $lexeme = new SymbolLexeme($lexemeInfo, $matcherInfo->getCode());
+        $lexeme->setMatcherInfo($matcherInfo);
         $actual = (new Utf8LexemeMatcher)->match($buffer, new LexemeFactory);
         self::assertEquals($lexeme, $actual);
     }

@@ -11,6 +11,8 @@ class Lexeme
 
     private $bufferInfo;
 
+    private $matcherInfo;
+
     public function __construct(int $type, bool $isEoi)
     {
         $this->type = $type;
@@ -35,5 +37,15 @@ class Lexeme
     public function getBufferInfo(): ?LexemeInfoInterface
     {
         return $this->bufferInfo;
+    }
+
+    public function setMatcherInfo(MatcherInfoInterface $matcherInfo): void
+    {
+        $this->matcherInfo = $matcherInfo;
+    }
+
+    public function getMatcherInfo(): ?MatcherInfoInterface
+    {
+        return $this->matcherInfo;
     }
 }
