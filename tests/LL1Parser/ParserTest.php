@@ -12,7 +12,6 @@ use Remorhaz\UniLex\LL1Parser\Parser;
 use Remorhaz\UniLex\SymbolBuffer;
 use Remorhaz\UniLex\LexemeReader;
 use Remorhaz\UniLex\TypeLexemeMatcher;
-use SplFixedArray;
 
 /**
  * @covers \Remorhaz\UniLex\LL1Parser\Parser
@@ -31,9 +30,8 @@ class ParserTest extends TestCase
     {
         $grammar = GrammarLoader::loadFile($configFile);
         $lexemeFactory = new LexemeFactory($grammar);
-        $buffer = new SymbolBuffer(SplFixedArray::fromArray($input));
-        $matcher = new TypeLexemeMatcher;
-        $reader = new LexemeReader($buffer, $matcher, $lexemeFactory);
+        $buffer = SymbolBuffer::fromSymbols(...$input);
+        $reader = new LexemeReader($buffer, new TypeLexemeMatcher, $lexemeFactory);
         $listener = $this
             ->createMock(AbstractParserListener::class);
         $listener
