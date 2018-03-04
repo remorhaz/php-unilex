@@ -4,7 +4,7 @@ namespace Remorhaz\UniLex;
 
 use SplFixedArray;
 
-class SymbolBufferLexemeInfo implements LexemeInfoInterface
+class SymbolBufferLexemeInfo implements BufferInfoInterface
 {
 
     private $buffer;

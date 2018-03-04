@@ -15,5 +15,5 @@ interface SymbolBufferInterface
 
     public function getSymbol(): int;
 
-    public function getLexemeInfo(): LexemeInfoInterface;
+    public function getLexemeInfo(): BufferInfoInterface;
 }

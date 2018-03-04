@@ -29,12 +29,12 @@ class Lexeme
         return $this->isEoi;
     }
 
-    public function setBufferInfo(LexemeInfoInterface $bufferInfo): void
+    public function setBufferInfo(BufferInfoInterface $bufferInfo): void
     {
         $this->bufferInfo = $bufferInfo;
     }
 
-    public function getBufferInfo(): ?LexemeInfoInterface
+    public function getBufferInfo(): ?BufferInfoInterface
     {
         return $this->bufferInfo;
     }

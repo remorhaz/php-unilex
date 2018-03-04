@@ -6,7 +6,7 @@ use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\Lexeme;
 use Remorhaz\UniLex\LexemeExtractInterface;
 use Remorhaz\UniLex\LexemeFactoryInterface;
-use Remorhaz\UniLex\LexemeInfoInterface;
+use Remorhaz\UniLex\BufferInfoInterface;
 use Remorhaz\UniLex\LexemeMatcherInterface;
 use Remorhaz\UniLex\LexemePosition;
 use Remorhaz\UniLex\SymbolBufferInterface;
@@ -89,10 +89,10 @@ class SymbolBuffer implements SymbolBufferInterface, LexemeExtractInterface
     }
 
     /**
-     * @return LexemeInfoInterface
+     * @return BufferInfoInterface
      * @throws Exception
      */
-    public function getLexemeInfo(): LexemeInfoInterface
+    public function getLexemeInfo(): BufferInfoInterface
     {
         $position = new LexemePosition($this->startOffset, $this->previewOffset);
         $sourcePosition = new LexemePosition($this->sourceStartOffset, $this->sourcePreviewOffset);

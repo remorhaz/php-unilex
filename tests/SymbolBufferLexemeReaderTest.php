@@ -6,14 +6,14 @@ use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\LexemePosition;
 use Remorhaz\UniLex\SymbolBuffer;
 use Remorhaz\UniLex\SymbolBufferLexemeInfo;
-use Remorhaz\UniLex\SymbolBufferLexemeReader;
+use Remorhaz\UniLex\LexemeReader;
 use Remorhaz\UniLex\Unicode\Grammar\TokenType;
 use Remorhaz\UniLex\Unicode\LexemeFactory;
 use Remorhaz\UniLex\Unicode\SymbolInfo;
 use Remorhaz\UniLex\Unicode\Utf8LexemeMatcher;
 
 /**
- * @covers \Remorhaz\UniLex\SymbolBufferLexemeReader
+ * @covers \Remorhaz\UniLex\LexemeReader
  */
 class SymbolBufferLexemeReaderTest extends TestCase
 {
@@ -30,7 +30,7 @@ class SymbolBufferLexemeReaderTest extends TestCase
         $expectedValue = $lexemeFactory->createLexeme(TokenType::SYMBOL);
         $expectedValue->setBufferInfo($lexemeInfo);
         $expectedValue->setMatcherInfo($matcherInfo);
-        $scanner = new SymbolBufferLexemeReader($buffer, new Utf8LexemeMatcher, $lexemeFactory);
+        $scanner = new LexemeReader($buffer, new Utf8LexemeMatcher, $lexemeFactory);
         $actualValue = $scanner->read();
         self::assertEquals($expectedValue, $actualValue);
     }
@@ -47,7 +47,7 @@ class SymbolBufferLexemeReaderTest extends TestCase
         $expectedValue = $lexemeFactory->createLexeme(TokenType::SYMBOL);
         $expectedValue->setBufferInfo($lexemeInfo);
         $expectedValue->setMatcherInfo($matcherInfo);
-        $scanner = new SymbolBufferLexemeReader($buffer, new Utf8LexemeMatcher, $lexemeFactory);
+        $scanner = new LexemeReader($buffer, new Utf8LexemeMatcher, $lexemeFactory);
         $scanner->read();
         $actualValue = $scanner->read();
         self::assertEquals($expectedValue, $actualValue);
@@ -60,7 +60,7 @@ class SymbolBufferLexemeReaderTest extends TestCase
     {
         $buffer = SymbolBuffer::fromString('a');
         $lexemeFactory = new LexemeFactory;
-        $scanner = new SymbolBufferLexemeReader($buffer, new Utf8LexemeMatcher, $lexemeFactory);
+        $scanner = new LexemeReader($buffer, new Utf8LexemeMatcher, $lexemeFactory);
         $scanner->read();
         $actualValue = $scanner->read()->isEoi();
         self::assertTrue($actualValue);
@@ -73,7 +73,7 @@ class SymbolBufferLexemeReaderTest extends TestCase
     {
         $buffer = SymbolBuffer::fromString('');
         $lexemeFactory = new LexemeFactory;
-        $scanner = new SymbolBufferLexemeReader($buffer, new Utf8LexemeMatcher, $lexemeFactory);
+        $scanner = new LexemeReader($buffer, new Utf8LexemeMatcher, $lexemeFactory);
         $actualValue = $scanner->read()->isEoi();
         self::assertTrue($actualValue);
     }
@@ -87,7 +87,7 @@ class SymbolBufferLexemeReaderTest extends TestCase
     {
         $buffer = SymbolBuffer::fromString('');
         $lexemeFactory = new LexemeFactory;
-        $scanner = new SymbolBufferLexemeReader($buffer, new Utf8LexemeMatcher, $lexemeFactory);
+        $scanner = new LexemeReader($buffer, new Utf8LexemeMatcher, $lexemeFactory);
         $scanner->read();
         $scanner->read();
     }
@@ -102,7 +102,7 @@ class SymbolBufferLexemeReaderTest extends TestCase
         $lexemeInfo = new SymbolBufferLexemeInfo($buffer, new LexemePosition(0, 1));
         $expectedValue = $lexemeFactory->createLexeme(TokenType::INVALID_BYTES);
         $expectedValue->setBufferInfo($lexemeInfo);
-        $scanner = new SymbolBufferLexemeReader($buffer, new Utf8LexemeMatcher, $lexemeFactory);
+        $scanner = new LexemeReader($buffer, new Utf8LexemeMatcher, $lexemeFactory);
         $actualValue = $scanner->read();
         self::assertEquals($expectedValue, $actualValue);
     }
