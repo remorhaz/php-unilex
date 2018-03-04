@@ -14,9 +14,9 @@ class SymbolBuffer implements SymbolBufferInterface, LexemeExtractInterface
 
     private $length;
 
-    private $startPosition = 0;
+    private $startOffset = 0;
 
-    private $previewPosition = 0;
+    private $previewOffset = 0;
 
     public function __construct(SplFixedArray $data)
     {
@@ -43,7 +43,7 @@ class SymbolBuffer implements SymbolBufferInterface, LexemeExtractInterface
 
     public function isEnd(): bool
     {
-        return $this->previewPosition == $this->length;
+        return $this->previewOffset == $this->length;
     }
 
     /**
@@ -52,10 +52,10 @@ class SymbolBuffer implements SymbolBufferInterface, LexemeExtractInterface
      */
     public function getSymbol(): int
     {
-        if ($this->previewPosition == $this->length) {
-            throw new Exception("No symbol to preview at index {$this->previewPosition}");
+        if ($this->previewOffset == $this->length) {
+            throw new Exception("No symbol to preview at index {$this->previewOffset}");
         }
-        return $this->data->offsetGet($this->previewPosition);
+        return $this->data->offsetGet($this->previewOffset);
     }
 
     /**
@@ -63,15 +63,15 @@ class SymbolBuffer implements SymbolBufferInterface, LexemeExtractInterface
      */
     public function nextSymbol(): void
     {
-        if ($this->previewPosition == $this->length) {
-            throw new Exception("Unexpected end of buffer on preview at index {$this->previewPosition}");
+        if ($this->previewOffset == $this->length) {
+            throw new Exception("Unexpected end of buffer on preview at index {$this->previewOffset}");
         }
-        $this->previewPosition++;
+        $this->previewOffset++;
     }
 
     public function resetLexeme(): void
     {
-        $this->previewPosition = $this->startPosition;
+        $this->previewOffset = $this->startOffset;
     }
 
     /**
@@ -81,19 +81,19 @@ class SymbolBuffer implements SymbolBufferInterface, LexemeExtractInterface
     public function finishLexeme(Lexeme $lexeme): void
     {
         $lexeme->setBufferInfo($this->getLexemeInfo());
-        $this->startPosition = $this->previewPosition;
+        $this->startOffset = $this->previewOffset;
     }
 
     public function extractLexeme(LexemePosition $position): SplFixedArray
     {
         $startOffset = $position->getStartOffset();
         $lexemeLength = $position->getLength();
-        $lexeme = new SplFixedArray($lexemeLength);
+        $output = new SplFixedArray($lexemeLength);
         for ($i = 0; $i < $lexemeLength; $i++) {
             $symbol = $this->data->offsetGet($startOffset + $i);
-            $lexeme->offsetSet($i, $symbol);
+            $output->offsetSet($i, $symbol);
         }
-        return $lexeme;
+        return $output;
     }
 
     /**
@@ -102,7 +102,7 @@ class SymbolBuffer implements SymbolBufferInterface, LexemeExtractInterface
      */
     public function getLexemeInfo(): BufferInfoInterface
     {
-        $position = new LexemePosition($this->startPosition, $this->previewPosition);
+        $position = new LexemePosition($this->startOffset, $this->previewOffset);
         return new SymbolBufferLexemeInfo($this, $position);
     }
 }
