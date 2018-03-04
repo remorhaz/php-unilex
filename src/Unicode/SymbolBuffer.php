@@ -7,6 +7,7 @@ use Remorhaz\UniLex\Lexeme;
 use Remorhaz\UniLex\LexemeExtractInterface;
 use Remorhaz\UniLex\LexemeFactoryInterface;
 use Remorhaz\UniLex\LexemeInfoInterface;
+use Remorhaz\UniLex\LexemeMatcherInterface;
 use Remorhaz\UniLex\LexemePosition;
 use Remorhaz\UniLex\SymbolBufferInterface;
 use SplFixedArray;

@@ -4,12 +4,12 @@ namespace Remorhaz\UniLex\Test\Unicode;
 
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Lexeme;
-use Remorhaz\UniLex\Unicode\LexemeFactory;
 use Remorhaz\UniLex\LexemeFactoryInterface;
+use Remorhaz\UniLex\LexemeMatcherInterface;
 use Remorhaz\UniLex\LexemePosition;
 use Remorhaz\UniLex\SymbolBufferInterface;
+use Remorhaz\UniLex\Unicode\LexemeFactory;
 use Remorhaz\UniLex\Unicode\LexemeInfo;
-use Remorhaz\UniLex\Unicode\LexemeMatcherInterface;
 use Remorhaz\UniLex\Unicode\SymbolBuffer;
 use Remorhaz\UniLex\Unicode\Utf8LexemeMatcher;
 use SplFixedArray;

@@ -4,6 +4,7 @@ namespace Remorhaz\UniLex\Unicode;
 
 use Remorhaz\UniLex\Lexeme;
 use Remorhaz\UniLex\LexemeFactoryInterface;
+use Remorhaz\UniLex\LexemeMatcherInterface;
 use Remorhaz\UniLex\SymbolBufferInterface;
 use Remorhaz\UniLex\Unicode\Grammar\TokenType;
 
