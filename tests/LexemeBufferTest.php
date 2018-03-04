@@ -7,7 +7,7 @@ use Remorhaz\UniLex\LexemeBuffer;
 use Remorhaz\UniLex\LexemeReader;
 use Remorhaz\UniLex\SymbolBuffer;
 use Remorhaz\UniLex\Unicode\CodeSymbolFactory;
-use Remorhaz\UniLex\Unicode\LexemeFactory;
+use Remorhaz\UniLex\Unicode\Grammar\LexemeFactory;
 use Remorhaz\UniLex\Unicode\Utf8LexemeMatcher;
 
 /**

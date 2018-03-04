@@ -5,12 +5,12 @@ namespace Remorhaz\UniLex\Test;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\LexemePosition;
 use Remorhaz\UniLex\SymbolBuffer;
-use Remorhaz\UniLex\SymbolBufferLexemeInfo;
+use Remorhaz\UniLex\LexemeBufferInfo;
 
 /**
- * @covers \Remorhaz\UniLex\SymbolBufferLexemeInfo
+ * @covers \Remorhaz\UniLex\LexemeBufferInfo
  */
-class SymbolBufferLexemeInfoTest extends TestCase
+class LexemeBufferInfoTest extends TestCase
 {
 
     /**
@@ -20,7 +20,7 @@ class SymbolBufferLexemeInfoTest extends TestCase
     {
         $buffer = SymbolBuffer::fromString('a');
         $position = new LexemePosition(0, 1);
-        $info = new SymbolBufferLexemeInfo($buffer, $position);
+        $info = new LexemeBufferInfo($buffer, $position);
         $actualValue = $info->getPosition();
         self::assertSame(0, $actualValue->getStartOffset());
     }
@@ -32,7 +32,7 @@ class SymbolBufferLexemeInfoTest extends TestCase
     {
         $buffer = SymbolBuffer::fromString('a');
         $position = new LexemePosition(0, 1);
-        $info = new SymbolBufferLexemeInfo($buffer, $position);
+        $info = new LexemeBufferInfo($buffer, $position);
         $actualValue = $info->getPosition();
         self::assertSame(1, $actualValue->getFinishOffset());
     }
@@ -43,7 +43,7 @@ class SymbolBufferLexemeInfoTest extends TestCase
     public function testExtractLexeme_ConstructWithValue_ReturnsEqualValue(): void
     {
         $buffer = SymbolBuffer::fromString('a');
-        $info = new SymbolBufferLexemeInfo($buffer, new LexemePosition(0, 1));
+        $info = new LexemeBufferInfo($buffer, new LexemePosition(0, 1));
         $actualValue = $info->extract();
         $expectedValue = \SplFixedArray::fromArray([0x61]);
         self::assertEquals($expectedValue, $actualValue);

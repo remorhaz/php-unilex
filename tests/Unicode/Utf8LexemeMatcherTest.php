@@ -5,7 +5,7 @@ namespace Remorhaz\UniLex\Test\Unicode;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\SymbolBuffer;
 use Remorhaz\UniLex\Unicode\Grammar\TokenType;
-use Remorhaz\UniLex\Unicode\LexemeFactory;
+use Remorhaz\UniLex\Unicode\Grammar\LexemeFactory;
 use Remorhaz\UniLex\Unicode\SymbolInfo;
 use Remorhaz\UniLex\Unicode\Utf8LexemeMatcher;
 

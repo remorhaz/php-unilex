@@ -4,7 +4,7 @@ namespace Remorhaz\UniLex;
 
 use SplFixedArray;
 
-interface BufferInfoInterface
+interface LexemeBufferInfoInterface
 {
 
     public function extract(): SplFixedArray;

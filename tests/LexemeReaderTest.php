@@ -5,17 +5,17 @@ namespace Remorhaz\UniLex\Test;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\LexemePosition;
 use Remorhaz\UniLex\SymbolBuffer;
-use Remorhaz\UniLex\SymbolBufferLexemeInfo;
+use Remorhaz\UniLex\LexemeBufferInfo;
 use Remorhaz\UniLex\LexemeReader;
 use Remorhaz\UniLex\Unicode\Grammar\TokenType;
-use Remorhaz\UniLex\Unicode\LexemeFactory;
+use Remorhaz\UniLex\Unicode\Grammar\LexemeFactory;
 use Remorhaz\UniLex\Unicode\SymbolInfo;
 use Remorhaz\UniLex\Unicode\Utf8LexemeMatcher;
 
 /**
  * @covers \Remorhaz\UniLex\LexemeReader
  */
-class SymbolBufferLexemeReaderTest extends TestCase
+class LexemeReaderTest extends TestCase
 {
 
     /**
@@ -25,7 +25,7 @@ class SymbolBufferLexemeReaderTest extends TestCase
     {
         $buffer = SymbolBuffer::fromString('a');
         $lexemeFactory = new LexemeFactory;
-        $lexemeInfo = new SymbolBufferLexemeInfo($buffer, new LexemePosition(0, 1));
+        $lexemeInfo = new LexemeBufferInfo($buffer, new LexemePosition(0, 1));
         $matcherInfo = new SymbolInfo(0x00000061);
         $expectedValue = $lexemeFactory->createLexeme(TokenType::SYMBOL);
         $expectedValue->setBufferInfo($lexemeInfo);
@@ -42,7 +42,7 @@ class SymbolBufferLexemeReaderTest extends TestCase
     {
         $buffer = SymbolBuffer::fromString('ab');
         $lexemeFactory = new LexemeFactory;
-        $lexemeInfo = new SymbolBufferLexemeInfo($buffer, new LexemePosition(1, 2));
+        $lexemeInfo = new LexemeBufferInfo($buffer, new LexemePosition(1, 2));
         $matcherInfo = new SymbolInfo(0x00000062);
         $expectedValue = $lexemeFactory->createLexeme(TokenType::SYMBOL);
         $expectedValue->setBufferInfo($lexemeInfo);
@@ -99,7 +99,7 @@ class SymbolBufferLexemeReaderTest extends TestCase
     {
         $buffer = SymbolBuffer::fromString("\x80");
         $lexemeFactory = new LexemeFactory;
-        $lexemeInfo = new SymbolBufferLexemeInfo($buffer, new LexemePosition(0, 1));
+        $lexemeInfo = new LexemeBufferInfo($buffer, new LexemePosition(0, 1));
         $expectedValue = $lexemeFactory->createLexeme(TokenType::INVALID_BYTES);
         $expectedValue->setBufferInfo($lexemeInfo);
         $scanner = new LexemeReader($buffer, new Utf8LexemeMatcher, $lexemeFactory);

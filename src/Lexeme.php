@@ -29,22 +29,22 @@ class Lexeme
         return $this->isEoi;
     }
 
-    public function setBufferInfo(BufferInfoInterface $bufferInfo): void
+    public function setBufferInfo(LexemeBufferInfoInterface $bufferInfo): void
     {
         $this->bufferInfo = $bufferInfo;
     }
 
-    public function getBufferInfo(): ?BufferInfoInterface
+    public function getBufferInfo(): ?LexemeBufferInfoInterface
     {
         return $this->bufferInfo;
     }
 
-    public function setMatcherInfo(MatcherInfoInterface $matcherInfo): void
+    public function setMatcherInfo(LexemeMatcherInfoInterface $matcherInfo): void
     {
         $this->matcherInfo = $matcherInfo;
     }
 
-    public function getMatcherInfo(): ?MatcherInfoInterface
+    public function getMatcherInfo(): ?LexemeMatcherInfoInterface
     {
         return $this->matcherInfo;
     }

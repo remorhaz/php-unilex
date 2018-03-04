@@ -1,10 +1,9 @@
 <?php
 
-namespace Remorhaz\UniLex\Unicode;
+namespace Remorhaz\UniLex\Unicode\Grammar;
 
 use Remorhaz\UniLex\Lexeme;
 use Remorhaz\UniLex\LexemeFactoryInterface;
-use Remorhaz\UniLex\Unicode\Grammar\TokenType;
 
 class LexemeFactory implements LexemeFactoryInterface
 {
