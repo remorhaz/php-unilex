@@ -160,7 +160,7 @@ class SymbolBufferTest extends TestCase
     {
         $buffer = $this->createSymbolBuffer('ab');
         $buffer->nextSymbol();
-        $buffer->finishLexeme();
+        $buffer->finishLexeme(new Lexeme(1, false));
         $actualValue = $buffer->getSymbol();
         self::assertSame(0x62, $actualValue);
     }
@@ -220,7 +220,7 @@ class SymbolBufferTest extends TestCase
         while ($nextSymbolCount-- > 0) {
             $buffer->nextSymbol();
         }
-        $buffer->finishLexeme();
+        $buffer->finishLexeme(new Lexeme(1, false));
         $expectedValue = new LexemePosition($startOffset, $finishOffset);
         $actualValue = $buffer
             ->getLexemeInfo()
@@ -397,7 +397,7 @@ class SymbolBufferTest extends TestCase
         while ($offset-- > 0) {
             $buffer->nextSymbol();
         }
-        $buffer->finishLexeme();
+        $buffer->finishLexeme(new Lexeme(1, false));
         while ($length-- > 0) {
             $buffer->nextSymbol();
         }

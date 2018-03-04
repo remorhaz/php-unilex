@@ -3,6 +3,7 @@
 namespace Remorhaz\UniLex\Unicode;
 
 use Remorhaz\UniLex\Exception;
+use Remorhaz\UniLex\Lexeme;
 use Remorhaz\UniLex\LexemeExtractInterface;
 use Remorhaz\UniLex\LexemeFactoryInterface;
 use Remorhaz\UniLex\LexemeInfoInterface;
@@ -67,7 +68,7 @@ class SymbolBuffer implements SymbolBufferInterface, LexemeExtractInterface
         $this->sourcePreviewOffset = $this->sourceStartOffset;
     }
 
-    public function finishLexeme(): void
+    public function finishLexeme(Lexeme $lexeme): void
     {
         $this->startOffset = $this->previewOffset;
         $this->sourceStartOffset = $this->sourcePreviewOffset;

@@ -45,14 +45,14 @@ class SymbolBufferLexemeReader implements LexemeReaderInterface
         }
         $this->isEnd = true;
         $lexeme = $this->lexemeFactory->createEoiLexeme();
-        $this->buffer->finishLexeme();
+        $this->buffer->finishLexeme($lexeme);
         return $lexeme;
     }
 
     private function readSymbolLexeme(): Lexeme
     {
         $lexeme = $this->matcher->match($this->buffer, $this->lexemeFactory);
-        $this->buffer->finishLexeme();
+        $this->buffer->finishLexeme($lexeme);
         return $lexeme;
     }
 }

@@ -3,6 +3,7 @@
 namespace Remorhaz\UniLex\Test;
 
 use PHPUnit\Framework\TestCase;
+use Remorhaz\UniLex\Lexeme;
 use Remorhaz\UniLex\LexemePosition;
 use Remorhaz\UniLex\SymbolBuffer;
 
@@ -83,7 +84,7 @@ class SymbolBufferTest extends TestCase
     {
         $buffer = SymbolBuffer::fromString('ab');
         $buffer->nextSymbol();
-        $buffer->finishLexeme();
+        $buffer->finishLexeme(new Lexeme(1, false));
         $buffer->resetLexeme();
         $actualValue = $buffer->getSymbol();
         self::assertSame(0x62, $actualValue);

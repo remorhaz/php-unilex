@@ -11,7 +11,7 @@ interface SymbolBufferInterface
 
     public function resetLexeme(): void;
 
-    public function finishLexeme(): void;
+    public function finishLexeme(Lexeme $lexeme): void;
 
     public function getSymbol(): int;
 
