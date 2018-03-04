@@ -75,7 +75,7 @@ class LexemeBuffer implements SymbolBufferInterface, LexemeExtractInterface
      * @throws Exception
      * @todo Attach merged source input info, maybe?
      */
-    public function getLexemeInfo(): BufferInfoInterface
+    private function getLexemeInfo(): BufferInfoInterface
     {
         $position = new LexemePosition($this->startOffset, $this->previewOffset);
         return new SymbolBufferLexemeInfo($this, $position);

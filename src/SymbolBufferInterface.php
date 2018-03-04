@@ -14,6 +14,4 @@ interface SymbolBufferInterface
     public function finishLexeme(Lexeme $lexeme): void;
 
     public function getSymbol(): int;
-
-    public function getLexemeInfo(): BufferInfoInterface;
 }
