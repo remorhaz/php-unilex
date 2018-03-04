@@ -3,12 +3,9 @@
 namespace Remorhaz\UniLex\Test\Unicode;
 
 use PHPUnit\Framework\TestCase;
-use Remorhaz\UniLex\LexemePosition;
 use Remorhaz\UniLex\SymbolBuffer;
-use Remorhaz\UniLex\SymbolBufferLexemeInfo;
 use Remorhaz\UniLex\Unicode\Grammar\TokenType;
 use Remorhaz\UniLex\Unicode\LexemeFactory;
-use Remorhaz\UniLex\Unicode\InvalidBytesLexeme;
 use Remorhaz\UniLex\Unicode\SymbolInfo;
 use Remorhaz\UniLex\Unicode\Utf8LexemeMatcher;
 
@@ -20,19 +17,29 @@ class Utf8LexemeMatcherTest extends TestCase
 
     /**
      * @param string $text
+     * @dataProvider providerValidSymbolList
+     */
+    public function testMatch_ValidText_ReturnsSymbolLexeme(string $text): void
+    {
+        $buffer = SymbolBuffer::fromString($text);
+        $actual = (new Utf8LexemeMatcher)->match($buffer, new LexemeFactory)->getType();
+        self::assertEquals(TokenType::SYMBOL, $actual);
+    }
+
+    /**
+     * @param string $text
      * @param int $expectedSymbol
      * @dataProvider providerValidSymbolList
      */
-    public function testMatch_ValidText_ReturnsMatchingSymbolLexeme(
+    public function testMatch_ValidText_ReturnsMatchingSymbolInfoInLexeme(
         string $text,
         int $expectedSymbol
     ): void {
         $buffer = SymbolBuffer::fromString($text);
         $lexemeFactory = new LexemeFactory;
-        $lexeme = $lexemeFactory->createLexeme(TokenType::SYMBOL);
-        $lexeme->setMatcherInfo(new SymbolInfo($expectedSymbol));
-        $actual = (new Utf8LexemeMatcher)->match($buffer, $lexemeFactory);
-        self::assertEquals($lexeme, $actual);
+        $expectedValue = new SymbolInfo($expectedSymbol);
+        $actualValue = (new Utf8LexemeMatcher)->match($buffer, $lexemeFactory)->getMatcherInfo();
+        self::assertEquals($expectedValue, $actualValue);
     }
 
     public function providerValidSymbolList(): array
@@ -50,24 +57,17 @@ class Utf8LexemeMatcherTest extends TestCase
 
     /**
      * @param string $text
-     * @param int $expectedFinishOffset
-     * @param int $invalidByte
-     * @throws \Remorhaz\UniLex\Exception
-     * @dataProvider providerInvalidFirstByteList
+     * @dataProvider providerInvalidText
      */
-    public function testMatch_InvalidFirstByteText_ReturnsMatchingInvalidBytesLexeme(
-        string $text,
-        int $expectedFinishOffset,
-        int $invalidByte
-    ): void {
+    public function testMatch_InvalidText_ReturnsInvalidBytesLexeme(string $text): void
+    {
         $buffer = SymbolBuffer::fromString($text);
-        $lexemeInfo = new SymbolBufferLexemeInfo($buffer, new LexemePosition(0, $expectedFinishOffset));
-        $lexeme = new InvalidBytesLexeme($lexemeInfo, $invalidByte);
-        $actual = (new Utf8LexemeMatcher)->match($buffer, new LexemeFactory);
-        self::assertEquals($lexeme, $actual);
+        $lexemeFactory = new LexemeFactory;
+        $actual = (new Utf8LexemeMatcher)->match($buffer, $lexemeFactory)->getType();
+        self::assertEquals(TokenType::INVALID_BYTES, $actual);
     }
 
-    public function providerInvalidFirstByteList(): array
+    public function providerInvalidText(): array
     {
         return [
             'Single tail byte' => ["\x80", 1, 0x80],

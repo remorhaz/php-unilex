@@ -9,7 +9,6 @@ use Remorhaz\UniLex\SymbolBufferLexemeInfo;
 use Remorhaz\UniLex\SymbolBufferLexemeReader;
 use Remorhaz\UniLex\Unicode\Grammar\TokenType;
 use Remorhaz\UniLex\Unicode\LexemeFactory;
-use Remorhaz\UniLex\Unicode\InvalidBytesLexeme;
 use Remorhaz\UniLex\Unicode\SymbolInfo;
 use Remorhaz\UniLex\Unicode\Utf8LexemeMatcher;
 
@@ -101,7 +100,7 @@ class SymbolBufferLexemeReaderTest extends TestCase
         $buffer = SymbolBuffer::fromString("\x80");
         $lexemeFactory = new LexemeFactory;
         $lexemeInfo = new SymbolBufferLexemeInfo($buffer, new LexemePosition(0, 1));
-        $expectedValue = new InvalidBytesLexeme($lexemeInfo, 0x80);
+        $expectedValue = $lexemeFactory->createLexeme(TokenType::INVALID_BYTES);
         $expectedValue->setBufferInfo($lexemeInfo);
         $scanner = new SymbolBufferLexemeReader($buffer, new Utf8LexemeMatcher, $lexemeFactory);
         $actualValue = $scanner->read();
