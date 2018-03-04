@@ -3,14 +3,13 @@
 namespace Remorhaz\UniLex\Test\RegExp;
 
 use PHPUnit\Framework\TestCase;
-use Remorhaz\UniLex\Grammar\ContextFree\Grammar;
+use Remorhaz\UniLex\Grammar\ContextFree\GrammarLoader;
 use Remorhaz\UniLex\Grammar\ContextFree\LexemeFactory;
-use Remorhaz\UniLex\LexemePosition;
-use Remorhaz\UniLex\RegExp\SymbolLexeme;
+use Remorhaz\UniLex\RegExp\Grammar\ConfigFile;
 use Remorhaz\UniLex\RegExp\LexemeMatcher;
-use Remorhaz\UniLex\RegExp\TokenType;
+use Remorhaz\UniLex\RegExp\Grammar\TokenType;
 use Remorhaz\UniLex\SymbolBuffer;
-use Remorhaz\UniLex\SymbolBufferLexemeInfo;
+use Remorhaz\UniLex\Unicode\SymbolInfo;
 
 /**
  * @covers \Remorhaz\UniLex\RegExp\LexemeMatcher
@@ -19,24 +18,21 @@ class LexemeMatcherTest extends TestCase
 {
 
     /**
-     * @param int $type
+     * @param int $expectedType
      * @param int $symbol
-     * @dataProvider providerValidLexeme
+     * @dataProvider providerValidLexemeType
      * @throws \Remorhaz\UniLex\Exception
      */
-    public function testMatch_ValidBuffer_ReturnsMatchingSymbolLexeme(int $type, int $symbol): void
+    public function testMatch_ValidBuffer_ReturnsLexemeWithMatchingType(int $expectedType, int $symbol): void
     {
         $buffer = SymbolBuffer::fromSymbols($symbol);
-        $matcher = new LexemeMatcher;
-        $info = new SymbolBufferLexemeInfo($buffer, new LexemePosition(0, 1));
-        $expectedLexeme = new SymbolLexeme($info, $type, $symbol);
-        $grammar = new Grammar(1, 2);
+        $grammar = GrammarLoader::loadFile(ConfigFile::getPath());
         $lexemeFactory = new LexemeFactory($grammar);
-        $actual = $matcher->match($buffer, $lexemeFactory);
-        self::assertEquals($expectedLexeme, $actual);
+        $actualValue = (new LexemeMatcher)->match($buffer, $lexemeFactory)->getType();
+        self::assertEquals($expectedType, $actualValue);
     }
 
-    public function providerValidLexeme(): array
+    public function providerValidLexemeType(): array
     {
         return [
             [TokenType::CTL_ASCII, ord("\t")],
@@ -87,17 +83,39 @@ class LexemeMatcherTest extends TestCase
     }
 
     /**
+     * @param int $symbol
+     * @dataProvider providerValidLexemeSymbol
      * @throws \Remorhaz\UniLex\Exception
      */
-    public function testMatch_InvalidBuffer_ReturnsMatchingSymbolLexeme(): void
+    public function testMatch_ValidBuffer_ReturnsLexemeWithMatchingSymbolInfo(int $symbol): void
+    {
+        $buffer = SymbolBuffer::fromSymbols($symbol);
+        $grammar = GrammarLoader::loadFile(ConfigFile::getPath());
+        $lexemeFactory = new LexemeFactory($grammar);
+        $actualValue = (new LexemeMatcher)->match($buffer, $lexemeFactory)->getMatcherInfo();
+        $expectedValue = new SymbolInfo($symbol);
+        self::assertEquals($expectedValue, $actualValue);
+    }
+
+    public function providerValidLexemeSymbol(): array
+    {
+        $data = [];
+        foreach ($this->providerValidLexemeType() as $key => $dataSet) {
+            $data[$key] = [$dataSet[1]];
+        }
+        return $data;
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testMatch_InvalidBuffer_ReturnsInvalidLexeme(): void
     {
         $buffer = SymbolBuffer::fromSymbols(0x110000);
         $matcher = new LexemeMatcher;
-        $info = new SymbolBufferLexemeInfo($buffer, new LexemePosition(0, 1));
-        $expectedLexeme = new SymbolLexeme($info, TokenType::INVALID, 0x110000);
-        $grammar = new Grammar(1, 2);
+        $grammar = GrammarLoader::loadFile(ConfigFile::getPath());
         $lexemeFactory = new LexemeFactory($grammar);
-        $actual = $matcher->match($buffer, $lexemeFactory);
-        self::assertEquals($expectedLexeme, $actual);
+        $actualValue = $matcher->match($buffer, $lexemeFactory)->getType();
+        self::assertEquals(TokenType::INVALID, $actualValue);
     }
 }

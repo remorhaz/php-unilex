@@ -1,18 +1,11 @@
 <?php
 
-namespace Remorhaz\UniLex\RegExp;
+use Remorhaz\UniLex\Grammar\ContextFree\GrammarLoader;
+use Remorhaz\UniLex\RegExp\Grammar\TokenType;
+use Remorhaz\UniLex\RegExp\Grammar\ProductionType;
 
-use Remorhaz\UniLex\Exception;
-
-class ParserTable
-{
-
-    /**
-     * Map of terminal productions. Key is production ID, value is list of terminal IDs.
-     *
-     * @var array
-     */
-    private $terminalProductionMap = [
+return [
+    GrammarLoader::TOKEN_MAP_KEY => [
         ProductionType::ALT_SEPARATOR => [TokenType::VERTICAL_LINE],
         ProductionType::ASSERT_LINE_START => [TokenType::CIRCUMFLEX],
         ProductionType::ASSERT_LINE_FINISH => [TokenType::DOLLAR],
@@ -225,15 +218,8 @@ class ParserTable
         ],
         ProductionType::PRINTABLE_ASCII_OTHER => [TokenType::PRINTABLE_ASCII_OTHER],
         ProductionType::EOI => [TokenType::EOI],
-    ];
-
-    /**
-     * Map of non-terminal productions. Key is production ID, value is list of lists of production IDs.
-     * Empty list of production IDs means ε-production.
-     *
-     * @var array
-     */
-    private $nonTerminalProductionMap = [
+    ],
+    GrammarLoader::PRODUCTION_MAP_KEY => [
         ProductionType::PARTS => [
             [ProductionType::PART, ProductionType::ALT_PARTS],
         ],
@@ -435,58 +421,7 @@ class ParserTable
             [ProductionType::ASCII_LETTER],
             [ProductionType::PRINTABLE_ASCII_OTHER],
         ],
-    ];
-
-    private $first;
-
-    private $firstContainsEpsilon;
-
-    public function isTerminal(int $productionType): bool
-    {
-        return isset($this->terminalProductionMap[$productionType]);
-    }
-
-    public function isNonTerminal(int $productionType): bool
-    {
-        return isset($this->nonTerminalProductionMap[$productionType]);
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function build(): void
-    {
-        $this->first = [];
-        $this->firstContainsEpsilon = [];
-        foreach ($this->terminalProductionMap as $nonTerminalId => $terminalIdList) {
-            foreach ($terminalIdList as $terminalId) {
-                $this->first[$nonTerminalId][] = $terminalId;
-            }
-        }
-        foreach ($this->nonTerminalProductionMap as $nonTerminalId => $productionList) {
-            if ($this->isTerminal($nonTerminalId)) {
-                throw new Exception("Production {$nonTerminalId} is a terminal");
-            }
-            foreach ($productionList as $production) {
-                if (empty($production)) {
-                    $this->firstContainsEpsilon[$nonTerminalId] = true;
-                }
-            }
-        }
-        $insertCount = 0;
-        do {
-            foreach ($this->nonTerminalProductionMap as $nonTerminalId => $productionList) {
-                foreach ($productionList as $production) {
-                    foreach ($production as $productionId) {
-                        if (empty($this->first[$productionId])) {
-                            continue;
-                        }
-                        if (empty($this->firstContainsEpsilon[$productionId])) {
-                            continue;
-                        }
-                    }
-                }
-            }
-        } while ($insertCount > 0);
-    }
-}
+    ],
+    GrammarLoader::START_SYMBOL_KEY => ProductionType::PARTS,
+    GrammarLoader::EOI_SYMBOL_KEY => ProductionType::EOI,
+];

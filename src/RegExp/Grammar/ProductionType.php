@@ -1,6 +1,6 @@
 <?php
 
-namespace Remorhaz\UniLex\RegExp;
+namespace Remorhaz\UniLex\RegExp\Grammar;
 
 /**
  * List of all available UniLex regular expression productions.

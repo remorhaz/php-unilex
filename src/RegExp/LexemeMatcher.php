@@ -5,7 +5,9 @@ namespace Remorhaz\UniLex\RegExp;
 use Remorhaz\UniLex\Lexeme;
 use Remorhaz\UniLex\LexemeFactoryInterface;
 use Remorhaz\UniLex\LexemeMatcherInterface;
+use Remorhaz\UniLex\RegExp\Grammar\TokenType;
 use Remorhaz\UniLex\SymbolBufferInterface;
+use Remorhaz\UniLex\Unicode\SymbolInfo;
 
 class LexemeMatcher implements LexemeMatcherInterface
 {
@@ -194,11 +196,10 @@ class LexemeMatcher implements LexemeMatcherInterface
         }
 
         valid_symbol:
-        $buffer->nextSymbol();
-        return new SymbolLexeme($buffer->getLexemeInfo(), $type, $symbol);
-
         invalid_symbol:
         $buffer->nextSymbol();
-        return new SymbolLexeme($buffer->getLexemeInfo(), $type, $symbol);
+        $lexeme = $lexemeFactory->createLexeme($type);
+        $lexeme->setMatcherInfo(new SymbolInfo($symbol));
+        return $lexeme;
     }
 }
