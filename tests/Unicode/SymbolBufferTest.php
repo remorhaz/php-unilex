@@ -84,9 +84,9 @@ class SymbolBufferTest extends TestCase
     /**
      * @throws \Remorhaz\UniLex\Exception
      * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Invalid lexeme at index 0
+     * @expectedExceptionMessage No matcher info in lexeme at index 0
      */
-    public function testGetSymbol_InvalidMatcher_ThrowsException(): void
+    public function testGetSymbol_NoInfoSetByMatcher_ThrowsException(): void
     {
         $this
             ->createSymbolBuffer('a', $this->createInvalidLexemeMatcher())
@@ -96,9 +96,9 @@ class SymbolBufferTest extends TestCase
     /**
      * @throws \Remorhaz\UniLex\Exception
      * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Invalid lexeme at index 0
+     * @expectedExceptionMessage No matcher info in lexeme at index 0
      */
-    public function testNextSymbol_InvalidMatcher_ThrowsException(): void
+    public function testNextSymbol_NoInfoSetByMatcher_ThrowsException(): void
     {
         $this
             ->createSymbolBuffer('a', $this->createInvalidLexemeMatcher())

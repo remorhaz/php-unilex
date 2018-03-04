@@ -5,6 +5,7 @@ namespace Remorhaz\UniLex\Unicode;
 use Remorhaz\UniLex\Lexeme;
 use Remorhaz\UniLex\LexemeFactoryInterface;
 use Remorhaz\UniLex\SymbolBufferInterface;
+use Remorhaz\UniLex\Unicode\Grammar\TokenType;
 
 class Utf8LexemeMatcher implements LexemeMatcherInterface
 {
@@ -16,7 +17,7 @@ class Utf8LexemeMatcher implements LexemeMatcherInterface
         if ($firstByte >= 0 && $firstByte <= 0x7F) { // 1-byte symbol
             $symbolInfo = new SymbolInfo($firstByte);
             $buffer->nextSymbol();
-            $lexeme = new SymbolLexeme($buffer->getLexemeInfo(), $symbolInfo->getCode());
+            $lexeme = $lexemeFactory->createLexeme(TokenType::SYMBOL);
             $lexeme->setMatcherInfo($symbolInfo);
             return $lexeme;
         }
@@ -89,7 +90,7 @@ class Utf8LexemeMatcher implements LexemeMatcherInterface
             $symbol |= ($tailByte & 0x3F);
             $symbolInfo = new SymbolInfo($symbol);
             $buffer->nextSymbol();
-            $lexeme = new SymbolLexeme($buffer->getLexemeInfo(), $symbolInfo->getCode());
+            $lexeme = $lexemeFactory->createLexeme(TokenType::SYMBOL);
             $lexeme->setMatcherInfo($symbolInfo);
             return $lexeme;
         }

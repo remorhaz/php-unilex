@@ -131,9 +131,13 @@ class SymbolBuffer implements SymbolBufferInterface, LexemeExtractInterface
             return;
         }
         $lexeme = $this->matcher->match($this->source, $this->lexemeFactory);
-        if (!($lexeme instanceof SymbolLexeme)) {
-            throw new Exception("Invalid lexeme at index {$this->previewOffset}");
+        $symbolInfo = $lexeme->getMatcherInfo();
+        if (!isset($symbolInfo)) {
+            throw new Exception("No matcher info in lexeme at index {$this->previewOffset}");
         }
-        $this->data[$this->previewOffset] = $lexeme->getSymbol();
+        if (!($symbolInfo instanceof SymbolInfo)) {
+            throw new Exception("Invalid lexeme info at index {$this->previewOffset}");
+        }
+        $this->data[$this->previewOffset] = $symbolInfo->getCode();
     }
 }

@@ -6,10 +6,10 @@ use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\LexemePosition;
 use Remorhaz\UniLex\SymbolBuffer;
 use Remorhaz\UniLex\SymbolBufferLexemeInfo;
+use Remorhaz\UniLex\Unicode\Grammar\TokenType;
 use Remorhaz\UniLex\Unicode\LexemeFactory;
 use Remorhaz\UniLex\Unicode\InvalidBytesLexeme;
 use Remorhaz\UniLex\Unicode\SymbolInfo;
-use Remorhaz\UniLex\Unicode\SymbolLexeme;
 use Remorhaz\UniLex\Unicode\Utf8LexemeMatcher;
 
 /**
@@ -20,35 +20,31 @@ class Utf8LexemeMatcherTest extends TestCase
 
     /**
      * @param string $text
-     * @param int $expectedFinishOffset
      * @param int $expectedSymbol
      * @dataProvider providerValidSymbolList
-     * @throws \Remorhaz\UniLex\Exception
      */
     public function testMatch_ValidText_ReturnsMatchingSymbolLexeme(
         string $text,
-        int $expectedFinishOffset,
         int $expectedSymbol
     ): void {
         $buffer = SymbolBuffer::fromString($text);
-        $lexemeInfo = new SymbolBufferLexemeInfo($buffer, new LexemePosition(0, $expectedFinishOffset));
-        $matcherInfo = new SymbolInfo($expectedSymbol);
-        $lexeme = new SymbolLexeme($lexemeInfo, $matcherInfo->getCode());
-        $lexeme->setMatcherInfo($matcherInfo);
-        $actual = (new Utf8LexemeMatcher)->match($buffer, new LexemeFactory);
+        $lexemeFactory = new LexemeFactory;
+        $lexeme = $lexemeFactory->createLexeme(TokenType::SYMBOL);
+        $lexeme->setMatcherInfo(new SymbolInfo($expectedSymbol));
+        $actual = (new Utf8LexemeMatcher)->match($buffer, $lexemeFactory);
         self::assertEquals($lexeme, $actual);
     }
 
     public function providerValidSymbolList(): array
     {
         return [
-            'Single ASCII char' => ['a', 1, 0x61],
-            'Multiple ASCII chars' => ['cba', 1, 0x63],
-            'Single cyrillic char' => ['б', 2, 0x0431],
-            'Single Japanese hieroglyph' => ['本', 3, 0x672C],
-            'Single cuneiform char' => ["\u{0122F0}", 4, 0x122F0],
-            'Single 5-byte NULL char' => ["\xF8\x80\x80\x80\x80", 5, 0x00],
-            'Single 6-byte NULL char' => ["\xFC\x80\x80\x80\x80\x80", 6, 0x00],
+            'Single ASCII char' => ['a', 0x61],
+            'Multiple ASCII chars' => ['cba', 0x63],
+            'Single cyrillic char' => ['б', 0x0431],
+            'Single Japanese hieroglyph' => ['本', 0x672C],
+            'Single cuneiform char' => ["\u{0122F0}", 0x122F0],
+            'Single 5-byte NULL char' => ["\xF8\x80\x80\x80\x80", 0x00],
+            'Single 6-byte NULL char' => ["\xFC\x80\x80\x80\x80\x80", 0x00],
         ];
     }
 
