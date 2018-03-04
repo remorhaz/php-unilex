@@ -9,7 +9,7 @@ class Lexeme
 
     private $isEoi;
 
-    public function __construct(int $type, bool $isEoi = false)
+    public function __construct(int $type, bool $isEoi)
     {
         $this->type = $type;
         $this->isEoi = $isEoi;

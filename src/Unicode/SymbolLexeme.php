@@ -14,7 +14,7 @@ class SymbolLexeme extends Lexeme
 
     public function __construct(LexemeInfoInterface $info, int $symbol)
     {
-        parent::__construct($symbol);
+        parent::__construct($symbol, false);
         $this->info = $info;
         $this->symbol = $symbol;
     }

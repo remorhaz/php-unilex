@@ -13,7 +13,7 @@ class LexemeTest extends TestCase
 
     public function testGetType(): void
     {
-        $actualValue = (new Lexeme(1))->getType();
+        $actualValue = (new Lexeme(1, false))->getType();
         self::assertSame(1, $actualValue);
     }
 }

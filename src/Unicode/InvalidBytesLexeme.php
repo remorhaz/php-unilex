@@ -12,7 +12,7 @@ class InvalidBytesLexeme extends Lexeme
 
     public function __construct(LexemeInfoInterface $info, int $type)
     {
-        parent::__construct($type);
+        parent::__construct($type, false);
         $this->info = $info;
     }
 
