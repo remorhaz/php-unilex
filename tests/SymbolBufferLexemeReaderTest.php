@@ -29,6 +29,7 @@ class SymbolBufferLexemeReaderTest extends TestCase
         $lexemeFactory = new LexemeFactory($grammar);
         $lexemeInfo = new SymbolBufferLexemeInfo($buffer, new LexemePosition(0, 1));
         $expectedValue = new SymbolLexeme($lexemeInfo, 0x00000061);
+        $expectedValue->setBufferInfo($lexemeInfo);
         $scanner = new SymbolBufferLexemeReader($buffer, new Utf8LexemeMatcher, $lexemeFactory);
         $actualValue = $scanner->read();
         self::assertEquals($expectedValue, $actualValue);
@@ -44,6 +45,7 @@ class SymbolBufferLexemeReaderTest extends TestCase
         $lexemeFactory = new LexemeFactory($grammar);
         $lexemeInfo = new SymbolBufferLexemeInfo($buffer, new LexemePosition(1, 2));
         $expectedValue = new SymbolLexeme($lexemeInfo, 0x00000062);
+        $expectedValue->setBufferInfo($lexemeInfo);
         $scanner = new SymbolBufferLexemeReader($buffer, new Utf8LexemeMatcher, $lexemeFactory);
         $scanner->read();
         $actualValue = $scanner->read();
@@ -105,6 +107,7 @@ class SymbolBufferLexemeReaderTest extends TestCase
         $lexemeFactory = new LexemeFactory($grammar);
         $lexemeInfo = new SymbolBufferLexemeInfo($buffer, new LexemePosition(0, 1));
         $expectedValue = new InvalidBytesLexeme($lexemeInfo, 0x80);
+        $expectedValue->setBufferInfo($lexemeInfo);
         $scanner = new SymbolBufferLexemeReader($buffer, new Utf8LexemeMatcher, $lexemeFactory);
         $actualValue = $scanner->read();
         self::assertEquals($expectedValue, $actualValue);

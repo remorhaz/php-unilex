@@ -74,8 +74,13 @@ class SymbolBuffer implements SymbolBufferInterface, LexemeExtractInterface
         $this->previewPosition = $this->startPosition;
     }
 
+    /**
+     * @param Lexeme $lexeme
+     * @throws Exception
+     */
     public function finishLexeme(Lexeme $lexeme): void
     {
+        $lexeme->setBufferInfo($this->getLexemeInfo());
         $this->startPosition = $this->previewPosition;
     }
 

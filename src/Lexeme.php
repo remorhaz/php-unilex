@@ -9,6 +9,8 @@ class Lexeme
 
     private $isEoi;
 
+    private $bufferInfo;
+
     public function __construct(int $type, bool $isEoi)
     {
         $this->type = $type;
@@ -23,5 +25,15 @@ class Lexeme
     public function isEoi(): bool
     {
         return $this->isEoi;
+    }
+
+    public function setBufferInfo(LexemeInfoInterface $bufferInfo): void
+    {
+        $this->bufferInfo = $bufferInfo;
+    }
+
+    public function getBufferInfo(): ?LexemeInfoInterface
+    {
+        return $this->bufferInfo;
     }
 }
