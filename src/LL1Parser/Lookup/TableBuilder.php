@@ -28,11 +28,48 @@ class TableBuilder
     public function getTable(): TableInterface
     {
         if (!isset($this->table)) {
+            $this->checkConflicts();
             $table = new Table;
             $this->addProductionsFromNonTerminalMap($table);
             $this->table = $table;
         }
         return $this->table;
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function checkConflicts(): void
+    {
+        foreach ($this->grammar->getNonTerminalList() as $nonTerminalId) {
+            $follow = $this->getFollow()->getTokens($nonTerminalId);
+            $productionList = $this->grammar->getProductionList($nonTerminalId);
+            foreach ($productionList as $i => $productionAlpha) {
+                $firstAlpha = $this->getFirst()->getProductionTokens(...$productionAlpha);
+                foreach ($productionList as $j => $productionBeta) {
+                    if ($i == $j) {
+                        continue;
+                    }
+                    $firstBeta = $this->getFirst()->getProductionTokens(...$productionBeta);
+                    $firstFirst = array_intersect($firstAlpha, $firstBeta);
+                    if (!empty($firstFirst)) {
+                        $intersectionText = implode(', ', $firstFirst);
+                        throw new Exception(
+                            "Symbol {$nonTerminalId} has FIRST({$i})/FIRST({$j}) conflict: {$intersectionText}"
+                        );
+                    }
+                    if ($this->getFirst()->productionHasEpsilon(...$productionBeta)) {
+                        $firstFollow = array_intersect($follow, $firstAlpha);
+                        if (!empty($firstFollow)) {
+                            $intersectionText = implode(', ', $firstFollow);
+                            throw new Exception(
+                                "Symbol {$nonTerminalId} has FIRST({$i})/FOLLOW conflict (ε ∈ {$j}): {$intersectionText}"
+                            );
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**
