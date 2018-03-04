@@ -29,30 +29,28 @@ class SymbolBufferLexemeReader implements LexemeReaderInterface
      */
     public function read(): Lexeme
     {
-        return $this->buffer->isEnd()
-            ? $this->readEoiLexeme()
-            : $this->readSymbolLexeme();
+        $lexeme = $this->buffer->isEnd()
+            ? $this->matchEoiLexeme()
+            : $this->matchSymbolLexeme();
+        $this->buffer->finishLexeme($lexeme);
+        return $lexeme;
     }
 
     /**
      * @return Lexeme
      * @throws Exception
      */
-    private function readEoiLexeme(): Lexeme
+    private function matchEoiLexeme(): Lexeme
     {
         if ($this->isEnd) {
             throw new Exception("Buffer end reached");
         }
         $this->isEnd = true;
-        $lexeme = $this->lexemeFactory->createEoiLexeme();
-        $this->buffer->finishLexeme($lexeme);
-        return $lexeme;
+        return $this->lexemeFactory->createEoiLexeme();
     }
 
-    private function readSymbolLexeme(): Lexeme
+    private function matchSymbolLexeme(): Lexeme
     {
-        $lexeme = $this->matcher->match($this->buffer, $this->lexemeFactory);
-        $this->buffer->finishLexeme($lexeme);
-        return $lexeme;
+        return $this->matcher->match($this->buffer, $this->lexemeFactory);
     }
 }
