@@ -12,7 +12,7 @@ use Remorhaz\UniLex\RegExp\Grammar\SymbolType;
 use Remorhaz\UniLex\RegExp\Grammar\TokenType;
 use Remorhaz\UniLex\RegExp\TokenMatcher;
 use Remorhaz\UniLex\LL1Parser\ParseTreeBuilder;
-use Remorhaz\UniLex\Unicode\BufferFactory;
+use Remorhaz\UniLex\Unicode\CharBufferFactory;
 
 /**
  * @coversNothing
@@ -26,7 +26,7 @@ class ParserTest extends TestCase
      */
     public function testParser()
     {
-        $buffer = BufferFactory::createFromUtf8String('hello');
+        $buffer = CharBufferFactory::createFromUtf8String('hello');
         $grammar = GrammarLoader::loadFile(ConfigFile::getPath());
         $reader = new TokenReader($buffer, new TokenMatcher, new TokenFactory($grammar));
         $listener = new ParseTreeBuilder($grammar);

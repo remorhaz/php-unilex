@@ -4,7 +4,7 @@ namespace Remorhaz\UniLex;
 
 use SplFixedArray;
 
-class SymbolBuffer implements SymbolBufferInterface, TokenExtractInterface
+class CharBuffer implements CharBufferInterface, TokenExtractInterface
 {
 
     /**

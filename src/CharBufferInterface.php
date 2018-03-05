@@ -2,7 +2,7 @@
 
 namespace Remorhaz\UniLex;
 
-interface SymbolBufferInterface
+interface CharBufferInterface
 {
 
     public function isEnd(): bool;

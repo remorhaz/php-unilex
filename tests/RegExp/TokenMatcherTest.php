@@ -8,7 +8,7 @@ use Remorhaz\UniLex\Grammar\ContextFree\TokenFactory;
 use Remorhaz\UniLex\RegExp\Grammar\ConfigFile;
 use Remorhaz\UniLex\RegExp\TokenMatcher;
 use Remorhaz\UniLex\RegExp\Grammar\TokenType;
-use Remorhaz\UniLex\SymbolBuffer;
+use Remorhaz\UniLex\CharBuffer;
 use Remorhaz\UniLex\Unicode\SymbolInfo;
 
 /**
@@ -25,7 +25,7 @@ class TokenMatcherTest extends TestCase
      */
     public function testMatch_ValidBuffer_ReturnsTokenWithMatchingType(int $expectedType, int $symbol): void
     {
-        $buffer = SymbolBuffer::fromSymbols($symbol);
+        $buffer = CharBuffer::fromSymbols($symbol);
         $grammar = GrammarLoader::loadFile(ConfigFile::getPath());
         $actualValue = (new TokenMatcher)
             ->match($buffer, new TokenFactory($grammar))
@@ -90,7 +90,7 @@ class TokenMatcherTest extends TestCase
      */
     public function testMatch_ValidBuffer_ReturnsTokenWithMatchingSymbolInfo(int $symbol): void
     {
-        $buffer = SymbolBuffer::fromSymbols($symbol);
+        $buffer = CharBuffer::fromSymbols($symbol);
         $grammar = GrammarLoader::loadFile(ConfigFile::getPath());
         $actualValue = (new TokenMatcher)
             ->match($buffer, new TokenFactory($grammar))
@@ -113,7 +113,7 @@ class TokenMatcherTest extends TestCase
      */
     public function testMatch_InvalidBuffer_ReturnsInvalidToken(): void
     {
-        $buffer = SymbolBuffer::fromSymbols(0x110000);
+        $buffer = CharBuffer::fromSymbols(0x110000);
         $matcher = new TokenMatcher;
         $grammar = GrammarLoader::loadFile(ConfigFile::getPath());
         $actualValue = $matcher

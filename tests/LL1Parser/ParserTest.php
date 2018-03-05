@@ -9,7 +9,7 @@ use Remorhaz\UniLex\Grammar\ContextFree\GrammarLoader;
 use Remorhaz\UniLex\Grammar\ContextFree\TokenFactory;
 use Remorhaz\UniLex\LL1Parser\AbstractParserListener;
 use Remorhaz\UniLex\LL1Parser\Parser;
-use Remorhaz\UniLex\SymbolBuffer;
+use Remorhaz\UniLex\CharBuffer;
 use Remorhaz\UniLex\TokenReader;
 use Remorhaz\UniLex\TokenMatcherByType;
 
@@ -29,7 +29,7 @@ class ParserTest extends TestCase
     public function testParse_ValidBuffer_OnTokenTriggeredForEachToken(string $configFile, array $input): void
     {
         $grammar = GrammarLoader::loadFile($configFile);
-        $buffer = SymbolBuffer::fromSymbols(...$input);
+        $buffer = CharBuffer::fromSymbols(...$input);
         $reader = new TokenReader($buffer, new TokenMatcherByType, new TokenFactory($grammar));
         $listener = $this
             ->createMock(AbstractParserListener::class);

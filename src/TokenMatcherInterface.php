@@ -5,5 +5,5 @@ namespace Remorhaz\UniLex;
 interface TokenMatcherInterface
 {
 
-    public function match(SymbolBufferInterface $buffer, TokenFactoryInterface $tokenFactory): Token;
+    public function match(CharBufferInterface $buffer, TokenFactoryInterface $tokenFactory): Token;
 }

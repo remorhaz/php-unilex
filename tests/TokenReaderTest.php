@@ -4,7 +4,7 @@ namespace Remorhaz\UniLex\Test;
 
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\TokenPosition;
-use Remorhaz\UniLex\SymbolBuffer;
+use Remorhaz\UniLex\CharBuffer;
 use Remorhaz\UniLex\TokenBufferInfo;
 use Remorhaz\UniLex\TokenReader;
 use Remorhaz\UniLex\Unicode\Grammar\TokenType;
@@ -23,7 +23,7 @@ class TokenReaderTest extends TestCase
      */
     public function testRead_NotEmptyValidBufferStart_ReturnsMatchingSymbolToken(): void
     {
-        $buffer = SymbolBuffer::fromString('a');
+        $buffer = CharBuffer::fromString('a');
         $tokenFactory = new TokenFactory;
         $tokenInfo = new TokenBufferInfo($buffer, new TokenPosition(0, 1));
         $matcherInfo = new SymbolInfo(0x00000061);
@@ -40,7 +40,7 @@ class TokenReaderTest extends TestCase
      */
     public function testRead_NotEmptyValidBufferMiddle_ReturnsMatchingSymbolToken(): void
     {
-        $buffer = SymbolBuffer::fromString('ab');
+        $buffer = CharBuffer::fromString('ab');
         $tokenFactory = new TokenFactory;
         $tokenInfo = new TokenBufferInfo($buffer, new TokenPosition(1, 2));
         $matcherInfo = new SymbolInfo(0x00000062);
@@ -58,7 +58,7 @@ class TokenReaderTest extends TestCase
      */
     public function testRead_NotEmptyBufferEnd_ReturnsEoiToken(): void
     {
-        $buffer = SymbolBuffer::fromString('a');
+        $buffer = CharBuffer::fromString('a');
         $scanner = new TokenReader($buffer, new Utf8TokenMatcher, new TokenFactory);
         $scanner->read();
         $actualValue = $scanner->read()->isEoi();
@@ -70,7 +70,7 @@ class TokenReaderTest extends TestCase
      */
     public function testRead_EmptyBuffer_ReturnsEoiToken(): void
     {
-        $buffer = SymbolBuffer::fromString('');
+        $buffer = CharBuffer::fromString('');
         $scanner = new TokenReader($buffer, new Utf8TokenMatcher, new TokenFactory);
         $actualValue = $scanner->read()->isEoi();
         self::assertTrue($actualValue);
@@ -83,7 +83,7 @@ class TokenReaderTest extends TestCase
      */
     public function testRead_AfterBufferEnd_ThrowsException(): void
     {
-        $buffer = SymbolBuffer::fromString('');
+        $buffer = CharBuffer::fromString('');
         $scanner = new TokenReader($buffer, new Utf8TokenMatcher, new TokenFactory);
         $scanner->read();
         $scanner->read();
@@ -94,7 +94,7 @@ class TokenReaderTest extends TestCase
      */
     public function testRead_NotEmptyInvalidBufferStart_ReturnsMatch(): void
     {
-        $buffer = SymbolBuffer::fromString("\x80");
+        $buffer = CharBuffer::fromString("\x80");
         $tokenFactory = new TokenFactory;
         $tokenInfo = new TokenBufferInfo($buffer, new TokenPosition(0, 1));
         $expectedValue = $tokenFactory->createToken(TokenType::INVALID_BYTES);

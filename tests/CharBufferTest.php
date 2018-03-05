@@ -5,23 +5,23 @@ namespace Remorhaz\UniLex\Test;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Token;
 use Remorhaz\UniLex\TokenPosition;
-use Remorhaz\UniLex\SymbolBuffer;
+use Remorhaz\UniLex\CharBuffer;
 
 /**
- * @covers \Remorhaz\UniLex\SymbolBuffer
+ * @covers \Remorhaz\UniLex\CharBuffer
  */
-class SymbolBufferTest extends TestCase
+class CharBufferTest extends TestCase
 {
 
     public function testIsEnd_EmptyString_ReturnsTrue(): void
     {
-        $actualValue = SymbolBuffer::fromString('')->isEnd();
+        $actualValue = CharBuffer::fromString('')->isEnd();
         self::assertTrue($actualValue);
     }
 
     public function testIsEnd_NotEmptyString_ReturnsFalse(): void
     {
-        $actualValue = SymbolBuffer::fromString('a')->isEnd();
+        $actualValue = CharBuffer::fromString('a')->isEnd();
         self::assertFalse($actualValue);
     }
 
@@ -32,7 +32,7 @@ class SymbolBufferTest extends TestCase
      */
     public function testGetSymbol_EmptyString_ThrowsException(): void
     {
-        SymbolBuffer::fromString('')->getSymbol();
+        CharBuffer::fromString('')->getSymbol();
     }
 
     /**
@@ -40,7 +40,7 @@ class SymbolBufferTest extends TestCase
      */
     public function testGetSymbol_NotEmptyString_ReturnsFirstByte(): void
     {
-        $actualValue = SymbolBuffer::fromString('a')->getSymbol();
+        $actualValue = CharBuffer::fromString('a')->getSymbol();
         self::assertSame(0x61, $actualValue);
     }
 
@@ -51,7 +51,7 @@ class SymbolBufferTest extends TestCase
      */
     public function testNextSymbol_EmptyString_ThrowsException(): void
     {
-        SymbolBuffer::fromString('')->nextSymbol();
+        CharBuffer::fromString('')->nextSymbol();
     }
 
     /**
@@ -59,7 +59,7 @@ class SymbolBufferTest extends TestCase
      */
     public function testNextSymbol_NotEmptyString_GetSymbolReturnsSecondByte(): void
     {
-        $buffer = SymbolBuffer::fromString('ab');
+        $buffer = CharBuffer::fromString('ab');
         $buffer->nextSymbol();
         $actualValue = $buffer->getSymbol();
         self::assertSame(0x62, $actualValue);
@@ -70,7 +70,7 @@ class SymbolBufferTest extends TestCase
      */
     public function testResetToken_NextSymbolCalled_GetSymbolReturnsFirstByte(): void
     {
-        $buffer = SymbolBuffer::fromString('ab');
+        $buffer = CharBuffer::fromString('ab');
         $buffer->nextSymbol();
         $buffer->resetToken();
         $actualValue = $buffer->getSymbol();
@@ -82,7 +82,7 @@ class SymbolBufferTest extends TestCase
      */
     public function testFinishToken_NotAtBufferEnd_GetSymbolAfterResetTokenReturnsSecondByte(): void
     {
-        $buffer = SymbolBuffer::fromString('ab');
+        $buffer = CharBuffer::fromString('ab');
         $buffer->nextSymbol();
         $buffer->finishToken(new Token(1, false));
         $buffer->resetToken();
@@ -95,7 +95,7 @@ class SymbolBufferTest extends TestCase
      */
     public function testExtractToken_NoTokenPreviewed_ReturnsEmptyBuffer(): void
     {
-        $buffer = SymbolBuffer::fromString('a');
+        $buffer = CharBuffer::fromString('a');
         $token = $buffer->extractToken(new TokenPosition(0, 0));
         self::assertEquals(0, $token->count());
     }
@@ -107,7 +107,7 @@ class SymbolBufferTest extends TestCase
      */
     public function testExtractToken_SingleSymbolTokenPreviewed_ReturnsBufferOfMatchingSize(string $text): void
     {
-        $buffer = SymbolBuffer::fromString($text);
+        $buffer = CharBuffer::fromString($text);
         $token = $buffer->extractToken(new TokenPosition(0, 1));
         self::assertEquals(1, $token->count());
     }

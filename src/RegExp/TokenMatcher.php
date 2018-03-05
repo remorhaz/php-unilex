@@ -6,13 +6,13 @@ use Remorhaz\UniLex\Token;
 use Remorhaz\UniLex\TokenFactoryInterface;
 use Remorhaz\UniLex\TokenMatcherInterface;
 use Remorhaz\UniLex\RegExp\Grammar\TokenType;
-use Remorhaz\UniLex\SymbolBufferInterface;
+use Remorhaz\UniLex\CharBufferInterface;
 use Remorhaz\UniLex\Unicode\SymbolInfo;
 
 class TokenMatcher implements TokenMatcherInterface
 {
 
-    public function match(SymbolBufferInterface $buffer, TokenFactoryInterface $tokenFactory): Token
+    public function match(CharBufferInterface $buffer, TokenFactoryInterface $tokenFactory): Token
     {
         $symbol = $buffer->getSymbol();
         if ($symbol >= 0x00 && $symbol <= 0x1F) {

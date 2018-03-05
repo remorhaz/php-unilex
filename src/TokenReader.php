@@ -14,7 +14,7 @@ class TokenReader implements TokenReaderInterface
     private $tokenFactory;
 
     public function __construct(
-        SymbolBufferInterface $buffer,
+        CharBufferInterface $buffer,
         TokenMatcherInterface $matcher,
         TokenFactoryInterface $tokenFactory
     ) {

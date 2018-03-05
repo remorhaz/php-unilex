@@ -5,13 +5,13 @@ namespace Remorhaz\UniLex\Unicode;
 use Remorhaz\UniLex\Token;
 use Remorhaz\UniLex\TokenFactoryInterface;
 use Remorhaz\UniLex\TokenMatcherInterface;
-use Remorhaz\UniLex\SymbolBufferInterface;
+use Remorhaz\UniLex\CharBufferInterface;
 use Remorhaz\UniLex\Unicode\Grammar\TokenType;
 
 class Utf8TokenMatcher implements TokenMatcherInterface
 {
 
-    public function match(SymbolBufferInterface $buffer, TokenFactoryInterface $tokenFactory): Token
+    public function match(CharBufferInterface $buffer, TokenFactoryInterface $tokenFactory): Token
     {
         $symbol = null;
         $firstByte = $buffer->getSymbol();

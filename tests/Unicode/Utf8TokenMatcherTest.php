@@ -3,7 +3,7 @@
 namespace Remorhaz\UniLex\Test\Unicode;
 
 use PHPUnit\Framework\TestCase;
-use Remorhaz\UniLex\SymbolBuffer;
+use Remorhaz\UniLex\CharBuffer;
 use Remorhaz\UniLex\Unicode\Grammar\TokenType;
 use Remorhaz\UniLex\Unicode\Grammar\TokenFactory;
 use Remorhaz\UniLex\Unicode\SymbolInfo;
@@ -21,7 +21,7 @@ class Utf8TokenMatcherTest extends TestCase
      */
     public function testMatch_ValidText_ReturnsSymbolToken(string $text): void
     {
-        $buffer = SymbolBuffer::fromString($text);
+        $buffer = CharBuffer::fromString($text);
         $actual = (new Utf8TokenMatcher)->match($buffer, new TokenFactory)->getType();
         self::assertEquals(TokenType::SYMBOL, $actual);
     }
@@ -35,7 +35,7 @@ class Utf8TokenMatcherTest extends TestCase
         string $text,
         int $expectedSymbol
     ): void {
-        $buffer = SymbolBuffer::fromString($text);
+        $buffer = CharBuffer::fromString($text);
         $expectedValue = new SymbolInfo($expectedSymbol);
         $actualValue = (new Utf8TokenMatcher)->match($buffer, new TokenFactory)->getMatcherInfo();
         self::assertEquals($expectedValue, $actualValue);
@@ -60,7 +60,7 @@ class Utf8TokenMatcherTest extends TestCase
      */
     public function testMatch_InvalidText_ReturnsInvalidBytesToken(string $text): void
     {
-        $buffer = SymbolBuffer::fromString($text);
+        $buffer = CharBuffer::fromString($text);
         $actual = (new Utf8TokenMatcher)->match($buffer, new TokenFactory)->getType();
         self::assertEquals(TokenType::INVALID_BYTES, $actual);
     }

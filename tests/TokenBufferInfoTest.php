@@ -4,7 +4,7 @@ namespace Remorhaz\UniLex\Test;
 
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\TokenPosition;
-use Remorhaz\UniLex\SymbolBuffer;
+use Remorhaz\UniLex\CharBuffer;
 use Remorhaz\UniLex\TokenBufferInfo;
 
 /**
@@ -18,7 +18,7 @@ class TokenBufferInfoTest extends TestCase
      */
     public function testGetPosition_ConstructWithValue_ReturnsPositionWithSameStartOffset(): void
     {
-        $buffer = SymbolBuffer::fromString('a');
+        $buffer = CharBuffer::fromString('a');
         $position = new TokenPosition(0, 1);
         $info = new TokenBufferInfo($buffer, $position);
         $actualValue = $info->getPosition();
@@ -30,7 +30,7 @@ class TokenBufferInfoTest extends TestCase
      */
     public function testGetPosition_ConstructWithValue_ReturnsPositionWithSameFinishOffset(): void
     {
-        $buffer = SymbolBuffer::fromString('a');
+        $buffer = CharBuffer::fromString('a');
         $position = new TokenPosition(0, 1);
         $info = new TokenBufferInfo($buffer, $position);
         $actualValue = $info->getPosition();
@@ -42,7 +42,7 @@ class TokenBufferInfoTest extends TestCase
      */
     public function testExtract_ConstructWithValue_ReturnsEqualValue(): void
     {
-        $buffer = SymbolBuffer::fromString('a');
+        $buffer = CharBuffer::fromString('a');
         $info = new TokenBufferInfo($buffer, new TokenPosition(0, 1));
         $actualValue = $info->extract();
         $expectedValue = \SplFixedArray::fromArray([0x61]);
