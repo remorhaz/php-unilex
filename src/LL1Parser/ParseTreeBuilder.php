@@ -49,9 +49,9 @@ class ParseTreeBuilder extends AbstractParserListener
 
     public function onSymbol(ParsedSymbol $symbol): void
     {
-        switch ($symbol->getId()) {
+        switch ($symbol->getSymbolId()) {
             default:
-                $this->symbolLog[] = $symbol->getId();
+                $this->symbolLog[] = $symbol->getSymbolId();
         }
     }
 
@@ -63,10 +63,10 @@ class ParseTreeBuilder extends AbstractParserListener
     public function onProduction(?ParsedSymbol $symbol, ParsedSymbol ...$production): void
     {
         foreach ($production as $productionSymbol) {
-            if ($this->grammar->isEoiSymbol($productionSymbol->getId())) {
+            if ($this->grammar->isEoiSymbol($productionSymbol->getSymbolId())) {
                 continue;
             }
-            $node = new ParseTreeSymbolNode($productionSymbol->getId());
+            $node = new ParseTreeSymbolNode($productionSymbol->getSymbolId());
             $this->setNode($productionSymbol->getIndex(), $node);
             if (isset($symbol)) {
                 $this->getNode($symbol->getIndex())->addChild($node);

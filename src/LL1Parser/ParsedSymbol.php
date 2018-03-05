@@ -9,10 +9,13 @@ class ParsedSymbol
 
     private $id;
 
-    public function __construct(int $index, int $id)
+    private $productionIndex;
+
+    public function __construct(int $index, int $symbolId, int $productionIndex)
     {
         $this->index = $index;
-        $this->id = $id;
+        $this->id = $symbolId;
+        $this->productionIndex;
     }
 
     public function getIndex(): int
@@ -20,8 +23,13 @@ class ParsedSymbol
         return $this->index;
     }
 
-    public function getId(): int
+    public function getSymbolId(): int
     {
         return $this->id;
+    }
+
+    public function getProductionIndex(): int
+    {
+        return $this->productionIndex;
     }
 }

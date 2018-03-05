@@ -70,8 +70,8 @@ class Parser
     private function getInitSymbols(): array
     {
         return [
-            new ParsedSymbol($this->getNextSymbolIndex(), $this->grammar->getStartSymbol()),
-            new ParsedSymbol($this->getNextSymbolIndex(), $this->grammar->getEoiSymbol()),
+            new ParsedSymbol($this->getNextSymbolIndex(), $this->grammar->getStartSymbol(), 0),
+            new ParsedSymbol($this->getNextSymbolIndex(), $this->grammar->getEoiSymbol(), 0),
         ];
     }
 
@@ -82,7 +82,7 @@ class Parser
 
     private function isTerminalSymbol(ParsedSymbol $symbol): bool
     {
-        return $this->grammar->isTerminal($symbol->getId());
+        return $this->grammar->isTerminal($symbol->getSymbolId());
     }
 
     private function previewToken(): Token
@@ -111,8 +111,8 @@ class Parser
     private function readSymbolToken(ParsedSymbol $symbol): void
     {
         $token = $this->previewToken();
-        if (!$this->grammar->tokenMatchesTerminal($symbol->getId(), $token->getType())) {
-            throw new Exception("Unexpected token {$token->getType()} for symbol {$symbol->getId()}");
+        if (!$this->grammar->tokenMatchesTerminal($symbol->getSymbolId(), $token->getType())) {
+            throw new Exception("Unexpected token {$token->getType()} for symbol {$symbol->getSymbolId()}");
         }
         $parsedToken = new ParsedToken($this->getNextSymbolIndex(), $token);
         $token->isEoi()
@@ -129,9 +129,9 @@ class Parser
     {
         $tokenId = $this->previewToken()->getType();
         $production = [];
-        $productionIndex = $this->getLookupTable()->getProductionIndex($symbol->getId(), $tokenId);
-        foreach ($this->grammar->getProduction($symbol->getId(), $productionIndex) as $symbolId) {
-            $production[] = new ParsedSymbol($this->getNextSymbolIndex(), $symbolId);
+        $productionIndex = $this->getLookupTable()->getProductionIndex($symbol->getSymbolId(), $tokenId);
+        foreach ($this->grammar->getProduction($symbol->getSymbolId(), $productionIndex) as $symbolId) {
+            $production[] = new ParsedSymbol($this->getNextSymbolIndex(), $symbolId, $productionIndex);
         }
         $this->pushSymbolProduction($symbol, ...$production);
     }
