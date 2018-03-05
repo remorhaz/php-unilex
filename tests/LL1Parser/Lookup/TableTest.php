@@ -14,13 +14,12 @@ class TableTest extends TestCase
     /**
      * @throws \Remorhaz\UniLex\Exception
      */
-    public function testAddProduction_ProductionNotSet_GetProductionReturnsAddedProduction(): void
+    public function testAddProduction_ProductionNotSet_GetProductionIndexReturnsAddedProductionIndex(): void
     {
         $table = new Table;
-        $production = [3, 4];
-        $table->addProduction(1, 2, ...$production);
-        $actualValue = $table->getProduction(1, 2);
-        self::assertSame($production, $actualValue);
+        $table->addProduction(1, 2, 0);
+        $actualValue = $table->getProductionIndex(1, 2);
+        self::assertSame(0, $actualValue);
     }
 
     /**
@@ -31,9 +30,8 @@ class TableTest extends TestCase
     public function testAddProduction_ProductionSet_ThrowsException(): void
     {
         $table = new Table;
-        $production = [3, 4];
-        $table->addProduction(1, 2, ...$production);
-        $table->addProduction(1, 2, ...$production);
+        $table->addProduction(1, 2, 0);
+        $table->addProduction(1, 2, 0);
     }
 
     /**
@@ -41,10 +39,10 @@ class TableTest extends TestCase
      * @expectedException \Remorhaz\UniLex\Exception
      * @expectedExceptionMessage Production for [1:2] is not defined
      */
-    public function testGetProduction_ProductionNotSet_ThrowsException(): void
+    public function testGetProductionIndex_ProductionNotSet_ThrowsException(): void
     {
         $table = new Table;
-        $table->getProduction(1, 2);
+        $table->getProductionIndex(1, 2);
     }
 
     public function testHasProduction_ProductionNotSet_ReturnsFalse(): void
@@ -60,7 +58,7 @@ class TableTest extends TestCase
     public function testHasProduction_ProductionSet_ReturnsTrue(): void
     {
         $table = new Table;
-        $table->addProduction(1, 2, ...[3, 4]);
+        $table->addProduction(1, 2, 0);
         $actualValue = $table->hasProduction(1, 2);
         self::assertTrue($actualValue);
     }
@@ -71,16 +69,16 @@ class TableTest extends TestCase
     public function testExportMap_ProductionsSet_ReturnsMatchingValue(): void
     {
         $table = new Table;
-        $table->addProduction(1, 2, ...[3, 4]);
-        $table->addProduction(1, 3, ...[4]);
-        $table->addProduction(2, 2, ...[]);
+        $table->addProduction(1, 2, 0);
+        $table->addProduction(1, 3, 1);
+        $table->addProduction(2, 2, 0);
         $expectedValue = [
             1 => [
-                2 => [3, 4],
-                3 => [4],
+                2 => 0,
+                3 => 1,
             ],
             2 => [
-                2 => [],
+                2 => 0,
             ],
         ];
         $actualValue = $table->exportMap();

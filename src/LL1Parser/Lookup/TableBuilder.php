@@ -102,40 +102,44 @@ class TableBuilder
      */
     private function addProductionsFromNonTerminalMap(Table $table): void
     {
-        foreach ($this->grammar->getFullProductionList() as [$symbolId, $production]) {
-            $this->addProductionFirsts($table, $symbolId, ...$production);
-            $this->addProductionFollows($table, $symbolId, ...$production);
+        foreach ($this->grammar->getNonTerminalList() as $symbolId) {
+            foreach ($this->grammar->getProductionList($symbolId) as $productionIndex => $production) {
+                $this->addProductionFirsts($table, $symbolId, $productionIndex, ...$production);
+                $this->addProductionFollows($table, $symbolId, $productionIndex, ...$production);
+            }
         }
     }
 
     /**
      * @param Table $table
      * @param int $symbolId
+     * @param int $productionIndex
      * @param int[] ...$symbolIdList
      * @throws Exception
      */
-    private function addProductionFirsts(Table $table, int $symbolId, int ...$symbolIdList): void
+    private function addProductionFirsts(Table $table, int $symbolId, int $productionIndex, int ...$symbolIdList): void
     {
         $productionFirsts = $this->getFirst()->getProductionTokens(...$symbolIdList);
         foreach ($productionFirsts as $tokenId) {
-            $table->addProduction($symbolId, $tokenId, ...$symbolIdList);
+            $table->addProduction($symbolId, $tokenId, $productionIndex);
         }
     }
 
     /**
      * @param Table $table
      * @param int $symbolId
+     * @param int $productionIndex
      * @param int[] ...$symbolIdList
      * @throws Exception
      */
-    private function addProductionFollows(Table $table, int $symbolId, int ...$symbolIdList): void
+    private function addProductionFollows(Table $table, int $symbolId, int $productionIndex, int ...$symbolIdList): void
     {
         if (!$this->getFirst()->productionHasEpsilon(...$symbolIdList)) {
             return;
         }
         $productionFollows = $this->getFollow()->getTokens($symbolId);
         foreach ($productionFollows as $tokenId) {
-            $table->addProduction($symbolId, $tokenId, ...$symbolIdList);
+            $table->addProduction($symbolId, $tokenId, $productionIndex);
         }
     }
 }

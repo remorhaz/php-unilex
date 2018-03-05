@@ -51,14 +51,14 @@ class FollowBuilder
         }
     }
 
-    private function mergeProduction(Follow $follow, int $nonTerminalId, int ...$nonTerminalIdList): void
+    private function mergeProduction(Follow $follow, int $symbolId, int ...$symbolIdList): void
     {
-        while (!empty($nonTerminalIdList)) {
-            $symbolId = array_shift($nonTerminalIdList);
-            $rightPartFirst = $this->first->getProductionTokens(...$nonTerminalIdList);
-            $follow->addToken($symbolId, ...$rightPartFirst);
-            if ($this->first->productionHasEpsilon(...$nonTerminalIdList)) {
-                $follow->mergeTokens($symbolId, $nonTerminalId);
+        while (!empty($symbolIdList)) {
+            $targetSymbolId = array_shift($symbolIdList);
+            $rightPartFirst = $this->first->getProductionTokens(...$symbolIdList);
+            $follow->addToken($targetSymbolId, ...$rightPartFirst);
+            if ($this->first->productionHasEpsilon(...$symbolIdList)) {
+                $follow->mergeTokens($targetSymbolId, $symbolId);
             }
         };
     }

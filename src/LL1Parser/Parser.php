@@ -129,7 +129,8 @@ class Parser
     {
         $tokenId = $this->previewToken()->getType();
         $production = [];
-        foreach ($this->getLookupTable()->getProduction($symbol->getId(), $tokenId) as $symbolId) {
+        $productionIndex = $this->getLookupTable()->getProductionIndex($symbol->getId(), $tokenId);
+        foreach ($this->grammar->getProduction($symbol->getId(), $productionIndex) as $symbolId) {
             $production[] = new ParsedSymbol($this->getNextSymbolIndex(), $symbolId);
         }
         $this->pushSymbolProduction($symbol, ...$production);

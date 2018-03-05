@@ -41,6 +41,8 @@ interface GrammarInterface
      */
     public function getProductionList(int $symbolId): array;
 
+    public function getProduction(int $symbolId, int $productionIndex): array;
+
     /**
      * @return Generator
      */

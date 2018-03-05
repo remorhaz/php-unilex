@@ -143,6 +143,21 @@ class Grammar implements GrammarInterface
     }
 
     /**
+     * @param int $symbolId
+     * @param int $productionIndex
+     * @return array
+     * @throws Exception
+     */
+    public function getProduction(int $symbolId, int $productionIndex): array
+    {
+        $productionList = $this->getProductionList($symbolId);
+        if (!isset($productionList[$productionIndex])) {
+            throw new Exception("Symbol {$symbolId} has no production at index {$productionIndex}");
+        }
+        return $productionList[$productionIndex];
+    }
+
+    /**
      * @return Generator
      * @throws Exception
      */

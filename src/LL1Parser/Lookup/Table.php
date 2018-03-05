@@ -12,24 +12,24 @@ class Table implements TableInterface
     /**
      * @param int $symbolId
      * @param int $tokenId
-     * @param int[] ...$symbolIdList
+     * @param int $productionIndex
      * @throws Exception
      */
-    public function addProduction(int $symbolId, int $tokenId, int ...$symbolIdList): void
+    public function addProduction(int $symbolId, int $tokenId, int $productionIndex): void
     {
         if ($this->hasProduction($symbolId, $tokenId)) {
             throw new Exception("Production for [{$symbolId}:{$tokenId}] is already defined");
         }
-        $this->map[$symbolId][$tokenId] = $symbolIdList;
+        $this->map[$symbolId][$tokenId] = $productionIndex;
     }
 
     /**
      * @param int $symbolId
      * @param int $tokenId
-     * @return array
+     * @return int
      * @throws Exception
      */
-    public function getProduction(int $symbolId, int $tokenId): array
+    public function getProductionIndex(int $symbolId, int $tokenId): int
     {
         if (!$this->hasProduction($symbolId, $tokenId)) {
             throw new Exception("Production for [{$symbolId}:{$tokenId}] is not defined");

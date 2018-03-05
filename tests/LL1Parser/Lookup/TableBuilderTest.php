@@ -44,31 +44,27 @@ class TableBuilderTest extends TestCase
     {
         return [
             SymbolType::NT_E0 => [
-                TokenType::L_PARENTHESIS => [SymbolType::NT_T0, SymbolType::NT_E1],
-                TokenType::ID => [SymbolType::NT_T0, SymbolType::NT_E1],
+                TokenType::L_PARENTHESIS => 0,
+                TokenType::ID => 0,
             ],
             SymbolType::NT_E1 => [
-                TokenType::PLUS => [SymbolType::T_PLUS, SymbolType::NT_T0, SymbolType::NT_E1],
-                TokenType::R_PARENTHESIS => [],
-                TokenType::EOI => [],
+                TokenType::PLUS => 0,
+                TokenType::R_PARENTHESIS => 1,
+                TokenType::EOI => 1,
             ],
             SymbolType::NT_T0 => [
-                TokenType::L_PARENTHESIS => [SymbolType::NT_F, SymbolType::NT_T1],
-                TokenType::ID => [SymbolType::NT_F, SymbolType::NT_T1],
+                TokenType::L_PARENTHESIS => 0,
+                TokenType::ID => 0,
             ],
             SymbolType::NT_T1 => [
-                TokenType::PLUS => [],
-                TokenType::STAR => [SymbolType::T_STAR, SymbolType::NT_F, SymbolType::NT_T1],
-                TokenType::R_PARENTHESIS => [],
-                TokenType::EOI => [],
+                TokenType::PLUS => 1,
+                TokenType::STAR => 0,
+                TokenType::R_PARENTHESIS => 1,
+                TokenType::EOI => 1,
             ],
             SymbolType::NT_F => [
-                TokenType::L_PARENTHESIS => [
-                    SymbolType::T_L_PARENTHESIS,
-                    SymbolType::NT_E0,
-                    SymbolType::T_R_PARENTHESIS,
-                ],
-                TokenType::ID => [SymbolType::T_ID],
+                TokenType::L_PARENTHESIS => 0,
+                TokenType::ID => 1,
             ],
         ];
     }
