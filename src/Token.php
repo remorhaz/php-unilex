@@ -9,8 +9,6 @@ class Token
 
     private $isEoi;
 
-    private $bufferInfo;
-
     private $matcherInfo;
 
     private $attributeList = [];

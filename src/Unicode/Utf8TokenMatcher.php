@@ -11,6 +11,21 @@ use Remorhaz\UniLex\Unicode\Grammar\TokenType;
 class Utf8TokenMatcher implements TokenMatcherInterface
 {
 
+    private const DEFAULT_TOKEN_ATTRIBUTE_PREFIX = 'utf8';
+
+    private $tokenAttributePrefix;
+
+    public function __construct($tokenAttributePrefix = self::DEFAULT_TOKEN_ATTRIBUTE_PREFIX)
+    {
+        $this->tokenAttributePrefix = $tokenAttributePrefix;
+    }
+
+    /**
+     * @param CharBufferInterface $buffer
+     * @param TokenFactoryInterface $tokenFactory
+     * @return Token
+     * @throws \Remorhaz\UniLex\Exception
+     */
     public function match(CharBufferInterface $buffer, TokenFactoryInterface $tokenFactory): Token
     {
         $symbol = null;
@@ -19,6 +34,7 @@ class Utf8TokenMatcher implements TokenMatcherInterface
             $symbolInfo = new SymbolInfo($firstByte);
             $buffer->nextSymbol();
             $token = $tokenFactory->createToken(TokenType::SYMBOL);
+            $token->setAttribute("{$this->tokenAttributePrefix}.unicode.symbol", $firstByte);
             $token->setMatcherInfo($symbolInfo);
             return $token;
         }
@@ -92,6 +108,7 @@ class Utf8TokenMatcher implements TokenMatcherInterface
             $symbolInfo = new SymbolInfo($symbol);
             $buffer->nextSymbol();
             $token = $tokenFactory->createToken(TokenType::SYMBOL);
+            $token->setAttribute("{$this->tokenAttributePrefix}.unicode.symbol", $symbol);
             $token->setMatcherInfo($symbolInfo);
             return $token;
         }

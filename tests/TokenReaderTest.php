@@ -28,6 +28,7 @@ class TokenReaderTest extends TestCase
         $expectedValue->setMatcherInfo($matcherInfo);
         $expectedValue->setAttribute('buffer.position.start', 0);
         $expectedValue->setAttribute('buffer.position.finish', 1);
+        $expectedValue->setAttribute('utf8.unicode.symbol', 0x61);
         $scanner = new TokenReader($buffer, new Utf8TokenMatcher, $tokenFactory);
         $actualValue = $scanner->read();
         self::assertEquals($expectedValue, $actualValue);
@@ -45,6 +46,7 @@ class TokenReaderTest extends TestCase
         $expectedValue->setMatcherInfo($matcherInfo);
         $expectedValue->setAttribute('buffer.position.start', 1);
         $expectedValue->setAttribute('buffer.position.finish', 2);
+        $expectedValue->setAttribute('utf8.unicode.symbol', 0x62);
         $scanner = new TokenReader($buffer, new Utf8TokenMatcher, $tokenFactory);
         $scanner->read();
         $actualValue = $scanner->read();
