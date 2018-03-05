@@ -27,9 +27,9 @@ interface GrammarInterface
 
     /**
      * @param int $symbolId
-     * @return array
+     * @return int
      */
-    public function getTerminalTokenList(int $symbolId): array;
+    public function getTerminalToken(int $symbolId): int;
 
     public function getTerminalList(): array;
 

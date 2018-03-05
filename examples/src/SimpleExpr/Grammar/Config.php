@@ -12,12 +12,12 @@ return [
      *      terminal symbol ID => [token 1 ID, token 2 ID, ...]
      */
     GrammarLoader::TOKEN_MAP_KEY => [
-        ProductionType::T_PLUS => [TokenType::PLUS], // +
-        ProductionType::T_STAR => [TokenType::STAR], // *
-        ProductionType::T_L_PARENTHESIS => [TokenType::L_PARENTHESIS], // (
-        ProductionType::T_R_PARENTHESIS => [TokenType::R_PARENTHESIS], // )
-        ProductionType::T_ID => [TokenType::ID], // id
-        ProductionType::T_EOI => [TokenType::EOI], // end of input
+        ProductionType::T_PLUS => TokenType::PLUS, // +
+        ProductionType::T_STAR => TokenType::STAR, // *
+        ProductionType::T_L_PARENTHESIS => TokenType::L_PARENTHESIS, // (
+        ProductionType::T_R_PARENTHESIS => TokenType::R_PARENTHESIS, // )
+        ProductionType::T_ID => TokenType::ID, // id
+        ProductionType::T_EOI => TokenType::EOI, // end of input
     ],
 
     /**

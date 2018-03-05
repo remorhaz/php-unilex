@@ -30,17 +30,11 @@ class Grammar implements GrammarInterface
 
     /**
      * @param int $symbolId
-     * @param int[] ...$tokenIdList
+     * @param int $tokenId
      */
-    public function addToken(int $symbolId, int ...$tokenIdList): void
+    public function addToken(int $symbolId, int $tokenId): void
     {
-        if (empty($tokenIdList)) {
-            return;
-        }
-        $this->terminalMap[$symbolId] = array_merge(
-            $this->terminalMap[$symbolId] ?? [],
-            $tokenIdList
-        );
+        $this->terminalMap[$symbolId] = $tokenId;
     }
 
     public function addProduction(int $symbolId, array ...$production): void
@@ -67,9 +61,7 @@ class Grammar implements GrammarInterface
      */
     public function getEoiToken(): int
     {
-        $eoiTokenList = $this->getTerminalTokenList($this->getEoiSymbol());
-        [$eoiToken] = $eoiTokenList;
-        return $eoiToken;
+        return $this->getTerminalToken($this->getEoiSymbol());
     }
 
     /**
@@ -106,15 +98,15 @@ class Grammar implements GrammarInterface
      */
     public function tokenMatchesTerminal(int $symbolId, int $tokenId): bool
     {
-        return in_array($tokenId, $this->getTerminalTokenList($symbolId));
+        return $this->getTerminalToken($symbolId) == $tokenId;
     }
 
     /**
      * @param int $symbolId
-     * @return array
+     * @return int
      * @throws Exception
      */
-    public function getTerminalTokenList(int $symbolId): array
+    public function getTerminalToken(int $symbolId): int
     {
         if (!$this->isTerminal($symbolId)) {
             throw new Exception("Symbol {$symbolId} is not defined as terminal");

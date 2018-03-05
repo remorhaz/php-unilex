@@ -39,8 +39,8 @@ class FirstBuilder
     private function addTokensFromTerminalMap(First $first): void
     {
         foreach ($this->grammar->getTerminalList() as $symbolId) {
-            $tokenIdList = $this->grammar->getTerminalTokenList($symbolId);
-            $first->addToken($symbolId, ...$tokenIdList);
+            $tokenId = $this->grammar->getTerminalToken($symbolId);
+            $first->addToken($symbolId, $tokenId);
         }
     }
 

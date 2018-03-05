@@ -65,8 +65,8 @@ abstract class GrammarLoader
 
     private static function loadFromMaps(Grammar $grammar, array $tokenMap, array $productionMap): void
     {
-        foreach ($tokenMap as $symbolId => $tokenIdList) {
-            $grammar->addToken($symbolId, ...$tokenIdList);
+        foreach ($tokenMap as $symbolId => $tokenId) {
+            $grammar->addToken($symbolId, $tokenId);
         }
         foreach ($productionMap as $symbolId => $productionList) {
             $grammar->addProduction($symbolId, ...$productionList);
