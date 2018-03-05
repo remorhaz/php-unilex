@@ -3,17 +3,17 @@
 namespace Remorhaz\UniLex\Test;
 
 use PHPUnit\Framework\TestCase;
-use Remorhaz\UniLex\Lexeme;
+use Remorhaz\UniLex\Token;
 
 /**
- * @covers \Remorhaz\UniLex\Lexeme
+ * @covers \Remorhaz\UniLex\Token
  */
-class LexemeTest extends TestCase
+class TokenTest extends TestCase
 {
 
     public function testGetType(): void
     {
-        $actualValue = (new Lexeme(1, false))->getType();
+        $actualValue = (new Token(1, false))->getType();
         self::assertSame(1, $actualValue);
     }
 }

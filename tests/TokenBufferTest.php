@@ -3,32 +3,32 @@
 namespace Remorhaz\UniLex\Test;
 
 use PHPUnit\Framework\TestCase;
-use Remorhaz\UniLex\LexemeBuffer;
-use Remorhaz\UniLex\LexemeReader;
+use Remorhaz\UniLex\TokenBuffer;
+use Remorhaz\UniLex\TokenReader;
 use Remorhaz\UniLex\SymbolBuffer;
 use Remorhaz\UniLex\Unicode\CodeSymbolFactory;
-use Remorhaz\UniLex\Unicode\Grammar\LexemeFactory;
-use Remorhaz\UniLex\Unicode\Utf8LexemeMatcher;
+use Remorhaz\UniLex\Unicode\Grammar\TokenFactory;
+use Remorhaz\UniLex\Unicode\Utf8TokenMatcher;
 
 /**
- * @covers \Remorhaz\UniLex\LexemeBuffer
+ * @covers \Remorhaz\UniLex\TokenBuffer
  */
-class LexemeBufferTest extends TestCase
+class TokenBufferTest extends TestCase
 {
 
     public function testIsEnd_EmptyInputBuffer_ReturnsTrue(): void
     {
         $inputBuffer = SymbolBuffer::fromString('');
-        $reader = new LexemeReader($inputBuffer, new Utf8LexemeMatcher, new LexemeFactory());
-        $actualValue = (new LexemeBuffer($reader, new CodeSymbolFactory))->isEnd();
+        $reader = new TokenReader($inputBuffer, new Utf8TokenMatcher, new TokenFactory());
+        $actualValue = (new TokenBuffer($reader, new CodeSymbolFactory))->isEnd();
         self::assertTrue($actualValue);
     }
 
     public function testIsEnd_NotEmptyInputBuffer_ReturnsTrue(): void
     {
         $inputBuffer = SymbolBuffer::fromString('a');
-        $reader = new LexemeReader($inputBuffer, new Utf8LexemeMatcher, new LexemeFactory);
-        $actualValue = (new LexemeBuffer($reader, new CodeSymbolFactory))->isEnd();
+        $reader = new TokenReader($inputBuffer, new Utf8TokenMatcher, new TokenFactory);
+        $actualValue = (new TokenBuffer($reader, new CodeSymbolFactory))->isEnd();
         self::assertFalse($actualValue);
     }
 
@@ -40,8 +40,8 @@ class LexemeBufferTest extends TestCase
     public function testNextSymbol_EmptyInputBuffer_ThrowsException(): void
     {
         $inputBuffer = SymbolBuffer::fromString('');
-        $reader = new LexemeReader($inputBuffer, new Utf8LexemeMatcher, new LexemeFactory);
-        (new LexemeBuffer($reader, new CodeSymbolFactory))->nextSymbol();
+        $reader = new TokenReader($inputBuffer, new Utf8TokenMatcher, new TokenFactory);
+        (new TokenBuffer($reader, new CodeSymbolFactory))->nextSymbol();
     }
 
     /**
@@ -50,10 +50,10 @@ class LexemeBufferTest extends TestCase
     public function testNextSymbol_NotEmptyInputBuffer_GetSymbolReturnsSecondSymbol(): void
     {
         $inputBuffer = SymbolBuffer::fromString('ab');
-        $reader = new LexemeReader($inputBuffer, new Utf8LexemeMatcher, new LexemeFactory);
-        $lexemeBuffer = new LexemeBuffer($reader, new CodeSymbolFactory);
-        $lexemeBuffer->nextSymbol();
-        $actualValue = $lexemeBuffer->getSymbol();
+        $reader = new TokenReader($inputBuffer, new Utf8TokenMatcher, new TokenFactory);
+        $tokenBuffer = new TokenBuffer($reader, new CodeSymbolFactory);
+        $tokenBuffer->nextSymbol();
+        $actualValue = $tokenBuffer->getSymbol();
         self::assertSame(0x62, $actualValue);
     }
 }

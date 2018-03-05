@@ -2,17 +2,17 @@
 
 namespace Remorhaz\UniLex\RegExp;
 
-use Remorhaz\UniLex\Lexeme;
-use Remorhaz\UniLex\LexemeFactoryInterface;
-use Remorhaz\UniLex\LexemeMatcherInterface;
+use Remorhaz\UniLex\Token;
+use Remorhaz\UniLex\TokenFactoryInterface;
+use Remorhaz\UniLex\TokenMatcherInterface;
 use Remorhaz\UniLex\RegExp\Grammar\TokenType;
 use Remorhaz\UniLex\SymbolBufferInterface;
 use Remorhaz\UniLex\Unicode\SymbolInfo;
 
-class LexemeMatcher implements LexemeMatcherInterface
+class TokenMatcher implements TokenMatcherInterface
 {
 
-    public function match(SymbolBufferInterface $buffer, LexemeFactoryInterface $lexemeFactory): Lexeme
+    public function match(SymbolBufferInterface $buffer, TokenFactoryInterface $tokenFactory): Token
     {
         $symbol = $buffer->getSymbol();
         if ($symbol >= 0x00 && $symbol <= 0x1F) {
@@ -198,8 +198,8 @@ class LexemeMatcher implements LexemeMatcherInterface
         valid_symbol:
         invalid_symbol:
         $buffer->nextSymbol();
-        $lexeme = $lexemeFactory->createLexeme($type);
-        $lexeme->setMatcherInfo(new SymbolInfo($symbol));
-        return $lexeme;
+        $token = $tokenFactory->createToken($type);
+        $token->setMatcherInfo(new SymbolInfo($symbol));
+        return $token;
     }
 }

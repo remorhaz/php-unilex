@@ -10,7 +10,7 @@ class ParseTreeBuilder extends AbstractParserListener
 
     private $grammar;
 
-    private $lexemeTypeLog = [];
+    private $tokenTypeLog = [];
 
     private $symbolLog = [];
 
@@ -34,16 +34,16 @@ class ParseTreeBuilder extends AbstractParserListener
 
     /**
      * @param ParsedSymbol $symbol
-     * @param ParsedLexeme $lexeme
+     * @param ParsedToken $token
      * @throws Exception
      */
-    public function onLexeme(ParsedSymbol $symbol, ParsedLexeme $lexeme): void
+    public function onToken(ParsedSymbol $symbol, ParsedToken $token): void
     {
-        switch ($lexeme->getLexeme()->getType()) {
+        switch ($token->getToken()->getType()) {
             default:
-                $this->lexemeTypeLog[] = $lexeme->getLexeme()->getType();
+                $this->tokenTypeLog[] = $token->getToken()->getType();
         }
-        $node = new ParseTreeLexemeNode($lexeme->getLexeme());
+        $node = new ParseTreeTokenNode($token->getToken());
         $this->getNode($symbol->getIndex())->addChild($node);
     }
 
@@ -130,9 +130,9 @@ class ParseTreeBuilder extends AbstractParserListener
      * @return array
      * @todo Debug method.
      */
-    public function getLexemeTypeLog(): array
+    public function getTokenTypeLog(): array
     {
-        return $this->lexemeTypeLog;
+        return $this->tokenTypeLog;
     }
 
     /**

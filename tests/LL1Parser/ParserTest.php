@@ -6,12 +6,12 @@ use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Example\SimpleExpr\Grammar\ConfigFile;
 use Remorhaz\UniLex\Example\SimpleExpr\Grammar\TokenType;
 use Remorhaz\UniLex\Grammar\ContextFree\GrammarLoader;
-use Remorhaz\UniLex\Grammar\ContextFree\LexemeFactory;
+use Remorhaz\UniLex\Grammar\ContextFree\TokenFactory;
 use Remorhaz\UniLex\LL1Parser\AbstractParserListener;
 use Remorhaz\UniLex\LL1Parser\Parser;
 use Remorhaz\UniLex\SymbolBuffer;
-use Remorhaz\UniLex\LexemeReader;
-use Remorhaz\UniLex\LexemeMatcherByType;
+use Remorhaz\UniLex\TokenReader;
+use Remorhaz\UniLex\TokenMatcherByType;
 
 /**
  * @covers \Remorhaz\UniLex\LL1Parser\Parser
@@ -26,17 +26,16 @@ class ParserTest extends TestCase
      * @throws \Remorhaz\UniLex\Exception
      * @dataProvider providerValidGrammarInput
      */
-    public function testParse_ValidBuffer_OnLexemeTriggeredForEachToken(string $configFile, array $input): void
+    public function testParse_ValidBuffer_OnTokenTriggeredForEachToken(string $configFile, array $input): void
     {
         $grammar = GrammarLoader::loadFile($configFile);
-        $lexemeFactory = new LexemeFactory($grammar);
         $buffer = SymbolBuffer::fromSymbols(...$input);
-        $reader = new LexemeReader($buffer, new LexemeMatcherByType, $lexemeFactory);
+        $reader = new TokenReader($buffer, new TokenMatcherByType, new TokenFactory($grammar));
         $listener = $this
             ->createMock(AbstractParserListener::class);
         $listener
             ->expects($this->exactly(count($input)))
-            ->method('onLexeme');
+            ->method('onToken');
 
         /** @var AbstractParserListener $listener */
         $parser = new Parser($grammar, $reader, $listener);

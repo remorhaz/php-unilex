@@ -9,9 +9,9 @@ interface SymbolBufferInterface
 
     public function nextSymbol(): void;
 
-    public function resetLexeme(): void;
+    public function resetToken(): void;
 
-    public function finishLexeme(Lexeme $lexeme): void;
+    public function finishToken(Token $token): void;
 
     public function getSymbol(): int;
 }

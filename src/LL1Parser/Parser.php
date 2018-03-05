@@ -4,8 +4,8 @@ namespace Remorhaz\UniLex\LL1Parser;
 
 use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\Grammar\ContextFree\GrammarInterface;
-use Remorhaz\UniLex\Lexeme;
-use Remorhaz\UniLex\LexemeReaderInterface;
+use Remorhaz\UniLex\Token;
+use Remorhaz\UniLex\TokenReaderInterface;
 use Remorhaz\UniLex\LL1Parser\Lookup\TableInterface;
 use Remorhaz\UniLex\LL1Parser\Lookup\TableBuilder;
 
@@ -18,9 +18,9 @@ class Parser
 
     private $symbolStack;
 
-    private $lexeme;
+    private $token;
 
-    private $lexemeReader;
+    private $tokenReader;
 
     private $listener;
 
@@ -28,11 +28,11 @@ class Parser
 
     public function __construct(
         GrammarInterface $grammar,
-        LexemeReaderInterface $lexemeReader,
+        TokenReaderInterface $tokenReader,
         ParserListenerInterface $listener
     ) {
         $this->grammar = $grammar;
-        $this->lexemeReader = $lexemeReader;
+        $this->tokenReader = $tokenReader;
         $this->listener = $listener;
         $this->symbolStack = new ParsedSymbolStack;
     }
@@ -46,7 +46,7 @@ class Parser
         while ($this->hasSymbolInStack()) {
             $symbol = $this->popSymbol();
             $this->isTerminalSymbol($symbol)
-                ? $this->readSymbolLexeme($symbol)
+                ? $this->readSymbolToken($symbol)
                 : $this->pushMatchingProduction($symbol);
         }
     }
@@ -85,12 +85,12 @@ class Parser
         return $this->grammar->isTerminal($symbol->getId());
     }
 
-    private function previewLexeme(): Lexeme
+    private function previewToken(): Token
     {
-        if (!isset($this->lexeme)) {
-            $this->lexeme = $this->lexemeReader->read();
+        if (!isset($this->token)) {
+            $this->token = $this->tokenReader->read();
         }
-        return $this->lexeme;
+        return $this->token;
     }
 
     /**
@@ -108,17 +108,17 @@ class Parser
      * @param ParsedSymbol $symbol
      * @throws Exception
      */
-    private function readSymbolLexeme(ParsedSymbol $symbol): void
+    private function readSymbolToken(ParsedSymbol $symbol): void
     {
-        $lexeme = $this->previewLexeme();
-        if (!$this->grammar->tokenMatchesTerminal($symbol->getId(), $lexeme->getType())) {
-            throw new Exception("Unexpected token {$lexeme->getType()} for symbol {$symbol->getId()}");
+        $token = $this->previewToken();
+        if (!$this->grammar->tokenMatchesTerminal($symbol->getId(), $token->getType())) {
+            throw new Exception("Unexpected token {$token->getType()} for symbol {$symbol->getId()}");
         }
-        $parsedLexeme = new ParsedLexeme($this->getNextSymbolIndex(), $lexeme);
-        $lexeme->isEoi()
-            ? $this->listener->onEoi($symbol, $parsedLexeme)
-            : $this->listener->onLexeme($symbol, $parsedLexeme);
-        unset($this->lexeme);
+        $parsedToken = new ParsedToken($this->getNextSymbolIndex(), $token);
+        $token->isEoi()
+            ? $this->listener->onEoi($symbol, $parsedToken)
+            : $this->listener->onToken($symbol, $parsedToken);
+        unset($this->token);
     }
 
     /**
@@ -127,7 +127,7 @@ class Parser
      */
     private function pushMatchingProduction(ParsedSymbol $symbol): void
     {
-        $tokenId = $this->previewLexeme()->getType();
+        $tokenId = $this->previewToken()->getType();
         $production = [];
         foreach ($this->getLookupTable()->getProduction($symbol->getId(), $tokenId) as $symbolId) {
             $production[] = new ParsedSymbol($this->getNextSymbolIndex(), $symbolId);

@@ -3,12 +3,12 @@
 namespace Remorhaz\UniLex\Test;
 
 use PHPUnit\Framework\TestCase;
-use Remorhaz\UniLex\LexemePosition;
+use Remorhaz\UniLex\TokenPosition;
 
 /**
- * @covers \Remorhaz\UniLex\LexemePosition
+ * @covers \Remorhaz\UniLex\TokenPosition
  */
-class LexemePositionTest extends TestCase
+class TokenPositionTest extends TestCase
 {
 
     /**
@@ -16,7 +16,7 @@ class LexemePositionTest extends TestCase
      */
     public function testGetStartOffset_ConstructWithValue_ReturnsSameValue(): void
     {
-        $position = new LexemePosition(0, 1);
+        $position = new TokenPosition(0, 1);
         $actualValue = $position->getStartOffset();
         self::assertSame(0, $actualValue);
     }
@@ -26,7 +26,7 @@ class LexemePositionTest extends TestCase
      */
     public function testGetFinishOffset_ConstructWithValue_ReturnsSameValue(): void
     {
-        $position = new LexemePosition(0, 1);
+        $position = new TokenPosition(0, 1);
         $actualValue = $position->getFinishOffset();
         self::assertSame(1, $actualValue);
     }
@@ -43,7 +43,7 @@ class LexemePositionTest extends TestCase
         int $finishOffset,
         int $expectedLength
     ): void {
-        $position = new LexemePosition($startOffset, $finishOffset);
+        $position = new TokenPosition($startOffset, $finishOffset);
         $actualValue = $position->getLength();
         self::assertSame($expectedLength, $actualValue);
     }
@@ -51,26 +51,26 @@ class LexemePositionTest extends TestCase
     public function providerOffsetsWithLength(): array
     {
         return [
-            'Single symbol lexeme' => [0, 1, 1],
-            'Empty lexeme' => [0, 0, 0],
+            'Single symbol token' => [0, 1, 1],
+            'Empty token' => [0, 0, 0],
         ];
     }
 
     /**
      * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Negative start offset in lexeme position: -1
+     * @expectedExceptionMessage Negative start offset in token position: -1
      */
     public function testConstruct_NegativeStartOffset_ThrowsException()
     {
-        new LexemePosition(-1, 1);
+        new TokenPosition(-1, 1);
     }
 
     /**
      * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Finish offset lesser than start in lexeme position: -1 < 0
+     * @expectedExceptionMessage Finish offset lesser than start in token position: -1 < 0
      */
     public function testConstruct_FinishOffsetLessThanStart_ThrowsException()
     {
-        new LexemePosition(0, -1);
+        new TokenPosition(0, -1);
     }
 }

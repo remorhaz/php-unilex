@@ -2,7 +2,7 @@
 
 namespace Remorhaz\UniLex;
 
-class Lexeme
+class Token
 {
 
     private $type;
@@ -29,22 +29,22 @@ class Lexeme
         return $this->isEoi;
     }
 
-    public function setBufferInfo(LexemeBufferInfoInterface $bufferInfo): void
+    public function setBufferInfo(TokenBufferInfoInterface $bufferInfo): void
     {
         $this->bufferInfo = $bufferInfo;
     }
 
-    public function getBufferInfo(): ?LexemeBufferInfoInterface
+    public function getBufferInfo(): ?TokenBufferInfoInterface
     {
         return $this->bufferInfo;
     }
 
-    public function setMatcherInfo(LexemeMatcherInfoInterface $matcherInfo): void
+    public function setMatcherInfo(TokenMatcherInfoInterface $matcherInfo): void
     {
         $this->matcherInfo = $matcherInfo;
     }
 
-    public function getMatcherInfo(): ?LexemeMatcherInfoInterface
+    public function getMatcherInfo(): ?TokenMatcherInfoInterface
     {
         return $this->matcherInfo;
     }

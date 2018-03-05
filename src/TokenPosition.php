@@ -3,20 +3,20 @@
 namespace Remorhaz\UniLex;
 
 /**
- * Describes lexeme position in symbol buffer.
+ * Describes token position in symbol buffer.
  */
-class LexemePosition
+class TokenPosition
 {
 
     /**
-     * Offset of the first symbol of lexeme.
+     * Offset of the first symbol of token.
      *
      * @var int
      */
     private $startOffset;
 
     /**
-     * Offset of the next symbol after lexeme.
+     * Offset of the next symbol after token.
      *
      * @var int
      */
@@ -32,17 +32,17 @@ class LexemePosition
     public function __construct(int $startOffset, int $finishOffset)
     {
         if ($startOffset < 0) {
-            throw new Exception("Negative start offset in lexeme position: {$startOffset}");
+            throw new Exception("Negative start offset in token position: {$startOffset}");
         }
         if ($finishOffset < $startOffset) {
-            throw new Exception("Finish offset lesser than start in lexeme position: {$finishOffset} < {$startOffset}");
+            throw new Exception("Finish offset lesser than start in token position: {$finishOffset} < {$startOffset}");
         }
         $this->startOffset = $startOffset;
         $this->finishOffset = $finishOffset;
     }
 
     /**
-     * Returns offset of the first symbol of lexeme.
+     * Returns offset of the first symbol of token.
      *
      * @return int
      */
@@ -52,7 +52,7 @@ class LexemePosition
     }
 
     /**
-     * Returns the offset of the next symbol after lexeme.
+     * Returns the offset of the next symbol after token.
      *
      * @return int
      */
@@ -62,7 +62,7 @@ class LexemePosition
     }
 
     /**
-     * Returns length of the lexeme in symbols.
+     * Returns length of the token in symbols.
      *
      * @return int
      */

@@ -11,7 +11,7 @@ interface ParserListenerInterface
 
     public function onProduction(?ParsedSymbol $symbol, ParsedSymbol ...$production): void;
 
-    public function onLexeme(ParsedSymbol $symbol, ParsedLexeme $lexeme): void;
+    public function onToken(ParsedSymbol $symbol, ParsedToken $token): void;
 
-    public function onEoi(ParsedSymbol $symbol, ParsedLexeme $lexeme): void;
+    public function onEoi(ParsedSymbol $symbol, ParsedToken $token): void;
 }

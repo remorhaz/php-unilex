@@ -4,10 +4,10 @@ namespace Remorhaz\UniLex;
 
 use SplFixedArray;
 
-interface LexemeBufferInfoInterface
+interface TokenBufferInfoInterface
 {
 
     public function extract(): SplFixedArray;
 
-    public function getPosition(): LexemePosition;
+    public function getPosition(): TokenPosition;
 }

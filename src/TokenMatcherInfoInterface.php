@@ -2,6 +2,6 @@
 
 namespace Remorhaz\UniLex;
 
-interface LexemeMatcherInfoInterface
+interface TokenMatcherInfoInterface
 {
 }

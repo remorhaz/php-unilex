@@ -7,7 +7,7 @@ namespace Remorhaz\UniLex\RegExp\Grammar;
  *
  * @see doc/RegExpGrammar.md
  */
-abstract class ProductionType
+abstract class SymbolType
 {
     const NT_PARTS                      = 0x01;
     const NT_ALT_PARTS                  = 0x02;

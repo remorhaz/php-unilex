@@ -3,14 +3,14 @@
 namespace Remorhaz\UniLex\Test;
 
 use PHPUnit\Framework\TestCase;
-use Remorhaz\UniLex\LexemePosition;
+use Remorhaz\UniLex\TokenPosition;
 use Remorhaz\UniLex\SymbolBuffer;
-use Remorhaz\UniLex\LexemeBufferInfo;
+use Remorhaz\UniLex\TokenBufferInfo;
 
 /**
- * @covers \Remorhaz\UniLex\LexemeBufferInfo
+ * @covers \Remorhaz\UniLex\TokenBufferInfo
  */
-class LexemeBufferInfoTest extends TestCase
+class TokenBufferInfoTest extends TestCase
 {
 
     /**
@@ -19,8 +19,8 @@ class LexemeBufferInfoTest extends TestCase
     public function testGetPosition_ConstructWithValue_ReturnsPositionWithSameStartOffset(): void
     {
         $buffer = SymbolBuffer::fromString('a');
-        $position = new LexemePosition(0, 1);
-        $info = new LexemeBufferInfo($buffer, $position);
+        $position = new TokenPosition(0, 1);
+        $info = new TokenBufferInfo($buffer, $position);
         $actualValue = $info->getPosition();
         self::assertSame(0, $actualValue->getStartOffset());
     }
@@ -31,8 +31,8 @@ class LexemeBufferInfoTest extends TestCase
     public function testGetPosition_ConstructWithValue_ReturnsPositionWithSameFinishOffset(): void
     {
         $buffer = SymbolBuffer::fromString('a');
-        $position = new LexemePosition(0, 1);
-        $info = new LexemeBufferInfo($buffer, $position);
+        $position = new TokenPosition(0, 1);
+        $info = new TokenBufferInfo($buffer, $position);
         $actualValue = $info->getPosition();
         self::assertSame(1, $actualValue->getFinishOffset());
     }
@@ -40,10 +40,10 @@ class LexemeBufferInfoTest extends TestCase
     /**
      * @throws \Remorhaz\UniLex\Exception
      */
-    public function testExtractLexeme_ConstructWithValue_ReturnsEqualValue(): void
+    public function testExtract_ConstructWithValue_ReturnsEqualValue(): void
     {
         $buffer = SymbolBuffer::fromString('a');
-        $info = new LexemeBufferInfo($buffer, new LexemePosition(0, 1));
+        $info = new TokenBufferInfo($buffer, new TokenPosition(0, 1));
         $actualValue = $info->extract();
         $expectedValue = \SplFixedArray::fromArray([0x61]);
         self::assertEquals($expectedValue, $actualValue);

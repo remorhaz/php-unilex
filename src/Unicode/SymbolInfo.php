@@ -2,9 +2,9 @@
 
 namespace Remorhaz\UniLex\Unicode;
 
-use Remorhaz\UniLex\LexemeMatcherInfoInterface;
+use Remorhaz\UniLex\TokenMatcherInfoInterface;
 
-class SymbolInfo implements LexemeMatcherInfoInterface
+class SymbolInfo implements TokenMatcherInfoInterface
 {
 
     private $code;

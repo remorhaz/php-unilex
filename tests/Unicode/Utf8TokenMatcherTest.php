@@ -5,24 +5,24 @@ namespace Remorhaz\UniLex\Test\Unicode;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\SymbolBuffer;
 use Remorhaz\UniLex\Unicode\Grammar\TokenType;
-use Remorhaz\UniLex\Unicode\Grammar\LexemeFactory;
+use Remorhaz\UniLex\Unicode\Grammar\TokenFactory;
 use Remorhaz\UniLex\Unicode\SymbolInfo;
-use Remorhaz\UniLex\Unicode\Utf8LexemeMatcher;
+use Remorhaz\UniLex\Unicode\Utf8TokenMatcher;
 
 /**
- * @covers \Remorhaz\UniLex\Unicode\Utf8LexemeMatcher
+ * @covers \Remorhaz\UniLex\Unicode\Utf8TokenMatcher
  */
-class Utf8LexemeMatcherTest extends TestCase
+class Utf8TokenMatcherTest extends TestCase
 {
 
     /**
      * @param string $text
      * @dataProvider providerValidSymbolList
      */
-    public function testMatch_ValidText_ReturnsSymbolLexeme(string $text): void
+    public function testMatch_ValidText_ReturnsSymbolToken(string $text): void
     {
         $buffer = SymbolBuffer::fromString($text);
-        $actual = (new Utf8LexemeMatcher)->match($buffer, new LexemeFactory)->getType();
+        $actual = (new Utf8TokenMatcher)->match($buffer, new TokenFactory)->getType();
         self::assertEquals(TokenType::SYMBOL, $actual);
     }
 
@@ -31,14 +31,13 @@ class Utf8LexemeMatcherTest extends TestCase
      * @param int $expectedSymbol
      * @dataProvider providerValidSymbolList
      */
-    public function testMatch_ValidText_ReturnsMatchingSymbolInfoInLexeme(
+    public function testMatch_ValidText_ReturnsMatchingSymbolInfoInToken(
         string $text,
         int $expectedSymbol
     ): void {
         $buffer = SymbolBuffer::fromString($text);
-        $lexemeFactory = new LexemeFactory;
         $expectedValue = new SymbolInfo($expectedSymbol);
-        $actualValue = (new Utf8LexemeMatcher)->match($buffer, $lexemeFactory)->getMatcherInfo();
+        $actualValue = (new Utf8TokenMatcher)->match($buffer, new TokenFactory)->getMatcherInfo();
         self::assertEquals($expectedValue, $actualValue);
     }
 
@@ -59,11 +58,10 @@ class Utf8LexemeMatcherTest extends TestCase
      * @param string $text
      * @dataProvider providerInvalidText
      */
-    public function testMatch_InvalidText_ReturnsInvalidBytesLexeme(string $text): void
+    public function testMatch_InvalidText_ReturnsInvalidBytesToken(string $text): void
     {
         $buffer = SymbolBuffer::fromString($text);
-        $lexemeFactory = new LexemeFactory;
-        $actual = (new Utf8LexemeMatcher)->match($buffer, $lexemeFactory)->getType();
+        $actual = (new Utf8TokenMatcher)->match($buffer, new TokenFactory)->getType();
         self::assertEquals(TokenType::INVALID_BYTES, $actual);
     }
 

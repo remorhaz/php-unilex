@@ -3,8 +3,8 @@
 namespace Remorhaz\UniLex\Test;
 
 use PHPUnit\Framework\TestCase;
-use Remorhaz\UniLex\Lexeme;
-use Remorhaz\UniLex\LexemePosition;
+use Remorhaz\UniLex\Token;
+use Remorhaz\UniLex\TokenPosition;
 use Remorhaz\UniLex\SymbolBuffer;
 
 /**
@@ -68,11 +68,11 @@ class SymbolBufferTest extends TestCase
     /**
      * @throws \Remorhaz\UniLex\Exception
      */
-    public function testResetLexeme_NextSymbolCalled_GetSymbolReturnsFirstByte(): void
+    public function testResetToken_NextSymbolCalled_GetSymbolReturnsFirstByte(): void
     {
         $buffer = SymbolBuffer::fromString('ab');
         $buffer->nextSymbol();
-        $buffer->resetLexeme();
+        $buffer->resetToken();
         $actualValue = $buffer->getSymbol();
         self::assertSame(0x61, $actualValue);
     }
@@ -80,12 +80,12 @@ class SymbolBufferTest extends TestCase
     /**
      * @throws \Remorhaz\UniLex\Exception
      */
-    public function testFinishLexeme_NotAtBufferEnd_GetSymbolAfterResetLexemeReturnsSecondByte(): void
+    public function testFinishToken_NotAtBufferEnd_GetSymbolAfterResetTokenReturnsSecondByte(): void
     {
         $buffer = SymbolBuffer::fromString('ab');
         $buffer->nextSymbol();
-        $buffer->finishLexeme(new Lexeme(1, false));
-        $buffer->resetLexeme();
+        $buffer->finishToken(new Token(1, false));
+        $buffer->resetToken();
         $actualValue = $buffer->getSymbol();
         self::assertSame(0x62, $actualValue);
     }
@@ -93,26 +93,26 @@ class SymbolBufferTest extends TestCase
     /**
      * @throws \Remorhaz\UniLex\Exception
      */
-    public function testExtractLexeme_NoLexemePreviewed_ReturnsEmptyBuffer(): void
+    public function testExtractToken_NoTokenPreviewed_ReturnsEmptyBuffer(): void
     {
         $buffer = SymbolBuffer::fromString('a');
-        $lexeme = $buffer->extractLexeme(new LexemePosition(0, 0));
-        self::assertEquals(0, $lexeme->count());
+        $token = $buffer->extractToken(new TokenPosition(0, 0));
+        self::assertEquals(0, $token->count());
     }
 
     /**
      * @param string $text
-     * @dataProvider providerSingleSymbolLexeme
+     * @dataProvider providerSingleSymbolToken
      * @throws \Remorhaz\UniLex\Exception
      */
-    public function testExtractLexeme_SingleSymbolLexemePreviewed_ReturnsBufferOfMatchingSize(string $text): void
+    public function testExtractToken_SingleSymbolTokenPreviewed_ReturnsBufferOfMatchingSize(string $text): void
     {
         $buffer = SymbolBuffer::fromString($text);
-        $lexeme = $buffer->extractLexeme(new LexemePosition(0, 1));
-        self::assertEquals(1, $lexeme->count());
+        $token = $buffer->extractToken(new TokenPosition(0, 1));
+        self::assertEquals(1, $token->count());
     }
 
-    public function providerSingleSymbolLexeme(): array
+    public function providerSingleSymbolToken(): array
     {
         return [
             'ASCII char' => ['a', 0x61],

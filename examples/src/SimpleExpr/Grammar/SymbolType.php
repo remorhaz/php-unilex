@@ -2,7 +2,7 @@
 
 namespace Remorhaz\UniLex\Example\SimpleExpr\Grammar;
 
-abstract class ProductionType
+abstract class SymbolType
 {
     const T_PLUS            = 0x01; // +
     const T_STAR            = 0x02; // *

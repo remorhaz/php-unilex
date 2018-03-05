@@ -4,20 +4,20 @@ namespace Remorhaz\UniLex;
 
 use SplFixedArray;
 
-class LexemeBufferInfo implements LexemeBufferInfoInterface
+class TokenBufferInfo implements TokenBufferInfoInterface
 {
 
     private $buffer;
 
     private $position;
 
-    public function __construct(LexemeExtractInterface $buffer, LexemePosition $position)
+    public function __construct(TokenExtractInterface $buffer, TokenPosition $position)
     {
         $this->buffer = $buffer;
         $this->position = $position;
     }
 
-    public function getPosition(): LexemePosition
+    public function getPosition(): TokenPosition
     {
         return $this->position;
     }
@@ -25,6 +25,6 @@ class LexemeBufferInfo implements LexemeBufferInfoInterface
     public function extract(): SplFixedArray
     {
         $position = $this->getPosition();
-        return $this->buffer->extractLexeme($position);
+        return $this->buffer->extractToken($position);
     }
 }

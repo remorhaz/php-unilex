@@ -17,11 +17,11 @@ abstract class AbstractParserListener implements ParserListenerInterface
     {
     }
 
-    public function onLexeme(ParsedSymbol $symbol, ParsedLexeme $lexeme): void
+    public function onToken(ParsedSymbol $symbol, ParsedToken $token): void
     {
     }
 
-    public function onEoi(ParsedSymbol $symbol, ParsedLexeme $lexeme): void
+    public function onEoi(ParsedSymbol $symbol, ParsedToken $token): void
     {
     }
 }

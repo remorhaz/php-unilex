@@ -2,25 +2,25 @@
 
 namespace Remorhaz\UniLex\Unicode;
 
-use Remorhaz\UniLex\Lexeme;
-use Remorhaz\UniLex\LexemeFactoryInterface;
-use Remorhaz\UniLex\LexemeMatcherInterface;
+use Remorhaz\UniLex\Token;
+use Remorhaz\UniLex\TokenFactoryInterface;
+use Remorhaz\UniLex\TokenMatcherInterface;
 use Remorhaz\UniLex\SymbolBufferInterface;
 use Remorhaz\UniLex\Unicode\Grammar\TokenType;
 
-class Utf8LexemeMatcher implements LexemeMatcherInterface
+class Utf8TokenMatcher implements TokenMatcherInterface
 {
 
-    public function match(SymbolBufferInterface $buffer, LexemeFactoryInterface $lexemeFactory): Lexeme
+    public function match(SymbolBufferInterface $buffer, TokenFactoryInterface $tokenFactory): Token
     {
         $symbol = null;
         $firstByte = $buffer->getSymbol();
         if ($firstByte >= 0 && $firstByte <= 0x7F) { // 1-byte symbol
             $symbolInfo = new SymbolInfo($firstByte);
             $buffer->nextSymbol();
-            $lexeme = $lexemeFactory->createLexeme(TokenType::SYMBOL);
-            $lexeme->setMatcherInfo($symbolInfo);
-            return $lexeme;
+            $token = $tokenFactory->createToken(TokenType::SYMBOL);
+            $token->setMatcherInfo($symbolInfo);
+            return $token;
         }
         if ($firstByte >= 0xC0 && $firstByte <= 0xDF) { // 2-byte symbol
             $symbol = ($firstByte & 0x1F) << 6;
@@ -91,14 +91,14 @@ class Utf8LexemeMatcher implements LexemeMatcherInterface
             $symbol |= ($tailByte & 0x3F);
             $symbolInfo = new SymbolInfo($symbol);
             $buffer->nextSymbol();
-            $lexeme = $lexemeFactory->createLexeme(TokenType::SYMBOL);
-            $lexeme->setMatcherInfo($symbolInfo);
-            return $lexeme;
+            $token = $tokenFactory->createToken(TokenType::SYMBOL);
+            $token->setMatcherInfo($symbolInfo);
+            return $token;
         }
         goto invalid_byte;
 
         invalid_byte:
         $buffer->nextSymbol();
-        return $lexemeFactory->createLexeme(TokenType::INVALID_BYTES);
+        return $tokenFactory->createToken(TokenType::INVALID_BYTES);
     }
 }

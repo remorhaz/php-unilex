@@ -4,7 +4,7 @@ namespace Remorhaz\UniLex;
 
 use SplFixedArray;
 
-class LexemeBuffer implements SymbolBufferInterface, LexemeExtractInterface
+class TokenBuffer implements SymbolBufferInterface, TokenExtractInterface
 {
 
     private $reader;
@@ -12,7 +12,7 @@ class LexemeBuffer implements SymbolBufferInterface, LexemeExtractInterface
     private $symbolFactory;
 
     /**
-     * @var Lexeme[]
+     * @var Token[]
      */
     private $data = [];
 
@@ -20,7 +20,7 @@ class LexemeBuffer implements SymbolBufferInterface, LexemeExtractInterface
 
     private $previewOffset = 0;
 
-    public function __construct(LexemeReaderInterface $reader, SymbolFactoryInterface $symbolFactory)
+    public function __construct(TokenReaderInterface $reader, SymbolFactoryInterface $symbolFactory)
     {
         $this->reader = $reader;
         $this->symbolFactory = $symbolFactory;
@@ -28,7 +28,7 @@ class LexemeBuffer implements SymbolBufferInterface, LexemeExtractInterface
 
     public function isEnd(): bool
     {
-        return $this->getLexeme()->isEoi();
+        return $this->getToken()->isEoi();
     }
 
     /**
@@ -39,22 +39,22 @@ class LexemeBuffer implements SymbolBufferInterface, LexemeExtractInterface
         if ($this->isEnd()) {
             throw new Exception("Unexpected end of buffer at index {$this->previewOffset}");
         }
-        $this->cacheLexeme();
+        $this->cacheToken();
         $this->previewOffset++;
     }
 
-    public function resetLexeme(): void
+    public function resetToken(): void
     {
         $this->previewOffset = $this->startOffset;
     }
 
     /**
-     * @param Lexeme $lexeme
+     * @param Token $token
      * @throws Exception
      */
-    public function finishLexeme(Lexeme $lexeme): void
+    public function finishToken(Token $token): void
     {
-        $lexeme->setBufferInfo($this->getLexemeInfo());
+        $token->setBufferInfo($this->getTokenInfo());
         $this->startOffset = $this->previewOffset;
     }
 
@@ -67,40 +67,40 @@ class LexemeBuffer implements SymbolBufferInterface, LexemeExtractInterface
         if ($this->isEnd()) {
             throw new Exception("No symbol to preview at index {$this->previewOffset}");
         }
-        return $this->symbolFactory->getSymbol($this->getLexeme());
+        return $this->symbolFactory->getSymbol($this->getToken());
     }
 
     /**
-     * @return LexemeBufferInfoInterface
+     * @return TokenBufferInfoInterface
      * @throws Exception
      * @todo Attach merged source input info, maybe?
      */
-    private function getLexemeInfo(): LexemeBufferInfoInterface
+    private function getTokenInfo(): TokenBufferInfoInterface
     {
-        $position = new LexemePosition($this->startOffset, $this->previewOffset);
-        return new LexemeBufferInfo($this, $position);
+        $position = new TokenPosition($this->startOffset, $this->previewOffset);
+        return new TokenBufferInfo($this, $position);
     }
 
-    public function extractLexeme(LexemePosition $position): SplFixedArray
+    public function extractToken(TokenPosition $position): SplFixedArray
     {
         $startOffset = $position->getStartOffset();
-        $lexemeLength = $position->getLength();
-        $output = new SplFixedArray($lexemeLength);
-        for ($i = 0; $i < $lexemeLength; $i++) {
-            $lexeme = $this->data[$startOffset + $i];
-            $symbol = $this->symbolFactory->getSymbol($lexeme);
+        $tokenLength = $position->getLength();
+        $output = new SplFixedArray($tokenLength);
+        for ($i = 0; $i < $tokenLength; $i++) {
+            $token = $this->data[$startOffset + $i];
+            $symbol = $this->symbolFactory->getSymbol($token);
             $output->offsetSet($i, $symbol);
         }
         return $output;
     }
 
-    private function getLexeme(): Lexeme
+    private function getToken(): Token
     {
-        $this->cacheLexeme();
+        $this->cacheToken();
         return $this->data[$this->previewOffset];
     }
 
-    private function cacheLexeme(): void
+    private function cacheToken(): void
     {
         if (!isset($this->data[$this->previewOffset])) {
             $this->data[$this->previewOffset] = $this->reader->read();

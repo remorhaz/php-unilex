@@ -5,5 +5,5 @@ namespace Remorhaz\UniLex;
 interface SymbolFactoryInterface
 {
 
-    public function getSymbol(Lexeme $lexeme): int;
+    public function getSymbol(Token $token): int;
 }

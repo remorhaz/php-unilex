@@ -1,0 +1,106 @@
+<?php
+
+namespace Remorhaz\UniLex\Test;
+
+use PHPUnit\Framework\TestCase;
+use Remorhaz\UniLex\TokenPosition;
+use Remorhaz\UniLex\SymbolBuffer;
+use Remorhaz\UniLex\TokenBufferInfo;
+use Remorhaz\UniLex\TokenReader;
+use Remorhaz\UniLex\Unicode\Grammar\TokenType;
+use Remorhaz\UniLex\Unicode\Grammar\TokenFactory;
+use Remorhaz\UniLex\Unicode\SymbolInfo;
+use Remorhaz\UniLex\Unicode\Utf8TokenMatcher;
+
+/**
+ * @covers \Remorhaz\UniLex\TokenReader
+ */
+class TokenReaderTest extends TestCase
+{
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testRead_NotEmptyValidBufferStart_ReturnsMatchingSymbolToken(): void
+    {
+        $buffer = SymbolBuffer::fromString('a');
+        $tokenFactory = new TokenFactory;
+        $tokenInfo = new TokenBufferInfo($buffer, new TokenPosition(0, 1));
+        $matcherInfo = new SymbolInfo(0x00000061);
+        $expectedValue = $tokenFactory->createToken(TokenType::SYMBOL);
+        $expectedValue->setBufferInfo($tokenInfo);
+        $expectedValue->setMatcherInfo($matcherInfo);
+        $scanner = new TokenReader($buffer, new Utf8TokenMatcher, $tokenFactory);
+        $actualValue = $scanner->read();
+        self::assertEquals($expectedValue, $actualValue);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testRead_NotEmptyValidBufferMiddle_ReturnsMatchingSymbolToken(): void
+    {
+        $buffer = SymbolBuffer::fromString('ab');
+        $tokenFactory = new TokenFactory;
+        $tokenInfo = new TokenBufferInfo($buffer, new TokenPosition(1, 2));
+        $matcherInfo = new SymbolInfo(0x00000062);
+        $expectedValue = $tokenFactory->createToken(TokenType::SYMBOL);
+        $expectedValue->setBufferInfo($tokenInfo);
+        $expectedValue->setMatcherInfo($matcherInfo);
+        $scanner = new TokenReader($buffer, new Utf8TokenMatcher, $tokenFactory);
+        $scanner->read();
+        $actualValue = $scanner->read();
+        self::assertEquals($expectedValue, $actualValue);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testRead_NotEmptyBufferEnd_ReturnsEoiToken(): void
+    {
+        $buffer = SymbolBuffer::fromString('a');
+        $scanner = new TokenReader($buffer, new Utf8TokenMatcher, new TokenFactory);
+        $scanner->read();
+        $actualValue = $scanner->read()->isEoi();
+        self::assertTrue($actualValue);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testRead_EmptyBuffer_ReturnsEoiToken(): void
+    {
+        $buffer = SymbolBuffer::fromString('');
+        $scanner = new TokenReader($buffer, new Utf8TokenMatcher, new TokenFactory);
+        $actualValue = $scanner->read()->isEoi();
+        self::assertTrue($actualValue);
+    }
+
+    /**
+     * @expectedException \Remorhaz\UniLex\Exception
+     * @expectedExceptionMessage Buffer end reached
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testRead_AfterBufferEnd_ThrowsException(): void
+    {
+        $buffer = SymbolBuffer::fromString('');
+        $scanner = new TokenReader($buffer, new Utf8TokenMatcher, new TokenFactory);
+        $scanner->read();
+        $scanner->read();
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testRead_NotEmptyInvalidBufferStart_ReturnsMatch(): void
+    {
+        $buffer = SymbolBuffer::fromString("\x80");
+        $tokenFactory = new TokenFactory;
+        $tokenInfo = new TokenBufferInfo($buffer, new TokenPosition(0, 1));
+        $expectedValue = $tokenFactory->createToken(TokenType::INVALID_BYTES);
+        $expectedValue->setBufferInfo($tokenInfo);
+        $scanner = new TokenReader($buffer, new Utf8TokenMatcher, $tokenFactory);
+        $actualValue = $scanner->read();
+        self::assertEquals($expectedValue, $actualValue);
+    }
+}
