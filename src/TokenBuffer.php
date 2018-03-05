@@ -7,6 +7,8 @@ use SplFixedArray;
 class TokenBuffer implements CharBufferInterface, TokenExtractInterface
 {
 
+    private const DEFAULT_TOKEN_ATTRIBUTE_PREFIX = 'buffer';
+
     private $reader;
 
     private $symbolFactory;
@@ -20,10 +22,16 @@ class TokenBuffer implements CharBufferInterface, TokenExtractInterface
 
     private $previewOffset = 0;
 
-    public function __construct(TokenReaderInterface $reader, SymbolFactoryInterface $symbolFactory)
-    {
+    private $tokenAttributePrefix;
+
+    public function __construct(
+        TokenReaderInterface $reader,
+        SymbolFactoryInterface $symbolFactory,
+        string $tokenAttributePrefix = self::DEFAULT_TOKEN_ATTRIBUTE_PREFIX
+    ) {
         $this->reader = $reader;
         $this->symbolFactory = $symbolFactory;
+        $this->tokenAttributePrefix = $tokenAttributePrefix;
     }
 
     public function isEnd(): bool
@@ -54,7 +62,8 @@ class TokenBuffer implements CharBufferInterface, TokenExtractInterface
      */
     public function finishToken(Token $token): void
     {
-        $token->setBufferInfo($this->getTokenInfo());
+        $token->setAttribute("{$this->tokenAttributePrefix}.position.start", $this->startOffset);
+        $token->setAttribute("{$this->tokenAttributePrefix}.position.finish", $this->previewOffset);
         $this->startOffset = $this->previewOffset;
     }
 
@@ -68,17 +77,6 @@ class TokenBuffer implements CharBufferInterface, TokenExtractInterface
             throw new Exception("No symbol to preview at index {$this->previewOffset}");
         }
         return $this->symbolFactory->getSymbol($this->getToken());
-    }
-
-    /**
-     * @return TokenBufferInfoInterface
-     * @throws Exception
-     * @todo Attach merged source input info, maybe?
-     */
-    private function getTokenInfo(): TokenBufferInfoInterface
-    {
-        $position = new TokenPosition($this->startOffset, $this->previewOffset);
-        return new TokenBufferInfo($this, $position);
     }
 
     public function extractToken(TokenPosition $position): SplFixedArray

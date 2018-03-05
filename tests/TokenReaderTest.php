@@ -3,9 +3,7 @@
 namespace Remorhaz\UniLex\Test;
 
 use PHPUnit\Framework\TestCase;
-use Remorhaz\UniLex\TokenPosition;
 use Remorhaz\UniLex\CharBuffer;
-use Remorhaz\UniLex\TokenBufferInfo;
 use Remorhaz\UniLex\TokenReader;
 use Remorhaz\UniLex\Unicode\Grammar\TokenType;
 use Remorhaz\UniLex\Unicode\Grammar\TokenFactory;
@@ -25,11 +23,11 @@ class TokenReaderTest extends TestCase
     {
         $buffer = CharBuffer::fromString('a');
         $tokenFactory = new TokenFactory;
-        $tokenInfo = new TokenBufferInfo($buffer, new TokenPosition(0, 1));
         $matcherInfo = new SymbolInfo(0x00000061);
         $expectedValue = $tokenFactory->createToken(TokenType::SYMBOL);
-        $expectedValue->setBufferInfo($tokenInfo);
         $expectedValue->setMatcherInfo($matcherInfo);
+        $expectedValue->setAttribute('buffer.position.start', 0);
+        $expectedValue->setAttribute('buffer.position.finish', 1);
         $scanner = new TokenReader($buffer, new Utf8TokenMatcher, $tokenFactory);
         $actualValue = $scanner->read();
         self::assertEquals($expectedValue, $actualValue);
@@ -42,11 +40,11 @@ class TokenReaderTest extends TestCase
     {
         $buffer = CharBuffer::fromString('ab');
         $tokenFactory = new TokenFactory;
-        $tokenInfo = new TokenBufferInfo($buffer, new TokenPosition(1, 2));
         $matcherInfo = new SymbolInfo(0x00000062);
         $expectedValue = $tokenFactory->createToken(TokenType::SYMBOL);
-        $expectedValue->setBufferInfo($tokenInfo);
         $expectedValue->setMatcherInfo($matcherInfo);
+        $expectedValue->setAttribute('buffer.position.start', 1);
+        $expectedValue->setAttribute('buffer.position.finish', 2);
         $scanner = new TokenReader($buffer, new Utf8TokenMatcher, $tokenFactory);
         $scanner->read();
         $actualValue = $scanner->read();
@@ -96,9 +94,9 @@ class TokenReaderTest extends TestCase
     {
         $buffer = CharBuffer::fromString("\x80");
         $tokenFactory = new TokenFactory;
-        $tokenInfo = new TokenBufferInfo($buffer, new TokenPosition(0, 1));
         $expectedValue = $tokenFactory->createToken(TokenType::INVALID_BYTES);
-        $expectedValue->setBufferInfo($tokenInfo);
+        $expectedValue->setAttribute('buffer.position.start', 0);
+        $expectedValue->setAttribute('buffer.position.finish', 1);
         $scanner = new TokenReader($buffer, new Utf8TokenMatcher, $tokenFactory);
         $actualValue = $scanner->read();
         self::assertEquals($expectedValue, $actualValue);

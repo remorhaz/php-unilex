@@ -7,6 +7,8 @@ use SplFixedArray;
 class CharBuffer implements CharBufferInterface, TokenExtractInterface
 {
 
+    private const DEFAULT_TOKEN_ATTRIBUTE_PREFIX = 'buffer';
+
     /**
      * @var SplFixedArray
      */
@@ -18,10 +20,13 @@ class CharBuffer implements CharBufferInterface, TokenExtractInterface
 
     private $previewOffset = 0;
 
-    public function __construct(SplFixedArray $data)
+    private $tokenAttributePrefix;
+
+    public function __construct(SplFixedArray $data, $tokenAttributePrefix = self::DEFAULT_TOKEN_ATTRIBUTE_PREFIX)
     {
         $this->data = $data;
         $this->length = $data->count();
+        $this->tokenAttributePrefix = $tokenAttributePrefix;
     }
 
     public static function fromString(string $text): self
@@ -80,7 +85,8 @@ class CharBuffer implements CharBufferInterface, TokenExtractInterface
      */
     public function finishToken(Token $token): void
     {
-        $token->setBufferInfo($this->getTokenInfo());
+        $token->setAttribute("{$this->tokenAttributePrefix}.position.start", $this->startOffset);
+        $token->setAttribute("{$this->tokenAttributePrefix}.position.finish", $this->previewOffset);
         $this->startOffset = $this->previewOffset;
     }
 
@@ -94,15 +100,5 @@ class CharBuffer implements CharBufferInterface, TokenExtractInterface
             $output->offsetSet($i, $symbol);
         }
         return $output;
-    }
-
-    /**
-     * @return TokenBufferInfoInterface
-     * @throws Exception
-     */
-    private function getTokenInfo(): TokenBufferInfoInterface
-    {
-        $position = new TokenPosition($this->startOffset, $this->previewOffset);
-        return new TokenBufferInfo($this, $position);
     }
 }

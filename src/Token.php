@@ -31,16 +31,6 @@ class Token
         return $this->isEoi;
     }
 
-    public function setBufferInfo(TokenBufferInfoInterface $bufferInfo): void
-    {
-        $this->bufferInfo = $bufferInfo;
-    }
-
-    public function getBufferInfo(): ?TokenBufferInfoInterface
-    {
-        return $this->bufferInfo;
-    }
-
     public function setMatcherInfo(TokenMatcherInfoInterface $matcherInfo): void
     {
         $this->matcherInfo = $matcherInfo;
