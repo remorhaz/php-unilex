@@ -90,6 +90,11 @@ class Grammar implements GrammarInterface
         return $this->tokenMatchesTerminal($this->getEoiSymbol(), $tokenId);
     }
 
+    public function isEoiSymbol(int $symbolId): bool
+    {
+        return $this->getEoiSymbol() == $symbolId;
+    }
+
     /**
      * @param int $symbolId
      * @param int $tokenId

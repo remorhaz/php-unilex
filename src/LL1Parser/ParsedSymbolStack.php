@@ -4,16 +4,19 @@ namespace Remorhaz\UniLex\LL1Parser;
 
 use Remorhaz\UniLex\Exception;
 
-class SymbolStack
+class ParsedSymbolStack
 {
 
+    /**
+     * @var ParsedSymbol[]
+     */
     private $data = [];
 
     /**
-     * @return int
+     * @return ParsedSymbol
      * @throws Exception
      */
-    public function pop(): int
+    public function pop(): ParsedSymbol
     {
         if (empty($this->data)) {
             throw new Exception("Unexpected end of stack");
@@ -21,12 +24,12 @@ class SymbolStack
         return array_pop($this->data);
     }
 
-    public function push(int ...$symbolIdList): void
+    public function push(ParsedSymbol ...$symbolList): void
     {
-        if (empty($symbolIdList)) {
+        if (empty($symbolList)) {
             return;
         }
-        array_push($this->data, ...array_reverse($symbolIdList));
+        array_push($this->data, ...array_reverse($symbolList));
     }
 
     public function isEmpty(): bool

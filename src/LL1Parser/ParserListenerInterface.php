@@ -2,14 +2,16 @@
 
 namespace Remorhaz\UniLex\LL1Parser;
 
-use Remorhaz\UniLex\Lexeme;
-
 interface ParserListenerInterface
 {
 
-    public function onSymbol(int $symbolId, Lexeme $lexeme): void;
+    public function onStart(): void;
 
-    public function onLexeme(Lexeme $lexeme): void;
+    public function onSymbol(ParsedSymbol $symbol): void;
 
-    public function onEoi(Lexeme $lexeme): void;
+    public function onProduction(?ParsedSymbol $symbol, ParsedSymbol ...$production): void;
+
+    public function onLexeme(ParsedSymbol $symbol, ParsedLexeme $lexeme): void;
+
+    public function onEoi(ParsedSymbol $symbol, ParsedLexeme $lexeme): void;
 }

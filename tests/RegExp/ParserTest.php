@@ -11,7 +11,7 @@ use Remorhaz\UniLex\RegExp\Grammar\ConfigFile;
 use Remorhaz\UniLex\RegExp\Grammar\ProductionType;
 use Remorhaz\UniLex\RegExp\Grammar\TokenType;
 use Remorhaz\UniLex\RegExp\LexemeMatcher;
-use Remorhaz\UniLex\RegExp\ParserListener;
+use Remorhaz\UniLex\LL1Parser\ParseTreeBuilder;
 use Remorhaz\UniLex\Unicode\BufferFactory;
 
 /**
@@ -28,9 +28,8 @@ class ParserTest extends TestCase
     {
         $buffer = BufferFactory::createFromUtf8String('hello');
         $grammar = GrammarLoader::loadFile(ConfigFile::getPath());
-        $lexemeFactory = new LexemeFactory($grammar);
-        $reader = new LexemeReader($buffer, new LexemeMatcher, $lexemeFactory);
-        $listener = new ParserListener;
+        $reader = new LexemeReader($buffer, new LexemeMatcher, new LexemeFactory($grammar));
+        $listener = new ParseTreeBuilder($grammar);
         $parser = new Parser($grammar, $reader, $listener);
         $parser->run();
         $expectedLexemeTypeLog = [
