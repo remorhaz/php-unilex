@@ -102,11 +102,9 @@ class TableBuilder
      */
     private function addProductionsFromNonTerminalMap(Table $table): void
     {
-        foreach ($this->grammar->getNonTerminalList() as $symbolId) {
-            foreach ($this->grammar->getProductionList($symbolId) as $productionIndex => $production) {
-                $this->addProductionFirsts($table, $symbolId, $productionIndex, ...$production);
-                $this->addProductionFollows($table, $symbolId, $productionIndex, ...$production);
-            }
+        foreach ($this->grammar->getFullProductionList() as [$symbolId, $productionIndex, $production]) {
+            $this->addProductionFirsts($table, $symbolId, $productionIndex, ...$production);
+            $this->addProductionFollows($table, $symbolId, $productionIndex, ...$production);
         }
     }
 

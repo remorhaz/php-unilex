@@ -39,7 +39,7 @@ class FirstBuilder
     private function addTokensFromTerminalMap(First $first): void
     {
         foreach ($this->grammar->getTerminalList() as $symbolId) {
-            $tokenId = $this->grammar->getTerminalToken($symbolId);
+            $tokenId = $this->grammar->getToken($symbolId);
             $first->addToken($symbolId, $tokenId);
         }
     }
@@ -49,7 +49,7 @@ class FirstBuilder
      */
     private function mergeProductionsFromNonTerminalMap(First $first): void
     {
-        foreach ($this->grammar->getFullProductionList() as [$symbolId, $production]) {
+        foreach ($this->grammar->getFullProductionList() as [$symbolId, , $production]) {
             $first->mergeProductionEpsilons($symbolId, ...$production);
             $first->mergeProductionTokens($symbolId, ...$production);
         }

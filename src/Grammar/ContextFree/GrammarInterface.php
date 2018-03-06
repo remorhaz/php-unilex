@@ -29,7 +29,7 @@ interface GrammarInterface
      * @param int $symbolId
      * @return int
      */
-    public function getTerminalToken(int $symbolId): int;
+    public function getToken(int $symbolId): int;
 
     public function getTerminalList(): array;
 
@@ -46,7 +46,7 @@ interface GrammarInterface
     /**
      * @return Generator
      */
-    public function getFullProductionList(): Generator;
+    public function getFullProductionList(): iterable;
 
     public function isEoiToken(int $tokenId): bool;
 }

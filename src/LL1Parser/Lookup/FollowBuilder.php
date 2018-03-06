@@ -46,7 +46,7 @@ class FollowBuilder
      */
     private function mergeProductionsFromNonTerminalMap(Follow $follow): void
     {
-        foreach ($this->grammar->getFullProductionList() as [$symbolId, $production]) {
+        foreach ($this->grammar->getFullProductionList() as [$symbolId, , $production]) {
             $this->mergeProduction($follow, $symbolId, ...$production);
         }
     }

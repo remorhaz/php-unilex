@@ -61,7 +61,7 @@ class Grammar implements GrammarInterface
      */
     public function getEoiToken(): int
     {
-        return $this->getTerminalToken($this->getEoiSymbol());
+        return $this->getToken($this->getEoiSymbol());
     }
 
     /**
@@ -77,7 +77,7 @@ class Grammar implements GrammarInterface
         if (isset($this->nonTerminalMap[$symbolId])) {
             return false;
         }
-        throw new Exception("Symbol {$symbolId} is undefined");
+        throw new Exception("Symbol {$symbolId} is not defined");
     }
 
     /**
@@ -90,9 +90,16 @@ class Grammar implements GrammarInterface
         return $this->tokenMatchesTerminal($this->getEoiSymbol(), $tokenId);
     }
 
+    /**
+     * @param int $symbolId
+     * @return bool
+     * @throws Exception
+     */
     public function isEoiSymbol(int $symbolId): bool
     {
-        return $this->getEoiSymbol() == $symbolId;
+        return $this->isTerminal($symbolId)
+            ? $this->getEoiSymbol() == $symbolId
+            : false;
     }
 
     /**
@@ -103,7 +110,10 @@ class Grammar implements GrammarInterface
      */
     public function tokenMatchesTerminal(int $symbolId, int $tokenId): bool
     {
-        return $this->getTerminalToken($symbolId) == $tokenId;
+        if (!in_array($tokenId, $this->terminalMap)) {
+            throw new Exception("Token {$tokenId} is not defined");
+        }
+        return $this->getToken($symbolId) == $tokenId;
     }
 
     /**
@@ -111,7 +121,7 @@ class Grammar implements GrammarInterface
      * @return int
      * @throws Exception
      */
-    public function getTerminalToken(int $symbolId): int
+    public function getToken(int $symbolId): int
     {
         if (!$this->isTerminal($symbolId)) {
             throw new Exception("Symbol {$symbolId} is not defined as terminal");
@@ -137,7 +147,7 @@ class Grammar implements GrammarInterface
     public function getProductionList(int $symbolId): array
     {
         if ($this->isTerminal($symbolId)) {
-            throw new Exception("Symbol {$symbolId} is terminal and has no productions");
+            throw new Exception("Symbol {$symbolId} is terminal and can't have productions");
         }
         return $this->nonTerminalMap[$symbolId];
     }
@@ -158,14 +168,14 @@ class Grammar implements GrammarInterface
     }
 
     /**
-     * @return Generator
+     * @return iterable
      * @throws Exception
      */
-    public function getFullProductionList(): Generator
+    public function getFullProductionList(): iterable
     {
         foreach ($this->getNonTerminalList() as $symbolId) {
-            foreach ($this->getProductionList($symbolId) as $production) {
-                yield [$symbolId, $production];
+            foreach ($this->getProductionList($symbolId) as $productionIndex => $production) {
+                yield [$symbolId, $productionIndex, $production];
             }
         }
     }
