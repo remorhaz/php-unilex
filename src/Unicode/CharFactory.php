@@ -10,8 +10,11 @@ use Remorhaz\UniLex\Unicode\Grammar\TokenAttribute;
 class CharFactory implements CharFactoryInterface
 {
 
-    public function __construct()
+    private $unicodeCharAttribute;
+
+    public function __construct(string $unicodeCharAttribute = TokenAttribute::UNICODE_CHAR)
     {
+        $this->unicodeCharAttribute = $unicodeCharAttribute;
     }
 
     /**
@@ -21,6 +24,6 @@ class CharFactory implements CharFactoryInterface
      */
     public function getChar(Token $token): int
     {
-        return $token->getAttribute(TokenAttribute::UNICODE_CHAR);
+        return $token->getAttribute($this->unicodeCharAttribute);
     }
 }
