@@ -94,7 +94,7 @@ class TokenMatcherTest extends TestCase
         $grammar = GrammarLoader::loadFile(ConfigFile::getPath());
         $token = (new TokenMatcher)
             ->match($buffer, new TokenFactory($grammar));
-        $actualValue = $token->getAttribute(TokenAttribute::SYMBOL);
+        $actualValue = $token->getAttribute(TokenAttribute::UNICODE_CHAR);
         self::assertEquals($symbol, $actualValue);
     }
 

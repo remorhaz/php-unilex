@@ -205,7 +205,7 @@ class TokenMatcher implements TokenMatcherInterface
         invalid_symbol:
         $buffer->nextSymbol();
         $token = $tokenFactory->createToken($type);
-        $token->setAttribute(TokenAttribute::SYMBOL, $symbol);
+        $token->setAttribute(TokenAttribute::UNICODE_CHAR, $symbol);
         return $token;
     }
 }

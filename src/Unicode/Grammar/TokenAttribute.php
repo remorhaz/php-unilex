@@ -4,5 +4,5 @@ namespace Remorhaz\UniLex\Unicode\Grammar;
 
 abstract class TokenAttribute
 {
-    const SYMBOL = 'unicode.symbol';
+    const UNICODE_CHAR = 'unicode.char';
 }

@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\TokenBuffer;
 use Remorhaz\UniLex\TokenReader;
 use Remorhaz\UniLex\CharBuffer;
-use Remorhaz\UniLex\Unicode\CodeSymbolFactory;
+use Remorhaz\UniLex\Unicode\CharFactory;
 use Remorhaz\UniLex\Unicode\Grammar\TokenFactory;
 use Remorhaz\UniLex\Unicode\Utf8TokenMatcher;
 
@@ -20,7 +20,7 @@ class TokenBufferTest extends TestCase
     {
         $inputBuffer = CharBuffer::fromString('');
         $reader = new TokenReader($inputBuffer, new Utf8TokenMatcher, new TokenFactory());
-        $actualValue = (new TokenBuffer($reader, new CodeSymbolFactory))->isEnd();
+        $actualValue = (new TokenBuffer($reader, new CharFactory))->isEnd();
         self::assertTrue($actualValue);
     }
 
@@ -28,7 +28,7 @@ class TokenBufferTest extends TestCase
     {
         $inputBuffer = CharBuffer::fromString('a');
         $reader = new TokenReader($inputBuffer, new Utf8TokenMatcher, new TokenFactory);
-        $actualValue = (new TokenBuffer($reader, new CodeSymbolFactory))->isEnd();
+        $actualValue = (new TokenBuffer($reader, new CharFactory))->isEnd();
         self::assertFalse($actualValue);
     }
 
@@ -41,7 +41,7 @@ class TokenBufferTest extends TestCase
     {
         $inputBuffer = CharBuffer::fromString('');
         $reader = new TokenReader($inputBuffer, new Utf8TokenMatcher, new TokenFactory);
-        (new TokenBuffer($reader, new CodeSymbolFactory))->nextSymbol();
+        (new TokenBuffer($reader, new CharFactory))->nextSymbol();
     }
 
     /**
@@ -51,7 +51,7 @@ class TokenBufferTest extends TestCase
     {
         $inputBuffer = CharBuffer::fromString('ab');
         $reader = new TokenReader($inputBuffer, new Utf8TokenMatcher, new TokenFactory);
-        $tokenBuffer = new TokenBuffer($reader, new CodeSymbolFactory);
+        $tokenBuffer = new TokenBuffer($reader, new CharFactory);
         $tokenBuffer->nextSymbol();
         $actualValue = $tokenBuffer->getSymbol();
         self::assertSame(0x62, $actualValue);

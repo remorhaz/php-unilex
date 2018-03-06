@@ -39,7 +39,7 @@ class Utf8TokenMatcherTest extends TestCase
     ): void {
         $buffer = CharBuffer::fromString($text);
         $actualValue = (new Utf8TokenMatcher)->match($buffer, new TokenFactory)
-            ->getAttribute(TokenAttribute::SYMBOL);
+            ->getAttribute(TokenAttribute::UNICODE_CHAR);
         self::assertEquals($expectedSymbol, $actualValue);
     }
 

@@ -17,7 +17,7 @@ abstract class CharBufferFactory
         TokenMatcherInterface $matcher
     ): CharBufferInterface {
         $reader = new TokenReader($source, $matcher, new TokenFactory());
-        return new TokenBuffer($reader, new CodeSymbolFactory);
+        return new TokenBuffer($reader, new CharFactory);
     }
 
     public static function createFromString(string $text, TokenMatcherInterface $matcher): CharBufferInterface

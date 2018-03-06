@@ -26,7 +26,7 @@ class Utf8TokenMatcher implements TokenMatcherInterface
             //$symbolInfo = new SymbolInfo($firstByte);
             $buffer->nextSymbol();
             $token = $tokenFactory->createToken(TokenType::SYMBOL);
-            $token->setAttribute(TokenAttribute::SYMBOL, $firstByte);
+            $token->setAttribute(TokenAttribute::UNICODE_CHAR, $firstByte);
             //$token->setMatcherInfo($symbolInfo);
             return $token;
         }
@@ -100,7 +100,7 @@ class Utf8TokenMatcher implements TokenMatcherInterface
             //$symbolInfo = new SymbolInfo($symbol);
             $buffer->nextSymbol();
             $token = $tokenFactory->createToken(TokenType::SYMBOL);
-            $token->setAttribute(TokenAttribute::SYMBOL, $symbol);
+            $token->setAttribute(TokenAttribute::UNICODE_CHAR, $symbol);
             //$token->setMatcherInfo($symbolInfo);
             return $token;
         }

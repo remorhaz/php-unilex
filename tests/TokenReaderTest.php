@@ -26,7 +26,7 @@ class TokenReaderTest extends TestCase
         $expectedValue = $tokenFactory->createToken(TokenType::SYMBOL);
         $expectedValue->setAttribute('char.position.start', 0);
         $expectedValue->setAttribute('char.position.finish', 1);
-        $expectedValue->setAttribute(TokenAttribute::SYMBOL, 0x61);
+        $expectedValue->setAttribute(TokenAttribute::UNICODE_CHAR, 0x61);
         $scanner = new TokenReader($buffer, new Utf8TokenMatcher, $tokenFactory);
         $actualValue = $scanner->read();
         self::assertEquals($expectedValue, $actualValue);
@@ -42,7 +42,7 @@ class TokenReaderTest extends TestCase
         $expectedValue = $tokenFactory->createToken(TokenType::SYMBOL);
         $expectedValue->setAttribute('char.position.start', 1);
         $expectedValue->setAttribute('char.position.finish', 2);
-        $expectedValue->setAttribute(TokenAttribute::SYMBOL, 0x62);
+        $expectedValue->setAttribute(TokenAttribute::UNICODE_CHAR, 0x62);
         $scanner = new TokenReader($buffer, new Utf8TokenMatcher, $tokenFactory);
         $scanner->read();
         $actualValue = $scanner->read();

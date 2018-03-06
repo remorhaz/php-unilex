@@ -26,7 +26,7 @@ class TokenBuffer implements CharBufferInterface, TokenExtractInterface
 
     public function __construct(
         TokenReaderInterface $reader,
-        SymbolFactoryInterface $symbolFactory,
+        CharFactoryInterface $symbolFactory,
         string $tokenAttributePrefix = self::DEFAULT_TOKEN_ATTRIBUTE_PREFIX
     ) {
         $this->reader = $reader;
@@ -76,7 +76,7 @@ class TokenBuffer implements CharBufferInterface, TokenExtractInterface
         if ($this->isEnd()) {
             throw new Exception("No symbol to preview at index {$this->previewOffset}");
         }
-        return $this->symbolFactory->getSymbol($this->getToken());
+        return $this->symbolFactory->getChar($this->getToken());
     }
 
     public function extractToken(TokenPosition $position): SplFixedArray
@@ -86,7 +86,7 @@ class TokenBuffer implements CharBufferInterface, TokenExtractInterface
         $output = new SplFixedArray($tokenLength);
         for ($i = 0; $i < $tokenLength; $i++) {
             $token = $this->data[$startOffset + $i];
-            $symbol = $this->symbolFactory->getSymbol($token);
+            $symbol = $this->symbolFactory->getChar($token);
             $output->offsetSet($i, $symbol);
         }
         return $output;
