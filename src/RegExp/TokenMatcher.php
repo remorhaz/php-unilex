@@ -2,16 +2,22 @@
 
 namespace Remorhaz\UniLex\RegExp;
 
+use Remorhaz\UniLex\CharBufferInterface;
+use Remorhaz\UniLex\RegExp\Grammar\TokenType;
 use Remorhaz\UniLex\Token;
 use Remorhaz\UniLex\TokenFactoryInterface;
 use Remorhaz\UniLex\TokenMatcherInterface;
-use Remorhaz\UniLex\RegExp\Grammar\TokenType;
-use Remorhaz\UniLex\CharBufferInterface;
-use Remorhaz\UniLex\Unicode\SymbolInfo;
+use Remorhaz\UniLex\Unicode\Grammar\TokenAttribute;
 
 class TokenMatcher implements TokenMatcherInterface
 {
 
+    /**
+     * @param CharBufferInterface $buffer
+     * @param TokenFactoryInterface $tokenFactory
+     * @return Token
+     * @throws \Remorhaz\UniLex\Exception
+     */
     public function match(CharBufferInterface $buffer, TokenFactoryInterface $tokenFactory): Token
     {
         $symbol = $buffer->getSymbol();
@@ -199,7 +205,7 @@ class TokenMatcher implements TokenMatcherInterface
         invalid_symbol:
         $buffer->nextSymbol();
         $token = $tokenFactory->createToken($type);
-        $token->setMatcherInfo(new SymbolInfo($symbol));
+        $token->setAttribute(TokenAttribute::SYMBOL, $symbol);
         return $token;
     }
 }

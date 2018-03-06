@@ -9,8 +9,6 @@ class Token
 
     private $isEoi;
 
-    private $matcherInfo;
-
     private $attributeList = [];
 
     public function __construct(int $type, bool $isEoi)
@@ -27,16 +25,6 @@ class Token
     public function isEoi(): bool
     {
         return $this->isEoi;
-    }
-
-    public function setMatcherInfo(TokenMatcherInfoInterface $matcherInfo): void
-    {
-        $this->matcherInfo = $matcherInfo;
-    }
-
-    public function getMatcherInfo(): ?TokenMatcherInfoInterface
-    {
-        return $this->matcherInfo;
     }
 
     /**

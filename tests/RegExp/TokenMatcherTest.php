@@ -9,7 +9,7 @@ use Remorhaz\UniLex\RegExp\Grammar\ConfigFile;
 use Remorhaz\UniLex\RegExp\TokenMatcher;
 use Remorhaz\UniLex\RegExp\Grammar\TokenType;
 use Remorhaz\UniLex\CharBuffer;
-use Remorhaz\UniLex\Unicode\SymbolInfo;
+use Remorhaz\UniLex\Unicode\Grammar\TokenAttribute;
 
 /**
  * @covers \Remorhaz\UniLex\RegExp\TokenMatcher
@@ -88,15 +88,14 @@ class TokenMatcherTest extends TestCase
      * @dataProvider providerValidTokenSymbol
      * @throws \Remorhaz\UniLex\Exception
      */
-    public function testMatch_ValidBuffer_ReturnsTokenWithMatchingSymbolInfo(int $symbol): void
+    public function testMatch_ValidBuffer_ReturnsTokenWithMatchingSymbolAttribute(int $symbol): void
     {
         $buffer = CharBuffer::fromSymbols($symbol);
         $grammar = GrammarLoader::loadFile(ConfigFile::getPath());
-        $actualValue = (new TokenMatcher)
-            ->match($buffer, new TokenFactory($grammar))
-            ->getMatcherInfo();
-        $expectedValue = new SymbolInfo($symbol);
-        self::assertEquals($expectedValue, $actualValue);
+        $token = (new TokenMatcher)
+            ->match($buffer, new TokenFactory($grammar));
+        $actualValue = $token->getAttribute(TokenAttribute::SYMBOL);
+        self::assertEquals($symbol, $actualValue);
     }
 
     public function providerValidTokenSymbol(): array

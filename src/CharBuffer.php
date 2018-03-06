@@ -7,7 +7,7 @@ use SplFixedArray;
 class CharBuffer implements CharBufferInterface, TokenExtractInterface
 {
 
-    private const DEFAULT_TOKEN_ATTRIBUTE_PREFIX = 'buffer';
+    private const DEFAULT_TOKEN_ATTRIBUTE_PREFIX = 'char';
 
     /**
      * @var SplFixedArray

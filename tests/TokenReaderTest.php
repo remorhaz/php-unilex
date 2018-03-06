@@ -5,9 +5,9 @@ namespace Remorhaz\UniLex\Test;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\CharBuffer;
 use Remorhaz\UniLex\TokenReader;
+use Remorhaz\UniLex\Unicode\Grammar\TokenAttribute;
 use Remorhaz\UniLex\Unicode\Grammar\TokenType;
 use Remorhaz\UniLex\Unicode\Grammar\TokenFactory;
-use Remorhaz\UniLex\Unicode\SymbolInfo;
 use Remorhaz\UniLex\Unicode\Utf8TokenMatcher;
 
 /**
@@ -23,12 +23,10 @@ class TokenReaderTest extends TestCase
     {
         $buffer = CharBuffer::fromString('a');
         $tokenFactory = new TokenFactory;
-        $matcherInfo = new SymbolInfo(0x00000061);
         $expectedValue = $tokenFactory->createToken(TokenType::SYMBOL);
-        $expectedValue->setMatcherInfo($matcherInfo);
-        $expectedValue->setAttribute('buffer.position.start', 0);
-        $expectedValue->setAttribute('buffer.position.finish', 1);
-        $expectedValue->setAttribute('utf8.unicode.symbol', 0x61);
+        $expectedValue->setAttribute('char.position.start', 0);
+        $expectedValue->setAttribute('char.position.finish', 1);
+        $expectedValue->setAttribute(TokenAttribute::SYMBOL, 0x61);
         $scanner = new TokenReader($buffer, new Utf8TokenMatcher, $tokenFactory);
         $actualValue = $scanner->read();
         self::assertEquals($expectedValue, $actualValue);
@@ -41,12 +39,10 @@ class TokenReaderTest extends TestCase
     {
         $buffer = CharBuffer::fromString('ab');
         $tokenFactory = new TokenFactory;
-        $matcherInfo = new SymbolInfo(0x00000062);
         $expectedValue = $tokenFactory->createToken(TokenType::SYMBOL);
-        $expectedValue->setMatcherInfo($matcherInfo);
-        $expectedValue->setAttribute('buffer.position.start', 1);
-        $expectedValue->setAttribute('buffer.position.finish', 2);
-        $expectedValue->setAttribute('utf8.unicode.symbol', 0x62);
+        $expectedValue->setAttribute('char.position.start', 1);
+        $expectedValue->setAttribute('char.position.finish', 2);
+        $expectedValue->setAttribute(TokenAttribute::SYMBOL, 0x62);
         $scanner = new TokenReader($buffer, new Utf8TokenMatcher, $tokenFactory);
         $scanner->read();
         $actualValue = $scanner->read();
@@ -97,8 +93,8 @@ class TokenReaderTest extends TestCase
         $buffer = CharBuffer::fromString("\x80");
         $tokenFactory = new TokenFactory;
         $expectedValue = $tokenFactory->createToken(TokenType::INVALID_BYTES);
-        $expectedValue->setAttribute('buffer.position.start', 0);
-        $expectedValue->setAttribute('buffer.position.finish', 1);
+        $expectedValue->setAttribute('char.position.start', 0);
+        $expectedValue->setAttribute('char.position.finish', 1);
         $scanner = new TokenReader($buffer, new Utf8TokenMatcher, $tokenFactory);
         $actualValue = $scanner->read();
         self::assertEquals($expectedValue, $actualValue);

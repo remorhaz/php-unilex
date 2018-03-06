@@ -7,7 +7,7 @@ use SplFixedArray;
 class TokenBuffer implements CharBufferInterface, TokenExtractInterface
 {
 
-    private const DEFAULT_TOKEN_ATTRIBUTE_PREFIX = 'buffer';
+    private const DEFAULT_TOKEN_ATTRIBUTE_PREFIX = 'token';
 
     private $reader;
 

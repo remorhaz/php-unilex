@@ -84,5 +84,6 @@ class ParserTest extends TestCase
         ];
         $actualSymbolLog = $listener->getSymbolLog();
         self::assertSame($expectedSymbolLog, $actualSymbolLog);
+        var_dump($listener->getRootNode());
     }
 }

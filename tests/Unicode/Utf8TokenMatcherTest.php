@@ -4,9 +4,9 @@ namespace Remorhaz\UniLex\Test\Unicode;
 
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\CharBuffer;
+use Remorhaz\UniLex\Unicode\Grammar\TokenAttribute;
 use Remorhaz\UniLex\Unicode\Grammar\TokenType;
 use Remorhaz\UniLex\Unicode\Grammar\TokenFactory;
-use Remorhaz\UniLex\Unicode\SymbolInfo;
 use Remorhaz\UniLex\Unicode\Utf8TokenMatcher;
 
 /**
@@ -18,6 +18,7 @@ class Utf8TokenMatcherTest extends TestCase
     /**
      * @param string $text
      * @dataProvider providerValidSymbolList
+     * @throws \Remorhaz\UniLex\Exception
      */
     public function testMatch_ValidText_ReturnsSymbolToken(string $text): void
     {
@@ -30,15 +31,16 @@ class Utf8TokenMatcherTest extends TestCase
      * @param string $text
      * @param int $expectedSymbol
      * @dataProvider providerValidSymbolList
+     * @throws \Remorhaz\UniLex\Exception
      */
-    public function testMatch_ValidText_ReturnsMatchingSymbolInfoInToken(
+    public function testMatch_ValidText_ReturnsTokenWithMatchingSymbolAttribute(
         string $text,
         int $expectedSymbol
     ): void {
         $buffer = CharBuffer::fromString($text);
-        $expectedValue = new SymbolInfo($expectedSymbol);
-        $actualValue = (new Utf8TokenMatcher)->match($buffer, new TokenFactory)->getMatcherInfo();
-        self::assertEquals($expectedValue, $actualValue);
+        $actualValue = (new Utf8TokenMatcher)->match($buffer, new TokenFactory)
+            ->getAttribute(TokenAttribute::SYMBOL);
+        self::assertEquals($expectedSymbol, $actualValue);
     }
 
     public function providerValidSymbolList(): array
@@ -57,6 +59,7 @@ class Utf8TokenMatcherTest extends TestCase
     /**
      * @param string $text
      * @dataProvider providerInvalidText
+     * @throws \Remorhaz\UniLex\Exception
      */
     public function testMatch_InvalidText_ReturnsInvalidBytesToken(string $text): void
     {

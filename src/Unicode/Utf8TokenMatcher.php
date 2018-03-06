@@ -6,19 +6,11 @@ use Remorhaz\UniLex\Token;
 use Remorhaz\UniLex\TokenFactoryInterface;
 use Remorhaz\UniLex\TokenMatcherInterface;
 use Remorhaz\UniLex\CharBufferInterface;
+use Remorhaz\UniLex\Unicode\Grammar\TokenAttribute;
 use Remorhaz\UniLex\Unicode\Grammar\TokenType;
 
 class Utf8TokenMatcher implements TokenMatcherInterface
 {
-
-    private const DEFAULT_TOKEN_ATTRIBUTE_PREFIX = 'utf8';
-
-    private $tokenAttributePrefix;
-
-    public function __construct($tokenAttributePrefix = self::DEFAULT_TOKEN_ATTRIBUTE_PREFIX)
-    {
-        $this->tokenAttributePrefix = $tokenAttributePrefix;
-    }
 
     /**
      * @param CharBufferInterface $buffer
@@ -31,11 +23,11 @@ class Utf8TokenMatcher implements TokenMatcherInterface
         $symbol = null;
         $firstByte = $buffer->getSymbol();
         if ($firstByte >= 0 && $firstByte <= 0x7F) { // 1-byte symbol
-            $symbolInfo = new SymbolInfo($firstByte);
+            //$symbolInfo = new SymbolInfo($firstByte);
             $buffer->nextSymbol();
             $token = $tokenFactory->createToken(TokenType::SYMBOL);
-            $token->setAttribute("{$this->tokenAttributePrefix}.unicode.symbol", $firstByte);
-            $token->setMatcherInfo($symbolInfo);
+            $token->setAttribute(TokenAttribute::SYMBOL, $firstByte);
+            //$token->setMatcherInfo($symbolInfo);
             return $token;
         }
         if ($firstByte >= 0xC0 && $firstByte <= 0xDF) { // 2-byte symbol
@@ -105,11 +97,11 @@ class Utf8TokenMatcher implements TokenMatcherInterface
         $tailByte = $buffer->getSymbol();
         if ($tailByte >= 0x80 && $tailByte <= 0xBF) {
             $symbol |= ($tailByte & 0x3F);
-            $symbolInfo = new SymbolInfo($symbol);
+            //$symbolInfo = new SymbolInfo($symbol);
             $buffer->nextSymbol();
             $token = $tokenFactory->createToken(TokenType::SYMBOL);
-            $token->setAttribute("{$this->tokenAttributePrefix}.unicode.symbol", $symbol);
-            $token->setMatcherInfo($symbolInfo);
+            $token->setAttribute(TokenAttribute::SYMBOL, $symbol);
+            //$token->setMatcherInfo($symbolInfo);
             return $token;
         }
         goto invalid_byte;
