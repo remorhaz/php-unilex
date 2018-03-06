@@ -6,6 +6,9 @@ use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\Grammar\ContextFree\Grammar;
 
+/**
+ * @covers \Remorhaz\UniLex\Grammar\ContextFree\Grammar
+ */
 class GrammarTest extends TestCase
 {
 
@@ -290,7 +293,9 @@ class GrammarTest extends TestCase
         $grammar = new Grammar(1, 2);
         $grammar->addProduction(1, [2]);
         $expectedValue = [1, 0, [2]];
-        $actualValue = $grammar->getFullProductionList()->current();
-        self::assertSame($expectedValue, $actualValue);
+        foreach ($grammar->getFullProductionList() as $actualValue) {
+            self::assertSame($expectedValue, $actualValue);
+            break;
+        }
     }
 }

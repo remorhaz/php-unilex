@@ -20,7 +20,7 @@ abstract class GrammarLoader
      * @return Grammar
      * @throws Exception
      */
-    public static function loadConfig(array $config): Grammar
+    public static function loadConfig($config): Grammar
     {
         $tokenMap = self::getConfigValue($config, self::TOKEN_MAP_KEY);
         $productionMap = self::getConfigValue($config, self::PRODUCTION_MAP_KEY);
