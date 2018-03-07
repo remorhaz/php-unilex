@@ -37,16 +37,16 @@ interface GrammarInterface
 
     /**
      * @param int $symbolId
-     * @return array
+     * @return Production[]
      */
     public function getProductionList(int $symbolId): array;
 
-    public function getProduction(int $symbolId, int $productionIndex): array;
+    public function getProduction(int $symbolId, int $productionIndex): Production;
 
     /**
-     * @return Generator
+     * @return Production[]
      */
-    public function getFullProductionList(): iterable;
+    public function getFullProductionList(): array;
 
     public function isEoiToken(int $tokenId): bool;
 }

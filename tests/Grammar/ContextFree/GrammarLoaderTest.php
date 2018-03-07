@@ -72,7 +72,9 @@ class GrammarLoaderTest extends TestCase
             GrammarLoader::EOI_SYMBOL_KEY => 2,
         ];
         $expectedValue = [1, 4];
-        $actualValue = GrammarLoader::loadConfig($config)->getProduction(3, 0);
+        $actualValue = GrammarLoader::loadConfig($config)
+            ->getProduction(3, 0)
+            ->getSymbolList();
         self::assertSame($expectedValue, $actualValue);
     }
 

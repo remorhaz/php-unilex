@@ -4,6 +4,7 @@ namespace Remorhaz\UniLex\LL1Parser\Lookup;
 
 use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\Grammar\ContextFree\GrammarInterface;
+use Remorhaz\UniLex\Grammar\ContextFree\Production;
 
 class TableBuilder
 {
@@ -43,50 +44,50 @@ class TableBuilder
     {
         foreach ($this->grammar->getNonTerminalList() as $symbolId) {
             $productionList = $this->grammar->getProductionList($symbolId);
-            foreach ($productionList as $iAlpha => $alpha) {
-                foreach ($productionList as $iBeta => $beta) {
-                    if ($iAlpha == $iBeta) {
+            foreach ($productionList as $alpha) {
+                foreach ($productionList as $beta) {
+                    if ($alpha->getIndex() == $beta->getIndex()) {
                         continue;
                     }
-                    $this->checkFirstFirstConflict($symbolId, $iAlpha, $alpha, $iBeta, $beta);
-                    $this->checkFirstFollowConflict($symbolId, $iAlpha, $alpha, $iBeta, $beta);
+                    $this->checkFirstFirstConflict($alpha, $beta);
+                    $this->checkFirstFollowConflict($alpha, $beta);
                 }
             }
         }
     }
 
     /**
-     * @param int $symbolId
-     * @param int $iAlpha
-     * @param array $alpha
-     * @param int $iBeta
-     * @param array $beta
+     * @param Production $alpha
+     * @param Production $beta
      * @throws Exception
      */
-    private function checkFirstFirstConflict(int $symbolId, int $iAlpha, array $alpha, int $iBeta, array $beta): void
+    private function checkFirstFirstConflict(Production $alpha, Production $beta): void
     {
-        $firstAlpha = $this->getFirst()->getProductionTokens(...$alpha);
-        $firstBeta = $this->getFirst()->getProductionTokens(...$beta);
-        $message = "Symbol {$symbolId} has FIRST({$iAlpha})/FIRST({$iBeta}) conflict";
+        if ($alpha->getSymbolId() != $beta->getSymbolId()) {
+            throw new Exception("Cannot check FIRST({$alpha})/FIRST({$beta}) conflict");
+        }
+        $firstAlpha = $this->getFirst()->getProductionTokens(...$alpha->getSymbolList());
+        $firstBeta = $this->getFirst()->getProductionTokens(...$beta->getSymbolList());
+        $message = "FIRST({$alpha})/FIRST({$beta}) conflict";
         $this->checkConflict($firstAlpha, $firstBeta, $message);
     }
 
     /**
-     * @param int $symbolId
-     * @param int $iAlpha
-     * @param array $alpha
-     * @param int $iBeta
-     * @param array $beta
+     * @param Production $alpha
+     * @param Production $beta
      * @throws Exception
      */
-    private function checkFirstFollowConflict(int $symbolId, int $iAlpha, array $alpha, int $iBeta, array $beta): void
+    private function checkFirstFollowConflict(Production $alpha, Production $beta): void
     {
-        if (!$this->getFirst()->productionHasEpsilon(...$beta)) {
+        if ($alpha->getSymbolId() != $beta->getSymbolId()) {
+            throw new Exception("Cannot check FIRST({$alpha})/FOLLOW({$alpha->getSymbolId()}) conflict");
+        }
+        if (!$this->getFirst()->productionHasEpsilon(...$beta->getSymbolList())) {
             return;
         }
-        $follow = $this->getFollow()->getTokens($symbolId);
-        $firstAlpha = $this->getFirst()->getProductionTokens(...$alpha);
-        $message = "Symbol {$symbolId} has FIRST({$iAlpha})/FOLLOW conflict (ε ∈ {$iBeta})";
+        $follow = $this->getFollow()->getTokens($alpha->getSymbolId());
+        $firstAlpha = $this->getFirst()->getProductionTokens(...$alpha->getSymbolList());
+        $message = "FIRST({$alpha})/FOLLOW({$alpha->getSymbolId()}) conflict (ε ∈ {$beta})";
         $this->checkConflict($follow, $firstAlpha, $message);
     }
 
@@ -135,42 +136,38 @@ class TableBuilder
      */
     private function addProductionsFromNonTerminalMap(Table $table): void
     {
-        foreach ($this->grammar->getFullProductionList() as [$symbolId, $productionIndex, $production]) {
-            $this->addProductionFirsts($table, $symbolId, $productionIndex, ...$production);
-            $this->addProductionFollows($table, $symbolId, $productionIndex, ...$production);
+        foreach ($this->grammar->getFullProductionList() as $production) {
+            $this->addProductionFirsts($table, $production);
+            $this->addProductionFollows($table, $production);
         }
     }
 
     /**
      * @param Table $table
-     * @param int $symbolId
-     * @param int $productionIndex
-     * @param int[] ...$symbolIdList
+     * @param Production $production
      * @throws Exception
      */
-    private function addProductionFirsts(Table $table, int $symbolId, int $productionIndex, int ...$symbolIdList): void
+    private function addProductionFirsts(Table $table, Production $production): void
     {
-        $productionFirsts = $this->getFirst()->getProductionTokens(...$symbolIdList);
+        $productionFirsts = $this->getFirst()->getProductionTokens(...$production->getSymbolList());
         foreach ($productionFirsts as $tokenId) {
-            $table->addProduction($symbolId, $tokenId, $productionIndex);
+            $table->addProduction($production->getSymbolId(), $tokenId, $production->getIndex());
         }
     }
 
     /**
      * @param Table $table
-     * @param int $symbolId
-     * @param int $productionIndex
-     * @param int[] ...$symbolIdList
+     * @param Production $production
      * @throws Exception
      */
-    private function addProductionFollows(Table $table, int $symbolId, int $productionIndex, int ...$symbolIdList): void
+    private function addProductionFollows(Table $table, Production $production): void
     {
-        if (!$this->getFirst()->productionHasEpsilon(...$symbolIdList)) {
+        if (!$this->getFirst()->productionHasEpsilon(...$production->getSymbolList())) {
             return;
         }
-        $productionFollows = $this->getFollow()->getTokens($symbolId);
+        $productionFollows = $this->getFollow()->getTokens($production->getSymbolId());
         foreach ($productionFollows as $tokenId) {
-            $table->addProduction($symbolId, $tokenId, $productionIndex);
+            $table->addProduction($production->getSymbolId(), $tokenId, $production->getIndex());
         }
     }
 }

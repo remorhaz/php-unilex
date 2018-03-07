@@ -219,8 +219,8 @@ class GrammarTest extends TestCase
     public function testGetNonTerminalList_ProductionsAdded_ReturnsSymbolArray(): void
     {
         $grammar = new Grammar(1, 2);
-        $grammar->addProduction(1, [3]);
-        $grammar->addProduction(3, [2]);
+        $grammar->addProduction(1, 3);
+        $grammar->addProduction(3, 2);
         $expectedValue = [1, 3];
         $actualValue = $grammar->getNonTerminalList();
         self::assertSame($expectedValue, $actualValue);
@@ -244,11 +244,18 @@ class GrammarTest extends TestCase
     public function testGetProductionList_NonTerminal_ReturnsMatchingValue(): void
     {
         $grammar = new Grammar(1, 2);
-        $grammar->addProduction(1, [3, 4]);
-        $grammar->addProduction(1, []);
+        $grammar->addProduction(1, 3, 4);
+        $grammar->addProduction(1);
         $expectedValue = [[3, 4], []];
-        $actualValue = $grammar->getProductionList(1);
-        self::assertSame($expectedValue, $actualValue);
+        $productionList = $grammar->getProductionList(1);
+        self::assertCount(2, $productionList);
+        foreach ($expectedValue as $productionIndex => $tokenList) {
+            self::assertArrayHasKey($productionIndex, $productionList);
+            $production = $productionList[$productionIndex];
+            self::assertSame(1, $production->getSymbolId());
+            self::assertSame($productionIndex, $production->getIndex());
+            self::assertSame($tokenList, $production->getSymbolList());
+        }
     }
 
     /**
@@ -257,10 +264,10 @@ class GrammarTest extends TestCase
     public function testGetProduction_ProductionExists_ReturnsProduction(): void
     {
         $grammar = new Grammar(1, 2);
-        $grammar->addProduction(1, [3, 4]);
-        $grammar->addProduction(1, []);
+        $grammar->addProduction(1, 3, 4);
+        $grammar->addProduction(1);
         $expectedValue = [3, 4];
-        $actualValue = $grammar->getProduction(1, 0);
+        $actualValue = $grammar->getProduction(1, 0)->getSymbolList();
         self::assertSame($expectedValue, $actualValue);
     }
 
@@ -272,29 +279,30 @@ class GrammarTest extends TestCase
     public function testGetProduction_ProductionNotExists_ThrowsException(): void
     {
         $grammar = new Grammar(1, 2);
-        $grammar->addProduction(1, [3, 4]);
+        $grammar->addProduction(1, 3, 4);
         $grammar->getProduction(1, 1);
     }
 
     /**
      * @throws Exception
      */
-    public function testGetFullProductionList_Created_ReturnsIterable(): void
+    public function testGetFullProductionList_Created_ReturnsArray(): void
     {
         $actualValue = (new Grammar(1, 2))->getFullProductionList();
-        self::assertTrue(is_iterable($actualValue));
+        self::assertInternalType('array', $actualValue);
     }
 
     /**
      * @throws Exception
      */
-    public function testGetFullProductionList_ProductionAdded_GeneratorReturnsMatchingValue(): void
+    public function testGetFullProductionList_ProductionAdded_ReturnsMatchingValue(): void
     {
         $grammar = new Grammar(1, 2);
-        $grammar->addProduction(1, [2]);
-        $expectedValue = [1, 0, [2]];
-        foreach ($grammar->getFullProductionList() as $actualValue) {
-            self::assertSame($expectedValue, $actualValue);
+        $grammar->addProduction(1, 2);
+        foreach ($grammar->getFullProductionList() as $production) {
+            self::assertSame(1, $production->getSymbolId());
+            self::assertSame(0, $production->getIndex());
+            self::assertSame([2], $production->getSymbolList());
             break;
         }
     }

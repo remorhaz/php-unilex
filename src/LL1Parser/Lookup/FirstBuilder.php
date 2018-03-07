@@ -49,9 +49,9 @@ class FirstBuilder
      */
     private function mergeProductionsFromNonTerminalMap(First $first): void
     {
-        foreach ($this->grammar->getFullProductionList() as [$symbolId, , $production]) {
-            $first->mergeProductionEpsilons($symbolId, ...$production);
-            $first->mergeProductionTokens($symbolId, ...$production);
+        foreach ($this->grammar->getFullProductionList() as $production) {
+            $first->mergeProductionEpsilons($production->getSymbolId(), ...$production->getSymbolList());
+            $first->mergeProductionTokens($production->getSymbolId(), ...$production->getSymbolList());
         }
     }
 }

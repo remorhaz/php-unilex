@@ -7,9 +7,9 @@ use Remorhaz\UniLex\Exception;
 class Grammar implements GrammarInterface
 {
 
-    private $terminalMap = [];
+    private $tokenMap = [];
 
-    private $nonTerminalMap = [];
+    private $productionMap =[];
 
     private $startSymbol;
 
@@ -33,15 +33,17 @@ class Grammar implements GrammarInterface
      */
     public function addToken(int $symbolId, int $tokenId): void
     {
-        $this->terminalMap[$symbolId] = $tokenId;
+        $this->tokenMap[$symbolId] = $tokenId;
     }
 
-    public function addProduction(int $symbolId, array ...$production): void
+    public function addProduction(int $symbolId, int ...$symbolIdList): void
     {
-        $this->nonTerminalMap[$symbolId] = array_merge(
-            $this->nonTerminalMap[$symbolId] ?? [],
-            $production
-        );
+        $isFirstProduction = !isset($this->productionMap[$symbolId]);
+        $index = $isFirstProduction
+            ? 0
+            : count($this->productionMap[$symbolId]);
+        $production = new Production($symbolId, $index, ...$symbolIdList);
+        $this->productionMap[$production->getSymbolId()][$production->getIndex()] = $production;
     }
 
     public function getStartSymbol(): int
@@ -70,10 +72,10 @@ class Grammar implements GrammarInterface
      */
     public function isTerminal(int $symbolId): bool
     {
-        if (isset($this->terminalMap[$symbolId])) {
+        if (isset($this->tokenMap[$symbolId])) {
             return true;
         };
-        if (isset($this->nonTerminalMap[$symbolId])) {
+        if (isset($this->productionMap[$symbolId])) {
             return false;
         }
         throw new Exception("Symbol {$symbolId} is not defined");
@@ -109,7 +111,7 @@ class Grammar implements GrammarInterface
      */
     public function tokenMatchesTerminal(int $symbolId, int $tokenId): bool
     {
-        if (!in_array($tokenId, $this->terminalMap)) {
+        if (!in_array($tokenId, $this->tokenMap)) {
             throw new Exception("Token {$tokenId} is not defined");
         }
         return $this->getToken($symbolId) == $tokenId;
@@ -125,22 +127,22 @@ class Grammar implements GrammarInterface
         if (!$this->isTerminal($symbolId)) {
             throw new Exception("Symbol {$symbolId} is not defined as terminal");
         }
-        return $this->terminalMap[$symbolId];
+        return $this->tokenMap[$symbolId];
     }
 
     public function getTerminalList(): array
     {
-        return array_keys($this->terminalMap);
+        return array_keys($this->tokenMap);
     }
 
     public function getNonTerminalList(): array
     {
-        return array_keys($this->nonTerminalMap);
+        return array_keys($this->productionMap);
     }
 
     /**
      * @param int $symbolId
-     * @return array
+     * @return Production[]
      * @throws Exception
      */
     public function getProductionList(int $symbolId): array
@@ -148,16 +150,16 @@ class Grammar implements GrammarInterface
         if ($this->isTerminal($symbolId)) {
             throw new Exception("Symbol {$symbolId} is terminal and can't have productions");
         }
-        return $this->nonTerminalMap[$symbolId];
+        return $this->productionMap[$symbolId];
     }
 
     /**
      * @param int $symbolId
      * @param int $productionIndex
-     * @return array
+     * @return Production
      * @throws Exception
      */
-    public function getProduction(int $symbolId, int $productionIndex): array
+    public function getProduction(int $symbolId, int $productionIndex): Production
     {
         $productionList = $this->getProductionList($symbolId);
         if (!isset($productionList[$productionIndex])) {
@@ -167,15 +169,17 @@ class Grammar implements GrammarInterface
     }
 
     /**
-     * @return iterable
+     * @return Production[]
      * @throws Exception
      */
-    public function getFullProductionList(): iterable
+    public function getFullProductionList(): array
     {
+        $productionList = [];
         foreach ($this->getNonTerminalList() as $symbolId) {
-            foreach ($this->getProductionList($symbolId) as $productionIndex => $production) {
-                yield [$symbolId, $productionIndex, $production];
+            foreach ($this->getProductionList($symbolId) as $production) {
+                $productionList[] = $production;
             }
         }
+        return $productionList;
     }
 }

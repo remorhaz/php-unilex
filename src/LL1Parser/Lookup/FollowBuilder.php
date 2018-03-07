@@ -3,6 +3,7 @@
 namespace Remorhaz\UniLex\LL1Parser\Lookup;
 
 use Remorhaz\UniLex\Grammar\ContextFree\GrammarInterface;
+use Remorhaz\UniLex\Grammar\ContextFree\Production;
 
 class FollowBuilder
 {
@@ -46,19 +47,20 @@ class FollowBuilder
      */
     private function mergeProductionsFromNonTerminalMap(Follow $follow): void
     {
-        foreach ($this->grammar->getFullProductionList() as [$symbolId, , $production]) {
-            $this->mergeProduction($follow, $symbolId, ...$production);
+        foreach ($this->grammar->getFullProductionList() as $production) {
+            $this->mergeProduction($follow, $production);
         }
     }
 
-    private function mergeProduction(Follow $follow, int $symbolId, int ...$symbolIdList): void
+    private function mergeProduction(Follow $follow, Production $production): void
     {
+        $symbolIdList = $production->getSymbolList();
         while (!empty($symbolIdList)) {
             $targetSymbolId = array_shift($symbolIdList);
             $rightPartFirst = $this->first->getProductionTokens(...$symbolIdList);
             $follow->addToken($targetSymbolId, ...$rightPartFirst);
             if ($this->first->productionHasEpsilon(...$symbolIdList)) {
-                $follow->mergeTokens($targetSymbolId, $symbolId);
+                $follow->mergeTokens($targetSymbolId, $production->getSymbolId());
             }
         };
     }

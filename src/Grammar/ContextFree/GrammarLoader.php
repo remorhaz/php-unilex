@@ -69,7 +69,9 @@ abstract class GrammarLoader
             $grammar->addToken($symbolId, $tokenId);
         }
         foreach ($productionMap as $symbolId => $productionList) {
-            $grammar->addProduction($symbolId, ...$productionList);
+            foreach ($productionList as $production) {
+                $grammar->addProduction($symbolId, ...$production);
+            }
         }
     }
 
