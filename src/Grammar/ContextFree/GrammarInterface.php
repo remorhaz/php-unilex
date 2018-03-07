@@ -2,10 +2,9 @@
 
 namespace Remorhaz\UniLex\Grammar\ContextFree;
 
-use Generator;
-
 interface GrammarInterface
 {
+
     public function getStartSymbol(): int;
 
     public function getEoiSymbol(): int;
