@@ -67,11 +67,8 @@ class TableBuilder
     {
         $firstAlpha = $this->getFirst()->getProductionTokens(...$alpha);
         $firstBeta = $this->getFirst()->getProductionTokens(...$beta);
-        $this->checkConflict(
-            $firstAlpha,
-            $firstBeta,
-            "Symbol {$symbolId} has FIRST({$iAlpha})/FIRST({$iBeta}) conflict"
-        );
+        $message = "Symbol {$symbolId} has FIRST({$iAlpha})/FIRST({$iBeta}) conflict";
+        $this->checkConflict($firstAlpha, $firstBeta, $message);
     }
 
     /**
@@ -89,11 +86,8 @@ class TableBuilder
         }
         $follow = $this->getFollow()->getTokens($symbolId);
         $firstAlpha = $this->getFirst()->getProductionTokens(...$alpha);
-        $this->checkConflict(
-            $follow,
-            $firstAlpha,
-            "Symbol {$symbolId} has FIRST({$iAlpha})/FOLLOW conflict (ε ∈ {$iBeta})"
-        );
+        $message = "Symbol {$symbolId} has FIRST({$iAlpha})/FOLLOW conflict (ε ∈ {$iBeta})";
+        $this->checkConflict($follow, $firstAlpha, $message);
     }
 
     /**
