@@ -28,7 +28,7 @@ class TableBuilder
     public function getTable(): TableInterface
     {
         if (!isset($this->table)) {
-            $this->checkConflicts();
+            $this->checkGrammarConflicts();
             $table = new Table;
             $this->addProductionsFromNonTerminalMap($table);
             $this->table = $table;
@@ -39,36 +39,75 @@ class TableBuilder
     /**
      * @throws Exception
      */
-    private function checkConflicts(): void
+    private function checkGrammarConflicts(): void
     {
-        foreach ($this->grammar->getNonTerminalList() as $nonTerminalId) {
-            $follow = $this->getFollow()->getTokens($nonTerminalId);
-            $productionList = $this->grammar->getProductionList($nonTerminalId);
-            foreach ($productionList as $i => $productionAlpha) {
-                $firstAlpha = $this->getFirst()->getProductionTokens(...$productionAlpha);
-                foreach ($productionList as $j => $productionBeta) {
-                    if ($i == $j) {
+        foreach ($this->grammar->getNonTerminalList() as $symbolId) {
+            $productionList = $this->grammar->getProductionList($symbolId);
+            foreach ($productionList as $iAlpha => $alpha) {
+                foreach ($productionList as $iBeta => $beta) {
+                    if ($iAlpha == $iBeta) {
                         continue;
                     }
-                    $firstBeta = $this->getFirst()->getProductionTokens(...$productionBeta);
-                    $firstFirst = array_intersect($firstAlpha, $firstBeta);
-                    if (!empty($firstFirst)) {
-                        $intersectionText = implode(', ', $firstFirst);
-                        throw new Exception(
-                            "Symbol {$nonTerminalId} has FIRST({$i})/FIRST({$j}) conflict: {$intersectionText}"
-                        );
-                    }
-                    if ($this->getFirst()->productionHasEpsilon(...$productionBeta)) {
-                        $firstFollow = array_intersect($follow, $firstAlpha);
-                        if (!empty($firstFollow)) {
-                            $intersectionText = implode(', ', $firstFollow);
-                            throw new Exception(
-                                "Symbol {$nonTerminalId} has FIRST({$i})/FOLLOW conflict (ε ∈ {$j}): {$intersectionText}"
-                            );
-                        }
-                    }
+                    $this->checkFirstFirstConflict($symbolId, $iAlpha, $alpha, $iBeta, $beta);
+                    $this->checkFirstFollowConflict($symbolId, $iAlpha, $alpha, $iBeta, $beta);
                 }
             }
+        }
+    }
+
+    /**
+     * @param int $symbolId
+     * @param int $iAlpha
+     * @param array $alpha
+     * @param int $iBeta
+     * @param array $beta
+     * @throws Exception
+     */
+    private function checkFirstFirstConflict(int $symbolId, int $iAlpha, array $alpha, int $iBeta, array $beta): void
+    {
+        $firstAlpha = $this->getFirst()->getProductionTokens(...$alpha);
+        $firstBeta = $this->getFirst()->getProductionTokens(...$beta);
+        $this->checkConflict(
+            $firstAlpha,
+            $firstBeta,
+            "Symbol {$symbolId} has FIRST({$iAlpha})/FIRST({$iBeta}) conflict"
+        );
+    }
+
+    /**
+     * @param int $symbolId
+     * @param int $iAlpha
+     * @param array $alpha
+     * @param int $iBeta
+     * @param array $beta
+     * @throws Exception
+     */
+    private function checkFirstFollowConflict(int $symbolId, int $iAlpha, array $alpha, int $iBeta, array $beta): void
+    {
+        if (!$this->getFirst()->productionHasEpsilon(...$beta)) {
+            return;
+        }
+        $follow = $this->getFollow()->getTokens($symbolId);
+        $firstAlpha = $this->getFirst()->getProductionTokens(...$alpha);
+        $this->checkConflict(
+            $follow,
+            $firstAlpha,
+            "Symbol {$symbolId} has FIRST({$iAlpha})/FOLLOW conflict (ε ∈ {$iBeta})"
+        );
+    }
+
+    /**
+     * @param array $tokenListA
+     * @param array $tokenListB
+     * @param string $message
+     * @throws Exception
+     */
+    private function checkConflict(array $tokenListA, array $tokenListB, string $message): void
+    {
+        $conflict = array_intersect($tokenListA, $tokenListB);
+        if (!empty($conflict)) {
+            $conflictText = implode(', ', $conflict);
+            throw new Exception("{$message}: {$conflictText}");
         }
     }
 
