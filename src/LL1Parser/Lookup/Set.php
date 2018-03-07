@@ -7,9 +7,8 @@ abstract class Set
 
     /**
      * @var array
-     * @todo Make private again
      */
-    public $tokenMap = [];
+    private $tokenMap = [];
 
     /**
      * This counter increases each time changes are made to set.
