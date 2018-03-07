@@ -2,7 +2,6 @@
 
 namespace Remorhaz\UniLex\Grammar\ContextFree;
 
-use Generator;
 use Remorhaz\UniLex\Exception;
 
 class Grammar implements GrammarInterface
