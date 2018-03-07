@@ -46,4 +46,16 @@ class ProductionTest extends TestCase
         $actualValue = $production->getSymbolList();
         self::assertSame($expectedValue, $actualValue);
     }
+
+    public function testIsEpsilon_EmptySymbolList_ReturnsTrue(): void
+    {
+        $actualValue = (new Production(1, 2))->isEpsilon();
+        self::assertTrue($actualValue);
+    }
+
+    public function testIsEpsilon_NotEmptySymbolList_ReturnsTrue(): void
+    {
+        $actualValue = (new Production(1, 2, 3))->isEpsilon();
+        self::assertFalse($actualValue);
+    }
 }

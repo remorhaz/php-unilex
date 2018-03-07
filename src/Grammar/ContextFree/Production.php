@@ -40,4 +40,9 @@ class Production
     {
         return $this->symbolList;
     }
+
+    public function isEpsilon(): bool
+    {
+        return empty($this->getSymbolList());
+    }
 }

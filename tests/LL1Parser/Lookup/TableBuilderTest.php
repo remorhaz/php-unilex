@@ -11,6 +11,7 @@ use Remorhaz\UniLex\LL1Parser\Lookup\TableBuilder;
 
 /**
  * @covers \Remorhaz\UniLex\LL1Parser\Lookup\TableBuilder
+ * @covers \Remorhaz\UniLex\LL1Parser\Lookup\TableConflictChecker
  */
 class TableBuilderTest extends TestCase
 {

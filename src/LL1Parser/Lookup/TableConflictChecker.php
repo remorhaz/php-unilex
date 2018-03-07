@@ -39,6 +39,7 @@ class TableConflictChecker
     private function checkSymbolConflicts(int $symbolId): void
     {
         $productionList = $this->grammar->getProductionList($symbolId);
+        $this->checkMultipleEpsilons($symbolId, ...$productionList);
         foreach ($productionList as $alpha) {
             foreach ($productionList as $beta) {
                 $this->checkProductionConflicts($alpha, $beta);
@@ -61,15 +62,28 @@ class TableConflictChecker
     }
 
     /**
+     * @param int $symbolId
+     * @param Production[] ...$productionList
+     * @throws Exception
+     */
+    private function checkMultipleEpsilons(int $symbolId, Production ...$productionList): void
+    {
+        $isEpsilonProduction = function (Production $production): bool {
+            return $production->isEpsilon();
+        };
+        $epsilonProductionList = array_filter($productionList, $isEpsilonProduction);
+        if (count($epsilonProductionList) > 1) {
+            throw new Exception("Symbol {$symbolId} has multiple ε-productions");
+        }
+    }
+
+    /**
      * @param Production $alpha
      * @param Production $beta
      * @throws Exception
      */
     private function checkFirstFirstConflict(Production $alpha, Production $beta): void
     {
-        if ($alpha->getSymbolId() != $beta->getSymbolId()) {
-            throw new Exception("Cannot check FIRST({$alpha})/FIRST({$beta}) conflict");
-        }
         $firstAlpha = $this->first->getProductionTokens(...$alpha->getSymbolList());
         $firstBeta = $this->first->getProductionTokens(...$beta->getSymbolList());
         $message = "FIRST({$alpha})/FIRST({$beta}) conflict";
@@ -83,9 +97,6 @@ class TableConflictChecker
      */
     private function checkFirstFollowConflict(Production $alpha, Production $beta): void
     {
-        if ($alpha->getSymbolId() != $beta->getSymbolId()) {
-            throw new Exception("Cannot check FIRST({$alpha})/FOLLOW({$alpha->getSymbolId()}) conflict");
-        }
         if (!$this->first->productionHasEpsilon(...$beta->getSymbolList())) {
             return;
         }
