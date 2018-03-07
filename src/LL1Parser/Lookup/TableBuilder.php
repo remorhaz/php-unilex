@@ -43,15 +43,24 @@ class TableBuilder
     private function checkGrammarConflicts(): void
     {
         foreach ($this->grammar->getNonTerminalList() as $symbolId) {
-            $productionList = $this->grammar->getProductionList($symbolId);
-            foreach ($productionList as $alpha) {
-                foreach ($productionList as $beta) {
-                    if ($alpha->getIndex() == $beta->getIndex()) {
-                        continue;
-                    }
-                    $this->checkFirstFirstConflict($alpha, $beta);
-                    $this->checkFirstFollowConflict($alpha, $beta);
+            $this->checkSymbolGrammarConflicts($symbolId);
+        }
+    }
+
+    /**
+     * @param int $symbolId
+     * @throws Exception
+     */
+    private function checkSymbolGrammarConflicts(int $symbolId): void
+    {
+        $productionList = $this->grammar->getProductionList($symbolId);
+        foreach ($productionList as $alpha) {
+            foreach ($productionList as $beta) {
+                if ($alpha->getIndex() == $beta->getIndex()) {
+                    continue;
                 }
+                $this->checkFirstFirstConflict($alpha, $beta);
+                $this->checkFirstFollowConflict($alpha, $beta);
             }
         }
     }
