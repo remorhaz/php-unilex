@@ -5,6 +5,9 @@ namespace Remorhaz\UniLex\Test\Grammar\ContextFree;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Grammar\ContextFree\Production;
 
+/**
+ * @covers \Remorhaz\UniLex\Grammar\ContextFree\Production
+ */
 class ProductionTest extends TestCase
 {
 

@@ -42,77 +42,8 @@ class TableBuilder
      */
     private function checkGrammarConflicts(): void
     {
-        foreach ($this->grammar->getNonTerminalList() as $symbolId) {
-            $this->checkSymbolGrammarConflicts($symbolId);
-        }
-    }
-
-    /**
-     * @param int $symbolId
-     * @throws Exception
-     */
-    private function checkSymbolGrammarConflicts(int $symbolId): void
-    {
-        $productionList = $this->grammar->getProductionList($symbolId);
-        foreach ($productionList as $alpha) {
-            foreach ($productionList as $beta) {
-                if ($alpha->getIndex() == $beta->getIndex()) {
-                    continue;
-                }
-                $this->checkFirstFirstConflict($alpha, $beta);
-                $this->checkFirstFollowConflict($alpha, $beta);
-            }
-        }
-    }
-
-    /**
-     * @param Production $alpha
-     * @param Production $beta
-     * @throws Exception
-     */
-    private function checkFirstFirstConflict(Production $alpha, Production $beta): void
-    {
-        if ($alpha->getSymbolId() != $beta->getSymbolId()) {
-            throw new Exception("Cannot check FIRST({$alpha})/FIRST({$beta}) conflict");
-        }
-        $firstAlpha = $this->getFirst()->getProductionTokens(...$alpha->getSymbolList());
-        $firstBeta = $this->getFirst()->getProductionTokens(...$beta->getSymbolList());
-        $message = "FIRST({$alpha})/FIRST({$beta}) conflict";
-        $this->checkConflict($firstAlpha, $firstBeta, $message);
-    }
-
-    /**
-     * @param Production $alpha
-     * @param Production $beta
-     * @throws Exception
-     */
-    private function checkFirstFollowConflict(Production $alpha, Production $beta): void
-    {
-        if ($alpha->getSymbolId() != $beta->getSymbolId()) {
-            throw new Exception("Cannot check FIRST({$alpha})/FOLLOW({$alpha->getSymbolId()}) conflict");
-        }
-        if (!$this->getFirst()->productionHasEpsilon(...$beta->getSymbolList())) {
-            return;
-        }
-        $follow = $this->getFollow()->getTokens($alpha->getSymbolId());
-        $firstAlpha = $this->getFirst()->getProductionTokens(...$alpha->getSymbolList());
-        $message = "FIRST({$alpha})/FOLLOW({$alpha->getSymbolId()}) conflict (ε ∈ {$beta})";
-        $this->checkConflict($follow, $firstAlpha, $message);
-    }
-
-    /**
-     * @param array $tokenListA
-     * @param array $tokenListB
-     * @param string $message
-     * @throws Exception
-     */
-    private function checkConflict(array $tokenListA, array $tokenListB, string $message): void
-    {
-        $conflict = array_intersect($tokenListA, $tokenListB);
-        if (!empty($conflict)) {
-            $conflictText = implode(', ', $conflict);
-            throw new Exception("{$message}: {$conflictText}");
-        }
+        $checker = new TableConflictChecker($this->grammar, $this->getFirst(), $this->getFollow());
+        $checker->check();
     }
 
     /**
