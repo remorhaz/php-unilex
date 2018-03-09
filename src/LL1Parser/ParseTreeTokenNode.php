@@ -2,20 +2,23 @@
 
 namespace Remorhaz\UniLex\LL1Parser;
 
-use Remorhaz\UniLex\Token;
-
 class ParseTreeTokenNode implements ParseTreeNodeInterface
 {
 
     private $token;
 
-    public function __construct(Token $token)
+    public function __construct(ParsedToken $token)
     {
         $this->token = $token;
     }
 
-    public function getToken(): Token
+    public function getToken(): ParsedToken
     {
         return $this->token;
+    }
+
+    public function getIndex(): int
+    {
+        return $this->token->getIndex();
     }
 }

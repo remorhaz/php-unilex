@@ -4,6 +4,7 @@ namespace Remorhaz\UniLex\Test\LL1Parser;
 
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Example\SimpleExpr\Grammar\ConfigFile;
+use Remorhaz\UniLex\Example\SimpleExpr\Grammar\SymbolType;
 use Remorhaz\UniLex\Example\SimpleExpr\Grammar\TokenType;
 use Remorhaz\UniLex\Grammar\ContextFree\GrammarLoader;
 use Remorhaz\UniLex\Grammar\ContextFree\TokenFactory;
@@ -38,7 +39,7 @@ class ParserTest extends TestCase
             ->method('onToken');
 
         /** @var AbstractParserListener $listener */
-        $parser = new Parser($grammar, $reader, $listener);
+        $parser = new Parser($grammar, $reader, SymbolType::NT_ROOT, $listener);
         $parser->run();
     }
 

@@ -9,6 +9,8 @@ namespace Remorhaz\UniLex\RegExp\Grammar;
  */
 abstract class SymbolType
 {
+    const NT_ROOT                       = 0x00;
+
     const NT_PARTS                      = 0x01;
     const NT_ALT_PARTS                  = 0x02;
     const NT_ALT_SEPARATOR              = 0x03;

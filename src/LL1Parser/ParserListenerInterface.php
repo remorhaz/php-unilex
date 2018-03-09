@@ -9,7 +9,7 @@ interface ParserListenerInterface
 
     public function onSymbol(ParsedSymbol $symbol): void;
 
-    public function onProduction(?ParsedSymbol $symbol, ParsedSymbol ...$production): void;
+    public function onProduction(ParsedProduction $production): void;
 
     public function onToken(ParsedSymbol $symbol, ParsedToken $token): void;
 

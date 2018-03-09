@@ -4,6 +4,8 @@ namespace Remorhaz\UniLex\Example\SimpleExpr\Grammar;
 
 abstract class SymbolType
 {
+    const NT_ROOT          = 0x00; // Root symbol fot LL(1) parser
+
     const T_PLUS            = 0x01; // +
     const T_STAR            = 0x02; // *
     const T_L_PARENTHESIS   = 0x03; // (

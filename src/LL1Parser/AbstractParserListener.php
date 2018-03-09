@@ -13,7 +13,7 @@ abstract class AbstractParserListener implements ParserListenerInterface
     {
     }
 
-    public function onProduction(?ParsedSymbol $symbol, ParsedSymbol ...$production): void
+    public function onProduction(ParsedProduction $production): void
     {
     }
 

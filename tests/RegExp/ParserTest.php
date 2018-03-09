@@ -29,8 +29,8 @@ class ParserTest extends TestCase
         $buffer = CharBufferFactory::createFromUtf8String('hello');
         $grammar = GrammarLoader::loadFile(ConfigFile::getPath());
         $reader = new TokenReader($buffer, new TokenMatcher, new TokenFactory($grammar));
-        $listener = new ParseTreeBuilder($grammar);
-        $parser = new Parser($grammar, $reader, $listener);
+        $listener = new ParseTreeBuilder($grammar, SymbolType::NT_ROOT);
+        $parser = new Parser($grammar, $reader, SymbolType::NT_ROOT, $listener);
         $parser->run();
         $expectedTokenTypeLog = [
             TokenType::OTHER_ASCII_LETTER,
@@ -42,6 +42,7 @@ class ParserTest extends TestCase
         $actualTokenTypeLog = $listener->getTokenTypeLog();
         self::assertSame($expectedTokenTypeLog, $actualTokenTypeLog);
         $expectedSymbolLog = [
+            SymbolType::NT_ROOT,
             SymbolType::NT_PARTS,
             SymbolType::NT_PART,
             SymbolType::NT_ITEM,

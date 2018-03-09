@@ -26,13 +26,17 @@ class Parser
 
     private $nextSymbolIndex = 0;
 
+    private $rootSymbolId;
+
     public function __construct(
         GrammarInterface $grammar,
         TokenReaderInterface $tokenReader,
+        int $rootSymbolId,
         ParserListenerInterface $listener
     ) {
         $this->grammar = $grammar;
         $this->tokenReader = $tokenReader;
+        $this->rootSymbolId = $rootSymbolId;
         $this->listener = $listener;
         $this->symbolStack = new ParsedSymbolStack;
     }
@@ -56,23 +60,17 @@ class Parser
         $this->nextSymbolIndex = 0;
         $this->symbolStack->reset();
         $this->listener->onStart();
-        $this->pushSymbolProduction(null, ...$this->getInitSymbols());
+        $rootSymbol = new ParsedSymbol($this->getNextSymbolIndex(), $this->rootSymbolId);
+        $this->listener->onSymbol($rootSymbol);
+        $startSymbol = new ParsedSymbol($this->getNextSymbolIndex(), $this->grammar->getStartSymbol());
+        $eoiSymbol = new ParsedSymbol($this->getNextSymbolIndex(), $this->grammar->getEoiSymbol());
+        $rootProduction = new ParsedProduction($rootSymbol, 0, $startSymbol, $eoiSymbol);
+        $this->pushProduction($rootProduction);
     }
 
     private function getNextSymbolIndex(): int
     {
         return $this->nextSymbolIndex++;
-    }
-
-    /**
-     * @return ParsedSymbol[]
-     */
-    private function getInitSymbols(): array
-    {
-        return [
-            new ParsedSymbol($this->getNextSymbolIndex(), $this->grammar->getStartSymbol(), 0),
-            new ParsedSymbol($this->getNextSymbolIndex(), $this->grammar->getEoiSymbol(), 0),
-        ];
     }
 
     private function hasSymbolInStack(): bool
@@ -127,25 +125,35 @@ class Parser
      */
     private function pushMatchingProduction(ParsedSymbol $symbol): void
     {
-        $tokenId = $this->previewToken()->getType();
-        $production = [];
-        $productionIndex = $this
-            ->getLookupTable()
-            ->getProductionIndex($symbol->getSymbolId(), $tokenId);
-        $symbolList = $this
-            ->grammar
-            ->getProduction($symbol->getSymbolId(), $productionIndex)
-            ->getSymbolList();
-        foreach ($symbolList as $symbolId) {
-            $production[] = new ParsedSymbol($this->getNextSymbolIndex(), $symbolId, $productionIndex);
-        }
-        $this->pushSymbolProduction($symbol, ...$production);
+        $production = $this->getMatchingProduction($symbol, $this->previewToken());
+        $this->pushProduction($production);
     }
 
-    private function pushSymbolProduction(?ParsedSymbol $symbol, ParsedSymbol ...$production): void
+    private function pushProduction(ParsedProduction $production): void
     {
-        $this->symbolStack->push(...$production);
-        $this->listener->onProduction($symbol, ...$production);
+        $this->symbolStack->push(...$production->getSymbolList());
+        $this->listener->onProduction($production);
+    }
+
+    /**
+     * @param ParsedSymbol $symbol
+     * @param Token $token
+     * @return ParsedProduction
+     * @throws Exception
+     */
+    private function getMatchingProduction(ParsedSymbol $symbol, Token $token): ParsedProduction
+    {
+        $productionIndex = $this
+            ->getLookupTable()
+            ->getProductionIndex($symbol->getSymbolId(), $token->getType());
+        $grammarProduction = $this
+            ->grammar
+            ->getProduction($symbol->getSymbolId(), $productionIndex);
+        $symbolList = [];
+        foreach ($grammarProduction->getSymbolList() as $symbolId) {
+            $symbolList[] = new ParsedSymbol($this->getNextSymbolIndex(), $symbolId);
+        }
+        return new ParsedProduction($symbol, $grammarProduction->getIndex(), ...$symbolList);
     }
 
     /**

@@ -5,18 +5,23 @@ namespace Remorhaz\UniLex\LL1Parser;
 class ParseTreeSymbolNode implements ParseTreeNodeInterface
 {
 
-    private $symbolId;
+    private $symbol;
 
     private $childList = [];
 
-    public function __construct(int $symbolId)
+    public function __construct(ParsedSymbol $symbol)
     {
-        $this->symbolId = $symbolId;
+        $this->symbol = $symbol;
     }
 
-    public function getSymbolId(): int
+    public function getIndex(): int
     {
-        return $this->symbolId;
+        return $this->symbol->getIndex();
+    }
+
+    public function getSymbol(): ParsedSymbol
+    {
+        return $this->symbol;
     }
 
     public function addChild(ParseTreeNodeInterface $node): void

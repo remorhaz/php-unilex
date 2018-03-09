@@ -16,14 +16,17 @@ class ParseTreeBuilder extends AbstractParserListener
 
     private $rootNodeIndex;
 
+    private $rootSymbolId;
+
     /**
      * @var ParseTreeSymbolNode[]
      */
     private $nodeList = [];
 
-    public function __construct(Grammar $grammar)
+    public function __construct(Grammar $grammar, int $rootSymbolId)
     {
         $this->grammar = $grammar;
+        $this->rootSymbolId = $rootSymbolId;
     }
 
     public function onStart(): void
@@ -43,36 +46,39 @@ class ParseTreeBuilder extends AbstractParserListener
             default:
                 $this->tokenTypeLog[] = $token->getToken()->getType();
         }
-        $node = new ParseTreeTokenNode($token->getToken());
+        $node = new ParseTreeTokenNode($token);
+        $this->setNode($token->getIndex(), $node);
         $this->getNode($symbol->getIndex())->addChild($node);
     }
 
+    /**
+     * @param ParsedSymbol $symbol
+     * @throws Exception
+     */
     public function onSymbol(ParsedSymbol $symbol): void
     {
         switch ($symbol->getSymbolId()) {
             default:
                 $this->symbolLog[] = $symbol->getSymbolId();
         }
+        if ($symbol->getSymbolId() == $this->rootSymbolId) {
+            $node = new ParseTreeSymbolNode($symbol);
+            $this->setNode($symbol->getIndex(), $node);
+            $this->setRootNodeIndex($symbol->getIndex());
+        }
     }
 
     /**
-     * @param null|ParsedSymbol $symbol
-     * @param ParsedSymbol[] ...$production
+     * @param ParsedProduction $production
      * @throws Exception
      */
-    public function onProduction(?ParsedSymbol $symbol, ParsedSymbol ...$production): void
+    public function onProduction(ParsedProduction $production): void
     {
-        foreach ($production as $productionSymbol) {
-            if ($this->grammar->isEoiSymbol($productionSymbol->getSymbolId())) {
-                continue;
-            }
-            $node = new ParseTreeSymbolNode($productionSymbol->getSymbolId());
+        $parentNode = $this->getNode($production->getSymbol()->getIndex());
+        foreach ($production->getSymbolList() as $productionSymbol) {
+            $node = new ParseTreeSymbolNode($productionSymbol);
             $this->setNode($productionSymbol->getIndex(), $node);
-            if (isset($symbol)) {
-                $this->getNode($symbol->getIndex())->addChild($node);
-                continue;
-            }
-            $this->setRootNodeIndex($productionSymbol->getIndex());
+            $parentNode->addChild($node);
         }
     }
 
@@ -115,10 +121,10 @@ class ParseTreeBuilder extends AbstractParserListener
 
     /**
      * @param int $index
-     * @param ParseTreeSymbolNode $node
+     * @param ParseTreeNodeInterface $node
      * @throws Exception
      */
-    private function setNode(int $index, ParseTreeSymbolNode $node): void
+    private function setNode(int $index, ParseTreeNodeInterface $node): void
     {
         if (isset($this->nodeList[$index])) {
             throw new Exception("Node at index {$index} is already set");
