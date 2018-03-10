@@ -28,6 +28,8 @@ class Parser
 
     private $rootSymbolId;
 
+    private $productionMap = [];
+
     public function __construct(
         GrammarInterface $grammar,
         TokenReaderInterface $tokenReader,
@@ -52,16 +54,18 @@ class Parser
             $this->isTerminalSymbol($symbol)
                 ? $this->readSymbolToken($symbol)
                 : $this->pushMatchingProduction($symbol);
+            $this->onSymbol($symbol);
         }
     }
 
     private function initStack(): void
     {
         $this->nextSymbolIndex = 0;
+        $this->productionMap = [];
         $this->symbolStack->reset();
         $this->listener->onStart();
         $rootSymbol = new ParsedSymbol($this->getNextSymbolIndex(), $this->rootSymbolId);
-        $this->listener->onSymbol($rootSymbol);
+        $this->listener->onRootSymbol($rootSymbol);
         $startSymbol = new ParsedSymbol($this->getNextSymbolIndex(), $this->grammar->getStartSymbol());
         $eoiSymbol = new ParsedSymbol($this->getNextSymbolIndex(), $this->grammar->getEoiSymbol());
         $rootProduction = new ParsedProduction($rootSymbol, 0, $startSymbol, $eoiSymbol);
@@ -97,9 +101,20 @@ class Parser
      */
     private function popSymbol(): ParsedSymbol
     {
-        $symbol = $this->symbolStack->pop();
-        $this->listener->onSymbol($symbol);
-        return $symbol;
+        return $this->symbolStack->pop();
+    }
+
+    /**
+     * @param ParsedSymbol $symbol
+     * @throws Exception
+     */
+    private function onSymbol(ParsedSymbol $symbol): void
+    {
+        if (!isset($this->productionMap[$symbol->getIndex()])) {
+            throw new Exception("No production in map for symbol {$symbol->getIndex()}");
+        }
+        [$symbolIndex, $production] = $this->productionMap[$symbol->getIndex()];
+        $this->listener->onSymbol($symbolIndex, $production);
     }
 
     /**
@@ -131,6 +146,9 @@ class Parser
 
     private function pushProduction(ParsedProduction $production): void
     {
+        foreach ($production->getSymbolList() as $symbolIndexInProduction => $symbol) {
+            $this->productionMap[$symbol->getIndex()] = [$symbolIndexInProduction, $production];
+        }
         $this->symbolStack->push(...$production->getSymbolList());
         $this->listener->onProduction($production);
     }

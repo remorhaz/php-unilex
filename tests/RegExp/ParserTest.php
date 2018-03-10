@@ -5,6 +5,7 @@ namespace Remorhaz\UniLex\Test\RegExp;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Grammar\ContextFree\GrammarLoader;
 use Remorhaz\UniLex\Grammar\ContextFree\TokenFactory;
+use Remorhaz\UniLex\RegExp\SyntaxTreeBuilder;
 use Remorhaz\UniLex\TokenReader;
 use Remorhaz\UniLex\LL1Parser\Parser;
 use Remorhaz\UniLex\RegExp\Grammar\ConfigFile;
@@ -24,13 +25,13 @@ class ParserTest extends TestCase
      * @throws \Remorhaz\UniLex\Exception
      * @todo Experimental test
      */
-    public function testParser()
+    public function testParserA()
     {
         $buffer = CharBufferFactory::createFromUtf8String('hello');
         $grammar = GrammarLoader::loadFile(ConfigFile::getPath());
         $reader = new TokenReader($buffer, new TokenMatcher, new TokenFactory($grammar));
-        $listener = new ParseTreeBuilder($grammar, SymbolType::NT_ROOT);
-        $parser = new Parser($grammar, $reader, SymbolType::NT_ROOT, $listener);
+        $treeBuilder = new ParseTreeBuilder($grammar, SymbolType::NT_ROOT);
+        $parser = new Parser($grammar, $reader, SymbolType::NT_ROOT, $treeBuilder);
         $parser->run();
         $expectedTokenTypeLog = [
             TokenType::OTHER_ASCII_LETTER,
@@ -39,10 +40,9 @@ class ParserTest extends TestCase
             TokenType::OTHER_ASCII_LETTER,
             TokenType::SMALL_O,
         ];
-        $actualTokenTypeLog = $listener->getTokenTypeLog();
+        $actualTokenTypeLog = $treeBuilder->getTokenTypeLog();
         self::assertSame($expectedTokenTypeLog, $actualTokenTypeLog);
         $expectedSymbolLog = [
-            SymbolType::NT_ROOT,
             SymbolType::NT_PARTS,
             SymbolType::NT_PART,
             SymbolType::NT_ITEM,
@@ -83,7 +83,21 @@ class ParserTest extends TestCase
             SymbolType::NT_ALT_PARTS,
             SymbolType::T_EOI,
         ];
-        $actualSymbolLog = $listener->getSymbolLog();
+        $actualSymbolLog = $treeBuilder->getSymbolLog();
         self::assertSame($expectedSymbolLog, $actualSymbolLog);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     * @todo Experimental test
+     */
+    public function _testParserSemantic(): void
+    {
+        $buffer = CharBufferFactory::createFromUtf8String('a');
+        $grammar = GrammarLoader::loadFile(ConfigFile::getPath());
+        $reader = new TokenReader($buffer, new TokenMatcher, new TokenFactory($grammar));
+        $treeBuilder = new SyntaxTreeBuilder();
+        $parser = new Parser($grammar, $reader, SymbolType::NT_ROOT, $treeBuilder);
+        $parser->run();
     }
 }

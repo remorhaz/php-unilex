@@ -2,26 +2,19 @@
 
 namespace Remorhaz\UniLex\LL1Parser;
 
-class ParsedSymbol
+class ParsedSymbol extends ParsedNode
 {
 
-    private $index;
-
-    private $id;
+    private $symbolId;
 
     public function __construct(int $index, int $symbolId)
     {
-        $this->index = $index;
-        $this->id = $symbolId;
-    }
-
-    public function getIndex(): int
-    {
-        return $this->index;
+        parent::__construct($index);
+        $this->symbolId = $symbolId;
     }
 
     public function getSymbolId(): int
     {
-        return $this->id;
+        return $this->symbolId;
     }
 }
