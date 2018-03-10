@@ -96,8 +96,9 @@ class ParserTest extends TestCase
         $buffer = CharBufferFactory::createFromUtf8String('a');
         $grammar = GrammarLoader::loadFile(ConfigFile::getPath());
         $reader = new TokenReader($buffer, new TokenMatcher, new TokenFactory($grammar));
-        $treeBuilder = new SyntaxTreeBuilder();
+        $treeBuilder = new SyntaxTreeBuilder;
         $parser = new Parser($grammar, $reader, SymbolType::NT_ROOT, $treeBuilder);
         $parser->run();
+        var_export($treeBuilder->getTree());
     }
 }
