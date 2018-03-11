@@ -5,7 +5,11 @@ namespace Remorhaz\UniLex\Test\RegExp;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Grammar\ContextFree\GrammarLoader;
 use Remorhaz\UniLex\Grammar\ContextFree\TokenFactory;
-use Remorhaz\UniLex\RegExp\SyntaxTreeBuilder;
+use Remorhaz\UniLex\LL1Parser\SDD\RuleSetApplier;
+use Remorhaz\UniLex\LL1Parser\SDD\RuleSetLoader;
+use Remorhaz\UniLex\RegExp\Grammar\SDD\ConfigFile as SDDConfigFile;
+use Remorhaz\UniLex\RegExp\SyntaxTree;
+use Remorhaz\UniLex\RegExp\SyntaxTreeContextFactory;
 use Remorhaz\UniLex\TokenReader;
 use Remorhaz\UniLex\LL1Parser\Parser;
 use Remorhaz\UniLex\RegExp\Grammar\ConfigFile;
@@ -91,14 +95,19 @@ class ParserTest extends TestCase
      * @throws \Remorhaz\UniLex\Exception
      * @todo Experimental test
      */
-    public function _testParserSemantic(): void
+    public function testParserSemantic(): void
     {
         $buffer = CharBufferFactory::createFromUtf8String('a');
         $grammar = GrammarLoader::loadFile(ConfigFile::getPath());
         $reader = new TokenReader($buffer, new TokenMatcher, new TokenFactory($grammar));
-        $treeBuilder = new SyntaxTreeBuilder;
+        $tree = new SyntaxTree;
+        $treeContextFactory = new SyntaxTreeContextFactory($tree);
+        $treeRuleSet = RuleSetLoader::loadFile($treeContextFactory, SDDConfigFile::getPath());
+        $treeBuilder = new RuleSetApplier($treeRuleSet);
         $parser = new Parser($grammar, $reader, SymbolType::NT_ROOT, $treeBuilder);
         $parser->run();
-        var_export($treeBuilder->getTree()->getRootNode());
+        $actualValue = $tree->getRootNode()
+            ->getName();
+        self::assertSame('alternative', $actualValue);
     }
 }
