@@ -12,13 +12,14 @@ abstract class RuleSetLoader
     const SYMBOL_RULE_MAP_KEY = 'symbol_rules';
 
     /**
-     * @param AbstractRuleSet $ruleSet
+     * @param ContextFactoryInterface $contextFactory
      * @param array $config
+     * @return RuleSet
      * @throws Exception
-     * @todo Find the way to use ruleset without overriding a class.
      */
-    public static function loadConfig(AbstractRuleSet $ruleSet, array $config): void
+    public static function loadConfig(ContextFactoryInterface $contextFactory, array $config): RuleSet
     {
+        $ruleSet = new RuleSet($contextFactory);
         $symbolRuleMap = self::getConfigValue($config, self::SYMBOL_RULE_MAP_KEY);
         foreach ($symbolRuleMap as $headerId => $productionMap) {
             foreach ($productionMap as $productionIndex => $symbolMap) {
@@ -31,21 +32,23 @@ abstract class RuleSetLoader
         foreach ($tokenRuleMap as $symbolId => $rule) {
             $ruleSet->addTokenRule($symbolId, $rule);
         }
+        return $ruleSet;
     }
 
     /**
-     * @param AbstractRuleSet $ruleSet
+     * @param ContextFactoryInterface $contextFactory
      * @param string $fileName
+     * @return RuleSet
      * @throws Exception
      */
-    public static function loadFile(AbstractRuleSet $ruleSet, string $fileName): void
+    public static function loadFile(ContextFactoryInterface $contextFactory, string $fileName): RuleSet
     {
         /** @noinspection PhpIncludeInspection */
         $config = @include $fileName;
         if (false === $config) {
             throw new Exception("Config file {$fileName} not found");
         }
-        self::loadConfig($ruleSet, $config);
+        return self::loadConfig($contextFactory, $config);
     }
 
     /**

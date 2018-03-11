@@ -4,8 +4,9 @@ namespace Remorhaz\UniLex\RegExp;
 
 use Remorhaz\UniLex\LL1Parser\ParsedSymbol;
 use Remorhaz\UniLex\LL1Parser\ParsedToken;
+use Remorhaz\UniLex\LL1Parser\SDD\TokenContextInterface;
 
-class SyntaxTreeTokenRuleContext
+class SyntaxTreeTokenRuleContext implements TokenContextInterface
 {
 
     private $symbol;

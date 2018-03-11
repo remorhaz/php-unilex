@@ -13,7 +13,7 @@ class RuleSetApplier extends AbstractParserListener
 
     private $ruleSet;
 
-    public function __construct(AbstractRuleSet $ruleSet)
+    public function __construct(RuleSet $ruleSet)
     {
         $this->ruleSet = $ruleSet;
     }

@@ -5,8 +5,9 @@ namespace Remorhaz\UniLex\RegExp;
 use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\LL1Parser\ParsedProduction;
 use Remorhaz\UniLex\LL1Parser\ParsedSymbol;
+use Remorhaz\UniLex\LL1Parser\SDD\SymbolContextInterface;
 
-class SyntaxTreeSymbolRuleContext
+class SyntaxTreeSymbolRuleContext implements SymbolContextInterface
 {
 
     private $tree;

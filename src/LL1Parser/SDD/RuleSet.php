@@ -7,7 +7,7 @@ use Remorhaz\UniLex\LL1Parser\ParsedProduction;
 use Remorhaz\UniLex\LL1Parser\ParsedSymbol;
 use Remorhaz\UniLex\LL1Parser\ParsedToken;
 
-abstract class AbstractRuleSet
+class RuleSet
 {
 
     /**
@@ -19,6 +19,13 @@ abstract class AbstractRuleSet
      * @var callable[]
      */
     protected $tokenRuleMap = [];
+
+    private $contextFactory;
+
+    public function __construct(ContextFactoryInterface $contextFactory)
+    {
+        $this->contextFactory = $contextFactory;
+    }
 
     /**
      * @param int $headerId
@@ -69,8 +76,9 @@ abstract class AbstractRuleSet
      */
     public function applySymbolRule(ParsedProduction $production, int $symbolIndex): void
     {
+        $context = $this->contextFactory->createSymbolContext($production, $symbolIndex);
         $rule = $this->getSymbolRule($production, $symbolIndex);
-        $rule($production, $symbolIndex);
+        $rule($context);
     }
 
     /**
@@ -80,8 +88,9 @@ abstract class AbstractRuleSet
      */
     public function applyTokenRule(ParsedSymbol $symbol, ParsedToken $token): void
     {
+        $context = $this->contextFactory->createTokenContext($symbol, $token);
         $rule = $this->getTokenRule($symbol);
-        $rule($symbol, $token);
+        $rule($context);
     }
 
     /**
@@ -94,8 +103,7 @@ abstract class AbstractRuleSet
         if (!$this->tokenRuleExists($symbol)) {
             return;
         }
-        $rule = $this->getTokenRule($symbol);
-        $rule($symbol, $token);
+        $this->applyTokenRule($symbol, $token);
     }
 
     /**
