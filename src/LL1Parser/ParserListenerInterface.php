@@ -9,7 +9,9 @@ interface ParserListenerInterface
 
     public function onRootSymbol(ParsedSymbol $symbol): void;
 
-    public function onProduction(ParsedProduction $production): void;
+    public function onBeginProduction(ParsedProduction $production): void;
+
+    public function onFinishProduction(ParsedProduction $production): void;
 
     public function onSymbol(int $symbolIndex, ParsedProduction $production): void;
 

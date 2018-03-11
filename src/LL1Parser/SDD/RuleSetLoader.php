@@ -11,6 +11,8 @@ abstract class RuleSetLoader
 
     const SYMBOL_RULE_MAP_KEY = 'symbol_rules';
 
+    const PRODUCTION_RULE_MAP_KEY = 'production_rules';
+
     /**
      * @param ContextFactoryInterface $contextFactory
      * @param array $config
@@ -26,6 +28,12 @@ abstract class RuleSetLoader
                 foreach ($symbolMap as $symbolIndex => $rule) {
                     $ruleSet->addSymbolRule($headerId, $productionIndex, $symbolIndex, $rule);
                 }
+            }
+        }
+        $productionRuleMap = self::getConfigValue($config, self::PRODUCTION_RULE_MAP_KEY);
+        foreach ($productionRuleMap as $headerId => $productionMap) {
+            foreach ($productionMap as $productionIndex => $rule) {
+                $ruleSet->addProductionRule($headerId, $productionIndex, $rule);
             }
         }
         $tokenRuleMap = self::getConfigValue($config, self::TOKEN_RULE_MAP_KEY);

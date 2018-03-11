@@ -20,6 +20,8 @@ class RuleSet
      */
     protected $tokenRuleMap = [];
 
+    protected $productionRuleMap = [];
+
     private $contextFactory;
 
     public function __construct(ContextFactoryInterface $contextFactory)
@@ -57,6 +59,20 @@ class RuleSet
     }
 
     /**
+     * @param int $headerId
+     * @param int $productionIndex
+     * @param callable $rule
+     * @throws Exception
+     */
+    public function addProductionRule(int $headerId, int $productionIndex, callable $rule): void
+    {
+        if (isset($this->productionRuleMap[$headerId][$productionIndex])) {
+            throw new Exception("Rule for production {$headerId}:{$productionIndex} is already set");
+        }
+        $this->productionRuleMap[$headerId][$productionIndex] = $rule;
+    }
+
+    /**
      * @param ParsedProduction $production
      * @param int $symbolIndex
      * @throws Exception
@@ -77,8 +93,7 @@ class RuleSet
     public function applySymbolRule(ParsedProduction $production, int $symbolIndex): void
     {
         $context = $this->contextFactory->createSymbolContext($production, $symbolIndex);
-        $rule = $this->getSymbolRule($production, $symbolIndex);
-        $rule($context);
+        $this->getSymbolRule($production, $symbolIndex)($context);
     }
 
     /**
@@ -89,8 +104,7 @@ class RuleSet
     public function applyTokenRule(ParsedSymbol $symbol, ParsedToken $token): void
     {
         $context = $this->contextFactory->createTokenContext($symbol, $token);
-        $rule = $this->getTokenRule($symbol);
-        $rule($context);
+        $this->getTokenRule($symbol)($context);
     }
 
     /**
@@ -107,11 +121,55 @@ class RuleSet
     }
 
     /**
+     * @param ParsedProduction $production
+     * @throws Exception
+     */
+    public function applyProductionRule(ParsedProduction $production): void
+    {
+        $context = $this->contextFactory->createProductionContext($production);
+        $this->getProductionRule($production)($context);
+    }
+
+    /**
+     * @param ParsedProduction $production
+     * @throws Exception
+     */
+    public function applyProductionRuleIfExists(ParsedProduction $production): void
+    {
+        if (!$this->productionRuleExists($production)) {
+            return;
+        }
+        $this->applyProductionRule($production);
+    }
+
+    public function productionRuleExists(ParsedProduction $production): bool
+    {
+        $headerId = $production->getHeader()->getSymbolId();
+        $productionIndex = $production->getIndex();
+        return isset($this->productionRuleMap[$headerId][$productionIndex]);
+    }
+
+    /**
+     * @param ParsedProduction $production
+     * @return callable
+     * @throws Exception
+     */
+    public function getProductionRule(ParsedProduction $production): callable
+    {
+        $headerId = $production->getHeader()->getSymbolId();
+        $productionIndex = $production->getIndex();
+        if (!isset($this->productionRuleMap[$headerId][$productionIndex])) {
+            throw new Exception("Production rule {$headerId}:{$productionIndex} is not defined");
+        }
+        return $this->productionRuleMap[$headerId][$productionIndex];
+    }
+
+    /**
      * @param ParsedSymbol $symbol
      * @return callable
      * @throws Exception
      */
-    protected function getTokenRule(ParsedSymbol $symbol): callable
+    private function getTokenRule(ParsedSymbol $symbol): callable
     {
         if (!$this->tokenRuleExists($symbol)) {
             throw new Exception("No rule defined for terminal symbol {$symbol->getSymbolId()}");
@@ -139,7 +197,7 @@ class RuleSet
      * @return callable
      * @throws Exception
      */
-    protected function getSymbolRule(ParsedProduction $production, int $symbolIndex): callable
+    private function getSymbolRule(ParsedProduction $production, int $symbolIndex): callable
     {
         if (!$this->symbolRuleExists($production, $symbolIndex)) {
             throw new Exception("No rule defined for production symbol {$production}[{$symbolIndex}]");

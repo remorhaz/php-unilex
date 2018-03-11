@@ -11,5 +11,7 @@ interface ContextFactoryInterface
 
     public function createSymbolContext(ParsedProduction $production, int $symbolIndex): SymbolContextInterface;
 
+    public function createProductionContext(ParsedProduction $production): ProductionContextInterface;
+
     public function createTokenContext(ParsedSymbol $symbol, ParsedToken $token): TokenContextInterface;
 }

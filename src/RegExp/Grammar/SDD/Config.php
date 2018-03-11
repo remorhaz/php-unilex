@@ -2,6 +2,7 @@
 
 use Remorhaz\UniLex\LL1Parser\SDD\RuleSetLoader;
 use Remorhaz\UniLex\RegExp\Grammar\SymbolType;
+use Remorhaz\UniLex\RegExp\SyntaxTreeProductionRuleContext;
 use Remorhaz\UniLex\RegExp\SyntaxTreeSymbolRuleContext;
 use Remorhaz\UniLex\RegExp\SyntaxTreeTokenRuleContext;
 use Remorhaz\UniLex\Unicode\Grammar\TokenAttribute;
@@ -44,6 +45,7 @@ return [
                 },
                 // SymbolType::NT_ITEM_QUANT
                 1 => function (SyntaxTreeSymbolRuleContext $context) {
+                    // TODO: Find out why this callback doesn't execute.
                     $context
                         ->inheritSymbolAttribute(0, 'i.repeat_node', 's.repeat_node')
                         ->createChildNode('quantity', 's.quantity_node', 'i.repeat_node');
@@ -114,12 +116,13 @@ return [
                     $node->setAttribute('maxInfinity', true);
                 },
             ],
-            4 => [
-                // ε
-                0 => function (SyntaxTreeSymbolRuleContext $context) {
-                    // TODO: Deal with ε-production rules
-                },
-            ],
+        ],
+    ],
+    RuleSetLoader::PRODUCTION_RULE_MAP_KEY => [
+        SymbolType::NT_ITEM_QUANT => [
+            // ε
+            4 => function (SyntaxTreeProductionRuleContext $context) {
+            }
         ],
     ],
     RuleSetLoader::TOKEN_RULE_MAP_KEY => [

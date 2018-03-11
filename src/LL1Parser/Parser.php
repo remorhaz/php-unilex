@@ -28,7 +28,12 @@ class Parser
 
     private $rootSymbolId;
 
+    /**
+     * @var ParsedProduction[]
+     */
     private $productionMap = [];
+
+    private $lastProductionSymbolMap = [];
 
     public function __construct(
         GrammarInterface $grammar,
@@ -62,6 +67,7 @@ class Parser
     {
         $this->nextSymbolIndex = 0;
         $this->productionMap = [];
+        $this->lastProductionSymbolMap = [];
         $this->symbolStack->reset();
         $this->listener->onStart();
         $rootSymbol = new ParsedSymbol($this->getNextSymbolIndex(), $this->rootSymbolId);
@@ -115,6 +121,9 @@ class Parser
         }
         [$symbolIndex, $production] = $this->productionMap[$symbol->getIndex()];
         $this->listener->onSymbol($symbolIndex, $production);
+        if (isset($this->lastProductionSymbolMap[$symbol->getIndex()])) {
+            $this->listener->onFinishProduction($production);
+        }
     }
 
     /**
@@ -146,11 +155,18 @@ class Parser
 
     private function pushProduction(ParsedProduction $production): void
     {
+        $lastSymbol = null;
         foreach ($production->getSymbolList() as $symbolIndexInProduction => $symbol) {
             $this->productionMap[$symbol->getIndex()] = [$symbolIndexInProduction, $production];
+            $lastSymbol = $symbol;
         }
         $this->symbolStack->push(...$production->getSymbolList());
-        $this->listener->onProduction($production);
+        $this->listener->onBeginProduction($production);
+        if ($production->isEpsilon()) {
+            $this->listener->onFinishProduction($production);
+        } elseif (isset($lastSymbol)) {
+            $this->lastProductionSymbolMap[$lastSymbol->getIndex()] = $production;
+        }
     }
 
     /**

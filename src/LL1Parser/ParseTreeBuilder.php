@@ -80,7 +80,7 @@ class ParseTreeBuilder extends AbstractParserListener
      * @param ParsedProduction $production
      * @throws Exception
      */
-    public function onProduction(ParsedProduction $production): void
+    public function onBeginProduction(ParsedProduction $production): void
     {
         $parentNode = $this->getNode($production->getHeader()->getIndex());
         foreach ($production->getSymbolList() as $productionSymbol) {
