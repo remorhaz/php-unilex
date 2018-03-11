@@ -34,7 +34,7 @@ class SyntaxTreeTokenRuleContext
      * @return SyntaxTreeTokenRuleContext
      * @throws \Remorhaz\UniLex\Exception
      */
-    public function setTokenAttribute(string $target, string $source = null): self
+    public function copyTokenAttribute(string $target, string $source = null): self
     {
         $value = $this
             ->getToken()

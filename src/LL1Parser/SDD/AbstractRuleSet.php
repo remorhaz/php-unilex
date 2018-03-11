@@ -13,43 +13,40 @@ abstract class AbstractRuleSet
     /**
      * @var callable[][][]
      */
-    protected $symbolRuleMap;
+    protected $symbolRuleMap = [];
 
     /**
      * @var callable[]
      */
-    protected $tokenRuleMap;
+    protected $tokenRuleMap = [];
 
     /**
-     * @return callable[][][]
+     * @param int $headerId
+     * @param int $productionIndex
+     * @param int $symbolIndex
+     * @param callable $rule
+     * @throws Exception
      */
-    abstract protected function createSymbolRuleMap(): array;
-
-    /**
-     * @return callable[]
-     */
-    abstract protected function createTokenRuleMap(): array;
-
-    /**
-     * @return callable[][][]
-     */
-    public function getSymbolRuleMap(): array
+    public function addSymbolRule(int $headerId, int $productionIndex, int $symbolIndex, callable $rule): void
     {
-        if (!isset($this->symbolRuleMap)) {
-            $this->symbolRuleMap = $this->createSymbolRuleMap();
+        if (isset($this->symbolRuleMap[$headerId][$productionIndex][$symbolIndex])) {
+            $symbolText = "{$headerId}:{$productionIndex}[{$symbolIndex}]";
+            throw new Exception("Rule for symbol {$symbolText} is already set");
         }
-        return $this->symbolRuleMap;
+        $this->symbolRuleMap[$headerId][$productionIndex][$symbolIndex] = $rule;
     }
 
     /**
-     * @return callable[]
+     * @param int $symbolId
+     * @param callable $rule
+     * @throws Exception
      */
-    public function getTokenRuleMap(): array
+    public function addTokenRule(int $symbolId, callable $rule): void
     {
-        if (!isset($this->tokenRuleMap)) {
-            $this->tokenRuleMap = $this->createTokenRuleMap();
+        if (isset($this->tokenRuleMap[$symbolId])) {
+            throw new Exception("Rule for terminal symbol {$symbolId} is already set");
         }
-        return $this->tokenRuleMap;
+        $this->tokenRuleMap[$symbolId] = $rule;
     }
 
     /**
@@ -111,24 +108,21 @@ abstract class AbstractRuleSet
         if (!$this->tokenRuleExists($symbol)) {
             throw new Exception("No rule defined for terminal symbol {$symbol->getSymbolId()}");
         }
-        $ruleMap = $this->getTokenRuleMap();
         $symbolId = $symbol->getSymbolId();
-        return $ruleMap[$symbolId];
+        return $this->tokenRuleMap[$symbolId];
     }
 
     private function tokenRuleExists(ParsedSymbol $symbol): bool
     {
-        $ruleMap = $this->getTokenRuleMap();
         $symbolId = $symbol->getSymbolId();
-        return isset($ruleMap[$symbolId]);
+        return isset($this->tokenRuleMap[$symbolId]);
     }
 
     private function symbolRuleExists(ParsedProduction $production, int $symbolIndex): bool
     {
-        $ruleMap = $this->getSymbolRuleMap();
         $headerId = $production->getHeader()->getSymbolId();
         $productionIndex = $production->getIndex();
-        return isset($ruleMap[$headerId][$productionIndex][$symbolIndex]);
+        return isset($this->symbolRuleMap[$headerId][$productionIndex][$symbolIndex]);
     }
 
     /**
@@ -142,9 +136,8 @@ abstract class AbstractRuleSet
         if (!$this->symbolRuleExists($production, $symbolIndex)) {
             throw new Exception("No rule defined for production symbol {$production}[{$symbolIndex}]");
         }
-        $ruleMap = $this->getSymbolRuleMap();
         $headerId = $production->getHeader()->getSymbolId();
         $productionIndex = $production->getIndex();
-        return $ruleMap[$headerId][$productionIndex][$symbolIndex];
+        return $this->symbolRuleMap[$headerId][$productionIndex][$symbolIndex];
     }
 }
