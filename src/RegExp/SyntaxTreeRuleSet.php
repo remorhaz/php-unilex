@@ -97,11 +97,8 @@ class SyntaxTreeRuleSet extends AbstractRuleSet
     public function createTokenRuleMap(): array
     {
         return [
-            SymbolType::T_OTHER_HEX_LETTER => function(ParsedSymbol $symbol, ParsedToken $token) {
-                $code = $token
-                    ->getToken()
-                    ->getAttribute(TokenAttribute::UNICODE_CHAR);
-                $symbol->setAttribute('s.code', $code);
+            SymbolType::T_OTHER_HEX_LETTER => function(SyntaxTreeTokenRuleContext $context) {
+                $context->setTokenAttribute('s.code', TokenAttribute::UNICODE_CHAR);
             },
         ];
     }
@@ -115,8 +112,15 @@ class SyntaxTreeRuleSet extends AbstractRuleSet
     {
         return function (ParsedProduction $production, int $symbolIndex) {
             $context = new SyntaxTreeSymbolRuleContext($this->tree, $production, $symbolIndex);
-            $rule = parent::getSymbolRule($production, $symbolIndex);
-            $rule($context);
+            parent::getSymbolRule($production, $symbolIndex)($context);
+        };
+    }
+
+    protected function getTokenRule(ParsedSymbol $symbol): callable
+    {
+        return function (ParsedSymbol $symbol, ParsedToken $token) {
+            $context = new SyntaxTreeTokenRuleContext($symbol, $token);
+            parent::getTokenRule($symbol)($context);
         };
     }
 }

@@ -106,7 +106,7 @@ abstract class AbstractRuleSet
      * @return callable
      * @throws Exception
      */
-    private function getTokenRule(ParsedSymbol $symbol): callable
+    protected function getTokenRule(ParsedSymbol $symbol): callable
     {
         if (!$this->tokenRuleExists($symbol)) {
             throw new Exception("No rule defined for terminal symbol {$symbol->getSymbolId()}");
