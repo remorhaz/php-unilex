@@ -99,6 +99,6 @@ class ParserTest extends TestCase
         $treeBuilder = new SyntaxTreeBuilder;
         $parser = new Parser($grammar, $reader, SymbolType::NT_ROOT, $treeBuilder);
         $parser->run();
-        var_export($treeBuilder->getTree());
+        var_export($treeBuilder->getTree()->getRootNode());
     }
 }

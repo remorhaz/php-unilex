@@ -55,4 +55,20 @@ class ParsedProduction
         }
         return $this->symbolList[$index];
     }
+
+    /**
+     * @param int $symbolIndex
+     * @param string $targetName
+     * @param string|null $sourceName
+     * @throws Exception
+     */
+    public function inheritHeaderAttribute(int $symbolIndex, string $targetName, string $sourceName = null): void
+    {
+        $value = $this
+            ->getHeader()
+            ->getAttribute($sourceName ?? $targetName);
+        $this
+            ->getSymbol($symbolIndex)
+            ->setAttribute($targetName, $value);
+    }
 }
