@@ -68,6 +68,29 @@ class SyntaxTreeSymbolRuleContext implements SymbolContextInterface
     }
 
     /**
+     * @param int $symbolIndex
+     * @param string $target
+     * @param string|null $source
+     * @return SyntaxTreeSymbolRuleContext
+     * @throws Exception
+     */
+    public function inheritSymbolAttribute(int $symbolIndex, string $target, string $source = null): self
+    {
+        if ($symbolIndex >= $this->getSymbolIndex()) {
+            $indexText = "from symbol {$symbolIndex} to {$this->getSymbolIndex()}";
+            throw new Exception("L-attribute SDD forbids attribute inheritance {$indexText}");
+        }
+        $value = $this
+            ->getProduction()
+            ->getSymbol($symbolIndex)
+            ->getAttribute($source ?? $target);
+        $this
+            ->getSymbol()
+            ->setAttribute($target, $value);
+        return $this;
+    }
+
+    /**
      * @param string $name
      * @param string $attr
      * @return SyntaxTreeNode
@@ -109,14 +132,24 @@ class SyntaxTreeSymbolRuleContext implements SymbolContextInterface
     public function createChildNode(string $name, string $attr, string $parentAttr): SyntaxTreeNode
     {
         $node = $this->createNode($name, $attr);
-        $parentNodeId = $this
-            ->getSymbol()
-            ->getAttribute($parentAttr);
         $this
-            ->getTree()
-            ->getNode($parentNodeId)
+            ->getNode($parentAttr)
             ->addChild($node);
         return $node;
     }
 
+    /**
+     * @param string $attr
+     * @return SyntaxTreeNode
+     * @throws Exception
+     */
+    public function getNode(string $attr): SyntaxTreeNode
+    {
+        $nodeId = $this
+            ->getSymbol()
+            ->getAttribute($attr);
+        return $this
+            ->getTree()
+            ->getNode($nodeId);
+    }
 }

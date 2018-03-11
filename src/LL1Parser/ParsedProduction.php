@@ -56,20 +56,8 @@ class ParsedProduction
         return $this->symbolList[$index];
     }
 
-    /**
-     * @param int $symbolIndex
-     * @param string $targetName
-     * @param string|null $sourceName
-     * @throws Exception
-     * @deprecated
-     */
-    public function inheritHeaderAttribute(int $symbolIndex, string $targetName, string $sourceName = null): void
+    public function isEpsilon(): bool
     {
-        $value = $this
-            ->getHeader()
-            ->getAttribute($sourceName ?? $targetName);
-        $this
-            ->getSymbol($symbolIndex)
-            ->setAttribute($targetName, $value);
+        return empty($this->getSymbolList());
     }
 }

@@ -41,4 +41,19 @@ class RuleSetApplier extends AbstractParserListener
             ->ruleSet
             ->applyTokenRuleIfExists($symbol, $token);
     }
+
+    /**
+     * @param ParsedProduction $production
+     * @throws Exception
+     */
+    public function onProduction(ParsedProduction $production): void
+    {
+        if (!$production->isEpsilon()) {
+            return;
+        }
+        $this
+            ->ruleSet
+            // TODO: Maybe special context for ε-productions?
+            ->applySymbolRuleIfExists($production, 0);
+    }
 }

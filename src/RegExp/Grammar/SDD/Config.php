@@ -42,6 +42,12 @@ return [
                         ->inheritHeaderAttribute('i.concatenate_node')
                         ->createChildNode('repeat', 's.repeat_node', 'i.concatenate_node');
                 },
+                // SymbolType::NT_ITEM_QUANT
+                1 => function (SyntaxTreeSymbolRuleContext $context) {
+                    $context
+                        ->inheritSymbolAttribute(0, 'i.repeat_node', 's.repeat_node')
+                        ->createChildNode('quantity', 's.quantity_node', 'i.repeat_node');
+                }
             ],
         ],
         SymbolType::NT_ITEM_BODY => [
@@ -71,6 +77,47 @@ return [
                         ->getSymbol()
                         ->getAttribute('s.code');
                     $node->setAttribute('code', $code);
+                },
+            ],
+        ],
+        SymbolType::NT_ITEM_QUANT => [
+            0 => [
+                // SymbolType::NT_ITEM_OPT
+                0 => function (SyntaxTreeSymbolRuleContext $context) {
+                    $node = $context
+                        ->inheritHeaderAttribute('i.quantity_node', 's.quantity_node')
+                        ->getNode('i.quantity_node');
+                    $node->setAttribute('min', 0);
+                    $node->setAttribute('max', 1);
+                    $node->setAttribute('maxInfinity', false);
+                },
+            ],
+            1 => [
+                // SymbolType::NT_ITEM_QUANT_STAR
+                0 => function (SyntaxTreeSymbolRuleContext $context) {
+                    $node = $context
+                        ->inheritHeaderAttribute('i.quantity_node', 's.quantity_node')
+                        ->getNode('i.quantity_node');
+                    $node->setAttribute('min', 0);
+                    $node->setAttribute('max', 0);
+                    $node->setAttribute('maxInfinity', true);
+                },
+            ],
+            2 => [
+                // SymbolType::NT_ITEM_QUANT_PLUS
+                0 => function (SyntaxTreeSymbolRuleContext $context) {
+                    $node = $context
+                        ->inheritHeaderAttribute('i.quantity_node', 's.quantity_node')
+                        ->getNode('i.quantity_node');
+                    $node->setAttribute('min', 1);
+                    $node->setAttribute('max', 0);
+                    $node->setAttribute('maxInfinity', true);
+                },
+            ],
+            4 => [
+                // ε
+                0 => function (SyntaxTreeSymbolRuleContext $context) {
+                    // TODO: Deal with ε-production rules
                 },
             ],
         ],
