@@ -28,95 +28,65 @@ class SyntaxTreeRuleSet extends AbstractRuleSet
             SymbolType::NT_ROOT => [
                 0 => [
                     // SymbolType::NT_PARTS
-                    0 => function (ParsedProduction $production, int $symbolIndex) {
-                        $node = $this->createNode(
-                            $production->getSymbol($symbolIndex),
-                            'alternative',
-                            's.alternative_node'
-                        );
-                        $this
-                            ->tree
-                            ->setRootNode($node);
+                    0 => function (SyntaxTreeSymbolRuleContext $context) {
+                        $context->createRootNode('alternative', 's.alternative_node');
                     },
                 ],
             ],
             SymbolType::NT_PARTS => [
                 0 => [
                     // SymbolType::NT_PART
-                    0 => function (ParsedProduction $production, int $symbolIndex) {
-                        $production->inheritHeaderAttribute(
-                            $symbolIndex,
-                            'i.alternative_node',
-                            's.alternative_node'
-                        );
-                        $this->createChildNode(
-                            $production->getSymbol($symbolIndex),
-                            'concatenate',
-                            's.concatenate_node',
-                            'i.alternative_node'
-                        );
+                    0 => function (SyntaxTreeSymbolRuleContext $context) {
+                        $context
+                            ->inheritHeaderAttribute('i.alternative_node', 's.alternative_node')
+                            ->createChildNode('concatenate', 's.concatenate_node', 'i.alternative_node');
                     },
                 ],
             ],
             SymbolType::NT_PART => [
                 0 => [
                     // SymbolType::NT_ITEM
-                    0 => function (ParsedProduction $production, int $symbolIndex) {
-                        $production->inheritHeaderAttribute(
-                            $symbolIndex,
-                            'i.concatenate_node',
-                            's.concatenate_node'
-                        );
+                    0 => function (SyntaxTreeSymbolRuleContext $context) {
+                        $context->inheritHeaderAttribute('i.concatenate_node', 's.concatenate_node');
                     },
                 ],
             ],
             SymbolType::NT_ITEM => [
                 1 => [
                     // SymbolType::NT_ITEM_BODY
-                    0 => function (ParsedProduction $production, int $symbolIndex) {
-                        $production->inheritHeaderAttribute($symbolIndex, 'i.concatenate_node');
-                        $this->createChildNode(
-                            $production->getSymbol($symbolIndex),
-                            'repeat',
-                            's.repeat_node',
-                            'i.concatenate_node'
-                        );
+                    0 => function (SyntaxTreeSymbolRuleContext $context) {
+                        $context
+                            ->inheritHeaderAttribute('i.concatenate_node')
+                            ->createChildNode('repeat', 's.repeat_node', 'i.concatenate_node');
                     },
                 ],
             ],
             SymbolType::NT_ITEM_BODY => [
                 2 => [
                     // SymbolType::NT_SYMBOL
-                    0 => function (ParsedProduction $production, int $symbolIndex) {
-                        $production->inheritHeaderAttribute(
-                            $symbolIndex,
-                            'i.repeat_node',
-                            's.repeat_node'
-                        );
+                    0 => function (SyntaxTreeSymbolRuleContext $context) {
+                        $context->inheritHeaderAttribute('i.repeat_node', 's.repeat_node');
                     },
                 ],
             ],
             SymbolType::NT_SYMBOL => [
                 2 => [
                     // SymbolType::NT_UNESC_SYMBOL
-                    0 => function (ParsedProduction $production, int $symbolIndex) {
-                        $production->inheritHeaderAttribute($symbolIndex, 'i.repeat_node');
+                    0 => function (SyntaxTreeSymbolRuleContext $context) {
+                        $context->inheritHeaderAttribute('i.repeat_node');
                     },
                 ],
             ],
             SymbolType::NT_UNESC_SYMBOL => [
                 14 => [
                     // SymbolType::T_OTHER_HEX_LETTER
-                    0 => function (ParsedProduction $production, int $symbolIndex) {
-                        $production->inheritHeaderAttribute($symbolIndex, 'i.repeat_node');
-                        $symbol = $production->getSymbol($symbolIndex);
-                        $node = $this->createChildNode(
-                            $symbol,
-                            'single_code',
-                            's.single_code',
-                            'i.repeat_node'
-                        );
-                        $code = $symbol->getAttribute('s.code');
+                    0 => function (SyntaxTreeSymbolRuleContext $context) {
+                        $node = $context
+                            ->inheritHeaderAttribute('i.repeat_node')
+                            ->createChildNode('single_code', 's.single_code', 'i.repeat_node');
+                        $code = $context
+                            ->getSymbol()
+                            ->getAttribute('s.code');
                         $node->setAttribute('code', $code);
                     },
                 ],
@@ -137,44 +107,16 @@ class SyntaxTreeRuleSet extends AbstractRuleSet
     }
 
     /**
-     * @param ParsedSymbol $symbol
-     * @param string $nodeName
-     * @param string $nodeAttribute
-     * @param string $parentAttribute
-     * @return SyntaxTreeNode
-     * @throws \Remorhaz\UniLex\Exception
+     * @param ParsedProduction $production
+     * @param int $symbolIndex
+     * @return callable
      */
-    private function createChildNode(
-        ParsedSymbol $symbol,
-        string $nodeName,
-        string $nodeAttribute,
-        string $parentAttribute
-    ): SyntaxTreeNode {
-        $node = $this->createNode($symbol, $nodeName, $nodeAttribute);
-        $parentNodeId = $symbol->getAttribute($parentAttribute);
-        $this
-            ->tree
-            ->getNode($parentNodeId)
-            ->addChild($node);
-        return $node;
-    }
-
-    /**
-     * @param ParsedSymbol $symbol
-     * @param string $nodeName
-     * @param string $nodeAttribute
-     * @return SyntaxTreeNode
-     * @throws \Remorhaz\UniLex\Exception
-     */
-    private function createNode(
-        ParsedSymbol $symbol,
-        string $nodeName,
-        string $nodeAttribute
-    ): SyntaxTreeNode {
-        $node = $this
-            ->tree
-            ->createNode($nodeName);
-        $symbol->setAttribute($nodeAttribute, $node->getId());
-        return $node;
+    protected function getSymbolRule(ParsedProduction $production, int $symbolIndex): callable
+    {
+        return function (ParsedProduction $production, int $symbolIndex) {
+            $context = new SyntaxTreeSymbolRuleContext($this->tree, $production, $symbolIndex);
+            $rule = parent::getSymbolRule($production, $symbolIndex);
+            $rule($context);
+        };
     }
 }

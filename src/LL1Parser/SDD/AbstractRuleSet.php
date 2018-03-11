@@ -137,7 +137,7 @@ abstract class AbstractRuleSet
      * @return callable
      * @throws Exception
      */
-    private function getSymbolRule(ParsedProduction $production, int $symbolIndex): callable
+    protected function getSymbolRule(ParsedProduction $production, int $symbolIndex): callable
     {
         if (!$this->symbolRuleExists($production, $symbolIndex)) {
             throw new Exception("No rule defined for production symbol {$production}[{$symbolIndex}]");

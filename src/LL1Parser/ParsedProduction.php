@@ -61,6 +61,7 @@ class ParsedProduction
      * @param string $targetName
      * @param string|null $sourceName
      * @throws Exception
+     * @deprecated
      */
     public function inheritHeaderAttribute(int $symbolIndex, string $targetName, string $sourceName = null): void
     {
