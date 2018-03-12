@@ -71,13 +71,11 @@ return [
             14 => [
                 // SymbolType::T_OTHER_HEX_LETTER
                 0 => function (SyntaxTreeSymbolRuleContext $context) {
-                    $node = $context
+                    $context
                         ->inheritHeaderAttribute('i.repeat_node')
                         ->createChildNode('single_code', 's.single_code', 'i.repeat_node');
-                    $code = $context
-                        ->getSymbol()
-                        ->getAttribute('s.code');
-                    $node->setAttribute('code', $code);
+                    $context
+                        ->setNodeAttribute('s.single_code', 'code', 's.code');
                 },
             ],
         ],
@@ -115,6 +113,22 @@ return [
                     $node->setAttribute('maxInfinity', true);
                 },
             ],
+            3 => [
+                // SymbolType::NT_LIMIT
+                0 => function (SyntaxTreeSymbolRuleContext $context) {
+                    $context
+                        ->inheritHeaderAttribute('i.quantity_node', 's.quantity_node');
+                },
+            ],
+        ],
+        SymbolType::NT_LIMIT => [
+            0 => [
+                // SymbolType::NT_MIN
+                1 => function (SyntaxTreeSymbolRuleContext $context) {
+                    $context
+                        ->inheritHeaderAttribute('i.quantity_node');
+                }
+            ],
         ],
     ],
     RuleSetLoader::PRODUCTION_RULE_MAP_KEY => [
@@ -128,10 +142,92 @@ return [
                 $node->setAttribute('maxInfinity', false);
             }
         ],
+        SymbolType::NT_MIN => [
+            // [SymbolType::NT_DEC]
+            /*0 => function (SyntaxTreeProductionRuleContext $context) {
+                $node = $context
+                    ->getNode('i.quantity_node');
+                $min = $context
+                    ->getProduction()
+                    ->getSymbol(0)
+                    ->getAttribute('s.number_value');
+                $node->setAttribute('min', $min);
+            },*/
+        ],
+        SymbolType::NT_DEC => [
+            // [SymbolType::NT_DEC_DIGIT, SymbolType::NT_OPT_DEC]
+            0 => function (SyntaxTreeProductionRuleContext $context) {
+                $digit = $context
+                    ->getProduction()
+                    ->getSymbol(0)
+                    ->getAttribute('s.dec_digit');
+                /*$numberTail = $context
+                    ->getProduction()
+                    ->getSymbol(1)
+                    ->getAttribute('s.dec_number_tail');
+                $context
+                    ->getProduction()
+                    ->getHeader()
+                    ->setAttribute('s.number_value', (int) $digit . $numberTail);*/
+            },
+        ],
+        SymbolType::NT_OPT_DEC => [
+            // ε
+            1 => function (SyntaxTreeProductionRuleContext $context) {
+                $context
+                    ->getProduction()
+                    ->getHeader()
+                    ->setAttribute('s.dec_number_tail', '');
+            },
+        ],
+        SymbolType::NT_DEC_DIGIT => [
+            // SymbolType::T_DIGIT_ZERO
+            0 => function (SyntaxTreeProductionRuleContext $context) {
+                $context
+                    ->copySymbolAttribute(0, 's.dec_digit');
+            },
+            // SymbolType::T_DIGIT_OCT
+            1 => function (SyntaxTreeProductionRuleContext $context) {
+                $context
+                    ->copySymbolAttribute(0, 's.dec_digit');
+            },
+            // SymbolType::T_DIGIT_DEC
+            2 => function (SyntaxTreeProductionRuleContext $context) {
+                $context
+                    ->copySymbolAttribute(0, 's.dec_digit');
+            },
+        ],
     ],
     RuleSetLoader::TOKEN_RULE_MAP_KEY => [
         SymbolType::T_OTHER_HEX_LETTER => function(SyntaxTreeTokenRuleContext $context) {
-            $context->copyTokenAttribute('s.code', TokenAttribute::UNICODE_CHAR);
+            $context
+                ->copyTokenAttribute('s.code', TokenAttribute::UNICODE_CHAR)
+                ->copyTokenAttribute('s.hex_digit', 'digit');
+        },
+        SymbolType::T_DIGIT_ZERO => function (SyntaxTreeTokenRuleContext $context) {
+            $context
+                ->copyTokenAttribute('s.code', TokenAttribute::UNICODE_CHAR)
+                ->copyTokenAttribute('s.oct_digit', 'digit')
+                ->copyTokenAttribute('s.dec_digit', 'digit')
+                ->copyTokenAttribute('s.hex_digit', 'digit');
+        },
+        SymbolType::T_DIGIT_OCT => function (SyntaxTreeTokenRuleContext $context) {
+            $context
+                ->copyTokenAttribute('s.code', TokenAttribute::UNICODE_CHAR)
+                ->copyTokenAttribute('s.oct_digit', 'digit')
+                ->copyTokenAttribute('s.dec_digit', 'digit')
+                ->copyTokenAttribute('s.hex_digit', 'digit');
+        },
+        SymbolType::T_DIGIT_DEC => function (SyntaxTreeTokenRuleContext $context) {
+            $context
+                ->copyTokenAttribute('s.code', TokenAttribute::UNICODE_CHAR)
+                ->copyTokenAttribute('s.dec_digit', 'digit')
+                ->copyTokenAttribute('s.hex_digit', 'digit');
+        },
+        SymbolType::T_SMALL_C => function (SyntaxTreeTokenRuleContext $context) {
+            $context
+                ->copyTokenAttribute('s.code', TokenAttribute::UNICODE_CHAR)
+                ->copyTokenAttribute('s.hex_digit', 'digit');
         },
     ],
 ];

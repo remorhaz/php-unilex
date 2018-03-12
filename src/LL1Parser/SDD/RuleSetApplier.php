@@ -48,8 +48,14 @@ class RuleSetApplier extends AbstractParserListener
      */
     public function onFinishProduction(ParsedProduction $production): void
     {
+        //echo "Finish {$production}", PHP_EOL;
         $this
             ->ruleSet
             ->applyProductionRuleIfExists($production);
+    }
+
+    public function onBeginProduction(ParsedProduction $production): void
+    {
+        //echo "Begin {$production}", PHP_EOL;
     }
 }

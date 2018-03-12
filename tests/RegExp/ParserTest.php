@@ -97,7 +97,7 @@ class ParserTest extends TestCase
      */
     public function testParserSemantic(): void
     {
-        $buffer = CharBufferFactory::createFromUtf8String('a');
+        $buffer = CharBufferFactory::createFromUtf8String('a{1,2}');
         $grammar = GrammarLoader::loadFile(ConfigFile::getPath());
         $reader = new TokenReader($buffer, new TokenMatcher, new TokenFactory($grammar));
         $tree = new SyntaxTree;

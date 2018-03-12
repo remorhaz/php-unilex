@@ -21,6 +21,7 @@ class TokenMatcher implements TokenMatcherInterface
     public function match(CharBufferInterface $buffer, TokenFactoryInterface $tokenFactory): Token
     {
         $symbol = $buffer->getSymbol();
+        $attrList = [];
         if ($symbol >= 0x00 && $symbol <= 0x1F) {
             $type = TokenType::CTL_ASCII;
             goto valid_symbol;
@@ -71,14 +72,17 @@ class TokenMatcher implements TokenMatcherInterface
         }
         if ($symbol == 0x30) {
             $type = TokenType::DIGIT_ZERO;
+            $attrList['digit'] = chr($symbol);
             goto valid_symbol;
         }
         if ($symbol >= 0x31 && $symbol <= 0x37) {
             $type = TokenType::DIGIT_OCT;
+            $attrList['digit'] = chr($symbol);
             goto valid_symbol;
         }
         if ($symbol >= 0x38 && $symbol <= 0x39) {
             $type = TokenType::DIGIT_DEC;
+            $attrList['digit'] = chr($symbol);
             goto valid_symbol;
         }
         if ($symbol >= 0x3A && $symbol <= 0x3E) {
@@ -95,6 +99,7 @@ class TokenMatcher implements TokenMatcherInterface
         }
         if ($symbol >= 0x41 && $symbol <= 0x46) {
             $type = TokenType::OTHER_HEX_LETTER;
+            $attrList['digit'] = chr($symbol);
             goto valid_symbol;
         }
         if ($symbol >= 0x47 && $symbol <= 0x4F) {
@@ -131,14 +136,17 @@ class TokenMatcher implements TokenMatcherInterface
         }
         if ($symbol >= 0x61 && $symbol <= 0x62) {
             $type = TokenType::OTHER_HEX_LETTER;
+            $attrList['digit'] = strtoupper(chr($symbol));
             goto valid_symbol;
         }
         if ($symbol == 0x63) {
             $type = TokenType::SMALL_C;
+            $attrList['digit'] = strtoupper(chr($symbol));
             goto valid_symbol;
         }
         if ($symbol >= 0x64 && $symbol <= 0x66) {
             $type = TokenType::OTHER_HEX_LETTER;
+            $attrList['digit'] = strtoupper(chr($symbol));
             goto valid_symbol;
         }
         if ($symbol >= 0x67 && $symbol <= 0x6E) {
@@ -206,6 +214,9 @@ class TokenMatcher implements TokenMatcherInterface
         $buffer->nextSymbol();
         $token = $tokenFactory->createToken($type);
         $token->setAttribute(TokenAttribute::UNICODE_CHAR, $symbol);
+        foreach ($attrList as $attrName => $attrValue) {
+            $token->setAttribute($attrName, $attrValue);
+        }
         return $token;
     }
 }

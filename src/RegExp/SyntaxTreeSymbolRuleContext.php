@@ -152,4 +152,22 @@ class SyntaxTreeSymbolRuleContext implements SymbolContextInterface
             ->getTree()
             ->getNode($nodeId);
     }
+
+    /**
+     * @param string $attr
+     * @param string $target
+     * @param string|null $source
+     * @return SyntaxTreeSymbolRuleContext
+     * @throws Exception
+     */
+    public function setNodeAttribute(string $attr, string $target, string $source = null): self
+    {
+        $value = $this
+            ->getSymbol()
+            ->getAttribute($source ?? $target);
+        $this
+            ->getNode($attr)
+            ->setAttribute($target, $value);
+        return $this;
+    }
 }

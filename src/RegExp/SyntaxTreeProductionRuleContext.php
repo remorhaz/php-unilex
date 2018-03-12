@@ -2,6 +2,7 @@
 
 namespace Remorhaz\UniLex\RegExp;
 
+use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\LL1Parser\ParsedProduction;
 use Remorhaz\UniLex\LL1Parser\SDD\ProductionContextInterface;
 
@@ -31,7 +32,7 @@ class SyntaxTreeProductionRuleContext implements ProductionContextInterface
     /**
      * @param string $attr
      * @return SyntaxTreeNode
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws Exception
      */
     public function getNode(string $attr): SyntaxTreeNode
     {
@@ -44,4 +45,23 @@ class SyntaxTreeProductionRuleContext implements ProductionContextInterface
             ->getNode($nodeId);
     }
 
+    /**
+     * @param int $index
+     * @param string $target
+     * @param string|null $source
+     * @return SyntaxTreeProductionRuleContext
+     * @throws Exception
+     */
+    public function copySymbolAttribute(int $index, string $target, string $source = null): self
+    {
+        $value = $this
+            ->getProduction()
+            ->getSymbol(0)
+            ->getAttribute($source ?? $target);
+        $this
+            ->getProduction()
+            ->getHeader()
+            ->setAttribute($target, $value);
+        return $this;
+    }
 }
