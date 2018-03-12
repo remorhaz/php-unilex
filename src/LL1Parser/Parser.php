@@ -59,7 +59,6 @@ class Parser
             $this->isTerminalSymbol($symbol)
                 ? $this->readSymbolToken($symbol)
                 : $this->pushMatchingProduction($symbol);
-            $this->onSymbol($symbol);
         }
     }
 
@@ -140,6 +139,7 @@ class Parser
         $token->isEoi()
             ? $this->listener->onEoi($symbol, $parsedToken)
             : $this->listener->onToken($symbol, $parsedToken);
+        $this->onSymbol($symbol);
         unset($this->token);
     }
 
@@ -149,6 +149,7 @@ class Parser
      */
     private function pushMatchingProduction(ParsedSymbol $symbol): void
     {
+        $this->onSymbol($symbol);
         $production = $this->getMatchingProduction($symbol, $this->previewToken());
         $this->pushProduction($production);
     }

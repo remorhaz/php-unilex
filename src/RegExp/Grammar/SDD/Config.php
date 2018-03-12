@@ -45,7 +45,6 @@ return [
                 },
                 // SymbolType::NT_ITEM_QUANT
                 1 => function (SyntaxTreeSymbolRuleContext $context) {
-                    // TODO: Find out why this callback doesn't execute.
                     $context
                         ->inheritSymbolAttribute(0, 'i.repeat_node', 's.repeat_node')
                         ->createChildNode('quantity', 's.quantity_node', 'i.repeat_node');
@@ -122,6 +121,11 @@ return [
         SymbolType::NT_ITEM_QUANT => [
             // ε
             4 => function (SyntaxTreeProductionRuleContext $context) {
+                $node = $context
+                    ->getNode('s.quantity_node');
+                $node->setAttribute('min', 1);
+                $node->setAttribute('max', 1);
+                $node->setAttribute('maxInfinity', false);
             }
         ],
     ],

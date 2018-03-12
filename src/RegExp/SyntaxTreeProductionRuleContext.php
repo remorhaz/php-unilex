@@ -27,4 +27,21 @@ class SyntaxTreeProductionRuleContext implements ProductionContextInterface
     {
         return $this->production;
     }
+
+    /**
+     * @param string $attr
+     * @return SyntaxTreeNode
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function getNode(string $attr): SyntaxTreeNode
+    {
+        $nodeId = $this
+            ->getProduction()
+            ->getHeader()
+            ->getAttribute($attr);
+        return $this
+            ->getTree()
+            ->getNode($nodeId);
+    }
+
 }
