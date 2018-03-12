@@ -97,7 +97,7 @@ class ParserTest extends TestCase
      */
     public function testParserSemantic(): void
     {
-        $buffer = CharBufferFactory::createFromUtf8String('a{1,2}');
+        $buffer = CharBufferFactory::createFromUtf8String('a{12,2}');
         $grammar = GrammarLoader::loadFile(ConfigFile::getPath());
         $reader = new TokenReader($buffer, new TokenMatcher, new TokenFactory($grammar));
         $tree = new SyntaxTree;
@@ -109,5 +109,6 @@ class ParserTest extends TestCase
         $actualValue = $tree->getRootNode()
             ->getName();
         self::assertSame('alternative', $actualValue);
+        //var_export($tree->getRootNode());
     }
 }

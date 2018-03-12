@@ -2,7 +2,7 @@
 
 namespace Remorhaz\UniLex\LL1Parser;
 
-class ParsedSymbol extends ParsedNode
+class ParsedSymbol extends ParsedNode implements StackableSymbolInterface
 {
 
     private $symbolId;

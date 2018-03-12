@@ -33,8 +33,6 @@ class Parser
      */
     private $productionMap = [];
 
-    private $lastProductionSymbolMap = [];
-
     public function __construct(
         GrammarInterface $grammar,
         TokenReaderInterface $tokenReader,
@@ -56,9 +54,13 @@ class Parser
         $this->initStack();
         while ($this->hasSymbolInStack()) {
             $symbol = $this->popSymbol();
-            $this->isTerminalSymbol($symbol)
-                ? $this->readSymbolToken($symbol)
-                : $this->pushMatchingProduction($symbol);
+            if ($symbol instanceof ParsedSymbol) {
+                $this->isTerminalSymbol($symbol)
+                    ? $this->readSymbolToken($symbol)
+                    : $this->pushMatchingProduction($symbol);
+            } elseif ($symbol instanceof EopSymbol) {
+                $this->listener->onFinishProduction($symbol->getProduction());
+            }
         }
     }
 
@@ -66,7 +68,6 @@ class Parser
     {
         $this->nextSymbolIndex = 0;
         $this->productionMap = [];
-        $this->lastProductionSymbolMap = [];
         $this->symbolStack->reset();
         $this->listener->onStart();
         $rootSymbol = new ParsedSymbol($this->getNextSymbolIndex(), $this->rootSymbolId);
@@ -101,10 +102,10 @@ class Parser
     }
 
     /**
-     * @return ParsedSymbol
+     * @return StackableSymbolInterface
      * @throws Exception
      */
-    private function popSymbol(): ParsedSymbol
+    private function popSymbol(): StackableSymbolInterface
     {
         return $this->symbolStack->pop();
     }
@@ -120,9 +121,6 @@ class Parser
         }
         [$symbolIndex, $production] = $this->productionMap[$symbol->getIndex()];
         $this->listener->onSymbol($symbolIndex, $production);
-        if (isset($this->lastProductionSymbolMap[$symbol->getIndex()])) {
-            $this->listener->onFinishProduction($production);
-        }
     }
 
     /**
@@ -156,18 +154,12 @@ class Parser
 
     private function pushProduction(ParsedProduction $production): void
     {
-        $lastSymbol = null;
+        $this->symbolStack->push(new EopSymbol($production));
         foreach ($production->getSymbolList() as $symbolIndexInProduction => $symbol) {
             $this->productionMap[$symbol->getIndex()] = [$symbolIndexInProduction, $production];
-            $lastSymbol = $symbol;
         }
         $this->symbolStack->push(...$production->getSymbolList());
         $this->listener->onBeginProduction($production);
-        if ($production->isEpsilon()) {
-            $this->listener->onFinishProduction($production);
-        } elseif (isset($lastSymbol)) {
-            $this->lastProductionSymbolMap[$lastSymbol->getIndex()] = $production;
-        }
     }
 
     /**

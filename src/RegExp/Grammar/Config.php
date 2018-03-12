@@ -216,6 +216,7 @@ return [
         ],
         SymbolType::NT_MAX => [
             [SymbolType::NT_DEC],
+            [],
         ],
         SymbolType::NT_OCT => [
             [SymbolType::NT_OCT_DIGIT, SymbolType::NT_OPT_OCT]

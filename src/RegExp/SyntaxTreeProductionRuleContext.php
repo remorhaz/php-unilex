@@ -54,14 +54,50 @@ class SyntaxTreeProductionRuleContext implements ProductionContextInterface
      */
     public function copySymbolAttribute(int $index, string $target, string $source = null): self
     {
-        $value = $this
+        $value = $this->getSymbolAttribute($index, $source ?? $target);
+        return $this
+            ->setHeaderAttribute($target, $value);
+    }
+
+    /**
+     * @param int $index
+     * @param string $attr
+     * @return mixed
+     * @throws Exception
+     */
+    public function getSymbolAttribute(int $index, string $attr)
+    {
+        return $this
             ->getProduction()
-            ->getSymbol(0)
-            ->getAttribute($source ?? $target);
+            ->getSymbol($index)
+            ->getAttribute($attr);
+    }
+
+    /**
+     * @param string $attr
+     * @return mixed
+     * @throws Exception
+     */
+    public function getHeaderAttribute(string $attr)
+    {
+        return $this
+            ->getProduction()
+            ->getHeader()
+            ->getAttribute($attr);
+    }
+
+    /**
+     * @param string $attr
+     * @param $value
+     * @return SyntaxTreeProductionRuleContext
+     * @throws Exception
+     */
+    public function setHeaderAttribute(string $attr, $value): self
+    {
         $this
             ->getProduction()
             ->getHeader()
-            ->setAttribute($target, $value);
+            ->setAttribute($attr, $value);
         return $this;
     }
 }
