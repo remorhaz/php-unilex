@@ -1,13 +1,15 @@
 <?php
 
-namespace Remorhaz\UniLex\RegExp;
+namespace Remorhaz\UniLex\SyntaxTree\SDD;
 
 use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\LL1Parser\ParsedProduction;
 use Remorhaz\UniLex\LL1Parser\ParsedSymbol;
 use Remorhaz\UniLex\LL1Parser\SDD\SymbolContextInterface;
+use Remorhaz\UniLex\SyntaxTree\Tree;
+use Remorhaz\UniLex\SyntaxTree\Node;
 
-class SyntaxTreeSymbolRuleContext implements SymbolContextInterface
+class SymbolRuleContext implements SymbolContextInterface
 {
 
     private $tree;
@@ -16,14 +18,14 @@ class SyntaxTreeSymbolRuleContext implements SymbolContextInterface
 
     private $symbolIndex;
 
-    public function __construct(SyntaxTree $tree, ParsedProduction $production, int $symbolIndex)
+    public function __construct(Tree $tree, ParsedProduction $production, int $symbolIndex)
     {
         $this->tree = $tree;
         $this->production = $production;
         $this->symbolIndex = $symbolIndex;
     }
 
-    private function getTree(): SyntaxTree
+    private function getTree(): Tree
     {
         return $this->tree;
     }
@@ -52,7 +54,7 @@ class SyntaxTreeSymbolRuleContext implements SymbolContextInterface
     /**
      * @param string $name
      * @param $value
-     * @return SyntaxTreeSymbolRuleContext
+     * @return SymbolRuleContext
      * @throws Exception
      */
     public function setAttribute(string $name, $value): self
@@ -66,7 +68,7 @@ class SyntaxTreeSymbolRuleContext implements SymbolContextInterface
     /**
      * @param string $target
      * @param string|null $source
-     * @return SyntaxTreeSymbolRuleContext
+     * @return SymbolRuleContext
      * @throws Exception
      */
     public function inheritHeaderAttribute(string $target, string $source = null): self
@@ -85,7 +87,7 @@ class SyntaxTreeSymbolRuleContext implements SymbolContextInterface
      * @param int $symbolIndex
      * @param string $target
      * @param string|null $source
-     * @return SyntaxTreeSymbolRuleContext
+     * @return SymbolRuleContext
      * @throws Exception
      */
     public function inheritSymbolAttribute(int $symbolIndex, string $target, string $source = null): self
@@ -107,10 +109,10 @@ class SyntaxTreeSymbolRuleContext implements SymbolContextInterface
     /**
      * @param string $name
      * @param string $attr
-     * @return SyntaxTreeNode
+     * @return Node
      * @throws Exception
      */
-    public function createNode(string $name, string $attr): SyntaxTreeNode
+    public function createNode(string $name, string $attr): Node
     {
         $node = $this
             ->getTree()
@@ -123,10 +125,10 @@ class SyntaxTreeSymbolRuleContext implements SymbolContextInterface
 
     /**
      * @param string $attr
-     * @return SyntaxTreeNode
+     * @return Node
      * @throws Exception
      */
-    public function getNode(string $attr): SyntaxTreeNode
+    public function getNode(string $attr): Node
     {
         $nodeId = $this
             ->getSymbol()

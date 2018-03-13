@@ -1,12 +1,12 @@
 <?php
 
-namespace Remorhaz\UniLex\RegExp;
+namespace Remorhaz\UniLex\SyntaxTree\SDD;
 
 use Remorhaz\UniLex\LL1Parser\ParsedSymbol;
 use Remorhaz\UniLex\LL1Parser\ParsedToken;
 use Remorhaz\UniLex\LL1Parser\SDD\TokenContextInterface;
 
-class SyntaxTreeTokenRuleContext implements TokenContextInterface
+class TokenRuleContext implements TokenContextInterface
 {
 
     private $symbol;
@@ -32,7 +32,7 @@ class SyntaxTreeTokenRuleContext implements TokenContextInterface
     /**
      * @param string $target
      * @param string|null $source
-     * @return SyntaxTreeTokenRuleContext
+     * @return TokenRuleContext
      * @throws \Remorhaz\UniLex\Exception
      */
     public function copyTokenAttribute(string $target, string $source = null): self

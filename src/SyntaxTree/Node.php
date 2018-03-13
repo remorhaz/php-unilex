@@ -1,10 +1,10 @@
 <?php
 
-namespace Remorhaz\UniLex\RegExp;
+namespace Remorhaz\UniLex\SyntaxTree;
 
 use Remorhaz\UniLex\Exception;
 
-class SyntaxTreeNode
+class Node
 {
 
     private $id;
@@ -34,7 +34,7 @@ class SyntaxTreeNode
     /**
      * @param string $name
      * @param $value
-     * @return SyntaxTreeNode
+     * @return Node
      * @throws Exception
      */
     public function setAttribute(string $name, $value): self
@@ -46,7 +46,7 @@ class SyntaxTreeNode
         return $this;
     }
 
-    public function addChild(SyntaxTreeNode $node): self
+    public function addChild(Node $node): self
     {
         $this->childMap[] = $node;
         return $this;

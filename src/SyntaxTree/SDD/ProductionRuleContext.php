@@ -1,25 +1,27 @@
 <?php
 
-namespace Remorhaz\UniLex\RegExp;
+namespace Remorhaz\UniLex\SyntaxTree\SDD;
 
 use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\LL1Parser\ParsedProduction;
 use Remorhaz\UniLex\LL1Parser\SDD\ProductionContextInterface;
+use Remorhaz\UniLex\SyntaxTree\Node;
+use Remorhaz\UniLex\SyntaxTree\Tree;
 
-class SyntaxTreeProductionRuleContext implements ProductionContextInterface
+class ProductionRuleContext implements ProductionContextInterface
 {
 
     private $tree;
 
     private $production;
 
-    public function __construct(SyntaxTree $tree, ParsedProduction $production)
+    public function __construct(Tree $tree, ParsedProduction $production)
     {
         $this->tree = $tree;
         $this->production = $production;
     }
 
-    private function getTree(): SyntaxTree
+    private function getTree(): Tree
     {
         return $this->tree;
     }
@@ -31,10 +33,10 @@ class SyntaxTreeProductionRuleContext implements ProductionContextInterface
 
     /**
      * @param string $attr
-     * @return SyntaxTreeNode
+     * @return Node
      * @throws Exception
      */
-    public function getNode(string $attr): SyntaxTreeNode
+    public function getNode(string $attr): Node
     {
         return $this
             ->getTree()
@@ -44,10 +46,10 @@ class SyntaxTreeProductionRuleContext implements ProductionContextInterface
     /**
      * @param int $index
      * @param string $attr
-     * @return SyntaxTreeNode
+     * @return Node
      * @throws Exception
      */
-    public function getSymbolNode(int $index, string $attr): SyntaxTreeNode{
+    public function getSymbolNode(int $index, string $attr): Node{
         return $this
             ->getTree()
             ->getNode($this->getSymbolAttribute($index, $attr));
@@ -57,7 +59,7 @@ class SyntaxTreeProductionRuleContext implements ProductionContextInterface
      * @param int $index
      * @param string $target
      * @param string|null $source
-     * @return SyntaxTreeProductionRuleContext
+     * @return ProductionRuleContext
      * @throws Exception
      */
     public function copySymbolAttribute(int $index, string $target, string $source = null): self
@@ -112,7 +114,7 @@ class SyntaxTreeProductionRuleContext implements ProductionContextInterface
     /**
      * @param string $attr
      * @param $value
-     * @return SyntaxTreeProductionRuleContext
+     * @return ProductionRuleContext
      * @throws Exception
      */
     public function setAttribute(string $attr, $value): self
@@ -127,7 +129,7 @@ class SyntaxTreeProductionRuleContext implements ProductionContextInterface
     /**
      * @param string $target
      * @param string $source
-     * @return SyntaxTreeProductionRuleContext
+     * @return ProductionRuleContext
      * @throws Exception
      */
     public function copyAttribute(string $target, string $source): self
@@ -138,7 +140,7 @@ class SyntaxTreeProductionRuleContext implements ProductionContextInterface
 
     /**
      * @param string $attr
-     * @return SyntaxTreeProductionRuleContext
+     * @return ProductionRuleContext
      * @throws Exception
      */
     public function setRootNode(string $attr): self
@@ -152,10 +154,10 @@ class SyntaxTreeProductionRuleContext implements ProductionContextInterface
     /**
      * @param string $name
      * @param string $attr
-     * @return SyntaxTreeNode
+     * @return Node
      * @throws Exception
      */
-    public function createNode(string $name, string $attr): SyntaxTreeNode
+    public function createNode(string $name, string $attr): Node
     {
         $node = $this
             ->getTree()
