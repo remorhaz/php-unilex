@@ -3,10 +3,10 @@
 namespace Remorhaz\UniLex\Test\LL1Parser\Lookup;
 
 use PHPUnit\Framework\TestCase;
-use Remorhaz\UniLex\LL1Parser\Lookup\Table;
+use Remorhaz\UniLex\Parser\LL1\Lookup\Table;
 
 /**
- * @covers \Remorhaz\UniLex\LL1Parser\Lookup\Table
+ * @covers \Remorhaz\UniLex\Parser\LL1\Lookup\Table
  */
 class TableTest extends TestCase
 {

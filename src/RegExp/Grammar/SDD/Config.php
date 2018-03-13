@@ -1,11 +1,11 @@
 <?php
 
 use Remorhaz\UniLex\Exception;
-use Remorhaz\UniLex\LL1Parser\SDD\RuleSetLoader;
+use Remorhaz\UniLex\Parser\LL1\SDD\RuleSetLoader;
 use Remorhaz\UniLex\RegExp\Grammar\SymbolType;
-use Remorhaz\UniLex\SyntaxTree\SDD\ProductionRuleContext;
-use Remorhaz\UniLex\SyntaxTree\SDD\SymbolRuleContext;
-use Remorhaz\UniLex\SyntaxTree\SDD\TokenRuleContext;
+use Remorhaz\UniLex\Parser\SyntaxTree\SDD\ProductionRuleContext;
+use Remorhaz\UniLex\Parser\SyntaxTree\SDD\SymbolRuleContext;
+use Remorhaz\UniLex\Parser\SyntaxTree\SDD\TokenRuleContext;
 use Remorhaz\UniLex\Unicode\Grammar\TokenAttribute;
 
 return [

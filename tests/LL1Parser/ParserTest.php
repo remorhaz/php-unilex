@@ -8,14 +8,14 @@ use Remorhaz\UniLex\Example\SimpleExpr\Grammar\SymbolType;
 use Remorhaz\UniLex\Example\SimpleExpr\Grammar\TokenType;
 use Remorhaz\UniLex\Grammar\ContextFree\GrammarLoader;
 use Remorhaz\UniLex\Grammar\ContextFree\TokenFactory;
-use Remorhaz\UniLex\LL1Parser\AbstractParserListener;
-use Remorhaz\UniLex\LL1Parser\Parser;
+use Remorhaz\UniLex\Parser\LL1\AbstractParserListener;
+use Remorhaz\UniLex\Parser\LL1\Parser;
 use Remorhaz\UniLex\CharBuffer;
 use Remorhaz\UniLex\TokenReader;
 use Remorhaz\UniLex\TokenMatcherByType;
 
 /**
- * @covers \Remorhaz\UniLex\LL1Parser\Parser
+ * @covers \Remorhaz\UniLex\Parser\LL1\Parser
  */
 class ParserTest extends TestCase
 {

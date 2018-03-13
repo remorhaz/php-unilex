@@ -4,12 +4,12 @@ namespace Remorhaz\UniLex\Test\LL1Parser\Lookup;
 
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Grammar\ContextFree\GrammarLoader;
-use Remorhaz\UniLex\LL1Parser\Lookup\FirstBuilder;
-use Remorhaz\UniLex\LL1Parser\Lookup\FollowBuilder;
-use Remorhaz\UniLex\LL1Parser\Lookup\TableConflictChecker;
+use Remorhaz\UniLex\Parser\LL1\Lookup\FirstBuilder;
+use Remorhaz\UniLex\Parser\LL1\Lookup\FollowBuilder;
+use Remorhaz\UniLex\Parser\LL1\Lookup\TableConflictChecker;
 
 /**
- * @covers \Remorhaz\UniLex\LL1Parser\Lookup\TableConflictChecker
+ * @covers \Remorhaz\UniLex\Parser\LL1\Lookup\TableConflictChecker
  */
 class TableConflictCheckerTest extends TestCase
 {

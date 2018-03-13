@@ -5,18 +5,18 @@ namespace Remorhaz\UniLex\Test\RegExp;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Grammar\ContextFree\GrammarLoader;
 use Remorhaz\UniLex\Grammar\ContextFree\TokenFactory;
-use Remorhaz\UniLex\LL1Parser\SDD\RuleSetApplier;
-use Remorhaz\UniLex\LL1Parser\SDD\RuleSetLoader;
+use Remorhaz\UniLex\Parser\LL1\SDD\RuleSetApplier;
+use Remorhaz\UniLex\Parser\LL1\SDD\RuleSetLoader;
 use Remorhaz\UniLex\RegExp\Grammar\SDD\ConfigFile as SDDConfigFile;
-use Remorhaz\UniLex\SyntaxTree\Tree;
-use Remorhaz\UniLex\SyntaxTree\SDD\ContextFactory;
+use Remorhaz\UniLex\Parser\SyntaxTree\Tree;
+use Remorhaz\UniLex\Parser\SyntaxTree\SDD\ContextFactory;
 use Remorhaz\UniLex\TokenReader;
-use Remorhaz\UniLex\LL1Parser\Parser;
+use Remorhaz\UniLex\Parser\LL1\Parser;
 use Remorhaz\UniLex\RegExp\Grammar\ConfigFile;
 use Remorhaz\UniLex\RegExp\Grammar\SymbolType;
 use Remorhaz\UniLex\RegExp\Grammar\TokenType;
 use Remorhaz\UniLex\RegExp\TokenMatcher;
-use Remorhaz\UniLex\LL1Parser\ParseTreeBuilder;
+use Remorhaz\UniLex\Parser\LL1\ParseTreeBuilder;
 use Remorhaz\UniLex\Unicode\CharBufferFactory;
 
 /**

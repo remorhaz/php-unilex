@@ -7,11 +7,11 @@ use Remorhaz\UniLex\Example\SimpleExpr\Grammar\ConfigFile;
 use Remorhaz\UniLex\Example\SimpleExpr\Grammar\SymbolType;
 use Remorhaz\UniLex\Example\SimpleExpr\Grammar\TokenType;
 use Remorhaz\UniLex\Grammar\ContextFree\GrammarLoader;
-use Remorhaz\UniLex\LL1Parser\Lookup\TableBuilder;
+use Remorhaz\UniLex\Parser\LL1\Lookup\TableBuilder;
 
 /**
- * @covers \Remorhaz\UniLex\LL1Parser\Lookup\TableBuilder
- * @covers \Remorhaz\UniLex\LL1Parser\Lookup\TableConflictChecker
+ * @covers \Remorhaz\UniLex\Parser\LL1\Lookup\TableBuilder
+ * @covers \Remorhaz\UniLex\Parser\LL1\Lookup\TableConflictChecker
  */
 class TableBuilderTest extends TestCase
 {

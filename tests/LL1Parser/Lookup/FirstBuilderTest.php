@@ -7,10 +7,10 @@ use Remorhaz\UniLex\Example\SimpleExpr\Grammar\ConfigFile;
 use Remorhaz\UniLex\Example\SimpleExpr\Grammar\SymbolType;
 use Remorhaz\UniLex\Example\SimpleExpr\Grammar\TokenType;
 use Remorhaz\UniLex\Grammar\ContextFree\GrammarLoader;
-use Remorhaz\UniLex\LL1Parser\Lookup\FirstBuilder;
+use Remorhaz\UniLex\Parser\LL1\Lookup\FirstBuilder;
 
 /**
- * @covers \Remorhaz\UniLex\LL1Parser\Lookup\FirstBuilder
+ * @covers \Remorhaz\UniLex\Parser\LL1\Lookup\FirstBuilder
  */
 class FirstBuilderTest extends TestCase
 {

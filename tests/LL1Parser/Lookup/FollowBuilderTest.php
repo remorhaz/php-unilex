@@ -7,11 +7,11 @@ use Remorhaz\UniLex\Example\SimpleExpr\Grammar\ConfigFile;
 use Remorhaz\UniLex\Example\SimpleExpr\Grammar\SymbolType;
 use Remorhaz\UniLex\Example\SimpleExpr\Grammar\TokenType;
 use Remorhaz\UniLex\Grammar\ContextFree\GrammarLoader;
-use Remorhaz\UniLex\LL1Parser\Lookup\FirstBuilder;
-use Remorhaz\UniLex\LL1Parser\Lookup\FollowBuilder;
+use Remorhaz\UniLex\Parser\LL1\Lookup\FirstBuilder;
+use Remorhaz\UniLex\Parser\LL1\Lookup\FollowBuilder;
 
 /**
- * @covers \Remorhaz\UniLex\LL1Parser\Lookup\FollowBuilder
+ * @covers \Remorhaz\UniLex\Parser\LL1\Lookup\FollowBuilder
  */
 class FollowBuilderTest extends TestCase
 {
