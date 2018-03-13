@@ -34,18 +34,21 @@ class SyntaxTreeNode
     /**
      * @param string $name
      * @param $value
+     * @return SyntaxTreeNode
      * @throws Exception
      */
-    public function setAttribute(string $name, $value): void
+    public function setAttribute(string $name, $value): self
     {
         if (isset($this->attributeMap[$name])) {
             throw new Exception("Attribute '{$name}' is already defined in syntax tree node {$this->getId()}");
         }
         $this->attributeMap[$name] = $value;
+        return $this;
     }
 
-    public function addChild(SyntaxTreeNode $node): void
+    public function addChild(SyntaxTreeNode $node): self
     {
         $this->childMap[] = $node;
+        return $this;
     }
 }

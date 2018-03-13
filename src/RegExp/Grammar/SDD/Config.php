@@ -63,14 +63,21 @@ return [
                 },
             ],
         ],
+        SymbolType::NT_LIMIT => [
+            0 => [
+                2 => function (SyntaxTreeSymbolRuleContext $context) {
+                    $context
+                        ->inheritSymbolAttribute(1, 'i.min', 's.number_value');
+                },
+            ],
+        ],
     ],
     RuleSetLoader::PRODUCTION_RULE_MAP_KEY => [
         SymbolType::NT_ROOT => [
             0 => function (SyntaxTreeProductionRuleContext $context) {
                 $context
                     ->copySymbolAttribute(0, 's.alternative_node')
-                    ->getTree()
-                    ->setRootNode($context->getNode('s.alternative_node'));
+                    ->setRootNode('s.alternative_node');
             }
         ],
         SymbolType::NT_PARTS => [
@@ -89,7 +96,7 @@ return [
             1 => function (SyntaxTreeProductionRuleContext $context) {
                 // TODO: Temporary hack, grammar needs modification to support alternatives
                 $context
-                    ->copyHeaderAttribute('s.alternative_node', 'i.concatenate_node');
+                    ->copyAttribute('s.alternative_node', 'i.concatenate_node');
             },
         ],
 
@@ -105,7 +112,7 @@ return [
             // []
             1 => function (SyntaxTreeProductionRuleContext $context) {
                 $context
-                    ->setHeaderAttribute('s.concatenate_node', null);
+                    ->setAttribute('s.concatenate_node', null);
             },
         ],
         SymbolType::NT_MORE_ITEMS => [
@@ -117,7 +124,7 @@ return [
             // []
             1 => function (SyntaxTreeProductionRuleContext $context) {
                 $context
-                    ->copyHeaderAttribute('s.concatenate_node', 'i.concatenable_node');
+                    ->copyAttribute('s.concatenate_node', 'i.concatenable_node');
             },
         ],
         SymbolType::NT_MORE_ITEMS_TAIL => [
@@ -129,8 +136,8 @@ return [
             // []
             1 => function (SyntaxTreeProductionRuleContext $context) {
                 $context
-                    ->copyHeaderAttribute('s.concatenate_node', 'i.concatenate_node')
-                    ->copyHeaderAttribute('s.concatenable_node', 'i.concatenable_node')
+                    ->copyAttribute('s.concatenate_node', 'i.concatenate_node')
+                    ->copyAttribute('s.concatenable_node', 'i.concatenable_node')
                     ->getNode('s.concatenate_node')
                     ->addChild($context->getNode('s.concatenable_node'));
             },
@@ -142,26 +149,20 @@ return [
             },
             // [SymbolType::NT_ITEM_BODY, SymbolType::NT_ITEM_QUANT]
             1 => function (SyntaxTreeProductionRuleContext $context) {
-                $min = $context->getSymbolAttribute(1, 's.min');
-                $max = $context->getSymbolAttribute(1, 's.max');
-                $isMaxInfinite = $context->getSymbolAttribute(1, 's.is_max_infinite');
+                [$min, $max, $isMaxInfinite] = $context
+                    ->getSymbolAttributeList(1, 's.min', 's.max', 's.is_max_infinite');
                 $shouldNotRepeat = 1 == $min && 1 == $max && !$isMaxInfinite;
                 if ($shouldNotRepeat) {
                     $context->copySymbolAttribute(0, 's.concatenable_node', 's.repeatable_node');
                     return;
                 }
-                $node = $context
-                    ->getTree()
-                    ->createNode('repeat');
-                $node->setAttribute('min', $min);
-                $node->setAttribute('max', $max);
-                $node->setAttribute('is_max_infinite', $isMaxInfinite);
-                $repeatableNodeId = $context->getSymbolAttribute(0, 's.repeatable_node');
-                $repeatableNode = $context
-                    ->getTree()
-                    ->getNode($repeatableNodeId);
-                $node->addChild($repeatableNode);
-                $context->setHeaderAttribute('s.concatenable_node', $node->getId());
+                $repeatableNode = $context->getSymbolNode(0, 's.repeatable_node');
+                $context
+                    ->createNode('repeat', 's.concatenable_node')
+                    ->setAttribute('min', $min)
+                    ->setAttribute('max', $max)
+                    ->setAttribute('is_max_infinite', $isMaxInfinite)
+                    ->addChild($repeatableNode);
             },
         ],
         SymbolType::NT_ITEM_BODY => [
@@ -175,13 +176,10 @@ return [
             },
             // [SymbolType::NT_SYMBOL]
             2 => function (SyntaxTreeProductionRuleContext $context) {
-                $node = $context
-                    ->getTree()
-                    ->createNode('symbol');
                 $code = $context->getSymbolAttribute(0, 's.code');
-                $node->setAttribute('code', $code);
                 $context
-                    ->setHeaderAttribute('s.repeatable_node', $node->getId());
+                    ->createNode('symbol', 's.repeatable_node')
+                    ->setAttribute('code', $code);
             },
         ],
         SymbolType::NT_SYMBOL => [
@@ -195,8 +193,7 @@ return [
             },
             // [SymbolType::NT_UNESC_SYMBOL]
             2 => function (SyntaxTreeProductionRuleContext $context) {
-                $context
-                    ->copySymbolAttribute(0, 's.code');
+                $context->copySymbolAttribute(0, 's.code');
             },
         ],
 
@@ -207,23 +204,23 @@ return [
             // [SymbolType::NT_ITEM_OPT]
             0 => function (SyntaxTreeProductionRuleContext $context) {
                 $context
-                    ->setHeaderAttribute('s.min', 0)
-                    ->setHeaderAttribute('s.max', 1)
-                    ->setHeaderAttribute('s.is_max_infinite', false);
+                    ->setAttribute('s.min', 0)
+                    ->setAttribute('s.max', 1)
+                    ->setAttribute('s.is_max_infinite', false);
             },
             // [SymbolType::NT_ITEM_QUANT_STAR]
             1 =>  function (SyntaxTreeProductionRuleContext $context) {
                 $context
-                    ->setHeaderAttribute('s.min', 0)
-                    ->setHeaderAttribute('s.max', 0)
-                    ->setHeaderAttribute('s.is_max_infinite', true);
+                    ->setAttribute('s.min', 0)
+                    ->setAttribute('s.max', 0)
+                    ->setAttribute('s.is_max_infinite', true);
             },
             // [SymbolType::NT_ITEM_QUANT_PLUS]
             2 =>  function (SyntaxTreeProductionRuleContext $context) {
                 $context
-                    ->setHeaderAttribute('s.min', 1)
-                    ->setHeaderAttribute('s.max', 0)
-                    ->setHeaderAttribute('s.is_max_infinite', true);
+                    ->setAttribute('s.min', 1)
+                    ->setAttribute('s.max', 0)
+                    ->setAttribute('s.is_max_infinite', true);
             },
             // [SymbolType::NT_LIMIT]
             3 => function (SyntaxTreeProductionRuleContext $context) {
@@ -235,33 +232,24 @@ return [
             // []
             4 => function (SyntaxTreeProductionRuleContext $context) {
                 $context
-                    ->setHeaderAttribute('s.min', 1)
-                    ->setHeaderAttribute('s.max', 1)
-                    ->setHeaderAttribute('s.is_max_infinite', false);
+                    ->setAttribute('s.min', 1)
+                    ->setAttribute('s.max', 1)
+                    ->setAttribute('s.is_max_infinite', false);
             }
         ],
         SymbolType::NT_LIMIT => [
             // [SymbolType::NT_LIMIT_START, SymbolType::NT_MIN, SymbolType::NT_OPT_MAX, SymbolType::NT_LIMIT_END]
             0 => function (SyntaxTreeProductionRuleContext $context) {
-                $isMaxSet = $context
-                    ->copySymbolAttribute(1, 's.min', 's.number_value')
-                    ->getSymbolAttribute(2, 's.is_set');
-                if ($isMaxSet) {
-                    $context
-                        ->copySymbolAttribute(2, 's.max', 's.number_value')
-                        ->copySymbolAttribute(2, 's.is_max_infinite', 's.is_infinite');
-                    return;
-                }
                 $context
-                    ->copySymbolAttribute(1, 's.max', 's.number_value')
-                    ->setHeaderAttribute('s.is_max_infinite', false);
+                    ->copySymbolAttribute(1, 's.min', 's.number_value')
+                    ->copySymbolAttribute(2, 's.max', 's.number_value')
+                    ->copySymbolAttribute(2, 's.is_max_infinite', 's.is_infinite');
             },
         ],
         SymbolType::NT_MIN => [
             // [SymbolType::NT_DEC]
             0 => function (SyntaxTreeProductionRuleContext $context) {
-                $context
-                    ->copySymbolAttribute(0, 's.number_value');
+                $context->copySymbolAttribute(0, 's.number_value');
             },
         ],
         SymbolType::NT_MAX => [
@@ -269,27 +257,27 @@ return [
             0 => function (SyntaxTreeProductionRuleContext $context) {
                 $context
                     ->copySymbolAttribute(0, 's.number_value')
-                    ->setHeaderAttribute('s.is_infinite', false);
+                    ->setAttribute('s.is_infinite', false);
             },
             // []
             1 => function (SyntaxTreeProductionRuleContext $context) {
                 $context
-                    ->setHeaderAttribute('s.number_value', 0)
-                    ->setHeaderAttribute('s.is_infinite', true);
+                    ->setAttribute('s.number_value', 0)
+                    ->setAttribute('s.is_infinite', true);
             },
         ],
         SymbolType::NT_OPT_MAX => [
             // [SymbolType::NT_LIMIT_SEPARATOR, SymbolType::NT_MAX]
             0 => function (SyntaxTreeProductionRuleContext $context) {
                 $context
-                    ->setHeaderAttribute('s.is_set', true)
                     ->copySymbolAttribute(1, 's.number_value')
                     ->copySymbolAttribute(1, 's.is_infinite');
             },
             // []
             1 => function (SyntaxTreeProductionRuleContext $context) {
                 $context
-                    ->setHeaderAttribute('s.is_set', false);
+                    ->copyAttribute('s.number_value', 'i.min')
+                    ->setAttribute('s.is_infinite', false);
             },
         ],
 
@@ -302,7 +290,7 @@ return [
                 $number =
                     $context->getSymbolAttribute(0, 's.dec_digit') .
                     $context->getSymbolAttribute(1, 's.dec_number_tail');
-                $context->setHeaderAttribute('s.number_value', (int) $number);
+                $context->setAttribute('s.number_value', (int) $number);
             },
         ],
         SymbolType::NT_OPT_DEC => [
@@ -311,11 +299,11 @@ return [
                 $numberTail =
                     $context->getSymbolAttribute(0, 's.dec_digit') .
                     $context->getSymbolAttribute(1, 's.dec_number_tail');
-                $context->setHeaderAttribute('s.dec_number_tail', $numberTail);
+                $context->setAttribute('s.dec_number_tail', $numberTail);
             },
             // []
             1 => function (SyntaxTreeProductionRuleContext $context) {
-                $context->setHeaderAttribute('s.dec_number_tail', '');
+                $context->setAttribute('s.dec_number_tail', '');
             },
         ],
         SymbolType::NT_DEC_DIGIT => [

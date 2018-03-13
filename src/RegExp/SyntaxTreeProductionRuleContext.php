@@ -19,12 +19,12 @@ class SyntaxTreeProductionRuleContext implements ProductionContextInterface
         $this->production = $production;
     }
 
-    public function getTree(): SyntaxTree
+    private function getTree(): SyntaxTree
     {
         return $this->tree;
     }
 
-    public function getProduction(): ParsedProduction
+    private function getProduction(): ParsedProduction
     {
         return $this->production;
     }
@@ -36,13 +36,21 @@ class SyntaxTreeProductionRuleContext implements ProductionContextInterface
      */
     public function getNode(string $attr): SyntaxTreeNode
     {
-        $nodeId = $this
-            ->getProduction()
-            ->getHeader()
-            ->getAttribute($attr);
         return $this
             ->getTree()
-            ->getNode($nodeId);
+            ->getNode($this->getAttribute($attr));
+    }
+
+    /**
+     * @param int $index
+     * @param string $attr
+     * @return SyntaxTreeNode
+     * @throws Exception
+     */
+    public function getSymbolNode(int $index, string $attr): SyntaxTreeNode{
+        return $this
+            ->getTree()
+            ->getNode($this->getSymbolAttribute($index, $attr));
     }
 
     /**
@@ -56,7 +64,7 @@ class SyntaxTreeProductionRuleContext implements ProductionContextInterface
     {
         $value = $this->getSymbolAttribute($index, $source ?? $target);
         return $this
-            ->setHeaderAttribute($target, $value);
+            ->setAttribute($target, $value);
     }
 
     /**
@@ -74,11 +82,26 @@ class SyntaxTreeProductionRuleContext implements ProductionContextInterface
     }
 
     /**
+     * @param int $index
+     * @param string[] ...$attrList
+     * @return array
+     * @throws Exception
+     */
+    public function getSymbolAttributeList(int $index, string ...$attrList): array
+    {
+        $valueList = [];
+        foreach ($attrList as $attr) {
+            $valueList[] = $this->getSymbolAttribute($index, $attr);
+        }
+        return $valueList;
+    }
+
+    /**
      * @param string $attr
      * @return mixed
      * @throws Exception
      */
-    public function getHeaderAttribute(string $attr)
+    public function getAttribute(string $attr)
     {
         return $this
             ->getProduction()
@@ -92,7 +115,7 @@ class SyntaxTreeProductionRuleContext implements ProductionContextInterface
      * @return SyntaxTreeProductionRuleContext
      * @throws Exception
      */
-    public function setHeaderAttribute(string $attr, $value): self
+    public function setAttribute(string $attr, $value): self
     {
         $this
             ->getProduction()
@@ -101,16 +124,43 @@ class SyntaxTreeProductionRuleContext implements ProductionContextInterface
         return $this;
     }
 
-    public function copyHeaderAttribute(string $target, string $source): self
+    /**
+     * @param string $target
+     * @param string $source
+     * @return SyntaxTreeProductionRuleContext
+     * @throws Exception
+     */
+    public function copyAttribute(string $target, string $source): self
     {
-        $value = $this
-            ->getProduction()
-            ->getHeader()
-            ->getAttribute($source);
-        $this
-            ->getProduction()
-            ->getHeader()
-            ->setAttribute($target, $value);
+        $this->setAttribute($target, $this->getAttribute($source));
         return $this;
+    }
+
+    /**
+     * @param string $attr
+     * @return SyntaxTreeProductionRuleContext
+     * @throws Exception
+     */
+    public function setRootNode(string $attr): self
+    {
+        $this
+            ->getTree()
+            ->setRootNode($this->getNode($attr));
+        return $this;
+    }
+
+    /**
+     * @param string $name
+     * @param string $attr
+     * @return SyntaxTreeNode
+     * @throws Exception
+     */
+    public function createNode(string $name, string $attr): SyntaxTreeNode
+    {
+        $node = $this
+            ->getTree()
+            ->createNode($name);
+        $this->setAttribute($attr, $node->getId());
+        return $node;
     }
 }

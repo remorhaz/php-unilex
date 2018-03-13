@@ -23,17 +23,17 @@ class SyntaxTreeSymbolRuleContext implements SymbolContextInterface
         $this->symbolIndex = $symbolIndex;
     }
 
-    public function getTree(): SyntaxTree
+    private function getTree(): SyntaxTree
     {
         return $this->tree;
     }
 
-    public function getProduction(): ParsedProduction
+    private function getProduction(): ParsedProduction
     {
         return $this->production;
     }
 
-    public function getSymbolIndex(): int
+    private function getSymbolIndex(): int
     {
         return $this->symbolIndex;
     }
@@ -42,7 +42,7 @@ class SyntaxTreeSymbolRuleContext implements SymbolContextInterface
      * @return ParsedSymbol
      * @throws Exception
      */
-    public function getSymbol(): ParsedSymbol
+    private function getSymbol(): ParsedSymbol
     {
         return $this
             ->getProduction()
@@ -55,7 +55,7 @@ class SyntaxTreeSymbolRuleContext implements SymbolContextInterface
      * @return SyntaxTreeSymbolRuleContext
      * @throws Exception
      */
-    public function setSymbolAttribute(string $name, $value): self
+    public function setAttribute(string $name, $value): self
     {
         $this
             ->getSymbol()
@@ -122,37 +122,6 @@ class SyntaxTreeSymbolRuleContext implements SymbolContextInterface
     }
 
     /**
-     * @param string $name
-     * @param string $attr
-     * @return SyntaxTreeNode
-     * @throws Exception
-     */
-    public function createRootNode(string $name, string $attr): SyntaxTreeNode
-    {
-        $node = $this->createNode($name, $attr);
-        $this
-            ->getTree()
-            ->setRootNode($node);
-        return $node;
-    }
-
-    /**
-     * @param string $name
-     * @param string $attr
-     * @param string $parentAttr
-     * @return SyntaxTreeNode
-     * @throws Exception
-     */
-    public function createChildNode(string $name, string $attr, string $parentAttr): SyntaxTreeNode
-    {
-        $node = $this->createNode($name, $attr);
-        $this
-            ->getNode($parentAttr)
-            ->addChild($node);
-        return $node;
-    }
-
-    /**
      * @param string $attr
      * @return SyntaxTreeNode
      * @throws Exception
@@ -165,40 +134,5 @@ class SyntaxTreeSymbolRuleContext implements SymbolContextInterface
         return $this
             ->getTree()
             ->getNode($nodeId);
-    }
-
-    /**
-     * @param string $attr
-     * @return null|SyntaxTreeNode
-     * @throws Exception
-     */
-    public function getNodeIfExists(string $attr): ?SyntaxTreeNode
-    {
-        $nodeId = $this
-            ->getSymbol()
-            ->getAttribute($attr);
-        return isset($nodeId)
-            ? $this
-                ->getTree()
-                ->getNode($nodeId)
-            : null;
-    }
-
-    /**
-     * @param string $attr
-     * @param string $target
-     * @param string|null $source
-     * @return SyntaxTreeSymbolRuleContext
-     * @throws Exception
-     */
-    public function setNodeAttribute(string $attr, string $target, string $source = null): self
-    {
-        $value = $this
-            ->getSymbol()
-            ->getAttribute($source ?? $target);
-        $this
-            ->getNode($attr)
-            ->setAttribute($target, $value);
-        return $this;
     }
 }
