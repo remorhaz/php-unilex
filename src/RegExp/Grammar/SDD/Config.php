@@ -15,7 +15,7 @@ return [
                 // SymbolType::NT_ALT_PARTS
                 1 => function (SymbolRuleContext $context) {
                     $context
-                        ->inheritSymbolAttribute(0, 'i.concatenate_node', 's.concatenate_node');
+                        ->copySymbolAttribute(0, 'i.concatenate_node', 's.concatenate_node');
                 },
             ],
         ],
@@ -24,7 +24,7 @@ return [
                 // SymbolType::NT_MORE_ITEMS
                 1 => function (SymbolRuleContext $context) {
                     $context
-                        ->inheritSymbolAttribute(0, 'i.concatenable_node', 's.concatenable_node');
+                        ->copySymbolAttribute(0, 'i.concatenable_node', 's.concatenable_node');
                 },
             ],
         ],
@@ -33,15 +33,15 @@ return [
                 // SymbolType::NT_ITEM
                 0 => function (SymbolRuleContext $context) {
                     $context
-                        ->inheritHeaderAttribute('i.concatenable_node')
+                        ->copyHeaderAttribute('i.concatenable_node')
                         ->createNode('concatenate', 'i.concatenate_node')
                         ->addChild($context->getNode('i.concatenable_node'));
                 },
                 // SymbolType::NT_MORE_ITEMS_TAIL
                 1 => function (SymbolRuleContext $context) {
                     $context
-                        ->inheritSymbolAttribute(0, 'i.concatenable_node', 's.concatenable_node')
-                        ->inheritSymbolAttribute(0, 'i.concatenate_node');
+                        ->copySymbolAttribute(0, 'i.concatenable_node', 's.concatenable_node')
+                        ->copySymbolAttribute(0, 'i.concatenate_node');
                 },
             ],
         ],
@@ -50,16 +50,16 @@ return [
                 // SymbolType::NT_ITEM
                 0 => function (SymbolRuleContext $context) {
                     $context
-                        ->inheritHeaderAttribute('i.concatenable_node')
-                        ->inheritHeaderAttribute('i.concatenate_node')
+                        ->copyHeaderAttribute('i.concatenable_node')
+                        ->copyHeaderAttribute('i.concatenate_node')
                         ->getNode('i.concatenate_node')
                         ->addChild($context->getNode('i.concatenable_node'));
                 },
                 // SymbolType::NT_MORE_ITEMS_TAIL
                 1 => function (SymbolRuleContext $context) {
                     $context
-                        ->inheritSymbolAttribute(0, 'i.concatenable_node', 's.concatenable_node')
-                        ->inheritSymbolAttribute(0, 'i.concatenate_node');
+                        ->copySymbolAttribute(0, 'i.concatenable_node', 's.concatenable_node')
+                        ->copySymbolAttribute(0, 'i.concatenate_node');
                 },
             ],
         ],
@@ -67,7 +67,7 @@ return [
             0 => [
                 2 => function (SymbolRuleContext $context) {
                     $context
-                        ->inheritSymbolAttribute(1, 'i.min', 's.number_value');
+                        ->copySymbolAttribute(1, 'i.min', 's.number_value');
                 },
             ],
         ],
