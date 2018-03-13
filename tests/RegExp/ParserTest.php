@@ -55,35 +55,35 @@ class ParserTest extends TestCase
             SymbolType::NT_UNESC_SYMBOL,
             SymbolType::T_OTHER_ASCII_LETTER,
             SymbolType::NT_ITEM_QUANT,
-            SymbolType::NT_PART,
+            SymbolType::NT_MORE_ITEMS,
             SymbolType::NT_ITEM,
             SymbolType::NT_ITEM_BODY,
             SymbolType::NT_SYMBOL,
             SymbolType::NT_UNESC_SYMBOL,
             SymbolType::T_OTHER_HEX_LETTER,
             SymbolType::NT_ITEM_QUANT,
-            SymbolType::NT_PART,
+            SymbolType::NT_MORE_ITEMS_TAIL,
             SymbolType::NT_ITEM,
             SymbolType::NT_ITEM_BODY,
             SymbolType::NT_SYMBOL,
             SymbolType::NT_UNESC_SYMBOL,
             SymbolType::T_OTHER_ASCII_LETTER,
             SymbolType::NT_ITEM_QUANT,
-            SymbolType::NT_PART,
+            SymbolType::NT_MORE_ITEMS_TAIL,
             SymbolType::NT_ITEM,
             SymbolType::NT_ITEM_BODY,
             SymbolType::NT_SYMBOL,
             SymbolType::NT_UNESC_SYMBOL,
             SymbolType::T_OTHER_ASCII_LETTER,
             SymbolType::NT_ITEM_QUANT,
-            SymbolType::NT_PART,
+            SymbolType::NT_MORE_ITEMS_TAIL,
             SymbolType::NT_ITEM,
             SymbolType::NT_ITEM_BODY,
             SymbolType::NT_SYMBOL,
             SymbolType::NT_UNESC_SYMBOL,
             SymbolType::T_SMALL_O,
             SymbolType::NT_ITEM_QUANT,
-            SymbolType::NT_PART,
+            SymbolType::NT_MORE_ITEMS_TAIL,
             SymbolType::NT_ALT_PARTS,
             SymbolType::T_EOI,
         ];
@@ -97,7 +97,7 @@ class ParserTest extends TestCase
      */
     public function testParserSemantic(): void
     {
-        $buffer = CharBufferFactory::createFromUtf8String('a{12,2}');
+        $buffer = CharBufferFactory::createFromUtf8String('a{12,14}bc');
         $grammar = GrammarLoader::loadFile(ConfigFile::getPath());
         $reader = new TokenReader($buffer, new TokenMatcher, new TokenFactory($grammar));
         $tree = new SyntaxTree;
@@ -108,7 +108,6 @@ class ParserTest extends TestCase
         $parser->run();
         $actualValue = $tree->getRootNode()
             ->getName();
-        self::assertSame('alternative', $actualValue);
-        //var_export($tree->getRootNode());
+        self::assertSame('concatenate', $actualValue);
     }
 }

@@ -49,7 +49,15 @@ return [
             [],
         ],
         SymbolType::NT_PART => [
-            [SymbolType::NT_ITEM, SymbolType::NT_PART],
+            [SymbolType::NT_ITEM, SymbolType::NT_MORE_ITEMS],
+            [],
+        ],
+        SymbolType::NT_MORE_ITEMS => [
+            [SymbolType::NT_ITEM, SymbolType::NT_MORE_ITEMS_TAIL],
+            [],
+        ],
+        SymbolType::NT_MORE_ITEMS_TAIL => [
+            [SymbolType::NT_ITEM, SymbolType::NT_MORE_ITEMS_TAIL],
             [],
         ],
         SymbolType::NT_ITEM => [

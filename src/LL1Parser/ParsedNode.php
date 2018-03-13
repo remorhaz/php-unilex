@@ -28,7 +28,7 @@ abstract class ParsedNode
      */
     public function getAttribute(string $name)
     {
-        if (!isset($this->attributeList[$name])) {
+        if (!array_key_exists($name, $this->attributeList)) {
             throw new Exception("Attribute '{$name}' not defined in node {$this->getIndex()}");
         }
         return $this->attributeList[$name];
@@ -41,7 +41,7 @@ abstract class ParsedNode
      */
     public function setAttribute(string $name, $value): void
     {
-        if (isset($this->attributeList[$name])) {
+        if (array_key_exists($name, $this->attributeList)) {
             throw new Exception("Attribute '{$name}' is already defined in node {$this->getIndex()}");
         }
         $this->attributeList[$name] = $value;

@@ -137,6 +137,10 @@ abstract class SymbolType
     const T_PRINTABLE_ASCII_OTHER       = 0x82;
     const T_OTHER_ASCII                 = 0x83;
     const T_NOT_ASCII                   = 0x84;
+
+    const NT_MORE_ITEMS                 = 0x85;
+    const NT_MORE_ITEMS_TAIL            = 0x86;
+
     const T_INVALID                     = 0xFE;
     const T_EOI                         = 0xFF;
 }

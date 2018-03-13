@@ -100,4 +100,17 @@ class SyntaxTreeProductionRuleContext implements ProductionContextInterface
             ->setAttribute($attr, $value);
         return $this;
     }
+
+    public function copyHeaderAttribute(string $target, string $source): self
+    {
+        $value = $this
+            ->getProduction()
+            ->getHeader()
+            ->getAttribute($source);
+        $this
+            ->getProduction()
+            ->getHeader()
+            ->setAttribute($target, $value);
+        return $this;
+    }
 }

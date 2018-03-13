@@ -50,6 +50,20 @@ class SyntaxTreeSymbolRuleContext implements SymbolContextInterface
     }
 
     /**
+     * @param string $name
+     * @param $value
+     * @return SyntaxTreeSymbolRuleContext
+     * @throws Exception
+     */
+    public function setSymbolAttribute(string $name, $value): self
+    {
+        $this
+            ->getSymbol()
+            ->setAttribute($name, $value);
+        return $this;
+    }
+
+    /**
      * @param string $target
      * @param string|null $source
      * @return SyntaxTreeSymbolRuleContext
@@ -151,6 +165,23 @@ class SyntaxTreeSymbolRuleContext implements SymbolContextInterface
         return $this
             ->getTree()
             ->getNode($nodeId);
+    }
+
+    /**
+     * @param string $attr
+     * @return null|SyntaxTreeNode
+     * @throws Exception
+     */
+    public function getNodeIfExists(string $attr): ?SyntaxTreeNode
+    {
+        $nodeId = $this
+            ->getSymbol()
+            ->getAttribute($attr);
+        return isset($nodeId)
+            ? $this
+                ->getTree()
+                ->getNode($nodeId)
+            : null;
     }
 
     /**

@@ -58,7 +58,9 @@ class Parser
                 $this->isTerminalSymbol($symbol)
                     ? $this->readSymbolToken($symbol)
                     : $this->pushMatchingProduction($symbol);
-            } elseif ($symbol instanceof EopSymbol) {
+                continue;
+            }
+            if ($symbol instanceof EopSymbol) {
                 $this->listener->onFinishProduction($symbol->getProduction());
             }
         }
