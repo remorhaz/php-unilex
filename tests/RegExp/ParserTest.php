@@ -10,6 +10,7 @@ use Remorhaz\UniLex\Parser\LL1\SDD\RuleSetLoader;
 use Remorhaz\UniLex\RegExp\Grammar\SDD\ConfigFile as SDDConfigFile;
 use Remorhaz\UniLex\Parser\SyntaxTree\Tree;
 use Remorhaz\UniLex\Parser\SyntaxTree\SDD\ContextFactory;
+use Remorhaz\UniLex\Token;
 use Remorhaz\UniLex\TokenReader;
 use Remorhaz\UniLex\Parser\LL1\Parser;
 use Remorhaz\UniLex\RegExp\Grammar\ConfigFile;
@@ -34,61 +35,87 @@ class ParserTest extends TestCase
         $buffer = CharBufferFactory::createFromUtf8String('hello');
         $grammar = GrammarLoader::loadFile(ConfigFile::getPath());
         $reader = new TokenReader($buffer, new TokenMatcher, new TokenFactory($grammar));
-        $treeBuilder = new ParseTreeBuilder($grammar, SymbolType::NT_ROOT);
+        $tree = new Tree;
+        $treeBuilder = new ParseTreeBuilder($grammar, $tree);
         $parser = new Parser($grammar, $reader, SymbolType::NT_ROOT, $treeBuilder);
         $parser->run();
-        $expectedTokenTypeLog = [
-            TokenType::OTHER_ASCII_LETTER,
-            TokenType::OTHER_HEX_LETTER,
-            TokenType::OTHER_ASCII_LETTER,
-            TokenType::OTHER_ASCII_LETTER,
-            TokenType::SMALL_O,
+        $actualValue = $this->walkParseTree($tree);
+        $expectedValue = [
+            ['symbol', SymbolType::NT_ROOT],
+            ['symbol', SymbolType::NT_PARTS],
+            ['symbol', SymbolType::NT_PART],
+            ['symbol', SymbolType::NT_ITEM],
+            ['symbol', SymbolType::NT_ITEM_BODY],
+            ['symbol', SymbolType::NT_SYMBOL],
+            ['symbol', SymbolType::NT_UNESC_SYMBOL],
+            ['symbol', SymbolType::T_OTHER_ASCII_LETTER],
+            ['token', TokenType::OTHER_ASCII_LETTER],
+            ['symbol', SymbolType::NT_ITEM_QUANT],
+            ['symbol', SymbolType::NT_MORE_ITEMS],
+            ['symbol', SymbolType::NT_ITEM],
+            ['symbol', SymbolType::NT_ITEM_BODY],
+            ['symbol', SymbolType::NT_SYMBOL],
+            ['symbol', SymbolType::NT_UNESC_SYMBOL],
+            ['symbol', SymbolType::T_OTHER_HEX_LETTER],
+            ['token', TokenType::OTHER_HEX_LETTER],
+            ['symbol', SymbolType::NT_ITEM_QUANT],
+            ['symbol', SymbolType::NT_MORE_ITEMS_TAIL],
+            ['symbol', SymbolType::NT_ITEM],
+            ['symbol', SymbolType::NT_ITEM_BODY],
+            ['symbol', SymbolType::NT_SYMBOL],
+            ['symbol', SymbolType::NT_UNESC_SYMBOL],
+            ['symbol', SymbolType::T_OTHER_ASCII_LETTER],
+            ['token', TokenType::OTHER_ASCII_LETTER],
+            ['symbol', SymbolType::NT_ITEM_QUANT],
+            ['symbol', SymbolType::NT_MORE_ITEMS_TAIL],
+            ['symbol', SymbolType::NT_ITEM],
+            ['symbol', SymbolType::NT_ITEM_BODY],
+            ['symbol', SymbolType::NT_SYMBOL],
+            ['symbol', SymbolType::NT_UNESC_SYMBOL],
+            ['symbol', SymbolType::T_OTHER_ASCII_LETTER],
+            ['token', TokenType::OTHER_ASCII_LETTER],
+            ['symbol', SymbolType::NT_ITEM_QUANT],
+            ['symbol', SymbolType::NT_MORE_ITEMS_TAIL],
+            ['symbol', SymbolType::NT_ITEM],
+            ['symbol', SymbolType::NT_ITEM_BODY],
+            ['symbol', SymbolType::NT_SYMBOL],
+            ['symbol', SymbolType::NT_UNESC_SYMBOL],
+            ['symbol', SymbolType::T_SMALL_O],
+            ['token', TokenType::SMALL_O],
+            ['symbol', SymbolType::NT_ITEM_QUANT],
+            ['symbol', SymbolType::NT_MORE_ITEMS_TAIL],
+            ['symbol', SymbolType::NT_ALT_PARTS],
+            ['symbol', SymbolType::T_EOI],
+            ['token', TokenType::EOI],
         ];
-        $actualTokenTypeLog = $treeBuilder->getTokenTypeLog();
-        self::assertSame($expectedTokenTypeLog, $actualTokenTypeLog);
-        $expectedSymbolLog = [
-            SymbolType::NT_PARTS,
-            SymbolType::NT_PART,
-            SymbolType::NT_ITEM,
-            SymbolType::NT_ITEM_BODY,
-            SymbolType::NT_SYMBOL,
-            SymbolType::NT_UNESC_SYMBOL,
-            SymbolType::T_OTHER_ASCII_LETTER,
-            SymbolType::NT_ITEM_QUANT,
-            SymbolType::NT_MORE_ITEMS,
-            SymbolType::NT_ITEM,
-            SymbolType::NT_ITEM_BODY,
-            SymbolType::NT_SYMBOL,
-            SymbolType::NT_UNESC_SYMBOL,
-            SymbolType::T_OTHER_HEX_LETTER,
-            SymbolType::NT_ITEM_QUANT,
-            SymbolType::NT_MORE_ITEMS_TAIL,
-            SymbolType::NT_ITEM,
-            SymbolType::NT_ITEM_BODY,
-            SymbolType::NT_SYMBOL,
-            SymbolType::NT_UNESC_SYMBOL,
-            SymbolType::T_OTHER_ASCII_LETTER,
-            SymbolType::NT_ITEM_QUANT,
-            SymbolType::NT_MORE_ITEMS_TAIL,
-            SymbolType::NT_ITEM,
-            SymbolType::NT_ITEM_BODY,
-            SymbolType::NT_SYMBOL,
-            SymbolType::NT_UNESC_SYMBOL,
-            SymbolType::T_OTHER_ASCII_LETTER,
-            SymbolType::NT_ITEM_QUANT,
-            SymbolType::NT_MORE_ITEMS_TAIL,
-            SymbolType::NT_ITEM,
-            SymbolType::NT_ITEM_BODY,
-            SymbolType::NT_SYMBOL,
-            SymbolType::NT_UNESC_SYMBOL,
-            SymbolType::T_SMALL_O,
-            SymbolType::NT_ITEM_QUANT,
-            SymbolType::NT_MORE_ITEMS_TAIL,
-            SymbolType::NT_ALT_PARTS,
-            SymbolType::T_EOI,
-        ];
-        $actualSymbolLog = $treeBuilder->getSymbolLog();
-        self::assertSame($expectedSymbolLog, $actualSymbolLog);
+        self::assertSame($expectedValue, $actualValue);
+    }
+
+    /**
+     * @param Tree $tree
+     * @return array
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    private function walkParseTree(Tree $tree): array
+    {
+        $result = [];
+        foreach ($tree->walk() as $node) {
+            switch ($node->getName()) {
+                case 'symbol':
+                    $result[] = [$node->getName(), $node->getAttribute('id')];
+                    break;
+
+                case 'token':
+                    /** @var Token $token */
+                    $token = $node->getAttribute('token');
+                    $result[] = [$node->getName(), $token->getType()];
+                    break;
+
+                default:
+                    $result[] = [$node->getName()];
+            }
+        }
+        return $result;
     }
 
     /**
@@ -101,12 +128,12 @@ class ParserTest extends TestCase
         $grammar = GrammarLoader::loadFile(ConfigFile::getPath());
         $reader = new TokenReader($buffer, new TokenMatcher, new TokenFactory($grammar));
         $tree = new Tree;
-        $treeContextFactory = new ContextFactory($tree);
-        $treeRuleSet = RuleSetLoader::loadFile($treeContextFactory, SDDConfigFile::getPath());
+        $treeRuleSet = RuleSetLoader::loadFile(new ContextFactory($tree), SDDConfigFile::getPath());
         $treeBuilder = new RuleSetApplier($treeRuleSet);
         $parser = new Parser($grammar, $reader, SymbolType::NT_ROOT, $treeBuilder);
         $parser->run();
-        $actualValue = $tree->getRootNode()
+        $actualValue = $tree
+            ->getRootNode()
             ->getName();
         self::assertSame('concatenate', $actualValue);
     }

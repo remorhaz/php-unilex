@@ -16,9 +16,9 @@ class Tree
 
     private $rootNodeId;
 
-    public function createNode(string $name): Node
+    public function createNode(string $name, int $id = null): Node
     {
-        $node = new Node($this->getNextNodeId(), $name);
+        $node = new Node($id ?? $this->getNextNodeId(), $name);
         $this->nodeMap[$node->getId()] = $node;
         return $node;
     }
@@ -63,5 +63,24 @@ class Tree
     private function getNextNodeId(): int
     {
         return $this->nextNodeId++;
+    }
+
+    /**
+     * @return Node[]
+     * @throws Exception
+     */
+    public function walk(): array
+    {
+        $nodeList = [];
+        $this->doWalk($this->getRootNode(), $nodeList);
+        return $nodeList;
+    }
+
+    private function doWalk(Node $node, array &$nodeList)
+    {
+        $nodeList[] = $node;
+        foreach ($node->getChildList() as $childNode) {
+            $this->doWalk($childNode, $nodeList);
+        }
     }
 }

@@ -46,9 +46,30 @@ class Node
         return $this;
     }
 
+    /**
+     * @param string $name
+     * @return mixed
+     * @throws Exception
+     */
+    public function getAttribute(string $name)
+    {
+        if (!isset($this->attributeMap[$name])) {
+            throw new Exception("Attribute '{$name}' is not defined in syntax tree node {$this->getId()}");
+        }
+        return $this->attributeMap[$name];
+    }
+
     public function addChild(Node $node): self
     {
         $this->childMap[] = $node;
         return $this;
+    }
+
+    /**
+     * @return Node[]
+     */
+    public function getChildList(): array
+    {
+        return $this->childMap;
     }
 }

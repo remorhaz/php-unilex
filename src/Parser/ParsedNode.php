@@ -37,13 +37,15 @@ abstract class ParsedNode
     /**
      * @param string $name
      * @param $value
+     * @return ParsedNode
      * @throws Exception
      */
-    public function setAttribute(string $name, $value): void
+    public function setAttribute(string $name, $value)
     {
         if (array_key_exists($name, $this->attributeList)) {
             throw new Exception("Attribute '{$name}' is already defined in node {$this->getIndex()}");
         }
         $this->attributeList[$name] = $value;
+        return $this;
     }
 }
