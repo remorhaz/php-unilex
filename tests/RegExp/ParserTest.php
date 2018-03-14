@@ -5,8 +5,8 @@ namespace Remorhaz\UniLex\Test\RegExp;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Grammar\ContextFree\GrammarLoader;
 use Remorhaz\UniLex\Grammar\ContextFree\TokenFactory;
-use Remorhaz\UniLex\Parser\LL1\SDD\RuleSetApplier;
-use Remorhaz\UniLex\Parser\LL1\SDD\RuleSetLoader;
+use Remorhaz\UniLex\Parser\LL1\TranslationSchemeApplier;
+use Remorhaz\UniLex\Grammar\SDD\TranslationSchemeLoader;
 use Remorhaz\UniLex\RegExp\Grammar\SDD\ConfigFile as SDDConfigFile;
 use Remorhaz\UniLex\Parser\SyntaxTree\Tree;
 use Remorhaz\UniLex\Parser\SyntaxTree\SDD\ContextFactory;
@@ -128,8 +128,8 @@ class ParserTest extends TestCase
         $grammar = GrammarLoader::loadFile(ConfigFile::getPath());
         $reader = new TokenReader($buffer, new TokenMatcher, new TokenFactory($grammar));
         $tree = new Tree;
-        $treeRuleSet = RuleSetLoader::loadFile($grammar, new ContextFactory($tree), SDDConfigFile::getPath());
-        $treeBuilder = new RuleSetApplier($treeRuleSet);
+        $scheme = TranslationSchemeLoader::loadFile($grammar, new ContextFactory($tree), SDDConfigFile::getPath());
+        $treeBuilder = new TranslationSchemeApplier($scheme);
         $parser = new Parser($grammar, $reader, $treeBuilder);
         $parser->run();
         $actualValue = $tree

@@ -1,6 +1,6 @@
 <?php
 
-namespace Remorhaz\UniLex\Parser\LL1\SDD;
+namespace Remorhaz\UniLex\Grammar\SDD;
 
 use Remorhaz\UniLex\Parser\ParsedProduction;
 use Remorhaz\UniLex\Parser\ParsedSymbol;

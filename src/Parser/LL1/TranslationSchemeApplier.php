@@ -1,21 +1,21 @@
 <?php
 
-namespace Remorhaz\UniLex\Parser\LL1\SDD;
+namespace Remorhaz\UniLex\Parser\LL1;
 
 use Remorhaz\UniLex\Exception;
-use Remorhaz\UniLex\Parser\LL1\AbstractParserListener;
+use Remorhaz\UniLex\Grammar\SDD\TranslationScheme;
 use Remorhaz\UniLex\Parser\ParsedProduction;
 use Remorhaz\UniLex\Parser\ParsedSymbol;
 use Remorhaz\UniLex\Parser\ParsedToken;
 
-class RuleSetApplier extends AbstractParserListener
+class TranslationSchemeApplier extends AbstractParserListener
 {
 
-    private $ruleSet;
+    private $scheme;
 
-    public function __construct(RuleSet $ruleSet)
+    public function __construct(TranslationScheme $scheme)
     {
-        $this->ruleSet = $ruleSet;
+        $this->scheme = $scheme;
     }
 
     /**
@@ -27,8 +27,8 @@ class RuleSetApplier extends AbstractParserListener
     {
         //echo "Symbol {$production}[{$symbolIndex}]->{$production->getSymbol($symbolIndex)->getSymbolId()}", PHP_EOL;
         $this
-            ->ruleSet
-            ->applySymbolRules($production, $symbolIndex);
+            ->scheme
+            ->applySymbolActions($production, $symbolIndex);
     }
 
     /**
@@ -40,8 +40,8 @@ class RuleSetApplier extends AbstractParserListener
     {
         //echo "Token {$symbol->getSymbolId()} -> {$token->getToken()->getType()}", PHP_EOL;
         $this
-            ->ruleSet
-            ->applyTokenRuleIfExists($symbol, $token);
+            ->scheme
+            ->applyTokenActions($symbol, $token);
     }
 
     /**
@@ -52,8 +52,8 @@ class RuleSetApplier extends AbstractParserListener
     {
         //echo "Finish {$production}", PHP_EOL;
         $this
-            ->ruleSet
-            ->applyProductionRules($production);
+            ->scheme
+            ->applyProductionActions($production);
     }
 
     public function onBeginProduction(ParsedProduction $production): void

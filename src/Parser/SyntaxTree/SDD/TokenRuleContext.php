@@ -4,7 +4,7 @@ namespace Remorhaz\UniLex\Parser\SyntaxTree\SDD;
 
 use Remorhaz\UniLex\Parser\ParsedSymbol;
 use Remorhaz\UniLex\Parser\ParsedToken;
-use Remorhaz\UniLex\Parser\LL1\SDD\TokenContextInterface;
+use Remorhaz\UniLex\Grammar\SDD\TokenContextInterface;
 
 class TokenRuleContext implements TokenContextInterface
 {
@@ -34,6 +34,7 @@ class TokenRuleContext implements TokenContextInterface
      * @param string|null $source
      * @return TokenRuleContext
      * @throws \Remorhaz\UniLex\Exception
+     * @deprecated
      */
     public function copyTokenAttribute(string $target, string $source = null): self
     {
@@ -45,5 +46,18 @@ class TokenRuleContext implements TokenContextInterface
             ->getSymbol()
             ->setAttribute($target, $value);
         return $this;
+    }
+
+    /**
+     * @param string $name
+     * @return mixed
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function getTokenAttribute(string $name)
+    {
+        return $this
+            ->getToken()
+            ->getToken()
+            ->getAttribute($name);
     }
 }

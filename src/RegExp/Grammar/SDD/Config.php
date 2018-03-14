@@ -1,7 +1,7 @@
 <?php
 
 use Remorhaz\UniLex\Exception;
-use Remorhaz\UniLex\Parser\LL1\SDD\RuleSetLoader;
+use Remorhaz\UniLex\Grammar\SDD\TranslationSchemeLoader;
 use Remorhaz\UniLex\RegExp\Grammar\SymbolType;
 use Remorhaz\UniLex\Parser\SyntaxTree\SDD\ProductionRuleContext;
 use Remorhaz\UniLex\Parser\SyntaxTree\SDD\SymbolRuleContext;
@@ -11,9 +11,9 @@ use Remorhaz\UniLex\Unicode\Grammar\TokenAttribute;
 return [
 
     /**
-     * Inherited attributes
+     * Inherited attributes.
      */
-    RuleSetLoader::SYMBOL_RULE_MAP_KEY => [
+    TranslationSchemeLoader::SYMBOL_RULE_MAP_KEY => [
         SymbolType::NT_PARTS => [
             0 => [
                 // SymbolType::NT_ALT_PARTS
@@ -91,9 +91,9 @@ return [
     ],
 
     /**
-     * Synthesized attributes
+     * Synthesized attributes for non-terminals.
      */
-    RuleSetLoader::PRODUCTION_RULE_MAP_KEY => [
+    TranslationSchemeLoader::PRODUCTION_RULE_MAP_KEY => [
         SymbolType::NT_ROOT => [
             0 => [
                 function (ProductionRuleContext $context): void {
@@ -417,7 +417,7 @@ return [
         ],
 
         /**
-         * Raw symbols
+         * Unescaped symbols
          */
         SymbolType::NT_UNESC_SYMBOL => [
             // [SymbolType::T_COMMA]
@@ -536,36 +536,65 @@ return [
             ],
         ],
     ],
-    RuleSetLoader::TOKEN_RULE_MAP_KEY => [
-        SymbolType::T_OTHER_HEX_LETTER => function(TokenRuleContext $context) {
-            $context
-                ->copyTokenAttribute('s.code', TokenAttribute::UNICODE_CHAR)
-                ->copyTokenAttribute('s.hex_digit', 'digit');
-        },
-        SymbolType::T_DIGIT_ZERO => function (TokenRuleContext $context) {
-            $context
-                ->copyTokenAttribute('s.code', TokenAttribute::UNICODE_CHAR)
-                ->copyTokenAttribute('s.oct_digit', 'digit')
-                ->copyTokenAttribute('s.dec_digit', 'digit')
-                ->copyTokenAttribute('s.hex_digit', 'digit');
-        },
-        SymbolType::T_DIGIT_OCT => function (TokenRuleContext $context) {
-            $context
-                ->copyTokenAttribute('s.code', TokenAttribute::UNICODE_CHAR)
-                ->copyTokenAttribute('s.oct_digit', 'digit')
-                ->copyTokenAttribute('s.dec_digit', 'digit')
-                ->copyTokenAttribute('s.hex_digit', 'digit');
-        },
-        SymbolType::T_DIGIT_DEC => function (TokenRuleContext $context) {
-            $context
-                ->copyTokenAttribute('s.code', TokenAttribute::UNICODE_CHAR)
-                ->copyTokenAttribute('s.dec_digit', 'digit')
-                ->copyTokenAttribute('s.hex_digit', 'digit');
-        },
-        SymbolType::T_SMALL_C => function (TokenRuleContext $context) {
-            $context
-                ->copyTokenAttribute('s.code', TokenAttribute::UNICODE_CHAR)
-                ->copyTokenAttribute('s.hex_digit', 'digit');
-        },
+
+    /**
+     * Synthesized attributes for terminals.
+     */
+    TranslationSchemeLoader::TOKEN_RULE_MAP_KEY => [
+        SymbolType::T_OTHER_HEX_LETTER => [
+            's.code' => function(TokenRuleContext $context): int {
+                return $context->getTokenAttribute(TokenAttribute::UNICODE_CHAR);
+            },
+            's.hex_digit' => function(TokenRuleContext $context): string {
+                return $context->getTokenAttribute('digit');
+            },
+        ],
+        SymbolType::T_DIGIT_ZERO => [
+            's.code' => function (TokenRuleContext $context): int {
+                return $context->getTokenAttribute(TokenAttribute::UNICODE_CHAR);
+            },
+            's.oct_digit' => function (TokenRuleContext $context): string {
+                return $context->getTokenAttribute('digit');
+            },
+            's.dec_digit' => function (TokenRuleContext $context): string {
+                return $context->getTokenAttribute('digit');
+            },
+            's.hex_digit' => function (TokenRuleContext $context): string {
+                return $context->getTokenAttribute('digit');
+            },
+        ],
+        SymbolType::T_DIGIT_OCT => [
+            's.code' => function (TokenRuleContext $context): int {
+                return $context->getTokenAttribute(TokenAttribute::UNICODE_CHAR);
+            },
+            's.oct_digit' => function (TokenRuleContext $context): string {
+                return $context->getTokenAttribute('digit');
+            },
+            's.dec_digit' => function (TokenRuleContext $context): string {
+                return $context->getTokenAttribute('digit');
+            },
+            's.hex_digit' => function (TokenRuleContext $context): string {
+                return $context->getTokenAttribute('digit');
+            },
+        ],
+        SymbolType::T_DIGIT_DEC => [
+            's.code' => function (TokenRuleContext $context): int {
+                return $context->getTokenAttribute(TokenAttribute::UNICODE_CHAR);
+            },
+            's.dec_digit' => function (TokenRuleContext $context): string {
+                return $context->getTokenAttribute('digit');
+            },
+            's.hex_digit' => function (TokenRuleContext $context): string {
+                return $context->getTokenAttribute('digit');
+            },
+        ],
+        SymbolType::T_SMALL_C => [
+            's.code' => function (TokenRuleContext $context): int {
+                return $context->getTokenAttribute(TokenAttribute::UNICODE_CHAR);
+            },
+            's.hex_digit' => function (TokenRuleContext $context): string {
+                return $context->getTokenAttribute('digit');
+            },
+        ],
     ],
 ];

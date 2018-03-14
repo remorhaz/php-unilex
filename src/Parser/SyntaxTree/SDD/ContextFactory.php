@@ -5,10 +5,10 @@ namespace Remorhaz\UniLex\Parser\SyntaxTree\SDD;
 use Remorhaz\UniLex\Parser\ParsedProduction;
 use Remorhaz\UniLex\Parser\ParsedSymbol;
 use Remorhaz\UniLex\Parser\ParsedToken;
-use Remorhaz\UniLex\Parser\LL1\SDD\ContextFactoryInterface;
-use Remorhaz\UniLex\Parser\LL1\SDD\ProductionContextInterface;
-use Remorhaz\UniLex\Parser\LL1\SDD\SymbolContextInterface;
-use Remorhaz\UniLex\Parser\LL1\SDD\TokenContextInterface;
+use Remorhaz\UniLex\Grammar\SDD\ContextFactoryInterface;
+use Remorhaz\UniLex\Grammar\SDD\ProductionContextInterface;
+use Remorhaz\UniLex\Grammar\SDD\SymbolContextInterface;
+use Remorhaz\UniLex\Grammar\SDD\TokenContextInterface;
 use Remorhaz\UniLex\Parser\SyntaxTree\Tree;
 
 class ContextFactory implements ContextFactoryInterface

@@ -1,11 +1,11 @@
 <?php
 
-namespace Remorhaz\UniLex\Parser\LL1\SDD;
+namespace Remorhaz\UniLex\Grammar\SDD;
 
 use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\Grammar\ContextFree\GrammarInterface;
 
-abstract class RuleSetLoader
+abstract class TranslationSchemeLoader
 {
 
     const TOKEN_RULE_MAP_KEY = 'token_rules';
@@ -18,38 +18,40 @@ abstract class RuleSetLoader
      * @param GrammarInterface $grammar
      * @param ContextFactoryInterface $contextFactory
      * @param array $config
-     * @return RuleSet
+     * @return TranslationScheme
      * @throws Exception
      */
     public static function loadConfig(
         GrammarInterface $grammar,
         ContextFactoryInterface $contextFactory,
         array $config
-    ): RuleSet {
-        $ruleSet = new RuleSet($contextFactory);
+    ): TranslationScheme {
+        $ruleSet = new TranslationScheme($contextFactory);
         $symbolRuleMap = self::getConfigValue($config, self::SYMBOL_RULE_MAP_KEY);
         foreach ($symbolRuleMap as $headerId => $productionMap) {
             foreach ($productionMap as $productionIndex => $symbolMap) {
                 $production = $grammar->getProduction($headerId, $productionIndex);
-                foreach ($symbolMap as $symbolIndex => $ruleList) {
-                    foreach ($ruleList as $ruleKey => $rule) {
-                        $ruleSet->addSymbolRule($production, $symbolIndex, $ruleKey, $rule);
+                foreach ($symbolMap as $symbolIndex => $actionList) {
+                    foreach ($actionList as $attribute => $action) {
+                        $ruleSet->addSymbolAction($production, $symbolIndex, $attribute, $action);
                     }
                 }
             }
         }
         $productionRuleMap = self::getConfigValue($config, self::PRODUCTION_RULE_MAP_KEY);
         foreach ($productionRuleMap as $headerId => $productionMap) {
-            foreach ($productionMap as $productionIndex => $ruleList) {
+            foreach ($productionMap as $productionIndex => $actionList) {
                 $production = $grammar->getProduction($headerId, $productionIndex);
-                foreach ($ruleList as $ruleKey => $rule) {
-                    $ruleSet->addProductionRule($production, $ruleKey, $rule);
+                foreach ($actionList as $attribute => $action) {
+                    $ruleSet->addProductionAction($production, $attribute, $action);
                 }
             }
         }
         $tokenRuleMap = self::getConfigValue($config, self::TOKEN_RULE_MAP_KEY);
-        foreach ($tokenRuleMap as $symbolId => $rule) {
-            $ruleSet->addTokenRule($symbolId, $rule);
+        foreach ($tokenRuleMap as $symbolId => $actionList) {
+            foreach ($actionList as $attribute => $action) {
+                $ruleSet->addTokenAction($symbolId, $attribute, $action);
+            }
         }
         return $ruleSet;
     }
@@ -58,14 +60,14 @@ abstract class RuleSetLoader
      * @param GrammarInterface $grammar
      * @param ContextFactoryInterface $contextFactory
      * @param string $fileName
-     * @return RuleSet
+     * @return TranslationScheme
      * @throws Exception
      */
     public static function loadFile(
         GrammarInterface $grammar,
         ContextFactoryInterface $contextFactory,
         string $fileName
-    ): RuleSet {
+    ): TranslationScheme {
         /** @noinspection PhpIncludeInspection */
         $config = @include $fileName;
         if (false === $config) {
