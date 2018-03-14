@@ -66,6 +66,19 @@ class Node
     }
 
     /**
+     * @param int $index
+     * @return Node
+     * @throws Exception
+     */
+    public function getChild(int $index): Node
+    {
+        if (!isset($this->childMap[$index])) {
+            throw new Exception("Child node at index {$index} in node {$this->getId()} is not defined");
+        }
+        return $this->childMap[$index];
+    }
+
+    /**
      * @return Node[]
      */
     public function getChildList(): array
