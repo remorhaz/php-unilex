@@ -528,6 +528,7 @@ return [
             [SymbolType::T_PRINTABLE_ASCII_OTHER],
         ],
     ],
+    GrammarLoader::ROOT_SYMBOL_KEY => SymbolType::NT_ROOT,
     GrammarLoader::START_SYMBOL_KEY => SymbolType::NT_PARTS,
     GrammarLoader::EOI_SYMBOL_KEY => SymbolType::T_EOI,
 ];

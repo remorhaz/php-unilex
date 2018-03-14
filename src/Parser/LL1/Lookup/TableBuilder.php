@@ -91,7 +91,7 @@ class TableBuilder
     {
         $productionFirsts = $this->getFirst()->getProductionTokens(...$production->getSymbolList());
         foreach ($productionFirsts as $tokenId) {
-            $table->addProduction($production->getSymbolId(), $tokenId, $production->getIndex());
+            $table->addProduction($production->getHeaderId(), $tokenId, $production->getIndex());
         }
     }
 
@@ -105,9 +105,9 @@ class TableBuilder
         if (!$this->getFirst()->productionHasEpsilon(...$production->getSymbolList())) {
             return;
         }
-        $productionFollows = $this->getFollow()->getTokens($production->getSymbolId());
+        $productionFollows = $this->getFollow()->getTokens($production->getHeaderId());
         foreach ($productionFollows as $tokenId) {
-            $table->addProduction($production->getSymbolId(), $tokenId, $production->getIndex());
+            $table->addProduction($production->getHeaderId(), $tokenId, $production->getIndex());
         }
     }
 }

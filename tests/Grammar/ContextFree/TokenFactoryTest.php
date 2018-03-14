@@ -14,7 +14,7 @@ class TokenFactoryTest extends TestCase
 
     public function testCreateEoiToken_EoiTokenAddedToGrammar_TokenIsEoiReturnsTrue(): void
     {
-        $grammar = new Grammar(1, 2);
+        $grammar = new Grammar(0, 1, 2);
         $grammar->addToken(2, 3);
         $actualValue = (new TokenFactory($grammar))
             ->createEoiToken()
@@ -24,7 +24,7 @@ class TokenFactoryTest extends TestCase
 
     public function testCreateEoiToken_EoiTokenAddedToGrammar_TokenGetTypeReturnsMatchingType(): void
     {
-        $grammar = new Grammar(1, 2);
+        $grammar = new Grammar(0, 1, 2);
         $grammar->addToken(2, 3);
         $actualValue = (new TokenFactory($grammar))
             ->createEoiToken()
@@ -34,7 +34,7 @@ class TokenFactoryTest extends TestCase
 
     public function testCreateToken_ValidType_TokenGetTypeReturnsSameType(): void
     {
-        $grammar = new Grammar(1, 2);
+        $grammar = new Grammar(0, 1, 2);
         $grammar->addToken(2, 3);
         $grammar->addToken(3, 4);
         $actualValue = (new TokenFactory($grammar))
@@ -45,7 +45,7 @@ class TokenFactoryTest extends TestCase
 
     public function testCreateToken_NotEoiTokenType_TokenIsEoiReturnsFalse(): void
     {
-        $grammar = new Grammar(1, 2);
+        $grammar = new Grammar(0, 1, 2);
         $grammar->addToken(2, 3);
         $grammar->addToken(3, 4);
         $actualValue = (new TokenFactory($grammar))
@@ -56,7 +56,7 @@ class TokenFactoryTest extends TestCase
 
     public function testCreateToken_EoiTokenType_TokenIsEoiReturnsTrue(): void
     {
-        $grammar = new Grammar(1, 2);
+        $grammar = new Grammar(0, 1, 2);
         $grammar->addToken(2, 3);
         $actualValue = (new TokenFactory($grammar))
             ->createToken(3)

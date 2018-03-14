@@ -21,7 +21,7 @@ class ProductionTest extends TestCase
     public function testGetSymbolId_ConstructWithValue_ReturnsSameValue(): void
     {
         $production = new Production(1, 2, 3);
-        $actualValue = $production->getSymbolId();
+        $actualValue = $production->getHeaderId();
         self::assertSame(1, $actualValue);
     }
 

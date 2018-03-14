@@ -21,6 +21,7 @@ class GrammarLoaderTest extends TestCase
         $config = [
             GrammarLoader::TOKEN_MAP_KEY => [1 => 1, 2 => 2],
             GrammarLoader::PRODUCTION_MAP_KEY => [3 => [[1, 4]], 4 => [[1], []]],
+            GrammarLoader::ROOT_SYMBOL_KEY => 0,
             GrammarLoader::START_SYMBOL_KEY => 3,
             GrammarLoader::EOI_SYMBOL_KEY => 2,
         ];
@@ -37,6 +38,7 @@ class GrammarLoaderTest extends TestCase
         $config = [
             GrammarLoader::TOKEN_MAP_KEY => [1 => 1, 2 => 2],
             GrammarLoader::PRODUCTION_MAP_KEY => [3 => [[1, 4]], 4 => [[1], []]],
+            GrammarLoader::ROOT_SYMBOL_KEY => 0,
             GrammarLoader::START_SYMBOL_KEY => 3,
             GrammarLoader::EOI_SYMBOL_KEY => 2,
         ];
@@ -52,6 +54,7 @@ class GrammarLoaderTest extends TestCase
         $config = [
             GrammarLoader::TOKEN_MAP_KEY => [1 => 1, 2 => 2],
             GrammarLoader::PRODUCTION_MAP_KEY => [3 => [[1, 4]], 4 => [[1], []]],
+            GrammarLoader::ROOT_SYMBOL_KEY => 0,
             GrammarLoader::START_SYMBOL_KEY => 3,
             GrammarLoader::EOI_SYMBOL_KEY => 2,
         ];
@@ -68,6 +71,7 @@ class GrammarLoaderTest extends TestCase
         $config = [
             GrammarLoader::TOKEN_MAP_KEY => [1 => 1, 2 => 2],
             GrammarLoader::PRODUCTION_MAP_KEY => [3 => [[1, 4]], 4 => [[1], []]],
+            GrammarLoader::ROOT_SYMBOL_KEY => 0,
             GrammarLoader::START_SYMBOL_KEY => 3,
             GrammarLoader::EOI_SYMBOL_KEY => 2,
         ];
@@ -86,6 +90,7 @@ class GrammarLoaderTest extends TestCase
         $config = [
             GrammarLoader::TOKEN_MAP_KEY => [1 => 1, 2 => 2],
             GrammarLoader::PRODUCTION_MAP_KEY => [3 => [[1, 4]], 4 => [[1], []]],
+            GrammarLoader::ROOT_SYMBOL_KEY => 0,
             GrammarLoader::START_SYMBOL_KEY => 3,
             GrammarLoader::EOI_SYMBOL_KEY => 2,
         ];
@@ -101,6 +106,7 @@ class GrammarLoaderTest extends TestCase
         $config = [
             GrammarLoader::TOKEN_MAP_KEY => [1 => 1, 2 => 2],
             GrammarLoader::PRODUCTION_MAP_KEY => [3 => [[1, 4]], 4 => [[1], []]],
+            GrammarLoader::ROOT_SYMBOL_KEY => 0,
             GrammarLoader::START_SYMBOL_KEY => 3,
             GrammarLoader::EOI_SYMBOL_KEY => 2,
         ];
@@ -118,6 +124,7 @@ class GrammarLoaderTest extends TestCase
         $config = [
             GrammarLoader::TOKEN_MAP_KEY => [1 => 1, 2 => 2],
             GrammarLoader::PRODUCTION_MAP_KEY => [3 => [[1, 4]], 4 => [[1], []]],
+            GrammarLoader::ROOT_SYMBOL_KEY => 0,
             GrammarLoader::EOI_SYMBOL_KEY => 2,
         ];
         GrammarLoader::loadConfig($config);

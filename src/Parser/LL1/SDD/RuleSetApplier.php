@@ -28,7 +28,7 @@ class RuleSetApplier extends AbstractParserListener
         //echo "Symbol {$production}[{$symbolIndex}]->{$production->getSymbol($symbolIndex)->getSymbolId()}", PHP_EOL;
         $this
             ->ruleSet
-            ->applySymbolRuleIfExists($production, $symbolIndex);
+            ->applySymbolRules($production, $symbolIndex);
     }
 
     /**
@@ -53,7 +53,7 @@ class RuleSetApplier extends AbstractParserListener
         //echo "Finish {$production}", PHP_EOL;
         $this
             ->ruleSet
-            ->applyProductionRuleIfExists($production);
+            ->applyProductionRules($production);
     }
 
     public function onBeginProduction(ParsedProduction $production): void

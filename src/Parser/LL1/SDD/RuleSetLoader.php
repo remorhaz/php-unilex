@@ -3,6 +3,7 @@
 namespace Remorhaz\UniLex\Parser\LL1\SDD;
 
 use Remorhaz\UniLex\Exception;
+use Remorhaz\UniLex\Grammar\ContextFree\GrammarInterface;
 
 abstract class RuleSetLoader
 {
@@ -14,26 +15,36 @@ abstract class RuleSetLoader
     const PRODUCTION_RULE_MAP_KEY = 'production_rules';
 
     /**
+     * @param GrammarInterface $grammar
      * @param ContextFactoryInterface $contextFactory
      * @param array $config
      * @return RuleSet
      * @throws Exception
      */
-    public static function loadConfig(ContextFactoryInterface $contextFactory, array $config): RuleSet
-    {
+    public static function loadConfig(
+        GrammarInterface $grammar,
+        ContextFactoryInterface $contextFactory,
+        array $config
+    ): RuleSet {
         $ruleSet = new RuleSet($contextFactory);
         $symbolRuleMap = self::getConfigValue($config, self::SYMBOL_RULE_MAP_KEY);
         foreach ($symbolRuleMap as $headerId => $productionMap) {
             foreach ($productionMap as $productionIndex => $symbolMap) {
-                foreach ($symbolMap as $symbolIndex => $rule) {
-                    $ruleSet->addSymbolRule($headerId, $productionIndex, $symbolIndex, $rule);
+                $production = $grammar->getProduction($headerId, $productionIndex);
+                foreach ($symbolMap as $symbolIndex => $ruleList) {
+                    foreach ($ruleList as $ruleKey => $rule) {
+                        $ruleSet->addSymbolRule($production, $symbolIndex, $ruleKey, $rule);
+                    }
                 }
             }
         }
         $productionRuleMap = self::getConfigValue($config, self::PRODUCTION_RULE_MAP_KEY);
         foreach ($productionRuleMap as $headerId => $productionMap) {
-            foreach ($productionMap as $productionIndex => $rule) {
-                $ruleSet->addProductionRule($headerId, $productionIndex, $rule);
+            foreach ($productionMap as $productionIndex => $ruleList) {
+                $production = $grammar->getProduction($headerId, $productionIndex);
+                foreach ($ruleList as $ruleKey => $rule) {
+                    $ruleSet->addProductionRule($production, $ruleKey, $rule);
+                }
             }
         }
         $tokenRuleMap = self::getConfigValue($config, self::TOKEN_RULE_MAP_KEY);
@@ -44,19 +55,23 @@ abstract class RuleSetLoader
     }
 
     /**
+     * @param GrammarInterface $grammar
      * @param ContextFactoryInterface $contextFactory
      * @param string $fileName
      * @return RuleSet
      * @throws Exception
      */
-    public static function loadFile(ContextFactoryInterface $contextFactory, string $fileName): RuleSet
-    {
+    public static function loadFile(
+        GrammarInterface $grammar,
+        ContextFactoryInterface $contextFactory,
+        string $fileName
+    ): RuleSet {
         /** @noinspection PhpIncludeInspection */
         $config = @include $fileName;
         if (false === $config) {
             throw new Exception("Config file {$fileName} not found");
         }
-        return self::loadConfig($contextFactory, $config);
+        return self::loadConfig($grammar, $contextFactory, $config);
     }
 
     /**

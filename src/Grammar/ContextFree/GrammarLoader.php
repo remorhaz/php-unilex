@@ -11,6 +11,8 @@ abstract class GrammarLoader
 
     public const PRODUCTION_MAP_KEY = 'productions';
 
+    public const ROOT_SYMBOL_KEY = 'root_symbol';
+
     public const START_SYMBOL_KEY = 'start_symbol';
 
     public const EOI_SYMBOL_KEY = 'eoi_symbol';
@@ -24,9 +26,10 @@ abstract class GrammarLoader
     {
         $tokenMap = self::getConfigValue($config, self::TOKEN_MAP_KEY);
         $productionMap = self::getConfigValue($config, self::PRODUCTION_MAP_KEY);
+        $rootSymbol = self::getConfigValue($config, self::ROOT_SYMBOL_KEY);
         $startSymbol = self::getConfigValue($config, self::START_SYMBOL_KEY);
         $eoiSymbol = self::getConfigValue($config, self::EOI_SYMBOL_KEY);
-        $grammar = new Grammar($startSymbol, $eoiSymbol);
+        $grammar = new Grammar($rootSymbol, $startSymbol, $eoiSymbol);
         self::loadFromMaps($grammar, $tokenMap, $productionMap);
         return $grammar;
     }

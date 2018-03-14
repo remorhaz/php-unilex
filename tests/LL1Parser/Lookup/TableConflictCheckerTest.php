@@ -23,6 +23,7 @@ class TableConflictCheckerTest extends TestCase
         $config = [
             GrammarLoader::TOKEN_MAP_KEY => [2 => 5, 3 => 5, 4 => 1],
             GrammarLoader::PRODUCTION_MAP_KEY => [1 => [[2], [3]]],
+            GrammarLoader::ROOT_SYMBOL_KEY => 0,
             GrammarLoader::START_SYMBOL_KEY => 1,
             GrammarLoader::EOI_SYMBOL_KEY => 4,
         ];
@@ -41,6 +42,7 @@ class TableConflictCheckerTest extends TestCase
         $config = [
             GrammarLoader::TOKEN_MAP_KEY => [3 => 1, 4 => 2],
             GrammarLoader::PRODUCTION_MAP_KEY => [1 => [[2, 3]], 2 => [[1], []]],
+            GrammarLoader::ROOT_SYMBOL_KEY => 0,
             GrammarLoader::START_SYMBOL_KEY => 1,
             GrammarLoader::EOI_SYMBOL_KEY => 4,
         ];
@@ -59,6 +61,7 @@ class TableConflictCheckerTest extends TestCase
         $config = [
             GrammarLoader::TOKEN_MAP_KEY => [2 => 1, 3 => 2],
             GrammarLoader::PRODUCTION_MAP_KEY => [1 => [[2], [], []]],
+            GrammarLoader::ROOT_SYMBOL_KEY => 0,
             GrammarLoader::START_SYMBOL_KEY => 1,
             GrammarLoader::EOI_SYMBOL_KEY => 3,
         ];

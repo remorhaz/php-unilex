@@ -20,10 +20,10 @@ class Production
 
     public function __toString()
     {
-        return "{$this->getSymbolId()}:{$this->getIndex()}";
+        return "{$this->getHeaderId()}:{$this->getIndex()}";
     }
 
-    public function getSymbolId(): int
+    public function getHeaderId(): int
     {
         return $this->symbolId;
     }

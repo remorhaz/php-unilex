@@ -100,9 +100,9 @@ class TableConflictChecker
         if (!$this->first->productionHasEpsilon(...$beta->getSymbolList())) {
             return;
         }
-        $follow = $this->follow->getTokens($alpha->getSymbolId());
+        $follow = $this->follow->getTokens($alpha->getHeaderId());
         $firstAlpha = $this->first->getProductionTokens(...$alpha->getSymbolList());
-        $message = "FIRST({$alpha})/FOLLOW({$alpha->getSymbolId()}) conflict (ε ∈ {$beta})";
+        $message = "FIRST({$alpha})/FOLLOW({$alpha->getHeaderId()}) conflict (ε ∈ {$beta})";
         $this->checkConflict($follow, $firstAlpha, $message);
     }
 

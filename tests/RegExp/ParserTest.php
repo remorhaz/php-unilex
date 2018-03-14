@@ -37,7 +37,7 @@ class ParserTest extends TestCase
         $reader = new TokenReader($buffer, new TokenMatcher, new TokenFactory($grammar));
         $tree = new Tree;
         $treeBuilder = new ParseTreeBuilder($grammar, $tree);
-        $parser = new Parser($grammar, $reader, SymbolType::NT_ROOT, $treeBuilder);
+        $parser = new Parser($grammar, $reader, $treeBuilder);
         $parser->run();
         $actualValue = $this->walkParseTree($tree);
         $expectedValue = [
@@ -128,9 +128,9 @@ class ParserTest extends TestCase
         $grammar = GrammarLoader::loadFile(ConfigFile::getPath());
         $reader = new TokenReader($buffer, new TokenMatcher, new TokenFactory($grammar));
         $tree = new Tree;
-        $treeRuleSet = RuleSetLoader::loadFile(new ContextFactory($tree), SDDConfigFile::getPath());
+        $treeRuleSet = RuleSetLoader::loadFile($grammar, new ContextFactory($tree), SDDConfigFile::getPath());
         $treeBuilder = new RuleSetApplier($treeRuleSet);
-        $parser = new Parser($grammar, $reader, SymbolType::NT_ROOT, $treeBuilder);
+        $parser = new Parser($grammar, $reader, $treeBuilder);
         $parser->run();
         $actualValue = $tree
             ->getRootNode()

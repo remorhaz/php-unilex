@@ -58,6 +58,11 @@ return [
     ],
 
     /**
+     * Virtual root symbol.
+     */
+    GrammarLoader::ROOT_SYMBOL_KEY => SymbolType::NT_ROOT,
+
+    /**
      * Starting symbol.
      */
     GrammarLoader::START_SYMBOL_KEY => SymbolType::NT_E0,

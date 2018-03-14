@@ -11,6 +11,8 @@ class Grammar implements GrammarInterface
 
     private $productionMap =[];
 
+    private $rootSymbol;
+
     private $startSymbol;
 
     private $eoiSymbol;
@@ -18,11 +20,13 @@ class Grammar implements GrammarInterface
     /**
      * Constructor. Accepts non-empty maps of terminal and non-terminal productions separately.
      *
+     * @param int $rootSymbol
      * @param int $startSymbol
      * @param int $eoiSymbol
      */
-    public function __construct(int $startSymbol, int $eoiSymbol)
+    public function __construct(int $rootSymbol, int $startSymbol, int $eoiSymbol)
     {
+        $this->rootSymbol = $rootSymbol;
         $this->startSymbol = $startSymbol;
         $this->eoiSymbol = $eoiSymbol;
     }
@@ -36,14 +40,19 @@ class Grammar implements GrammarInterface
         $this->tokenMap[$symbolId] = $tokenId;
     }
 
-    public function addProduction(int $symbolId, int ...$symbolIdList): void
+    public function addProduction(int $headerId, int ...$symbolIdList): void
     {
-        $isFirstProduction = !isset($this->productionMap[$symbolId]);
+        $isFirstProduction = !isset($this->productionMap[$headerId]);
         $index = $isFirstProduction
             ? 0
-            : count($this->productionMap[$symbolId]);
-        $production = new Production($symbolId, $index, ...$symbolIdList);
-        $this->productionMap[$production->getSymbolId()][$production->getIndex()] = $production;
+            : count($this->productionMap[$headerId]);
+        $production = new Production($headerId, $index, ...$symbolIdList);
+        $this->productionMap[$production->getHeaderId()][$production->getIndex()] = $production;
+    }
+
+    public function getRootSymbol(): int
+    {
+        return $this->rootSymbol;
     }
 
     public function getStartSymbol(): int
@@ -161,6 +170,9 @@ class Grammar implements GrammarInterface
      */
     public function getProduction(int $symbolId, int $productionIndex): Production
     {
+        if ($symbolId == $this->getRootSymbol()) {
+            return new Production($this->getRootSymbol(), 0, $this->getStartSymbol(), $this->getEoiSymbol());
+        }
         $productionList = $this->getProductionList($symbolId);
         if (!isset($productionList[$productionIndex])) {
             throw new Exception("Symbol {$symbolId} has no production at index {$productionIndex}");

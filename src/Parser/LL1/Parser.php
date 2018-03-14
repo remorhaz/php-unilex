@@ -31,8 +31,6 @@ class Parser
 
     private $nextSymbolIndex = 0;
 
-    private $rootSymbolId;
-
     /**
      * @var ParsedProduction[]
      */
@@ -41,12 +39,10 @@ class Parser
     public function __construct(
         GrammarInterface $grammar,
         TokenReaderInterface $tokenReader,
-        int $rootSymbolId,
         ParserListenerInterface $listener
     ) {
         $this->grammar = $grammar;
         $this->tokenReader = $tokenReader;
-        $this->rootSymbolId = $rootSymbolId;
         $this->listener = $listener;
         $this->symbolStack = new ParsedSymbolStack;
     }
@@ -56,7 +52,7 @@ class Parser
      */
     public function run(): void
     {
-        $this->initStack();
+        $this->initRun();
         while ($this->hasSymbolInStack()) {
             $symbol = $this->popSymbol();
             if ($symbol instanceof ParsedSymbol) {
@@ -71,18 +67,20 @@ class Parser
         }
     }
 
-    private function initStack(): void
+    private function initRun(): void
     {
         $this->nextSymbolIndex = 0;
         $this->productionMap = [];
         $this->symbolStack->reset();
         $this->listener->onStart();
-        $rootSymbol = new ParsedSymbol($this->getNextSymbolIndex(), $this->rootSymbolId);
+        $this->pushProduction($this->createRootProduction());
+    }
+
+    private function createRootProduction(): ParsedProduction
+    {
+        $rootSymbol = new ParsedSymbol($this->getNextSymbolIndex(), $this->grammar->getRootSymbol());
         $this->listener->onRootSymbol($rootSymbol);
-        $startSymbol = new ParsedSymbol($this->getNextSymbolIndex(), $this->grammar->getStartSymbol());
-        $eoiSymbol = new ParsedSymbol($this->getNextSymbolIndex(), $this->grammar->getEoiSymbol());
-        $rootProduction = new ParsedProduction($rootSymbol, 0, $startSymbol, $eoiSymbol);
-        $this->pushProduction($rootProduction);
+        return $this->createParsedProduction($rootSymbol, 0);
     }
 
     private function getNextSymbolIndex(): int
@@ -180,6 +178,11 @@ class Parser
         $productionIndex = $this
             ->getLookupTable()
             ->getProductionIndex($symbol->getSymbolId(), $token->getType());
+        return $this->createParsedProduction($symbol, $productionIndex);
+    }
+
+    private function createParsedProduction(ParsedSymbol $symbol, $productionIndex): ParsedProduction
+    {
         $grammarProduction = $this
             ->grammar
             ->getProduction($symbol->getSymbolId(), $productionIndex);

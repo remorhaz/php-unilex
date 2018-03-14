@@ -60,7 +60,7 @@ class FollowBuilder
             $rightPartFirst = $this->first->getProductionTokens(...$symbolIdList);
             $follow->addToken($targetSymbolId, ...$rightPartFirst);
             if ($this->first->productionHasEpsilon(...$symbolIdList)) {
-                $follow->mergeTokens($targetSymbolId, $production->getSymbolId());
+                $follow->mergeTokens($targetSymbolId, $production->getHeaderId());
             }
         };
     }

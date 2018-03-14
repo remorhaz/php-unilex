@@ -20,11 +20,17 @@ abstract class TreeRuleContext
         $this->production = $production;
     }
 
+    /**
+     * @param string $name
+     * @param $value
+     * @return mixed
+     * @deprecated
+     */
     abstract public function setAttribute(string $name, $value);
 
     abstract public function getAttribute(string $name);
 
-    protected function getTree(): Tree
+    public function getTree(): Tree
     {
         return $this->tree;
     }
@@ -90,6 +96,7 @@ abstract class TreeRuleContext
      * @param string $target
      * @param string $source
      * @return $this
+     * @deprecated
      */
     public function copyAttribute(string $target, string $source)
     {
@@ -103,6 +110,7 @@ abstract class TreeRuleContext
      * @param string|null $source
      * @return $this
      * @throws Exception
+     * @deprecated
      */
     public function copySymbolAttribute(int $symbolIndex, string $target, string $source = null)
     {

@@ -5,6 +5,7 @@ namespace Remorhaz\UniLex\Parser\SyntaxTree\SDD;
 use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\Parser\ParsedProduction;
 use Remorhaz\UniLex\Parser\LL1\SDD\SymbolContextInterface;
+use Remorhaz\UniLex\Parser\SyntaxTree\Node;
 use Remorhaz\UniLex\Parser\SyntaxTree\Tree;
 
 class SymbolRuleContext extends TreeRuleContext implements SymbolContextInterface
@@ -23,6 +24,7 @@ class SymbolRuleContext extends TreeRuleContext implements SymbolContextInterfac
      * @param $value
      * @return $this
      * @throws Exception
+     * @deprecated
      */
     public function setAttribute(string $name, $value)
     {
@@ -49,16 +51,51 @@ class SymbolRuleContext extends TreeRuleContext implements SymbolContextInterfac
     /**
      * @param string $target
      * @param string|null $source
-     * @return $this
+     * @return mixed
      * @throws Exception
      */
-    public function copyHeaderAttribute(string $target, string $source = null)
+    public function getHeaderAttribute(string $target, string $source = null)
     {
-        $value = $this
+        return $this
             ->getProduction()
             ->getHeader()
             ->getAttribute($source ?? $target);
-        $this->setAttribute($target, $value);
-        return $this;
+    }
+
+    /**
+     * @param string $attr
+     * @return Node
+     * @throws Exception
+     */
+    public function getNodeByAttribute(string $attr): Node
+    {
+        return $this
+            ->getTree()
+            ->getNode($this->getAttribute($attr));
+    }
+
+    /**
+     * @param string $attr
+     * @return Node
+     * @throws Exception
+     */
+    public function getNodeByHeaderAttribute(string $attr): Node
+    {
+        return $this
+            ->getTree()
+            ->getNode($this->getHeaderAttribute($attr));
+    }
+
+    /**
+     * @param int $index
+     * @param string $attr
+     * @return Node
+     * @throws Exception
+     */
+    public function getNodeBySymbolAttribute(int $index, string $attr): Node
+    {
+        return $this
+            ->getTree()
+            ->getNode($this->getSymbolAttribute($index, $attr));
     }
 }
