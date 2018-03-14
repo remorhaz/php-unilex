@@ -20,103 +20,34 @@ abstract class TreeRuleContext
         $this->production = $production;
     }
 
-    /**
-     * @param string $name
-     * @param $value
-     * @return mixed
-     * @deprecated
-     */
-    abstract public function setAttribute(string $name, $value);
-
-    abstract public function getAttribute(string $name);
-
-    public function getTree(): Tree
+    private function getTree(): Tree
     {
         return $this->tree;
     }
 
-    protected function getProduction(): ParsedProduction
+    private function getProduction(): ParsedProduction
     {
         return $this->production;
     }
 
-    /**
-     * @param string $attr
-     * @return Node
-     * @throws Exception
-     */
-    public function getNode(string $attr): Node
+    public function createNode(string $name): Node
     {
         return $this
-            ->getTree()
-            ->getNode($this->getAttribute($attr));
-    }
-
-    /**
-     * @param int $index
-     * @param string $attr
-     * @return Node
-     * @throws Exception
-     */
-    public function getSymbolNode(int $index, string $attr): Node
-    {
-        return $this
-            ->getTree()
-            ->getNode($this->getSymbolAttribute($index, $attr));
-    }
-
-    /**
-     * @param string $name
-     * @param string $attr
-     * @return Node
-     */
-    public function createNode(string $name, string $attr): Node
-    {
-        $node = $this
             ->getTree()
             ->createNode($name);
-        $this->setAttribute($attr, $node->getId());
-        return $node;
     }
 
     /**
-     * @param string $attr
+     * @param Node $node
      * @return $this
      * @throws Exception
      */
-    public function setRootNode(string $attr)
+    public function setRootNode(Node $node)
     {
         $this
             ->getTree()
-            ->setRootNode($this->getNode($attr));
+            ->setRootNode($node);
         return $this;
-    }
-
-    /**
-     * @param string $target
-     * @param string $source
-     * @return $this
-     * @deprecated
-     */
-    public function copyAttribute(string $target, string $source)
-    {
-        $this->setAttribute($target, $this->getAttribute($source));
-        return $this;
-    }
-
-    /**
-     * @param int $symbolIndex
-     * @param string $target
-     * @param string|null $source
-     * @return $this
-     * @throws Exception
-     * @deprecated
-     */
-    public function copySymbolAttribute(int $symbolIndex, string $target, string $source = null)
-    {
-        $value = $this->getSymbolAttribute($symbolIndex, $source ?? $target);
-        return $this
-            ->setAttribute($target, $value);
     }
 
     /**
@@ -146,5 +77,43 @@ abstract class TreeRuleContext
             $valueList[] = $this->getSymbolAttribute($index, $attr);
         }
         return $valueList;
+    }
+
+    /**
+     * @param int $index
+     * @param string $attr
+     * @return Node
+     * @throws Exception
+     */
+    public function getNodeBySymbolAttribute(int $index, string $attr): Node
+    {
+        return $this
+            ->getTree()
+            ->getNode($this->getSymbolAttribute($index, $attr));
+    }
+
+    /**
+     * @param string $attr
+     * @return Node
+     * @throws Exception
+     */
+    public function getNodeByHeaderAttribute(string $attr): Node
+    {
+        return $this
+            ->getTree()
+            ->getNode($this->getHeaderAttribute($attr));
+    }
+
+    /**
+     * @param string $attr
+     * @return mixed
+     * @throws Exception
+     */
+    public function getHeaderAttribute(string $attr)
+    {
+        return $this
+            ->getProduction()
+            ->getHeader()
+            ->getAttribute($attr);
     }
 }

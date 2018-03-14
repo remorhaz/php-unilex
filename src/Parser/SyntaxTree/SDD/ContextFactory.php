@@ -23,7 +23,7 @@ class ContextFactory implements ContextFactoryInterface
 
     public function createSymbolContext(ParsedProduction $production, int $symbolIndex): SymbolContextInterface
     {
-        return new SymbolRuleContext($this->tree, $production, $symbolIndex);
+        return new SymbolRuleContext($this->tree, $production);
     }
 
     public function createProductionContext(ParsedProduction $production): ProductionContextInterface
