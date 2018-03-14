@@ -85,4 +85,9 @@ class Node
     {
         return $this->childMap;
     }
+
+    public function getAttributeList(): array
+    {
+        return $this->attributeMap;
+    }
 }

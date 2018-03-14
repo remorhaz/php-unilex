@@ -11,7 +11,6 @@
             <directory>examples/tests/</directory>
         </testsuite>
         <testsuite name="examples">
-            <directory>tests/</directory>
             <directory>examples/tests/</directory>
         </testsuite>
         <testsuite name="library">
