@@ -5,11 +5,8 @@ namespace Remorhaz\UniLex\Test\RegExp;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Grammar\ContextFree\GrammarLoader;
 use Remorhaz\UniLex\Grammar\ContextFree\TokenFactory;
-use Remorhaz\UniLex\Parser\LL1\TranslationSchemeApplier;
-use Remorhaz\UniLex\Grammar\SDD\TranslationSchemeLoader;
-use Remorhaz\UniLex\RegExp\Grammar\SDD\ConfigFile as SDDConfigFile;
 use Remorhaz\UniLex\Parser\SyntaxTree\Tree;
-use Remorhaz\UniLex\Parser\SyntaxTree\SDD\ContextFactory;
+use Remorhaz\UniLex\RegExp\ParserFactory;
 use Remorhaz\UniLex\Token;
 use Remorhaz\UniLex\TokenReader;
 use Remorhaz\UniLex\Parser\LL1\Parser;
@@ -125,12 +122,8 @@ class ParserTest extends TestCase
     public function testParserSemantic(): void
     {
         $buffer = CharBufferFactory::createFromUtf8String('a{12,14}bc');
-        $grammar = GrammarLoader::loadFile(ConfigFile::getPath());
-        $reader = new TokenReader($buffer, new TokenMatcher, new TokenFactory($grammar));
         $tree = new Tree;
-        $scheme = TranslationSchemeLoader::loadFile($grammar, new ContextFactory($tree), SDDConfigFile::getPath());
-        $treeBuilder = new TranslationSchemeApplier($scheme);
-        $parser = new Parser($grammar, $reader, $treeBuilder);
+        $parser = ParserFactory::createFromBuffer($tree, $buffer);
         $parser->run();
         $actualValue = $tree
             ->getRootNode()
