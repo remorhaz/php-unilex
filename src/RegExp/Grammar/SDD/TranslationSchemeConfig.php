@@ -180,16 +180,17 @@ return [
                 's.concatenable_node' => function (ProductionRuleContext $context): int {
                     [$min, $max, $isMaxInfinite] = $context
                         ->getSymbolAttributeList(1, 's.min', 's.max', 's.is_max_infinite');
-                    $shouldRepeat = 1 != $min || 1 != $max || $isMaxInfinite;
-                    if ($shouldRepeat) {
-                        $context
-                            ->createNode('repeat')
-                            ->setAttribute('min', $min)
-                            ->setAttribute('max', $max)
-                            ->setAttribute('is_max_infinite', $isMaxInfinite)
-                            ->addChild($context->getNodeBySymbolAttribute(0, 's.repeatable_node'));
+                    $shouldNotRepeat = 1 == $min && 1 == $max && !$isMaxInfinite;
+                    if ($shouldNotRepeat) {
+                        return $context->getSymbolAttribute(0, 's.repeatable_node');
                     }
-                    return $context->getSymbolAttribute(0, 's.repeatable_node');
+                    $repeatNode = $context
+                        ->createNode('repeat')
+                        ->setAttribute('min', $min)
+                        ->setAttribute('max', $max)
+                        ->setAttribute('is_max_infinite', $isMaxInfinite)
+                        ->addChild($context->getNodeBySymbolAttribute(0, 's.repeatable_node'));
+                    return $repeatNode->getId();
                 },
             ],
         ],

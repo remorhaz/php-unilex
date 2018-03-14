@@ -2,11 +2,11 @@
 
 namespace Remorhaz\UniLex\RegExp\Grammar\SDD;
 
-abstract class ConfigFile
+abstract class TranslationSchemeConfigFile
 {
 
     public static function getPath(): string
     {
-        return realpath(__DIR__ . "/Config.php");
+        return realpath(__DIR__ . "/TranslationSchemeConfig.php");
     }
 }

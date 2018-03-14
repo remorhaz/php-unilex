@@ -11,7 +11,7 @@ use Remorhaz\UniLex\Parser\LL1\TranslationSchemeApplier;
 use Remorhaz\UniLex\Parser\SyntaxTree\SDD\ContextFactory;
 use Remorhaz\UniLex\Parser\SyntaxTree\Tree;
 use Remorhaz\UniLex\RegExp\Grammar\ConfigFile;
-use Remorhaz\UniLex\RegExp\Grammar\SDD\ConfigFile as SDDConfigFile;
+use Remorhaz\UniLex\RegExp\Grammar\SDD\TranslationSchemeConfigFile as SDDConfigFile;
 use Remorhaz\UniLex\TokenReader;
 
 abstract class ParserFactory
