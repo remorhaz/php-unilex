@@ -1,6 +1,6 @@
 <?php
 
-namespace Remorhaz\UniLex\RegExp\Grammar\SDD;
+namespace Remorhaz\UniLex\RegExp\Grammar;
 
 abstract class TranslationSchemeConfigFile
 {
