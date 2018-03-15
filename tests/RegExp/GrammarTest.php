@@ -133,6 +133,12 @@ class GrammarTest extends TestCase
                     'nodes' => [$symbolA, $symbolEmpty, $symbolB],
                 ],
             ],
+            "Any symbol (.)" => [
+                '.',
+                (object) [
+                    'name' => 'symbol_any',
+                ],
+            ],
         ];
     }
 

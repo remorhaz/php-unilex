@@ -282,18 +282,17 @@ return [
             // [SymbolType::NT_SYMBOL]
             2 => [
                 's.repeatable_node' => function (ProductionRuleContext $context): int {
-                    $node = $context
-                        ->createNode('symbol')
-                        ->setAttribute('code', $context->getSymbolAttribute(0, 's.code'));
-                    return $node->getId();
+                    return $context->getSymbolAttribute(0, 's.symbol_node');
                 },
             ],
         ],
         SymbolType::NT_SYMBOL => [
             // [SymbolType::NT_SYMBOL_ANY]
             0 => [
-                function () {
-                    throw new Exception("Dot symbol is not implemented yet");
+                's.symbol_node' => function (ProductionRuleContext $context): int {
+                    return $context
+                        ->createNode('symbol_any')
+                        ->getId();
                 },
             ],
             // [SymbolType::NT_ESC_SYMBOL]
@@ -304,8 +303,11 @@ return [
             ],
             // [SymbolType::NT_UNESC_SYMBOL]
             2 => [
-                's.code' => function (ProductionRuleContext $context): int {
-                    return $context->getSymbolAttribute(0, 's.code');
+                's.symbol_node' => function (ProductionRuleContext $context): int {
+                    return $context
+                        ->createNode('symbol')
+                        ->setAttribute('code', $context->getSymbolAttribute(0, 's.code'))
+                        ->getId();
                 },
             ],
         ],
