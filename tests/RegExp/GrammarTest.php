@@ -9,7 +9,7 @@ use Remorhaz\UniLex\RegExp\ParserFactory;
 use Remorhaz\UniLex\Unicode\CharBufferFactory;
 
 /**
- * @coversNothing
+ * @covers \Remorhaz\UniLex\RegExp\Grammar\TranslationSchemeConfig
  */
 class GrammarTest extends TestCase
 {
@@ -180,6 +180,13 @@ class GrammarTest extends TestCase
                     ],
                 ],
              ],
+            "Single simple escaped symbol" => [
+                '\s',
+                (object) [
+                    'name' => 'esc_simple',
+                    'attr' => (object) ['code' => 0x73],
+                ],
+            ],
         ];
     }
 
