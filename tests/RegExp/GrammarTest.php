@@ -32,159 +32,72 @@ class GrammarTest extends TestCase
 
     public function providerSyntaxTree(): array
     {
+        $symbolA = (object) [
+            'name' => 'symbol',
+            'attr' => (object) ['code' => 0x61],
+        ];
+        $symbolB = (object) [
+            'name' => 'symbol',
+            'attr' => (object) ['code' => 0x62],
+        ];
         return [
-            "Single latin char" => [
-                'a',
-                (object) [
-                    'name' => 'symbol',
-                    'attr' => (object) [
-                        'code' => 0x61,
-                    ],
-                ],
-            ],
+            "Single symbol (skips concatenate node)" => ['a', $symbolA],
             "Concatenation of two latin chars" => [
                 'ab',
                 (object) [
                     'name' => 'concatenate',
-                    'nodes' => [
-                        (object) [
-                            'name' => 'symbol',
-                            'attr' => (object) [
-                                'code' => 0x61,
-                            ],
-                        ],
-                        (object) [
-                            'name' => 'symbol',
-                            'attr' => (object) [
-                                'code' => 0x62,
-                            ],
-                        ],
-                    ],
+                    'nodes' => [$symbolA, $symbolB],
                 ],
             ],
-            "Optional latin char" => [
+            "Optional symbol (?)" => [
                 'a?',
                 (object) [
                     'name' => 'repeat',
-                    'attr' => (object) [
-                        'min' => 0,
-                        'max' => 1,
-                        'is_max_infinite' => false,
-                    ],
-                    'nodes' => [
-                        (object) [
-                            'name' => 'symbol',
-                            'attr' => (object) [
-                                'code' => 0x61,
-                            ],
-                        ],
-                    ],
+                    'attr' => (object) ['min' => 0, 'max' => 1, 'is_max_infinite' => false],
+                    'nodes' => [$symbolA],
                 ],
             ],
-            "Zero or many latin chars" => [
+            "Zero or many symbols (*)" => [
                 'a*',
                 (object) [
                     'name' => 'repeat',
-                    'attr' => (object) [
-                        'min' => 0,
-                        'max' => 0,
-                        'is_max_infinite' => true,
-                    ],
-                    'nodes' => [
-                        (object) [
-                            'name' => 'symbol',
-                            'attr' => (object) [
-                                'code' => 0x61,
-                            ],
-                        ],
-                    ],
+                    'attr' => (object) ['min' => 0, 'max' => 0, 'is_max_infinite' => true],
+                    'nodes' => [$symbolA],
                 ],
             ],
-            "One or many latin chars" => [
+            "One or many symbols (+)" => [
                 'a+',
                 (object) [
                     'name' => 'repeat',
-                    'attr' => (object) [
-                        'min' => 1,
-                        'max' => 0,
-                        'is_max_infinite' => true,
-                    ],
-                    'nodes' => [
-                        (object) [
-                            'name' => 'symbol',
-                            'attr' => (object) [
-                                'code' => 0x61,
-                            ],
-                        ],
-                    ],
+                    'attr' => (object) ['min' => 1, 'max' => 0, 'is_max_infinite' => true],
+                    'nodes' => [$symbolA],
                 ],
             ],
-            "Exact number of latin chars" => [
+            "Exact number of symbols (limit)" => [
                 'a{5}',
                 (object) [
                     'name' => 'repeat',
-                    'attr' => (object) [
-                        'min' => 5,
-                        'max' => 5,
-                        'is_max_infinite' => false,
-                    ],
-                    'nodes' => [
-                        (object) [
-                            'name' => 'symbol',
-                            'attr' => (object) [
-                                'code' => 0x61,
-                            ],
-                        ],
-                    ],
+                    'attr' => (object) ['min' => 5, 'max' => 5, 'is_max_infinite' => false],
+                    'nodes' => [$symbolA],
                 ],
             ],
-            "At least number of latin chars" => [
+            "Open number range of symbols (limit)" => [
                 'a{3,}',
                 (object) [
                     'name' => 'repeat',
-                    'attr' => (object) [
-                        'min' => 3,
-                        'max' => 0,
-                        'is_max_infinite' => true,
-                    ],
-                    'nodes' => [
-                        (object) [
-                            'name' => 'symbol',
-                            'attr' => (object) [
-                                'code' => 0x61,
-                            ],
-                        ],
-                    ],
+                    'attr' => (object) ['min' => 3, 'max' => 0, 'is_max_infinite' => true],
+                    'nodes' => [$symbolA],
                 ],
             ],
-            "Exact count range of latin chars" => [
+            "Fixed number range of symbols (limit)" => [
                 'a{3,5}',
                 (object) [
                     'name' => 'repeat',
-                    'attr' => (object) [
-                        'min' => 3,
-                        'max' => 5,
-                        'is_max_infinite' => false,
-                    ],
-                    'nodes' => [
-                        (object) [
-                            'name' => 'symbol',
-                            'attr' => (object) [
-                                'code' => 0x61,
-                            ],
-                        ],
-                    ],
+                    'attr' => (object) ['min' => 3, 'max' => 5, 'is_max_infinite' => false],
+                    'nodes' => [$symbolA],
                 ],
             ],
-            "Exactly one latin char (repeat node skipped)" => [
-                'a{1,1}',
-                (object) [
-                    'name' => 'symbol',
-                    'attr' => (object) [
-                        'code' => 0x61,
-                    ],
-                ],
-            ],
+            "Exactly one symbol (limit) (skips repeat node)" => ['a{1,1}', $symbolA],
         ];
     }
 
