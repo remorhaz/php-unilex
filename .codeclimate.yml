@@ -1,0 +1,6 @@
+version: 2
+exclude-patterns:
+  - "build/"
+  - "generated/"
+  - "tests/"
+  - "vendor/"
