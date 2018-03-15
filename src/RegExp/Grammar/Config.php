@@ -45,7 +45,11 @@ return [
             [SymbolType::NT_PART, SymbolType::NT_ALT_PARTS],
         ],
         SymbolType::NT_ALT_PARTS => [
-            [SymbolType::NT_ALT_SEPARATOR, SymbolType::NT_PARTS],
+            [SymbolType::NT_ALT_SEPARATOR, SymbolType::NT_PART, SymbolType::NT_ALT_PARTS_TAIL],
+            [],
+        ],
+        SymbolType::NT_ALT_PARTS_TAIL => [
+            [SymbolType::NT_ALT_SEPARATOR, SymbolType::NT_PART, SymbolType::NT_ALT_PARTS_TAIL],
             [],
         ],
         SymbolType::NT_PART => [

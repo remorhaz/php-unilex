@@ -40,13 +40,24 @@ class GrammarTest extends TestCase
             'name' => 'symbol',
             'attr' => (object) ['code' => 0x62],
         ];
+        $symbolC = (object) [
+            'name' => 'symbol',
+            'attr' => (object) ['code' => 0x63],
+        ];
         return [
             "Single symbol (skips concatenate node)" => ['a', $symbolA],
-            "Concatenation of two latin chars" => [
+            "Concatenation of two symbols" => [
                 'ab',
                 (object) [
                     'name' => 'concatenate',
                     'nodes' => [$symbolA, $symbolB],
+                ],
+            ],
+            "Concatenation of three symbols" => [
+                'abc',
+                (object) [
+                    'name' => 'concatenate',
+                    'nodes' => [$symbolA, $symbolB, $symbolC],
                 ],
             ],
             "Optional symbol (?)" => [
@@ -98,6 +109,20 @@ class GrammarTest extends TestCase
                 ],
             ],
             "Exactly one symbol (limit) (skips repeat node)" => ['a{1,1}', $symbolA],
+            "Alternative of two symbols" => [
+                'a|b',
+                (object) [
+                    'name' => 'alternative',
+                    'nodes' => [$symbolA, $symbolB],
+                ],
+            ],
+            "Alternative of three symbols" => [
+                'a|b|c',
+                (object) [
+                    'name' => 'alternative',
+                    'nodes' => [$symbolA, $symbolB, $symbolC],
+                ],
+            ],
         ];
     }
 

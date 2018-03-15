@@ -18,8 +18,52 @@ return [
             0 => [
                 // SymbolType::NT_ALT_PARTS
                 1 => [
-                    'i.concatenate_node' => function (SymbolRuleContext $context): int {
-                        return $context->getSymbolAttribute(0, 's.concatenate_node');
+                    'i.alternative_node' => function (SymbolRuleContext $context): int {
+                        return $context->getSymbolAttribute(0, 's.alternative_node');
+                    },
+                ],
+            ],
+        ],
+        SymbolType::NT_ALT_PARTS => [
+            0 => [
+                1 => [
+                    // SymbolType::NT_PART
+                    'i.alternatives_node' => function (SymbolRuleContext $context): int {
+                        $alternativesNode = $context
+                            ->createNode('alternative')
+                            ->addChild($context->getNodeByHeaderAttribute('i.alternative_node'));
+                        return $alternativesNode->getId();
+                    },
+                ],
+                2 => [
+                    // SymbolType::NT_ALT_PARTS_TAIL
+                    'i.alternatives_node' => function (SymbolRuleContext $context): int {
+                        return $context->getSymbolAttribute(1, 'i.alternatives_node');
+                    },
+                    'i.alternative_node' => function (SymbolRuleContext $context): int {
+                        return $context->getSymbolAttribute(1, 's.alternative_node');
+                    },
+                ],
+            ],
+        ],
+        SymbolType::NT_ALT_PARTS_TAIL => [
+            0 => [
+                1 => [
+                    // SymbolType::NT_PART
+                    'i.alternatives_node' => function (SymbolRuleContext $context): int {
+                        return $context
+                            ->getNodeByHeaderAttribute('i.alternatives_node')
+                            ->addChild($context->getNodeByHeaderAttribute('i.alternative_node'))
+                            ->getId();
+                    },
+                ],
+                2 => [
+                    // SymbolType::NT_ALT_PARTS_TAIL
+                    'i.alternatives_node' => function (SymbolRuleContext $context): int {
+                        return $context->getSymbolAttribute(1, 'i.alternatives_node');
+                    },
+                    'i.alternative_node' => function (SymbolRuleContext $context): int {
+                        return $context->getSymbolAttribute(1, 's.alternative_node');
                     },
                 ],
             ],
@@ -98,31 +142,51 @@ return [
             0 => [
                 function (ProductionRuleContext $context): void {
                     $context
-                        ->setRootNode($context->getNodeBySymbolAttribute(0, 's.alternative_node'));
+                        ->setRootNode($context->getNodeBySymbolAttribute(0, 's.alternatives_node'));
                 },
             ],
         ],
+
+        /**
+         * Alternative patterns.
+         */
         SymbolType::NT_PARTS => [
             // [SymbolType::NT_PART, SymbolType::NT_ALT_PARTS]
             0 => [
-                's.alternative_node' => function (ProductionRuleContext $context): int {
-                    return $context->getSymbolAttribute(1, 'i.concatenate_node');
+                's.alternatives_node' => function (ProductionRuleContext $context): int {
+                    return $context->getSymbolAttribute(1, 's.alternatives_node');
                 },
             ],
         ],
         SymbolType::NT_ALT_PARTS => [
-            // [SymbolType::NT_ALT_SEPARATOR, SymbolType::NT_PARTS]
+            // [SymbolType::NT_ALT_SEPARATOR, SymbolType::NT_PART, SymbolType::NT_ALT_PARTS_TAIL]
             0 => [
-                function (): void {
-                    throw new Exception("Alternatives are not implemented yet");
+                's.alternatives_node' => function (ProductionRuleContext $context): int {
+                    return $context->getSymbolAttribute(2, 's.alternatives_node');
                 },
             ],
             // []
             1 => [
-                's.alternative_node' => function (ProductionRuleContext $context): int {
-                    // TODO: Temporary hack, grammar needs modification to support alternatives
-                    return $context->getHeaderAttribute('i.concatenate_node');
+                's.alternatives_node' => function (ProductionRuleContext $context): int {
+                    return $context->getHeaderAttribute('i.alternative_node');
                 },
+            ],
+        ],
+        SymbolType::NT_ALT_PARTS_TAIL => [
+            // [SymbolType::NT_ALT_SEPARATOR, SymbolType::NT_PART, SymbolType::NT_ALT_PARTS_TAIL]
+            0 => [
+                's.alternatives_node' => function (ProductionRuleContext $context): int {
+                    return $context->getSymbolAttribute(2, 's.alternatives_node');
+                }
+            ],
+            // []
+            1 => [
+                's.alternatives_node' => function (ProductionRuleContext $context): int {
+                    $context
+                        ->getNodeByHeaderAttribute('i.alternatives_node')
+                        ->addChild($context->getNodeByHeaderAttribute('i.alternative_node'));
+                    return $context->getHeaderAttribute('i.alternatives_node');
+                }
             ],
         ],
 
@@ -132,7 +196,7 @@ return [
         SymbolType::NT_PART => [
             // [SymbolType::NT_ITEM, SymbolType::NT_MORE_ITEMS]
             0 => [
-                's.concatenate_node' => function (ProductionRuleContext $context): int {
+                's.alternative_node' => function (ProductionRuleContext $context): int {
                     return $context->getSymbolAttribute(1, 's.concatenate_node');
                 },
             ],

@@ -140,6 +140,7 @@ abstract class SymbolType
 
     const NT_MORE_ITEMS                 = 0x85;
     const NT_MORE_ITEMS_TAIL            = 0x86;
+    const NT_ALT_PARTS_TAIL             = 0x87;
 
     const T_INVALID                     = 0xFE;
     const T_EOI                         = 0xFF;
