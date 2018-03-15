@@ -25,13 +25,15 @@ class GrammarTest extends TestCase
     {
         $buffer = CharBufferFactory::createFromUtf8String($text);
         $tree = new Tree;
-        $parser = ParserFactory::createFromBuffer($tree, $buffer);
-        $parser->run();
+        ParserFactory::createFromBuffer($tree, $buffer)->run();
         self::assertEquals($expectedValue, $this->exportSyntaxTree($tree));
     }
 
     public function providerSyntaxTree(): array
     {
+        $symbolEmpty = (object) [
+            'name' => 'empty',
+        ];
         $symbolA = (object) [
             'name' => 'symbol',
             'attr' => (object) ['code' => 0x61],
@@ -45,6 +47,7 @@ class GrammarTest extends TestCase
             'attr' => (object) ['code' => 0x63],
         ];
         return [
+            "Empty string" => ['', $symbolEmpty],
             "Single symbol (skips concatenate node)" => ['a', $symbolA],
             "Concatenation of two symbols" => [
                 'ab',
@@ -121,6 +124,13 @@ class GrammarTest extends TestCase
                 (object) [
                     'name' => 'alternative',
                     'nodes' => [$symbolA, $symbolB, $symbolC],
+                ],
+            ],
+            "Alternative of two symbols and empty string" => [
+                'a||b',
+                (object) [
+                    'name' => 'alternative',
+                    'nodes' => [$symbolA, $symbolEmpty, $symbolB],
                 ],
             ],
         ];

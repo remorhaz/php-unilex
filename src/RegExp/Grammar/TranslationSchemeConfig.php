@@ -200,6 +200,14 @@ return [
                     return $context->getSymbolAttribute(1, 's.concatenate_node');
                 },
             ],
+            // []
+            1 => [
+                's.alternative_node' => function (ProductionRuleContext $context): int {
+                    return $context
+                        ->createNode('empty')
+                        ->getId();
+                }
+            ],
         ],
         SymbolType::NT_MORE_ITEMS => [
             // [SymbolType::NT_ITEM, SymbolType::NT_MORE_ITEMS_TAIL]
