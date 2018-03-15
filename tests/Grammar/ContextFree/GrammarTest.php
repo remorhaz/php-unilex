@@ -12,6 +12,13 @@ use Remorhaz\UniLex\Grammar\ContextFree\Grammar;
 class GrammarTest extends TestCase
 {
 
+    public function testGetRootSymbol_ConstructWithValue_ReturnsSameValue(): void
+    {
+        $grammar = new Grammar(0, 1, 2);
+        $actualValue = $grammar->getRootSymbol();
+        self::assertEquals(0, $actualValue);
+    }
+
     public function testGetStartSymbol_ConstructWithValue_ReturnsSameValue(): void
     {
         $grammar = new Grammar(0, 1, 2);
@@ -281,6 +288,19 @@ class GrammarTest extends TestCase
         $grammar = new Grammar(0, 1, 2);
         $grammar->addProduction(1, 3, 4);
         $grammar->getProduction(1, 1);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testGetProduction_RootSymbol_ReturnsRootProduction(): void
+    {
+        $grammar = new Grammar(0, 1, 2);
+        $grammar->addProduction(1, 3);
+        $production = $grammar->getProduction(0, 0);
+        self::assertSame(0, $production->getHeaderId());
+        self::assertSame(0, $production->getIndex());
+        self::assertSame([1, 2], $production->getSymbolList());
     }
 
     /**
