@@ -1,5 +1,5 @@
 version: 2
-exclude-patterns:
+exclude_patterns:
   - "build/"
   - "generated/"
   - "tests/"
