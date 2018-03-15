@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<project name="UniLex" basedir="." default="build-lookup-tables">
+    <target name="build-lookup-tables" description="Build LL(1) parser lookup tables">
+        <taskdef classname="src.Phing.BuildRegExpLookupTable" name="regexp-lookup-table" />
+        <regexp-lookup-table />
+    </target>
+</project>

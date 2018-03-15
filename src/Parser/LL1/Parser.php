@@ -5,6 +5,7 @@ namespace Remorhaz\UniLex\Parser\LL1;
 use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\Grammar\ContextFree\GrammarInterface;
 use Remorhaz\UniLex\Parser\EopSymbol;
+use Remorhaz\UniLex\Parser\LL1\Lookup\Table;
 use Remorhaz\UniLex\Parser\ParsedProduction;
 use Remorhaz\UniLex\Parser\ParsedSymbol;
 use Remorhaz\UniLex\Parser\ParsedToken;
@@ -45,6 +46,22 @@ class Parser
         $this->tokenReader = $tokenReader;
         $this->listener = $listener;
         $this->symbolStack = new ParsedSymbolStack;
+    }
+
+    /**
+     * @param string $fileName
+     * @throws Exception
+     */
+    public function loadLookupTable(string $fileName): void
+    {
+        /** @noinspection PhpIncludeInspection */
+        $data = @include $fileName;
+        if (false === $data) {
+            throw new Exception("Failed to load lookup table from file {$fileName}");
+        }
+        $table = new Table;
+        $table->importMap($data);
+        $this->lookupTable = $table;
     }
 
     /**

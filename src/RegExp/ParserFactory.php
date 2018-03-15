@@ -29,6 +29,8 @@ abstract class ParserFactory
         $reader = new TokenReader($buffer, new TokenMatcher, new TokenFactory($grammar));
         $scheme = TranslationSchemeLoader::loadFile($grammar, new ContextFactory($tree), SDDConfigFile::getPath());
         $treeBuilder = new TranslationSchemeApplier($scheme);
-        return new Parser($grammar, $reader, $treeBuilder);
+        $parser = new Parser($grammar, $reader, $treeBuilder);
+        $parser->loadLookupTable(ConfigFile::getLookupTablePath());
+        return $parser;
     }
 }

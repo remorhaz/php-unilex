@@ -9,4 +9,10 @@ abstract class ConfigFile
     {
         return realpath(__DIR__ . "/Config.php");
     }
+
+    public static function getLookupTablePath(): string
+    {
+        return
+            realpath(__DIR__ . "/../../../generated/RegExp/Grammar") . DIRECTORY_SEPARATOR . "LookupTable.php";
+    }
 }

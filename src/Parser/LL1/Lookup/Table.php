@@ -46,4 +46,9 @@ class Table implements TableInterface
     {
         return $this->map;
     }
+
+    public function importMap(array $map): void
+    {
+        $this->map = $map;
+    }
 }
