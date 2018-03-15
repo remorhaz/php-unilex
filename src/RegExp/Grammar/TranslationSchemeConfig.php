@@ -269,8 +269,8 @@ return [
         SymbolType::NT_ITEM_BODY => [
             // [SymbolType::NT_GROUP]
             0 => [
-                function () {
-                    throw new Exception("Groups are not implemented yet");
+                's.repeatable_node' => function (ProductionRuleContext $context): int {
+                    return $context->getSymbolAttribute(0, 's.group_node');
                 },
             ],
             // [SymbolType::NT_CLASS_]
@@ -309,6 +309,14 @@ return [
                         ->setAttribute('code', $context->getSymbolAttribute(0, 's.code'))
                         ->getId();
                 },
+            ],
+        ],
+        SymbolType::NT_GROUP => [
+            // [SymbolType::NT_GROUP_START, SymbolType::NT_PARTS, SymbolType::NT_GROUP_END]
+            0 => [
+                's.group_node' => function (ProductionRuleContext $context): int {
+                    return $context->getSymbolAttribute(1, 's.alternatives_node');
+                }
             ],
         ],
 

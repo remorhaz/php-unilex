@@ -126,7 +126,7 @@ class GrammarTest extends TestCase
                     'nodes' => [$symbolA, $symbolB, $symbolC],
                 ],
             ],
-            "Alternative of two symbols and empty string" => [
+            "Alternative of two symbols and empty string between them" => [
                 'a||b',
                 (object) [
                     'name' => 'alternative',
@@ -137,6 +137,27 @@ class GrammarTest extends TestCase
                 '.',
                 (object) [
                     'name' => 'symbol_any',
+                ],
+            ],
+            "Symbol in a group" => ['(a)', $symbolA],
+            "Concatenation of two symbols inside and outside of a group" => [
+                'a(b)',
+                (object) [
+                    'name' => 'concatenate',
+                    'nodes' => [$symbolA, $symbolB],
+                ]
+            ],
+            "Repeated alternative of two symbols in a group" => [
+                '(a|b)+',
+                (object) [
+                    'name' => 'repeat',
+                    'attr' => (object) ['min' => 1, 'max' => 0, 'is_max_infinite' => true],
+                    'nodes' => [
+                        (object) [
+                            'name' => 'alternative',
+                            'nodes' => [$symbolA, $symbolB],
+                        ],
+                    ],
                 ],
             ],
         ];
