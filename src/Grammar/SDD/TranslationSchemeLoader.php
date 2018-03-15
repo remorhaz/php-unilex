@@ -18,14 +18,14 @@ abstract class TranslationSchemeLoader
      * @param GrammarInterface $grammar
      * @param ContextFactoryInterface $contextFactory
      * @param array $config
-     * @return TranslationScheme
+     * @return TranslationSchemeInterface
      * @throws Exception
      */
     public static function loadConfig(
         GrammarInterface $grammar,
         ContextFactoryInterface $contextFactory,
         array $config
-    ): TranslationScheme {
+    ): TranslationSchemeInterface {
         $ruleSet = new TranslationScheme($contextFactory);
         $symbolRuleMap = self::getConfigValue($config, self::SYMBOL_RULE_MAP_KEY);
         foreach ($symbolRuleMap as $headerId => $productionMap) {
@@ -60,14 +60,14 @@ abstract class TranslationSchemeLoader
      * @param GrammarInterface $grammar
      * @param ContextFactoryInterface $contextFactory
      * @param string $fileName
-     * @return TranslationScheme
+     * @return TranslationSchemeInterface
      * @throws Exception
      */
     public static function loadFile(
         GrammarInterface $grammar,
         ContextFactoryInterface $contextFactory,
         string $fileName
-    ): TranslationScheme {
+    ): TranslationSchemeInterface {
         /** @noinspection PhpIncludeInspection */
         $config = @include $fileName;
         if (false === $config) {

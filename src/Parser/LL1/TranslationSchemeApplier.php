@@ -2,8 +2,7 @@
 
 namespace Remorhaz\UniLex\Parser\LL1;
 
-use Remorhaz\UniLex\Exception;
-use Remorhaz\UniLex\Grammar\SDD\TranslationScheme;
+use Remorhaz\UniLex\Grammar\SDD\TranslationSchemeInterface;
 use Remorhaz\UniLex\Parser\ParsedProduction;
 use Remorhaz\UniLex\Parser\ParsedSymbol;
 use Remorhaz\UniLex\Parser\ParsedToken;
@@ -13,7 +12,7 @@ class TranslationSchemeApplier extends AbstractParserListener
 
     private $scheme;
 
-    public function __construct(TranslationScheme $scheme)
+    public function __construct(TranslationSchemeInterface $scheme)
     {
         $this->scheme = $scheme;
     }
@@ -21,7 +20,6 @@ class TranslationSchemeApplier extends AbstractParserListener
     /**
      * @param int $symbolIndex
      * @param ParsedProduction $production
-     * @throws Exception
      */
     public function onSymbol(int $symbolIndex, ParsedProduction $production): void
     {
@@ -34,7 +32,6 @@ class TranslationSchemeApplier extends AbstractParserListener
     /**
      * @param ParsedSymbol $symbol
      * @param ParsedToken $token
-     * @throws Exception
      */
     public function onToken(ParsedSymbol $symbol, ParsedToken $token): void
     {
@@ -46,7 +43,6 @@ class TranslationSchemeApplier extends AbstractParserListener
 
     /**
      * @param ParsedProduction $production
-     * @throws Exception
      */
     public function onFinishProduction(ParsedProduction $production): void
     {

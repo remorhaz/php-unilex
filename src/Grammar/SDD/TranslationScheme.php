@@ -9,7 +9,7 @@ use Remorhaz\UniLex\Parser\ParsedProduction;
 use Remorhaz\UniLex\Parser\ParsedSymbol;
 use Remorhaz\UniLex\Parser\ParsedToken;
 
-class TranslationScheme
+class TranslationScheme implements TranslationSchemeInterface
 {
 
     /**
@@ -134,7 +134,7 @@ class TranslationScheme
      * @param ParsedProduction $production
      * @return Closure[]
      */
-    public function getProductionActionList(ParsedProduction $production): array
+    private function getProductionActionList(ParsedProduction $production): array
     {
         $headerId = $production
             ->getHeader()
