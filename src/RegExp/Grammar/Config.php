@@ -294,11 +294,11 @@ return [
             [SymbolType::T_STAR],
             [SymbolType::T_PLUS],
             [SymbolType::T_COMMA],
-            // Symbol 25 has FIRST(0)/FOLLOW conflict (ε ∈ 1): 8
+            // FIRST(25:0)/FOLLOW(25) conflict (ε ∈ 25:1): 8
             //[SymbolType::T_HYPHEN],
             [SymbolType::T_QUESTION],
             [SymbolType::T_LEFT_SQUARE_BRACKET],
-            // FIRST/FIRST conflict for symbol 16[0/1]: 18
+            // FIRST(16:0)/FIRST(16:1) conflict: 18
             //[SymbolType::T_CIRCUMFLEX],
             [SymbolType::T_LEFT_CURLY_BRACKET],
             [SymbolType::T_VERTICAL_LINE],
@@ -339,9 +339,6 @@ return [
             [SymbolType::T_VERTICAL_LINE],
             [SymbolType::T_RIGHT_CURLY_BRACKET],
             [SymbolType::T_CTL_ASCII],
-            // FIRST/FIRST conflict for symbol 31[0/1]: 28, 27
-            //[SymbolType::T_OTHER_HEX_LETTER],
-            //[SymbolType::T_OTHER_ASCII_LETTER],
             [SymbolType::T_PRINTABLE_ASCII_OTHER],
             [SymbolType::T_OTHER_ASCII],
             [SymbolType::T_NOT_ASCII],
@@ -451,8 +448,6 @@ return [
             [SymbolType::T_DIGIT_DEC],
             [SymbolType::T_CAPITAL_P],
             [SymbolType::T_RIGHT_SQUARE_BRACKET],
-            // FIRST/FIRST conflict for symbol 5[0/1]: 18
-            //[SymbolType::T_CIRCUMFLEX],
             [SymbolType::T_SMALL_C],
             [SymbolType::T_SMALL_O],
             [SymbolType::T_SMALL_P],
