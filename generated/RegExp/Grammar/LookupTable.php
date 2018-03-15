@@ -1,7 +1,10 @@
 <?php
 /**
  * RegExp lookup table for usage with LL(1) parser.
+ *
  * Auto-generated file, please don't edit manually.
+ * Run following command to update this file:
+ *     vendor/bin/phing regexp-lookup-table
  *
  * Phing version: 2.16.1
  */

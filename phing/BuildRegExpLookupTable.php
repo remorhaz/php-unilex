@@ -131,7 +131,10 @@ class BuildRegExpLookupTable extends Task
         return
             "/**\n" .
             " * RegExp lookup table for usage with LL(1) parser.\n" .
+            " *\n" .
             " * Auto-generated file, please don't edit manually.\n" .
+            " * Run following command to update this file:\n" .
+            " *     vendor/bin/phing {$this->getOwningTarget()->getName()}\n" .
             " *\n" .
             " * Phing version: {$this->getProject()->getPhingVersion()}\n" .
             " */\n";
