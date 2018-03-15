@@ -15,4 +15,9 @@ abstract class ConfigFile
         return
             realpath(__DIR__ . "/../../../generated/RegExp/Grammar") . DIRECTORY_SEPARATOR . "LookupTable.php";
     }
+
+    public static function getTranslationSchemePath(): string
+    {
+        return realpath(__DIR__ . "/TranslationSchemeConfig.php");
+    }
 }
