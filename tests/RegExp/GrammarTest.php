@@ -160,6 +160,26 @@ class GrammarTest extends TestCase
                     ],
                 ],
             ],
+            "Single line start assert" => [
+                '^',
+                (object) [
+                    'name' => 'assert',
+                    'attr' => (object) ['type' => 'line_start'],
+                ],
+            ],
+            "Concatenation of symbol and assert" => [
+                'a$',
+                (object) [
+                    'name' => 'concatenate',
+                    'nodes' => [
+                        $symbolA,
+                        (object) [
+                            'name' => 'assert',
+                            'attr' => (object) ['type' => 'line_finish'],
+                        ],
+                    ],
+                ],
+             ],
         ];
     }
 

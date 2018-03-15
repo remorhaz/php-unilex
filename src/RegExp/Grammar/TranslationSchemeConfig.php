@@ -243,8 +243,8 @@ return [
         SymbolType::NT_ITEM => [
             // [SymbolType::NT_ASSERT]
             0 => [
-                function () {
-                    throw new Exception("Asserts are not implemented yet");
+                's.concatenable_node' => function (ProductionRuleContext $context): int {
+                    return $context->getSymbolAttribute(0, 's.assert_node');
                 },
             ],
             // [SymbolType::NT_ITEM_BODY, SymbolType::NT_ITEM_QUANT]
@@ -317,6 +317,26 @@ return [
                 's.group_node' => function (ProductionRuleContext $context): int {
                     return $context->getSymbolAttribute(1, 's.alternatives_node');
                 }
+            ],
+        ],
+        SymbolType::NT_ASSERT => [
+            // [SymbolType::NT_ASSERT_LINE_START]
+            0 => [
+                's.assert_node' => function (ProductionRuleContext $context): int {
+                    return $context
+                        ->createNode('assert')
+                        ->setAttribute('type', 'line_start')
+                        ->getId();
+                },
+            ],
+            // [SymbolType::NT_ASSERT_LINE_FINISH]
+            1 => [
+                's.assert_node' => function (ProductionRuleContext $context): int {
+                    return $context
+                        ->createNode('assert')
+                        ->setAttribute('type', 'line_finish')
+                        ->getId();
+                },
             ],
         ],
 
