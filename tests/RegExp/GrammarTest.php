@@ -181,47 +181,48 @@ class GrammarTest extends TestCase
                 ],
              ],
             "Simple escaped symbol" => [
-                '\s',
+                '\\s',
                 (object) [
                     'name' => 'esc_simple',
                     'attr' => (object) ['code' => 0x73],
                 ],
             ],
             "Special escaped symbol" => [
-                '\$',
+                '\\$',
                 (object) [
                     'name' => 'symbol',
                     'attr' => (object) ['code' => 0x24]
                 ],
             ],
             "Symbol with Unicode property (full)" => [
-                '\p{Greek}',
+                '\\p{Greek}',
                 (object) [
                     'name' => 'symbol_prop',
                     'attr' => (object) ['not' => false, 'name' => [0x47, 0x72, 0x65, 0x65, 0x6B]]
                 ],
             ],
             "Symbol without Unicode property (full)" => [
-                '\P{Greek}',
+                '\\P{Greek}',
                 (object) [
                     'name' => 'symbol_prop',
                     'attr' => (object) ['not' => true, 'name' => [0x47, 0x72, 0x65, 0x65, 0x6B]]
                 ],
             ],
             "Symbol with Unicode property (short)" => [
-                '\pL',
+                '\\pL',
                 (object) [
                     'name' => 'symbol_prop',
                     'attr' => (object) ['not' => false, 'name' => [0x4C]]
                 ],
             ],
             "Symbol without Unicode property (short)" => [
-                '\PL',
+                '\\PL',
                 (object) [
                     'name' => 'symbol_prop',
                     'attr' => (object) ['not' => true, 'name' => [0x4C]]
                 ],
             ],
+            "Escaped Unicode symbol" => ['\\u0061', $symbolA],
         ];
     }
 

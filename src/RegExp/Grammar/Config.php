@@ -179,12 +179,7 @@ return [
             [SymbolType::NT_ESC_UNICODE_MARKER, SymbolType::NT_ESC_UNICODE_NUM],
         ],
         SymbolType::NT_ESC_UNICODE_NUM => [
-            [
-                SymbolType::NT_HEX_DIGIT,
-                SymbolType::NT_HEX_DIGIT,
-                SymbolType::NT_HEX_DIGIT,
-                SymbolType::NT_HEX_DIGIT
-            ],
+            [SymbolType::NT_HEX_DIGIT, SymbolType::NT_HEX_DIGIT, SymbolType::NT_HEX_DIGIT, SymbolType::NT_HEX_DIGIT],
         ],
         SymbolType::NT_ESC_PROP => [
             [SymbolType::NT_ESC_PROP_MARKER, SymbolType::NT_PROP],

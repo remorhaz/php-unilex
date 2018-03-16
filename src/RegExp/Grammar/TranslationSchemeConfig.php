@@ -151,6 +151,7 @@ abstract class TranslationSchemeConfig
     private static function getProductionActions(): array
     {
         $getSynthesizedCodeAttribute = self::synSymbolAttribute(0, 's.code');
+        $getSynthesizedHexDigitAttribute = self::synSymbolAttribute(0, 's.hex_digit');
         $getTrue = function (): bool {
             return true;
         };
@@ -341,11 +342,7 @@ abstract class TranslationSchemeConfig
                     }
                 ],
                 // [SymbolType::NT_ESC_NON_PRINTABLE]
-                2 => [
-                    function () {
-                        throw new Exception("Non-printable escapes are not implemented yet");
-                    }
-                ],
+                2 => ['s.escape_node' => self::synSymbolAttribute(0, 's.symbol_node')],
                 // [SymbolType::NT_ESC_PROP]
                 3 => [
                     's.escape_node' => function (ProductionRuleContext $context): int {
@@ -576,6 +573,61 @@ abstract class TranslationSchemeConfig
                 28 => ['s.code' => $getSynthesizedCodeAttribute],
                 // [SymbolType::T_NOT_ASCII]
                 29 => ['s.code' => $getSynthesizedCodeAttribute],
+            ],
+            SymbolType::NT_ESC_NON_PRINTABLE => [
+                // [SymbolType::NT_ESC_CTL]
+                0 => [
+                    function () {
+                        throw new Exception("Escaped control characters are not implemented yet");
+                    },
+                ],
+                // [SymbolType::NT_ESC_OCT]
+                1 => [
+                    function () {
+                        throw new Exception("Escaped octal characters are not implemented yet");
+                    },
+                ],
+                // [SymbolType::NT_ESC_HEX]
+                2 => [
+                    function () {
+                        throw new Exception("Escaped hexadecimal characters are not implemented yet");
+                    },
+                ],
+                // [SymbolType::NT_ESC_UNICODE]
+                3 => ['s.symbol_node' => self::synSymbolAttribute(0, 's.symbol_node')],
+            ],
+            SymbolType::NT_ESC_UNICODE => [
+                // [SymbolType::NT_ESC_UNICODE_MARKER, SymbolType::NT_ESC_UNICODE_NUM]
+                0 => ['s.symbol_node' => self::synSymbolAttribute(1, 's.symbol_node')],
+            ],
+            SymbolType::NT_ESC_UNICODE_NUM => [
+                // [4 x SymbolType::NT_HEX_DIGIT]
+                0 => [
+                    's.symbol_node' => function (ProductionRuleContext $context): int {
+                        $hexNumberString =
+                            $context->getSymbolAttribute(0, 's.hex_digit') .
+                            $context->getSymbolAttribute(1, 's.hex_digit') .
+                            $context->getSymbolAttribute(2, 's.hex_digit') .
+                            $context->getSymbolAttribute(3, 's.hex_digit');
+                        $hexNumber = hexdec($hexNumberString);
+                        return $context
+                            ->createNode('symbol')
+                            ->setAttribute('code', $hexNumber)
+                            ->getId();
+                    },
+                ],
+            ],
+            SymbolType::NT_HEX_DIGIT => [
+                // [SymbolType::T_DIGIT_ZERO]
+                0 => ['s.hex_digit' => $getSynthesizedHexDigitAttribute],
+                // [SymbolType::T_DIGIT_OCT]
+                1 => ['s.hex_digit' => $getSynthesizedHexDigitAttribute],
+                // [SymbolType::T_DIGIT_DEC]
+                2 => ['s.hex_digit' => $getSynthesizedHexDigitAttribute],
+                // [SymbolType::T_SMALL_C]
+                3 => ['s.hex_digit' => $getSynthesizedHexDigitAttribute],
+                // [SymbolType::T_OTHER_HEX_LETTER]
+                4 => ['s.hex_digit' => $getSynthesizedHexDigitAttribute],
             ],
 
             /**
