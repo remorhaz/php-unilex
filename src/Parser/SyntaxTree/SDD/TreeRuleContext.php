@@ -20,6 +20,11 @@ abstract class TreeRuleContext
         $this->production = $production;
     }
 
+    public function __toString(): string
+    {
+        return "{$this->production}";
+    }
+
     private function getTree(): Tree
     {
         return $this->tree;

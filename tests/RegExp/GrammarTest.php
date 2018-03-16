@@ -95,11 +95,11 @@ class GrammarTest extends TestCase
                     'nodes' => [$symbolA],
                 ],
             ],
-            "Open number range of symbols (limit)" => [
-                'a{3,}',
+            "Open long number range of symbols (limit)" => [
+                'a{13,}',
                 (object) [
                     'name' => 'repeat',
-                    'attr' => (object) ['min' => 3, 'max' => 0, 'is_max_infinite' => true],
+                    'attr' => (object) ['min' => 13, 'max' => 0, 'is_max_infinite' => true],
                     'nodes' => [$symbolA],
                 ],
             ],
@@ -192,6 +192,34 @@ class GrammarTest extends TestCase
                 (object) [
                     'name' => 'symbol',
                     'attr' => (object) ['code' => 0x24]
+                ],
+            ],
+            "Symbol with Unicode property (full)" => [
+                '\p{Greek}',
+                (object) [
+                    'name' => 'symbol_prop',
+                    'attr' => (object) ['not' => false, 'name' => [0x47, 0x72, 0x65, 0x65, 0x6B]]
+                ],
+            ],
+            "Symbol without Unicode property (full)" => [
+                '\P{Greek}',
+                (object) [
+                    'name' => 'symbol_prop',
+                    'attr' => (object) ['not' => true, 'name' => [0x47, 0x72, 0x65, 0x65, 0x6B]]
+                ],
+            ],
+            "Symbol with Unicode property (short)" => [
+                '\pL',
+                (object) [
+                    'name' => 'symbol_prop',
+                    'attr' => (object) ['not' => false, 'name' => [0x4C]]
+                ],
+            ],
+            "Symbol without Unicode property (short)" => [
+                '\PL',
+                (object) [
+                    'name' => 'symbol_prop',
+                    'attr' => (object) ['not' => true, 'name' => [0x4C]]
                 ],
             ],
         ];

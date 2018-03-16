@@ -19,6 +19,11 @@ class TokenRuleContext implements TokenContextInterface
         $this->token = $token;
     }
 
+    public function __toString(): string
+    {
+        return "{$this->symbol->getSymbolId()}->{$this->token->getToken()->getType()}";
+    }
+
     public function getSymbol(): ParsedSymbol
     {
         return $this->symbol;

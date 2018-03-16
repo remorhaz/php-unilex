@@ -9,6 +9,7 @@ use Remorhaz\UniLex\Parser\SyntaxTree\SDD\ProductionRuleContext;
 use Remorhaz\UniLex\Parser\SyntaxTree\SDD\SymbolRuleContext;
 use Remorhaz\UniLex\Parser\SyntaxTree\SDD\TokenRuleContext;
 use Remorhaz\UniLex\Unicode\Grammar\TokenAttribute;
+use Throwable;
 
 abstract class TranslationSchemeConfig
 {
@@ -121,6 +122,29 @@ abstract class TranslationSchemeConfig
                     ],
                 ],
             ],
+            SymbolType::NT_PROP_NAME => [
+                0 => [
+                    // SymbolType::NT_PROP_NAME_PART
+                    0 => [
+                        'i.name' => function (): array {
+                            return [];
+                        },
+                    ],
+                ],
+            ],
+            SymbolType::NT_PROP_NAME_PART => [
+                0 => [
+                    // SymbolType::NT_PROP_NAME_PART
+                    1 => [
+                        'i.name' => function (SymbolRuleContext $context): array {
+                            return array_merge(
+                                $context->getHeaderAttribute('i.name'),
+                                [$context->getSymbolAttribute(0, 's.code')]
+                            );
+                        },
+                    ],
+                ],
+            ],
         ];
     }
 
@@ -160,7 +184,7 @@ abstract class TranslationSchemeConfig
                 // [SymbolType::NT_ALT_SEPARATOR, SymbolType::NT_PART, SymbolType::NT_ALT_PARTS_TAIL]
                 0 => ['s.alternatives_node' => self::synSymbolAttribute(2, 's.alternatives_node')],
                 // []
-                1 => ['s.alternatives_node' => self::inhHeaderAttribute('i.alternative_node')],
+                1 => ['s.alternatives_node' => self::synHeaderAttribute('i.alternative_node')],
             ],
             SymbolType::NT_ALT_PARTS_TAIL => [
                 // [SymbolType::NT_ALT_SEPARATOR, SymbolType::NT_PART, SymbolType::NT_ALT_PARTS_TAIL]
@@ -195,7 +219,7 @@ abstract class TranslationSchemeConfig
                 // [SymbolType::NT_ITEM, SymbolType::NT_MORE_ITEMS_TAIL]
                 0 => ['s.concatenate_node' => self::synSymbolAttribute(1, 's.concatenate_node')],
                 // []
-                1 => ['s.concatenate_node' => self::inhHeaderAttribute('i.concatenable_node')],
+                1 => ['s.concatenate_node' => self::synHeaderAttribute('i.concatenable_node')],
             ],
             SymbolType::NT_MORE_ITEMS_TAIL => [
                 // [SymbolType::NT_ITEM, SymbolType::NT_MORE_ITEMS_TAIL]
@@ -324,15 +348,23 @@ abstract class TranslationSchemeConfig
                 ],
                 // [SymbolType::NT_ESC_PROP]
                 3 => [
-                    function () {
-                        throw new Exception("Unicode property escapes are not implemented yet");
-                    }
+                    's.escape_node' => function (ProductionRuleContext $context): int {
+                        return $context
+                            ->createNode('symbol_prop')
+                            ->setAttribute('not', false)
+                            ->setAttribute('name', $context->getSymbolAttribute(0, 's.name'))
+                            ->getId();
+                    },
                 ],
                 // [SymbolType::NT_ESC_NOT_PROP]
                 4 => [
-                    function () {
-                        throw new Exception("Unicode non-property escapes are not implemented yet");
-                    }
+                    's.escape_node' => function (ProductionRuleContext $context): int {
+                        return $context
+                            ->createNode('symbol_prop')
+                            ->setAttribute('not', true)
+                            ->setAttribute('name', $context->getSymbolAttribute(0, 's.name'))
+                            ->getId();
+                    },
                 ],
             ],
             SymbolType::NT_ESC_SIMPLE => [
@@ -384,6 +416,166 @@ abstract class TranslationSchemeConfig
                 17 => ['s.code' => $getSynthesizedCodeAttribute],
                 // [SymbolType::T_NOT_ASCII]
                 18 => ['s.code' => $getSynthesizedCodeAttribute],
+            ],
+            SymbolType::NT_ESC_PROP => [
+                // [SymbolType::NT_ESC_PROP_MARKER, SymbolType::NT_PROP]
+                0 => ['s.name' => self::synSymbolAttribute(1, 's.name')],
+            ],
+            SymbolType::NT_ESC_NOT_PROP => [
+                // [SymbolType::NT_ESC_NOT_PROP_MARKER, SymbolType::NT_PROP]
+                0 => ['s.name' => self::synSymbolAttribute(1, 's.name')],
+            ],
+            SymbolType::NT_PROP => [
+                // [SymbolType::NT_PROP_SHORT]
+                0 => ['s.name' => self::synSymbolAttribute(0, 's.name')],
+                // [SymbolType::NT_PROP_FULL]
+                1 => ['s.name' => self::synSymbolAttribute(0, 's.name')],
+            ],
+            SymbolType::NT_PROP_SHORT => [
+                // [SymbolType::NT_NOT_PROP_START]
+                0 => [
+                    's.name' => function (ProductionRuleContext $context) {
+                        return [$context->getSymbolAttribute(0, 's.code')];
+                    },
+                ],
+            ],
+            SymbolType::NT_PROP_FULL => [
+                // [SymbolType::NT_PROP_START, SymbolType::NT_PROP_NAME, SymbolType::NT_PROP_FINISH]
+                0 => ['s.name' => self::synSymbolAttribute(1, 's.name')],
+            ],
+            SymbolType::NT_PROP_NAME => [
+                // [SymbolType::NT_PROP_NAME_PART]
+                0 => ['s.name' => self::synSymbolAttribute(0, 's.name')],
+            ],
+            SymbolType::NT_PROP_NAME_PART => [
+                // [SymbolType::NT_NOT_PROP_FINISH, SymbolType::NT_PROP_NAME_PART]
+                0 => ['s.name' => self::synSymbolAttribute(1, 's.name')],
+                // []
+                1 => ['s.name' => self::synHeaderAttribute('i.name')],
+            ],
+            SymbolType::NT_NOT_PROP_START => [
+                // [SymbolType::T_DOLLAR]
+                0 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_LEFT_BRACKET]
+                1 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_RIGHT_BRACKET]
+                2 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_STAR]
+                3 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_PLUS]
+                4 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_COMMA]
+                5 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_HYPHEN]
+                6 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_DOT]
+                7 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_DIGIT_ZERO]
+                8 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_DIGIT_OCT]
+                9 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_DIGIT_DEC]
+                10 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_QUESTION]
+                11 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_CAPITAL_P]
+                12 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_LEFT_SQUARE_BRACKET]
+                13 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_BACKSLASH]
+                14 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_RIGHT_SQUARE_BRACKET]
+                15 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_CIRCUMFLEX]
+                16 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_SMALL_C]
+                17 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_SMALL_O]
+                18 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_SMALL_P]
+                19 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_SMALL_U]
+                20 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_SMALL_X]
+                21 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_VERTICAL_LINE]
+                22 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_RIGHT_CURLY_BRACKET]
+                23 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_CTL_ASCII]
+                24 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_OTHER_HEX_LETTER]
+                25 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_OTHER_ASCII_LETTER]
+                26 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_PRINTABLE_ASCII_OTHER]
+                27 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_OTHER_ASCII]
+                28 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_NOT_ASCII]
+                29 => ['s.code' => $getSynthesizedCodeAttribute],
+            ],
+            SymbolType::NT_NOT_PROP_FINISH => [
+                // [SymbolType::T_DOLLAR]
+                0 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_LEFT_BRACKET]
+                1 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_RIGHT_BRACKET]
+                2 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_STAR]
+                3 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_PLUS]
+                4 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_COMMA]
+                5 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_HYPHEN]
+                6 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_DOT]
+                7 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_DIGIT_ZERO]
+                8 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_DIGIT_OCT]
+                9 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_DIGIT_DEC]
+                10 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_QUESTION]
+                11 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_CAPITAL_P]
+                12 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_LEFT_SQUARE_BRACKET]
+                13 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_BACKSLASH]
+                14 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_RIGHT_SQUARE_BRACKET]
+                15 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_CIRCUMFLEX]
+                16 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_SMALL_C]
+                17 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_SMALL_O]
+                18 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_SMALL_P]
+                19 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_SMALL_U]
+                20 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_SMALL_X]
+                21 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_LEFT_CURLY_BRACKET]
+                22 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_VERTICAL_LINE]
+                23 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_CTL_ASCII]
+                24 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_OTHER_HEX_LETTER]
+                25 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_OTHER_ASCII_LETTER]
+                26 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_PRINTABLE_ASCII_OTHER]
+                27 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_OTHER_ASCII]
+                28 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_NOT_ASCII]
+                29 => ['s.code' => $getSynthesizedCodeAttribute],
             ],
 
             /**
@@ -453,7 +645,7 @@ abstract class TranslationSchemeConfig
                 ],
                 // []
                 1 => [
-                    's.number_value' => self::inhHeaderAttribute('i.min'),
+                    's.number_value' => self::synHeaderAttribute('i.min'),
                     's.is_infinite' => $getFalse,
                 ],
             ],
@@ -598,34 +790,50 @@ abstract class TranslationSchemeConfig
             SymbolType::T_CIRCUMFLEX => ['s.code' => $getTokenUnicodeChar],
             SymbolType::T_LEFT_CURLY_BRACKET => ['s.code' => $getTokenUnicodeChar],
             SymbolType::T_VERTICAL_LINE => ['s.code' => $getTokenUnicodeChar],
+            SymbolType::T_DOT => ['s.code' => $getTokenUnicodeChar],
         ];
     }
 
     private static function inhSymbolAttribute(int $index, string $attribute): Closure
     {
         return function (SymbolRuleContext $context) use ($index, $attribute) {
-            return $context->getSymbolAttribute($index, $attribute);
+            try {
+                return $context->getSymbolAttribute($index, $attribute);
+            } catch (Throwable $e) {
+                throw new Exception("Failed to inherit attribute from symbol {$index} in context {$context}", 0, $e);
+            }
         };
     }
 
     private static function synSymbolAttribute(int $index, string $attribute): Closure
     {
         return function (ProductionRuleContext $context) use ($index, $attribute) {
-            return $context->getSymbolAttribute($index, $attribute);
+            try {
+                return $context->getSymbolAttribute($index, $attribute);
+            } catch (Throwable $e) {
+                throw new Exception("Failed to synthesize attribute from symbol {$index} in context {$context}", 0, $e);
+            }
         };
     }
 
-    private static function inhHeaderAttribute(string $attribute): Closure
+    private static function synHeaderAttribute(string $attribute): Closure
     {
-        return function (ProductionRuleContext $context) use ($attribute): int {
-            return $context->getHeaderAttribute($attribute);
+        return function (ProductionRuleContext $context) use ($attribute) {
+            try {
+                return $context->getHeaderAttribute($attribute);
+            } catch (Throwable $e) {
+                throw new Exception("Failed to synthesize attribute from header in context {$context}", 0, $e);
+            }
         };
     }
-
     private static function synTokenAttribute(string $attribute): Closure
     {
         return function (TokenRuleContext $context) use ($attribute) {
-            return $context->getTokenAttribute($attribute);
+            try {
+                return $context->getTokenAttribute($attribute);
+            } catch (Throwable $e) {
+                throw new Exception("Failed to synthesize attribute from token in context {$context}", 0, $e);
+            }
         };
     }
 }
