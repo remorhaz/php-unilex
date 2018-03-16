@@ -309,8 +309,11 @@ abstract class TranslationSchemeConfig
                 ],
                 // [SymbolType::NT_ESC_SPECIAL]
                 1 => [
-                    function () {
-                        throw new Exception("Special escapes are not implemented yet");
+                    's.escape_node' => function (ProductionRuleContext $context): int {
+                        return $context
+                            ->createNode('symbol')
+                            ->setAttribute('code', $context->getSymbolAttribute(0, 's.code'))
+                            ->getId();
                     }
                 ],
                 // [SymbolType::NT_ESC_NON_PRINTABLE]
@@ -341,6 +344,46 @@ abstract class TranslationSchemeConfig
                 2 => ['s.code' => $getSynthesizedCodeAttribute],
                 // [SymbolType::T_DIGIT_DEC]
                 3 => ['s.code' => $getSynthesizedCodeAttribute],
+            ],
+            SymbolType::NT_ESC_SPECIAL => [
+                // [SymbolType::T_DOLLAR]
+                0 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_LEFT_BRACKET]
+                1 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_RIGHT_BRACKET]
+                2 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_STAR]
+                3 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_PLUS]
+                4 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_COMMA]
+                5 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_HYPHEN]
+                6 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_QUESTION]
+                7 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_LEFT_SQUARE_BRACKET]
+                8 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_BACKSLASH]
+                9 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_RIGHT_SQUARE_BRACKET]
+                10 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_CIRCUMFLEX]
+                11 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_LEFT_CURLY_BRACKET]
+                12 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_VERTICAL_LINE]
+                13 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_RIGHT_CURLY_BRACKET]
+                14 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_CTL_ASCII]
+                15 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_PRINTABLE_ASCII_OTHER]
+                16 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_OTHER_ASCII]
+                17 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_NOT_ASCII]
+                18 => ['s.code' => $getSynthesizedCodeAttribute],
             ],
 
             /**
@@ -544,6 +587,17 @@ abstract class TranslationSchemeConfig
             SymbolType::T_CTL_ASCII => ['s.code' => $getTokenUnicodeChar],
             SymbolType::T_PRINTABLE_ASCII_OTHER => ['s.code' => $getTokenUnicodeChar],
             SymbolType::T_NOT_ASCII => ['s.code' => $getTokenUnicodeChar],
+            SymbolType::T_DOLLAR => ['s.code' => $getTokenUnicodeChar],
+            SymbolType::T_LEFT_BRACKET => ['s.code' => $getTokenUnicodeChar],
+            SymbolType::T_RIGHT_BRACKET => ['s.code' => $getTokenUnicodeChar],
+            SymbolType::T_STAR => ['s.code' => $getTokenUnicodeChar],
+            SymbolType::T_PLUS => ['s.code' => $getTokenUnicodeChar],
+            SymbolType::T_QUESTION => ['s.code' => $getTokenUnicodeChar],
+            SymbolType::T_LEFT_SQUARE_BRACKET => ['s.code' => $getTokenUnicodeChar],
+            SymbolType::T_BACKSLASH => ['s.code' => $getTokenUnicodeChar],
+            SymbolType::T_CIRCUMFLEX => ['s.code' => $getTokenUnicodeChar],
+            SymbolType::T_LEFT_CURLY_BRACKET => ['s.code' => $getTokenUnicodeChar],
+            SymbolType::T_VERTICAL_LINE => ['s.code' => $getTokenUnicodeChar],
         ];
     }
 

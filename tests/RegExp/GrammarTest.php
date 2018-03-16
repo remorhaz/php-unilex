@@ -180,11 +180,18 @@ class GrammarTest extends TestCase
                     ],
                 ],
              ],
-            "Single simple escaped symbol" => [
+            "Simple escaped symbol" => [
                 '\s',
                 (object) [
                     'name' => 'esc_simple',
                     'attr' => (object) ['code' => 0x73],
+                ],
+            ],
+            "Special escaped symbol" => [
+                '\$',
+                (object) [
+                    'name' => 'symbol',
+                    'attr' => (object) ['code' => 0x24]
                 ],
             ],
         ];
