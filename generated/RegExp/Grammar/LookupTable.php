@@ -471,14 +471,6 @@ return [
     SymbolType::NT_ESC_OCT_SHORT => [
         TokenType::DIGIT_ZERO => 0,
     ],
-    SymbolType::NT_ESC_OCT_SHORT_NUM => [
-        TokenType::DIGIT_ZERO => 0,
-        TokenType::DIGIT_OCT => 0,
-    ],
-    SymbolType::NT_ESC_OCT_SHORT_NUM_LAST => [
-        TokenType::DIGIT_ZERO => 0,
-        TokenType::DIGIT_OCT => 0,
-    ],
     SymbolType::NT_ESC_OCT_LONG => [
         TokenType::SMALL_O => 0,
     ],

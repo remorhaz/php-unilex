@@ -233,6 +233,13 @@ class GrammarTest extends TestCase
                 ],
             ],
             "Escaped long octal symbol" => ['\\o{141}', $symbolA],
+            "Escaped short octal symbol (single zero)" => [
+                '\\0',
+                (object) [
+                    'name' => 'symbol',
+                    'attr' => (object) ['code' => 0x00],
+                ],
+            ],
         ];
     }
 

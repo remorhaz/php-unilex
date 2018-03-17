@@ -602,8 +602,11 @@ abstract class TranslationSchemeConfig
             SymbolType::NT_ESC_OCT => [
                 // [SymbolType::NT_ESC_OCT_SHORT]
                 0 => [
-                    function () {
-                        throw new Exception("Escaped short octal characters are not implemented yet");
+                    's.symbol_node' => function (ProductionRuleContext $context): int {
+                        return $context
+                            ->createNode('symbol')
+                            ->setAttribute('code', $context->getSymbolAttribute(0, 's.code'))
+                            ->getId();
                     },
                 ],
                 // [SymbolType::NT_ESC_OCT_LONG]
@@ -615,6 +618,19 @@ abstract class TranslationSchemeConfig
                             ->getId();
                     },
                 ],
+            ],
+            SymbolType::NT_ESC_OCT_SHORT => [
+                // [SymbolType::NT_ESC_OCT_SHORT_MARKER]
+                0 => [
+                    's.code' => function (ProductionRuleContext $context): int {
+                        $octNumber = $context->getSymbolAttribute(0, 's.oct_digit');
+                        return octdec($octNumber);
+                    },
+                ],
+            ],
+            SymbolType::NT_ESC_OCT_SHORT_MARKER => [
+                // [SymbolType::T_DIGIT_ZERO]
+                0 => ['s.oct_digit' => self::synSymbolAttribute(0, 's.oct_digit')],
             ],
             SymbolType::NT_ESC_OCT_LONG => [
                 // [SymbolType::NT_ESC_OCT_LONG_MARKER, SymbolType::NT_ESC_OCT_LONG_NUM]

@@ -144,17 +144,7 @@ return [
             [SymbolType::NT_ESC_OCT_LONG],
         ],
         SymbolType::NT_ESC_OCT_SHORT => [
-            [SymbolType::NT_ESC_OCT_SHORT_MARKER, SymbolType::NT_ESC_OCT_SHORT_NUM],
-        ],
-        SymbolType::NT_ESC_OCT_SHORT_NUM => [
-            [SymbolType::NT_OCT_DIGIT, SymbolType::NT_ESC_OCT_SHORT_NUM_LAST],
-            // Symbol 42 has FIRST(0)/FOLLOW conflict (ε ∈ 1): 10, 11
-            //[],
-        ],
-        SymbolType::NT_ESC_OCT_SHORT_NUM_LAST => [
-            [SymbolType::NT_OCT_DIGIT],
-            // Symbol 90 has FIRST(0)/FOLLOW conflict (ε ∈ 1): 10, 11
-            //[],
+            [SymbolType::NT_ESC_OCT_SHORT_MARKER],
         ],
         SymbolType::NT_ESC_OCT_LONG => [
             [SymbolType::NT_ESC_OCT_LONG_MARKER, SymbolType::NT_ESC_OCT_LONG_NUM],

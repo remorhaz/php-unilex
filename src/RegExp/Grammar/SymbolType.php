@@ -51,7 +51,6 @@ abstract class SymbolType
     const NT_ESC_NUM_FINISH             = 0x27;
     const NT_ESC_OCT                    = 0x28;
     const NT_ESC_OCT_SHORT              = 0x29;
-    const NT_ESC_OCT_SHORT_NUM          = 0x2A;
     const NT_ESC_OCT_SHORT_MARKER       = 0x2B;
     const NT_ESC_OCT_LONG               = 0x2C;
     const NT_ESC_OCT_LONG_NUM           = 0x2D;
@@ -99,7 +98,6 @@ abstract class SymbolType
     const NT_CLASS_END                  = 0x57;
     const NT_PRINTABLE_ASCII_OTHER      = 0x58;
     const NT_CLASS_ITEMS                = 0x59;
-    const NT_ESC_OCT_SHORT_NUM_LAST     = 0x5A;
     const NT_PROP_NAME_PART             = 0x5B;
     const NT_OPT_MAX                    = 0x5C;
     const NT_OPT_OCT                    = 0x5D;
