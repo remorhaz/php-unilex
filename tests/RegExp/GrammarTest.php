@@ -232,6 +232,7 @@ class GrammarTest extends TestCase
                     'attr' => (object) ['code' => 0x3F],
                 ],
             ],
+            "Escaped long octal symbol" => ['\\o{141}', $symbolA],
         ];
     }
 

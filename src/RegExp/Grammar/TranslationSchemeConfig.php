@@ -578,11 +578,7 @@ abstract class TranslationSchemeConfig
                 // [SymbolType::NT_ESC_CTL]
                 0 => ['s.symbol_node' => self::synSymbolAttribute(0, 's.symbol_node')],
                 // [SymbolType::NT_ESC_OCT]
-                1 => [
-                    function () {
-                        throw new Exception("Escaped octal characters are not implemented yet");
-                    },
-                ],
+                1 => ['s.symbol_node' => self::synSymbolAttribute(0, 's.symbol_node')],
                 // [SymbolType::NT_ESC_HEX]
                 2 => ['s.symbol_node' => self::synSymbolAttribute(0, 's.symbol_node')],
                 // [SymbolType::NT_ESC_UNICODE]
@@ -602,6 +598,31 @@ abstract class TranslationSchemeConfig
             SymbolType::NT_ESC_CTL_CODE => [
                 // [SymbolType::NT_PRINTABLE_ASCII]
                 0 => ['s.code' => self::synSymbolAttribute(0, 's.code')],
+            ],
+            SymbolType::NT_ESC_OCT => [
+                // [SymbolType::NT_ESC_OCT_SHORT]
+                0 => [
+                    function () {
+                        throw new Exception("Escaped short octal characters are not implemented yet");
+                    },
+                ],
+                // [SymbolType::NT_ESC_OCT_LONG]
+                1 => [
+                    's.symbol_node' => function (ProductionRuleContext $context): int {
+                        return $context
+                            ->createNode('symbol')
+                            ->setAttribute('code', $context->getSymbolAttribute(0, 's.code'))
+                            ->getId();
+                    },
+                ],
+            ],
+            SymbolType::NT_ESC_OCT_LONG => [
+                // [SymbolType::NT_ESC_OCT_LONG_MARKER, SymbolType::NT_ESC_OCT_LONG_NUM]
+                0 => ['s.code' => self::synSymbolAttribute(1, 's.code')],
+            ],
+            SymbolType::NT_ESC_OCT_LONG_NUM => [
+                // [SymbolType::NT_ESC_NUM_START, SymbolType::NT_OCT, SymbolType::NT_ESC_NUM_FINISH]
+                0 => ['s.code' => self::synSymbolAttribute(1, 's.number_value')],
             ],
             SymbolType::NT_ESC_UNICODE => [
                 // [SymbolType::NT_ESC_UNICODE_MARKER, SymbolType::NT_ESC_UNICODE_NUM]
@@ -766,6 +787,43 @@ abstract class TranslationSchemeConfig
                 1 => ['s.dec_digit' => self::synSymbolAttribute(0, 's.dec_digit')],
                 // SymbolType::T_DIGIT_DEC
                 2 => ['s.dec_digit' => self::synSymbolAttribute(0, 's.dec_digit')],
+            ],
+
+            /**
+             * Octal numbers.
+             */
+            SymbolType::NT_OCT => [
+                // [SymbolType::NT_DEC_DIGIT, SymbolType::NT_OPT_DEC]
+                0 => [
+                    's.number_value' => function (ProductionRuleContext $context): int {
+                        $number =
+                            $context->getSymbolAttribute(0, 's.oct_digit') .
+                            $context->getSymbolAttribute(1, 's.oct_number_tail');
+                        return octdec($number);
+                    },
+                ],
+            ],
+            SymbolType::NT_OPT_OCT => [
+                // [SymbolType::NT_OCT_DIGIT, SymbolType::NT_OPT_OCT]
+                0 => [
+                    's.oct_number_tail' => function (ProductionRuleContext $context): string {
+                        return
+                            $context->getSymbolAttribute(0, 's.oct_digit') .
+                            $context->getSymbolAttribute(1, 's.oct_number_tail');
+                    },
+                ],
+                // []
+                1 => [
+                    's.oct_number_tail' => function (): string {
+                        return '';
+                    },
+                ],
+            ],
+            SymbolType::NT_OCT_DIGIT => [
+                // SymbolType::T_DIGIT_ZERO
+                0 => ['s.oct_digit' => self::synSymbolAttribute(0, 's.oct_digit')],
+                // SymbolType::T_DIGIT_OCT
+                1 => ['s.oct_digit' => self::synSymbolAttribute(0, 's.oct_digit')],
             ],
 
             /**
