@@ -240,6 +240,30 @@ class GrammarTest extends TestCase
                     'attr' => (object) ['code' => 0x00],
                 ],
             ],
+            "Single symbol in class" => [
+                '[a]',
+                (object) [
+                    'name' => 'symbol_class',
+                    'attr' => (object) ['not' => false],
+                    'nodes' => [$symbolA],
+                ],
+            ],
+            "Single symbol in negative class" => [
+                '[^a]',
+                (object) [
+                    'name' => 'symbol_class',
+                    'attr' => (object) ['not' => true],
+                    'nodes' => [$symbolA],
+                ],
+            ],
+            "Two symbols in class" => [
+                '[ab]',
+                (object) [
+                    'name' => 'symbol_class',
+                    'attr' => (object) ['not' => false],
+                    'nodes' => [$symbolA, $symbolB],
+                ],
+            ],
         ];
     }
 
