@@ -225,6 +225,13 @@ class GrammarTest extends TestCase
             "Escaped Unicode symbol" => ['\\u0061', $symbolA],
             "Escaped short hexadecimal symbol" => ['\\x61', $symbolA],
             "Escaped long hexadecimal symbol" => ['\\x{061}', $symbolA],
+            "Escaped control symbol" => [
+                '\\c?',
+                (object) [
+                    'name' => 'symbol_ctl',
+                    'attr' => (object) ['code' => 0x3F],
+                ],
+            ],
         ];
     }
 

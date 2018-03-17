@@ -576,11 +576,7 @@ abstract class TranslationSchemeConfig
             ],
             SymbolType::NT_ESC_NON_PRINTABLE => [
                 // [SymbolType::NT_ESC_CTL]
-                0 => [
-                    function () {
-                        throw new Exception("Escaped control characters are not implemented yet");
-                    },
-                ],
+                0 => ['s.symbol_node' => self::synSymbolAttribute(0, 's.symbol_node')],
                 // [SymbolType::NT_ESC_OCT]
                 1 => [
                     function () {
@@ -591,6 +587,21 @@ abstract class TranslationSchemeConfig
                 2 => ['s.symbol_node' => self::synSymbolAttribute(0, 's.symbol_node')],
                 // [SymbolType::NT_ESC_UNICODE]
                 3 => ['s.symbol_node' => self::synSymbolAttribute(0, 's.symbol_node')],
+            ],
+            SymbolType::NT_ESC_CTL => [
+                // [SymbolType::NT_ESC_CTL_MARKER, SymbolType::NT_ESC_CTL_CODE]
+                0 => [
+                    's.symbol_node' => function (ProductionRuleContext $context): int {
+                        return $context
+                            ->createNode('symbol_ctl')
+                            ->setAttribute('code', $context->getSymbolAttribute(1, 's.code'))
+                            ->getId();
+                    },
+                ],
+            ],
+            SymbolType::NT_ESC_CTL_CODE => [
+                // [SymbolType::NT_PRINTABLE_ASCII]
+                0 => ['s.code' => self::synSymbolAttribute(0, 's.code')],
             ],
             SymbolType::NT_ESC_UNICODE => [
                 // [SymbolType::NT_ESC_UNICODE_MARKER, SymbolType::NT_ESC_UNICODE_NUM]
@@ -842,6 +853,75 @@ abstract class TranslationSchemeConfig
                 17 => ['s.code' => $getSynthesizedCodeAttribute],
                 // [SymbolType::T_NOT_ASCII]
                 18 => ['s.code' => $getSynthesizedCodeAttribute],
+            ],
+
+            /**
+             * Printable ASCII symbols.
+             */
+            SymbolType::NT_PRINTABLE_ASCII => [
+                // [SymbolType::NT_META_CHAR],
+                0 => ['s.code' => self::synSymbolAttribute(0, 's.code')],
+                // [SymbolType::NT_DEC_DIGIT],
+                1 => ['s.code' => self::synSymbolAttribute(0, 's.code')],
+                // [SymbolType::NT_ASCII_LETTER],
+                2 => ['s.code' => self::synSymbolAttribute(0, 's.code')],
+                // [SymbolType::NT_PRINTABLE_ASCII_OTHER],
+                3 => ['s.code' => self::synSymbolAttribute(0, 's.code')],
+            ],
+            SymbolType::NT_META_CHAR => [
+                // [SymbolType::T_DOLLAR]
+                0 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_LEFT_BRACKET]
+                1 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_RIGHT_BRACKET]
+                2 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_STAR]
+                3 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_PLUS]
+                4 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_COMMA]
+                5 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_HYPHEN]
+                6 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_DOT]
+                7 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_QUESTION]
+                8 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_LEFT_SQUARE_BRACKET]
+                9 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_BACKSLASH]
+                10 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_RIGHT_SQUARE_BRACKET]
+                11 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_CIRCUMFLEX]
+                12 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_LEFT_CURLY_BRACKET]
+                13 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_VERTICAL_LINE]
+                14 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_RIGHT_CURLY_BRACKET]
+                15 => ['s.code' => $getSynthesizedCodeAttribute],
+            ],
+            SymbolType::NT_ASCII_LETTER => [
+                // [SymbolType::T_CAPITAL_P]
+                0 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_SMALL_C]
+                1 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_SMALL_O]
+                2 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_SMALL_P]
+                3 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_SMALL_U]
+                4 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_SMALL_X]
+                5 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_OTHER_ASCII_LETTER]
+                6 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_OTHER_HEX_LETTER]
+            ],
+            SymbolType::NT_PRINTABLE_ASCII_OTHER => [
+                // [SymbolType::T_PRINTABLE_ASCII_OTHER]
+                0 => ['s.code' => $getSynthesizedCodeAttribute],
             ],
         ];
     }
