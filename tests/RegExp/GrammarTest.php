@@ -264,6 +264,19 @@ class GrammarTest extends TestCase
                     'nodes' => [$symbolA, $symbolB],
                 ],
             ],
+            "Two circumflexes in class" => [
+                '[^^]',
+                (object) [
+                    'name' => 'symbol_class',
+                    'attr' => (object) ['not' => true],
+                    'nodes' => [
+                        (object) [
+                            'name' => 'symbol',
+                            'attr' => (object) ['code' => 0x5E],
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 

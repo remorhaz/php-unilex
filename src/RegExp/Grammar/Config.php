@@ -84,7 +84,7 @@ return [
             [SymbolType::NT_CLASS_START, SymbolType::NT_CLASS_BODY, SymbolType::NT_CLASS_END],
         ],
         SymbolType::NT_CLASS_BODY => [
-            [SymbolType::NT_CLASS_INVERTOR, SymbolType::NT_FIRST_CLASS_ITEM, SymbolType::NT_CLASS_ITEMS],
+            [SymbolType::NT_CLASS_INVERTOR, SymbolType::NT_CLASS_ITEM, SymbolType::NT_CLASS_ITEMS],
             [SymbolType::NT_FIRST_CLASS_ITEM, SymbolType::NT_CLASS_ITEMS],
         ],
         SymbolType::NT_CLASS_ITEMS => [
