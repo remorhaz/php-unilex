@@ -88,7 +88,11 @@ return [
             [SymbolType::NT_FIRST_CLASS_ITEM, SymbolType::NT_CLASS_ITEMS],
         ],
         SymbolType::NT_CLASS_ITEMS => [
-            [SymbolType::NT_CLASS_ITEM, SymbolType::NT_CLASS_ITEMS],
+            [SymbolType::NT_CLASS_ITEM, SymbolType::NT_CLASS_ITEMS_TAIL],
+            [],
+        ],
+        SymbolType::NT_CLASS_ITEMS_TAIL => [
+            [SymbolType::NT_CLASS_ITEM, SymbolType::NT_CLASS_ITEMS_TAIL],
             [],
         ],
         SymbolType::NT_FIRST_CLASS_ITEM => [

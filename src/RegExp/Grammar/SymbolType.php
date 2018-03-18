@@ -141,6 +141,7 @@ abstract class SymbolType
     const NT_ALT_PARTS_TAIL             = 0x87;
     const NT_FIRST_INV_CLASS_ITEM       = 0x88;
     const NT_FIRST_INV_CLASS_SYMBOL     = 0x89;
+    const NT_CLASS_ITEMS_TAIL           = 0x8A;
 
     const T_INVALID                     = 0xFE;
     const T_EOI                         = 0xFF;

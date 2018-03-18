@@ -149,25 +149,19 @@ abstract class TranslationSchemeConfig
                 0 => [
                     // SymbolType::NT_CLASS_ITEMS
                     2 => [
-                        'i.class_node' => function (SymbolRuleContext $context): int {
-                            return $context
-                                ->createNode('symbol_class')
-                                ->setAttribute('not', true)
-                                ->addChild($context->getNodeBySymbolAttribute(1, 's.symbol_node'))
-                                ->getId();
+                        'i.not' => function (): bool {
+                            return true;
                         },
+                        'i.symbol_node' => self::inhSymbolAttribute(1, 's.symbol_node'),
                     ],
                 ],
                 1 => [
                     // SymbolType::NT_CLASS_ITEMS
                     1 => [
-                        'i.class_node' => function (SymbolRuleContext $context): int {
-                            return $context
-                                ->createNode('symbol_class')
-                                ->setAttribute('not', false)
-                                ->addChild($context->getNodeBySymbolAttribute(0, 's.symbol_node'))
-                                ->getId();
+                        'i.not' => function (): bool {
+                            return false;
                         },
+                        'i.symbol_node' => self::inhSymbolAttribute(0, 's.symbol_node'),
                     ],
                 ],
             ],
@@ -199,7 +193,22 @@ abstract class TranslationSchemeConfig
             ],
             SymbolType::NT_CLASS_ITEMS => [
                 0 => [
-                    // SymbolType::NT_CLASS_ITEMS
+                    // SymbolType::NT_CLASS_ITEMS_TAIL
+                    1 => [
+                        'i.class_node' => function (SymbolRuleContext $context): int {
+                            return $context
+                                ->createNode('symbol_class')
+                                ->setAttribute('not', $context->getHeaderAttribute('i.not'))
+                                ->addChild($context->getNodeByHeaderAttribute('i.symbol_node'))
+                                ->addChild($context->getNodeBySymbolAttribute(0, 's.symbol_node'))
+                                ->getId();
+                        },
+                    ],
+                ],
+            ],
+            SymbolType::NT_CLASS_ITEMS_TAIL => [
+                0 => [
+                    // SymbolType::NT_CLASS_ITEMS_TAIL
                     1 => [
                         'i.class_node' => function (SymbolRuleContext $context): int {
                             return $context
@@ -549,7 +558,28 @@ abstract class TranslationSchemeConfig
                 1 => ['s.symbol_node' => self::synHeaderAttribute('i.symbol_node')],
             ],
             SymbolType::NT_CLASS_ITEMS => [
-                // [SymbolType::NT_CLASS_ITEM, SymbolType::NT_CLASS_ITEMS]
+                // [SymbolType::NT_CLASS_ITEM, SymbolType::NT_CLASS_ITEMS_TAIL]
+                0 => [
+                    's.class_node' => self::synSymbolAttribute(1, 'i.class_node'),
+                ],
+                // []
+                1 => [
+                    's.class_node' => function (ProductionRuleContext $context): int {
+                        $isNot = $context->getHeaderAttribute('i.not');
+                        return $isNot
+                            ? $context
+                                ->createNode('symbol_class')
+                                ->setAttribute('not', $isNot)
+                                ->addChild($context->getNodeByHeaderAttribute('i.symbol_node'))
+                                ->getId()
+                            : $context
+                                ->getNodeByHeaderAttribute('i.symbol_node')
+                                ->getId();
+                    }
+                ],
+            ],
+            SymbolType::NT_CLASS_ITEMS_TAIL => [
+                // [SymbolType::NT_CLASS_ITEM, SymbolType::NT_CLASS_ITEMS_TAIL]
                 0 => ['s.class_node' => self::synHeaderAttribute('i.class_node')],
                 // []
                 1 => ['s.class_node' => self::synHeaderAttribute('i.class_node')],

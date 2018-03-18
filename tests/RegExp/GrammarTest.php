@@ -243,9 +243,8 @@ class GrammarTest extends TestCase
             "Single symbol in class" => [
                 '[a]',
                 (object) [
-                    'name' => 'symbol_class',
-                    'attr' => (object) ['not' => false],
-                    'nodes' => [$symbolA],
+                    'name' => 'symbol',
+                    'attr' => (object) ['code' => 0x61],
                 ],
             ],
             "Single symbol in negative class" => [
@@ -253,8 +252,13 @@ class GrammarTest extends TestCase
                 (object) [
                     'name' => 'symbol_class',
                     'attr' => (object) ['not' => true],
-                    'nodes' => [$symbolA],
-                ],
+                    'nodes' => [
+                        (object) [
+                            'name' => 'symbol',
+                            'attr' => (object) ['code' => 0x61],
+                        ],
+                    ],
+                ]
             ],
             "Two symbols in class" => [
                 '[ab]',
@@ -280,14 +284,8 @@ class GrammarTest extends TestCase
             "Right square bracket in class" => [
                 '[]]',
                 (object) [
-                    'name' => 'symbol_class',
-                    'attr' => (object) ['not' => false],
-                    'nodes' => [
-                        (object) [
-                            'name' => 'symbol',
-                            'attr' => (object) ['code' => 0x5D],
-                        ],
-                    ],
+                    'name' => 'symbol',
+                    'attr' => (object) ['code' => 0x5D],
                 ],
             ],
             "Right square bracket in inverted class" => [
@@ -306,14 +304,8 @@ class GrammarTest extends TestCase
             "One range in class" => [
                 '[a-c]',
                 (object) [
-                    'name' => 'symbol_class',
-                    'attr' => (object) ['not' => false],
-                    'nodes' => [
-                        (object) [
-                            'name' => 'symbol_range',
-                            'nodes' => [$symbolA, $symbolC],
-                        ],
-                    ],
+                    'name' => 'symbol_range',
+                    'nodes' => [$symbolA, $symbolC],
                 ],
             ],
             "One range in inverted class" => [
