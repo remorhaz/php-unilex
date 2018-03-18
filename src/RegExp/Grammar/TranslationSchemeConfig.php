@@ -213,14 +213,7 @@ abstract class TranslationSchemeConfig
             SymbolType::NT_CLASS_ITEM => [
                 0 => [
                     // SymbolType::NT_RANGE
-                    1 => [
-                        'i.symbol_node' => function (SymbolRuleContext $context): int {
-                            return $context
-                                ->createNode('symbol')
-                                ->setAttribute('code', $context->getSymbolAttribute(0, 's.code'))
-                                ->getId();
-                        },
-                    ],
+                    1 => ['i.symbol_node' => self::inhSymbolAttribute(0, 's.symbol_node')],
                 ],
             ],
         ];
@@ -408,6 +401,18 @@ abstract class TranslationSchemeConfig
                 16 => ['s.code' => $getSynthesizedCodeAttribute],
                 // [SymbolType::T_NOT_ASCII]
                 17 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_CAPITAL_P]
+                18 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_SMALL_C]
+                19 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_SMALL_O]
+                20 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_SMALL_P]
+                21 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_SMALL_U]
+                22 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_SMALL_X]
+                23 => ['s.code' => $getSynthesizedCodeAttribute],
             ],
             SymbolType::NT_FIRST_INV_CLASS_SYMBOL => [
                 // [SymbolType::T_RIGHT_SQUARE_BRACKET]
@@ -448,6 +453,18 @@ abstract class TranslationSchemeConfig
                 17 => ['s.code' => $getSynthesizedCodeAttribute],
                 // [SymbolType::T_CIRCUMFLEX]
                 18 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_CAPITAL_P]
+                19 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_SMALL_C]
+                20 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_SMALL_O]
+                21 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_SMALL_P]
+                22 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_SMALL_U]
+                23 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_SMALL_X]
+                24 => ['s.code' => $getSynthesizedCodeAttribute],
             ],
             SymbolType::NT_UNESC_CLASS_SYMBOL => [
                 // [SymbolType::T_DOLLAR]
@@ -486,6 +503,18 @@ abstract class TranslationSchemeConfig
                 16 => ['s.code' => $getSynthesizedCodeAttribute],
                 // [SymbolType::T_NOT_ASCII]
                 17 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_CAPITAL_P]
+                18 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_SMALL_C]
+                19 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_SMALL_O]
+                20 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_SMALL_P]
+                21 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_SMALL_U]
+                22 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_SMALL_X]
+                23 => ['s.code' => $getSynthesizedCodeAttribute],
             ],
             SymbolType::NT_CLASS_SYMBOL => [
                 // [SymbolType::NT_ESC_CLASS_SYMBOL]
@@ -495,13 +524,25 @@ abstract class TranslationSchemeConfig
                     },
                 ],
                 // [SymbolType::NT_UNESC_CLASS_SYMBOL]
-                1 => ['s.code' => self::synSymbolAttribute(0, 's.code')],
+                1 => [
+                    's.symbol_node' => function (ProductionRuleContext $context): int {
+                        return $context
+                            ->createNode('symbol')
+                            ->setAttribute('code', $context->getSymbolAttribute(0, 's.code'))
+                            ->getId();
+                    },
+                ],
             ],
             SymbolType::NT_RANGE => [
                 // [SymbolType::NT_RANGE_SEPARATOR, SymbolType::NT_CLASS_SYMBOL]
                 0 => [
-                    function () {
-                        throw new Exception("Ranges in classes are not implemented yet");
+                    's.symbol_node' => function (ProductionRuleContext $context): int {
+                        return
+                            $context
+                            ->createNode('symbol_range')
+                            ->addChild($context->getNodeByHeaderAttribute('i.symbol_node'))
+                            ->addChild($context->getNodeBySymbolAttribute(1, 's.symbol_node'))
+                            ->getId();
                     },
                 ],
                 // []

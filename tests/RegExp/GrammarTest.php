@@ -303,6 +303,50 @@ class GrammarTest extends TestCase
                     ],
                 ],
             ],
+            "One range in class" => [
+                '[a-c]',
+                (object) [
+                    'name' => 'symbol_class',
+                    'attr' => (object) ['not' => false],
+                    'nodes' => [
+                        (object) [
+                            'name' => 'symbol_range',
+                            'nodes' => [$symbolA, $symbolC],
+                        ],
+                    ],
+                ],
+            ],
+            "One range in inverted class" => [
+                '[^a-c]',
+                (object) [
+                    'name' => 'symbol_class',
+                    'attr' => (object) ['not' => true],
+                    'nodes' => [
+                        (object) [
+                            'name' => 'symbol_range',
+                            'nodes' => [$symbolA, $symbolC],
+                        ],
+                    ],
+                ],
+            ],
+            "Two ranges and a symbol between in class" => [
+                '[a-cbb-c]',
+                (object) [
+                    'name' => 'symbol_class',
+                    'attr' => (object) ['not' => false],
+                    'nodes' => [
+                        (object) [
+                            'name' => 'symbol_range',
+                            'nodes' => [$symbolA, $symbolC],
+                        ],
+                        $symbolB,
+                        (object) [
+                            'name' => 'symbol_range',
+                            'nodes' => [$symbolB, $symbolC],
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 
