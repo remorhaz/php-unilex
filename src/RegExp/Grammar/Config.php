@@ -84,7 +84,7 @@ return [
             [SymbolType::NT_CLASS_START, SymbolType::NT_CLASS_BODY, SymbolType::NT_CLASS_END],
         ],
         SymbolType::NT_CLASS_BODY => [
-            [SymbolType::NT_CLASS_INVERTOR, SymbolType::NT_CLASS_ITEM, SymbolType::NT_CLASS_ITEMS],
+            [SymbolType::NT_CLASS_INVERTOR, SymbolType::NT_FIRST_INV_CLASS_ITEM, SymbolType::NT_CLASS_ITEMS],
             [SymbolType::NT_FIRST_CLASS_ITEM, SymbolType::NT_CLASS_ITEMS],
         ],
         SymbolType::NT_CLASS_ITEMS => [
@@ -92,7 +92,11 @@ return [
             [],
         ],
         SymbolType::NT_FIRST_CLASS_ITEM => [
-            [SymbolType::NT_FIRST_UNESC_CLASS_SYMBOL, SymbolType::NT_RANGE],
+            [SymbolType::NT_FIRST_CLASS_SYMBOL, SymbolType::NT_RANGE],
+            [SymbolType::NT_ESC_CLASS_SYMBOL, SymbolType::NT_RANGE],
+        ],
+        SymbolType::NT_FIRST_INV_CLASS_ITEM => [
+            [SymbolType::NT_FIRST_INV_CLASS_SYMBOL, SymbolType::NT_RANGE],
             [SymbolType::NT_ESC_CLASS_SYMBOL, SymbolType::NT_RANGE],
         ],
         SymbolType::NT_CLASS_ITEM => [
@@ -266,7 +270,7 @@ return [
         SymbolType::NT_CLASS_INVERTOR => [
             [SymbolType::T_CIRCUMFLEX],
         ],
-        SymbolType::NT_FIRST_UNESC_CLASS_SYMBOL => [
+        SymbolType::NT_FIRST_CLASS_SYMBOL => [
             [SymbolType::T_RIGHT_SQUARE_BRACKET],
             [SymbolType::T_DOLLAR],
             [SymbolType::T_LEFT_BRACKET],
@@ -285,6 +289,27 @@ return [
             [SymbolType::T_PRINTABLE_ASCII_OTHER],
             [SymbolType::T_OTHER_ASCII],
             [SymbolType::T_NOT_ASCII],
+        ],
+        SymbolType::NT_FIRST_INV_CLASS_SYMBOL => [
+            [SymbolType::T_RIGHT_SQUARE_BRACKET],
+            [SymbolType::T_DOLLAR],
+            [SymbolType::T_LEFT_BRACKET],
+            [SymbolType::T_RIGHT_BRACKET],
+            [SymbolType::T_STAR],
+            [SymbolType::T_PLUS],
+            [SymbolType::T_COMMA],
+            [SymbolType::T_QUESTION],
+            [SymbolType::T_LEFT_SQUARE_BRACKET],
+            [SymbolType::T_LEFT_CURLY_BRACKET],
+            [SymbolType::T_VERTICAL_LINE],
+            [SymbolType::T_RIGHT_CURLY_BRACKET],
+            [SymbolType::T_CTL_ASCII],
+            [SymbolType::T_OTHER_HEX_LETTER],
+            [SymbolType::T_OTHER_ASCII_LETTER],
+            [SymbolType::T_PRINTABLE_ASCII_OTHER],
+            [SymbolType::T_OTHER_ASCII],
+            [SymbolType::T_NOT_ASCII],
+            [SymbolType::T_CIRCUMFLEX],
         ],
         SymbolType::NT_ESC => [
             [SymbolType::T_BACKSLASH],

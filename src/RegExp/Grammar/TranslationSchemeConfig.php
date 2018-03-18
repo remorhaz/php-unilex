@@ -184,6 +184,19 @@ abstract class TranslationSchemeConfig
                     ],
                 ],
             ],
+            SymbolType::NT_FIRST_INV_CLASS_ITEM => [
+                0 => [
+                    // SymbolType::NT_RANGE
+                    1 => [
+                        'i.symbol_node' => function (SymbolRuleContext $context): int {
+                            return $context
+                                ->createNode('symbol')
+                                ->setAttribute('code', $context->getSymbolAttribute(0, 's.code'))
+                                ->getId();
+                        },
+                    ],
+                ],
+            ],
             SymbolType::NT_CLASS_ITEMS => [
                 0 => [
                     // SymbolType::NT_CLASS_ITEMS
@@ -335,13 +348,19 @@ abstract class TranslationSchemeConfig
                 0 => ['s.class_node' => self::synSymbolAttribute(1, 's.class_node')],
             ],
             SymbolType::NT_CLASS_BODY => [
-                // [SymbolType::NT_CLASS_INVERTOR, SymbolType::NT_FIRST_CLASS_ITEM, SymbolType::NT_CLASS_ITEMS]
+                // [SymbolType::NT_CLASS_INVERTOR, SymbolType::NT_FIRST_INV_CLASS_ITEM, SymbolType::NT_CLASS_ITEMS]
                 0 => ['s.class_node' => self::synSymbolAttribute(2, 's.class_node')],
                 // [SymbolType::NT_FIRST_CLASS_ITEM, SymbolType::NT_CLASS_ITEMS]
                 1 => ['s.class_node' => self::synSymbolAttribute(1, 's.class_node')],
             ],
             SymbolType::NT_FIRST_CLASS_ITEM => [
-                // [SymbolType::NT_FIRST_UNESC_CLASS_SYMBOL, SymbolType::NT_RANGE]
+                // [SymbolType::NT_FIRST_CLASS_SYMBOL, SymbolType::NT_RANGE]
+                0 => [
+                    's.symbol_node' => self::synSymbolAttribute(1, 's.symbol_node'),
+                ],
+            ],
+            SymbolType::NT_FIRST_INV_CLASS_ITEM => [
+                // [SymbolType::NT_FIRST_INV_CLASS_SYMBOL, SymbolType::NT_RANGE]
                 0 => [
                     's.symbol_node' => self::synSymbolAttribute(1, 's.symbol_node'),
                 ],
@@ -352,7 +371,7 @@ abstract class TranslationSchemeConfig
                     's.symbol_node' => self::synSymbolAttribute(1, 's.symbol_node'),
                 ],
             ],
-            SymbolType::NT_FIRST_UNESC_CLASS_SYMBOL => [
+            SymbolType::NT_FIRST_CLASS_SYMBOL => [
                 // [SymbolType::T_RIGHT_SQUARE_BRACKET]
                 0 => ['s.code' => $getSynthesizedCodeAttribute],
                 // [SymbolType::T_DOLLAR]
@@ -389,6 +408,46 @@ abstract class TranslationSchemeConfig
                 16 => ['s.code' => $getSynthesizedCodeAttribute],
                 // [SymbolType::T_NOT_ASCII]
                 17 => ['s.code' => $getSynthesizedCodeAttribute],
+            ],
+            SymbolType::NT_FIRST_INV_CLASS_SYMBOL => [
+                // [SymbolType::T_RIGHT_SQUARE_BRACKET]
+                0 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_DOLLAR]
+                1 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_LEFT_BRACKET]
+                2 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_RIGHT_BRACKET]
+                3 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_STAR]
+                4 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_PLUS]
+                5 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_COMMA]
+                6 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_QUESTION]
+                7 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_LEFT_SQUARE_BRACKET]
+                8 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_LEFT_CURLY_BRACKET]
+                9 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_VERTICAL_LINE]
+                10 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_RIGHT_CURLY_BRACKET]
+                11 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_CTL_ASCII]
+                12 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_OTHER_HEX_LETTER]
+                13 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_OTHER_ASCII_LETTER]
+                14 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_PRINTABLE_ASCII_OTHER]
+                15 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_OTHER_ASCII]
+                16 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_NOT_ASCII]
+                17 => ['s.code' => $getSynthesizedCodeAttribute],
+                // [SymbolType::T_CIRCUMFLEX]
+                18 => ['s.code' => $getSynthesizedCodeAttribute],
             ],
             SymbolType::NT_UNESC_CLASS_SYMBOL => [
                 // [SymbolType::T_DOLLAR]

@@ -29,7 +29,7 @@ abstract class SymbolType
     const NT_CLASS_BODY                 = 0x10;
     const NT_FIRST_CLASS_ITEM           = 0x11;
     const NT_CLASS_ITEM                 = 0x12;
-    const NT_FIRST_UNESC_CLASS_SYMBOL   = 0x13;
+    const NT_FIRST_CLASS_SYMBOL         = 0x13;
     const NT_CLASS_SYMBOL               = 0x14;
     const NT_ESC_CLASS_SYMBOL           = 0x15;
     const NT_ESC                        = 0x16;
@@ -139,6 +139,8 @@ abstract class SymbolType
     const NT_MORE_ITEMS                 = 0x85;
     const NT_MORE_ITEMS_TAIL            = 0x86;
     const NT_ALT_PARTS_TAIL             = 0x87;
+    const NT_FIRST_INV_CLASS_ITEM       = 0x88;
+    const NT_FIRST_INV_CLASS_SYMBOL     = 0x89;
 
     const T_INVALID                     = 0xFE;
     const T_EOI                         = 0xFF;

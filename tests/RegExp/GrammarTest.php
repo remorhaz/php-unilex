@@ -264,7 +264,7 @@ class GrammarTest extends TestCase
                     'nodes' => [$symbolA, $symbolB],
                 ],
             ],
-            "Two circumflexes in class" => [
+            "Circumflex in inverted class" => [
                 '[^^]',
                 (object) [
                     'name' => 'symbol_class',
@@ -273,6 +273,32 @@ class GrammarTest extends TestCase
                         (object) [
                             'name' => 'symbol',
                             'attr' => (object) ['code' => 0x5E],
+                        ],
+                    ],
+                ],
+            ],
+            "Right square bracket in class" => [
+                '[]]',
+                (object) [
+                    'name' => 'symbol_class',
+                    'attr' => (object) ['not' => false],
+                    'nodes' => [
+                        (object) [
+                            'name' => 'symbol',
+                            'attr' => (object) ['code' => 0x5D],
+                        ],
+                    ],
+                ],
+            ],
+            "Right square bracket in inverted class" => [
+                '[^]]',
+                (object) [
+                    'name' => 'symbol_class',
+                    'attr' => (object) ['not' => true],
+                    'nodes' => [
+                        (object) [
+                            'name' => 'symbol',
+                            'attr' => (object) ['code' => 0x5D],
                         ],
                     ],
                 ],
