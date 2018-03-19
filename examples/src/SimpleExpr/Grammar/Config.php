@@ -29,6 +29,10 @@ return [
      *      ]
      */
     GrammarLoader::PRODUCTION_MAP_KEY => [
+        SymbolType::NT_ROOT => [
+            // ROOT → E $
+            [SymbolType::NT_E0, SymbolType::T_EOI],
+        ],
         SymbolType::NT_E0 => [
             // E  →  T E'
             [SymbolType::NT_T0, SymbolType::NT_E1],

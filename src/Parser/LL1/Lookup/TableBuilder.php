@@ -77,6 +77,9 @@ class TableBuilder
     private function addProductionsFromNonTerminalMap(Table $table): void
     {
         foreach ($this->grammar->getFullProductionList() as $production) {
+            if ($production->getHeaderId() == $this->grammar->getRootSymbol()) {
+                continue;
+            }
             $this->addProductionFirsts($table, $production);
             $this->addProductionFollows($table, $production);
         }

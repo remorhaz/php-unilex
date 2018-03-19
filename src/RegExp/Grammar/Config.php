@@ -41,6 +41,9 @@ return [
         SymbolType::T_EOI => TokenType::EOI,
     ],
     GrammarLoader::PRODUCTION_MAP_KEY => [
+        SymbolType::NT_ROOT => [
+            [SymbolType::NT_PARTS, SymbolType::T_EOI],
+        ],
         SymbolType::NT_PARTS => [
             [SymbolType::NT_PART, SymbolType::NT_ALT_PARTS],
         ],
