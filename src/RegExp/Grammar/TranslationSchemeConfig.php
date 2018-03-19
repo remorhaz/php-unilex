@@ -40,7 +40,7 @@ abstract class TranslationSchemeConfig
                         // SymbolType::NT_PART
                         'i.alternatives_node' => function (SymbolRuleContext $context): int {
                             return $context
-                                ->createNode('alternative')
+                                ->createNode(NodeType::ALTERNATIVE)
                                 ->addChild($context->getNodeByHeaderAttribute('i.alternative_node'))
                                 ->getId();
                         },
@@ -84,7 +84,7 @@ abstract class TranslationSchemeConfig
                     0 => [
                         'i.concatenate_node' => function (SymbolRuleContext $context): int {
                             return $context
-                                ->createNode('concatenate')
+                                ->createNode(NodeType::CONCATENATE)
                                 ->addChild($context->getNodeByHeaderAttribute('i.concatenable_node'))
                                 ->getId();
                         },
@@ -171,7 +171,7 @@ abstract class TranslationSchemeConfig
                     1 => [
                         'i.symbol_node' => function (SymbolRuleContext $context): int {
                             return $context
-                                ->createNode('symbol')
+                                ->createNode(NodeType::SYMBOL)
                                 ->setAttribute('code', $context->getSymbolAttribute(0, 's.code'))
                                 ->getId();
                         },
@@ -188,7 +188,7 @@ abstract class TranslationSchemeConfig
                     1 => [
                         'i.symbol_node' => function (SymbolRuleContext $context): int {
                             return $context
-                                ->createNode('symbol')
+                                ->createNode(NodeType::SYMBOL)
                                 ->setAttribute('code', $context->getSymbolAttribute(0, 's.code'))
                                 ->getId();
                         },
@@ -205,7 +205,7 @@ abstract class TranslationSchemeConfig
                     1 => [
                         'i.class_node' => function (SymbolRuleContext $context): int {
                             return $context
-                                ->createNode('symbol_class')
+                                ->createNode(NodeType::SYMBOL_CLASS)
                                 ->setAttribute('not', $context->getHeaderAttribute('i.not'))
                                 ->addChild($context->getNodeByHeaderAttribute('i.symbol_node'))
                                 ->addChild($context->getNodeBySymbolAttribute(0, 's.symbol_node'))
@@ -295,11 +295,11 @@ abstract class TranslationSchemeConfig
             SymbolType::NT_PART => [
                 // [SymbolType::NT_ITEM, SymbolType::NT_MORE_ITEMS]
                 0 => ['s.alternative_node' => self::synSymbolAttribute(1, 's.concatenate_node')],
-                // []
+                // []§
                 1 => [
                     's.alternative_node' => function (ProductionRuleContext $context): int {
                         return $context
-                            ->createNode('empty')
+                            ->createNode(NodeType::EMPTY)
                             ->getId();
                     }
                 ],
@@ -336,7 +336,7 @@ abstract class TranslationSchemeConfig
                             return $context->getSymbolAttribute(0, 's.repeatable_node');
                         }
                         $repeatNode = $context
-                            ->createNode('repeat')
+                            ->createNode(NodeType::REPEAT)
                             ->setAttribute('min', $min)
                             ->setAttribute('max', $max)
                             ->setAttribute('is_max_infinite', $isMaxInfinite)
@@ -388,7 +388,7 @@ abstract class TranslationSchemeConfig
                 0 => [
                     's.escape_node' => function (ProductionRuleContext $context): int {
                         return $context
-                            ->createNode('esc_simple')
+                            ->createNode(NodeType::ESC_SIMPLE)
                             ->setAttribute('code', $context->getSymbolAttribute(0, 's.code'))
                             ->getId();
                     },
@@ -397,7 +397,7 @@ abstract class TranslationSchemeConfig
                 1 => [
                     's.escape_node' => function (ProductionRuleContext $context): int {
                         return $context
-                            ->createNode('symbol')
+                            ->createNode(NodeType::SYMBOL)
                             ->setAttribute('code', $context->getSymbolAttribute(0, 's.code'))
                             ->getId();
                     }
@@ -408,7 +408,7 @@ abstract class TranslationSchemeConfig
                 3 => [
                     's.escape_node' => function (ProductionRuleContext $context): int {
                         return $context
-                            ->createNode('symbol_prop')
+                            ->createNode(NodeType::SYMBOL_PROP)
                             ->setAttribute('not', false)
                             ->setAttribute('name', $context->getSymbolAttribute(0, 's.name'))
                             ->getId();
@@ -418,7 +418,7 @@ abstract class TranslationSchemeConfig
                 4 => [
                     's.escape_node' => function (ProductionRuleContext $context): int {
                         return $context
-                            ->createNode('symbol_prop')
+                            ->createNode(NodeType::SYMBOL_PROP)
                             ->setAttribute('not', true)
                             ->setAttribute('name', $context->getSymbolAttribute(0, 's.name'))
                             ->getId();
@@ -584,7 +584,7 @@ abstract class TranslationSchemeConfig
                 1 => [
                     's.symbol_node' => function (ProductionRuleContext $context): int {
                         return $context
-                            ->createNode('symbol')
+                            ->createNode(NodeType::SYMBOL)
                             ->setAttribute('code', $context->getSymbolAttribute(0, 's.code'))
                             ->getId();
                     },
@@ -596,7 +596,7 @@ abstract class TranslationSchemeConfig
                     's.symbol_node' => function (ProductionRuleContext $context): int {
                         return
                             $context
-                            ->createNode('symbol_range')
+                            ->createNode(NodeType::SYMBOL_RANGE)
                             ->addChild($context->getNodeByHeaderAttribute('i.symbol_node'))
                             ->addChild($context->getNodeBySymbolAttribute(1, 's.symbol_node'))
                             ->getId();
@@ -616,7 +616,7 @@ abstract class TranslationSchemeConfig
                         $isNot = $context->getHeaderAttribute('i.not');
                         return $isNot
                             ? $context
-                                ->createNode('symbol_class')
+                                ->createNode(NodeType::SYMBOL_CLASS)
                                 ->setAttribute('not', $isNot)
                                 ->addChild($context->getNodeByHeaderAttribute('i.symbol_node'))
                                 ->getId()
@@ -637,7 +637,7 @@ abstract class TranslationSchemeConfig
                 0 => [
                     's.symbol_node' => function (ProductionRuleContext $context): int {
                         return $context
-                            ->createNode('symbol_any')
+                            ->createNode(NodeType::SYMBOL_ANY)
                             ->getId();
                     },
                 ],
@@ -647,7 +647,7 @@ abstract class TranslationSchemeConfig
                 2 => [
                     's.symbol_node' => function (ProductionRuleContext $context): int {
                         return $context
-                            ->createNode('symbol')
+                            ->createNode(NodeType::SYMBOL)
                             ->setAttribute('code', $context->getSymbolAttribute(0, 's.code'))
                             ->getId();
                     },
@@ -662,7 +662,7 @@ abstract class TranslationSchemeConfig
                 0 => [
                     's.assert_node' => function (ProductionRuleContext $context): int {
                         return $context
-                            ->createNode('assert')
+                            ->createNode(NodeType::ASSERT)
                             ->setAttribute('type', 'line_start')
                             ->getId();
                     },
@@ -671,7 +671,7 @@ abstract class TranslationSchemeConfig
                 1 => [
                     's.assert_node' => function (ProductionRuleContext $context): int {
                         return $context
-                            ->createNode('assert')
+                            ->createNode(NodeType::ASSERT)
                             ->setAttribute('type', 'line_finish')
                             ->getId();
                     },
@@ -690,7 +690,7 @@ abstract class TranslationSchemeConfig
                 0 => [
                     's.escape_node' => function (ProductionRuleContext $context): int {
                         return $context
-                            ->createNode('esc_simple')
+                            ->createNode(NodeType::ESC_SIMPLE)
                             ->setAttribute('code', $context->getSymbolAttribute(0, 's.code'))
                             ->getId();
                     },
@@ -699,7 +699,7 @@ abstract class TranslationSchemeConfig
                 1 => [
                     's.escape_node' => function (ProductionRuleContext $context): int {
                         return $context
-                            ->createNode('symbol')
+                            ->createNode(NodeType::SYMBOL)
                             ->setAttribute('code', $context->getSymbolAttribute(0, 's.code'))
                             ->getId();
                     }
@@ -710,7 +710,7 @@ abstract class TranslationSchemeConfig
                 3 => [
                     's.escape_node' => function (ProductionRuleContext $context): int {
                         return $context
-                            ->createNode('symbol_prop')
+                            ->createNode(NodeType::SYMBOL_PROP)
                             ->setAttribute('not', false)
                             ->setAttribute('name', $context->getSymbolAttribute(0, 's.name'))
                             ->getId();
@@ -720,7 +720,7 @@ abstract class TranslationSchemeConfig
                 4 => [
                     's.escape_node' => function (ProductionRuleContext $context): int {
                         return $context
-                            ->createNode('symbol_prop')
+                            ->createNode(NodeType::SYMBOL_PROP)
                             ->setAttribute('not', true)
                             ->setAttribute('name', $context->getSymbolAttribute(0, 's.name'))
                             ->getId();
@@ -952,7 +952,7 @@ abstract class TranslationSchemeConfig
                 0 => [
                     's.symbol_node' => function (ProductionRuleContext $context): int {
                         return $context
-                            ->createNode('symbol_ctl')
+                            ->createNode(NodeType::SYMBOL_CTL)
                             ->setAttribute('code', $context->getSymbolAttribute(1, 's.code'))
                             ->getId();
                     },
@@ -967,7 +967,7 @@ abstract class TranslationSchemeConfig
                 0 => [
                     's.symbol_node' => function (ProductionRuleContext $context): int {
                         return $context
-                            ->createNode('symbol')
+                            ->createNode(NodeType::SYMBOL)
                             ->setAttribute('code', $context->getSymbolAttribute(0, 's.code'))
                             ->getId();
                     },
@@ -976,7 +976,7 @@ abstract class TranslationSchemeConfig
                 1 => [
                     's.symbol_node' => function (ProductionRuleContext $context): int {
                         return $context
-                            ->createNode('symbol')
+                            ->createNode(NodeType::SYMBOL)
                             ->setAttribute('code', $context->getSymbolAttribute(0, 's.code'))
                             ->getId();
                     },
@@ -1018,7 +1018,7 @@ abstract class TranslationSchemeConfig
                             $context->getSymbolAttribute(3, 's.hex_digit');
                         $hexNumber = hexdec($hexNumberString);
                         return $context
-                            ->createNode('symbol')
+                            ->createNode(NodeType::SYMBOL)
                             ->setAttribute('code', $hexNumber)
                             ->getId();
                     },
@@ -1029,7 +1029,7 @@ abstract class TranslationSchemeConfig
                 0 => [
                     's.symbol_node' => function (ProductionRuleContext $context): int {
                         return $context
-                            ->createNode('symbol')
+                            ->createNode(NodeType::SYMBOL)
                             ->setAttribute('code', $context->getSymbolAttribute(1, 's.code'))
                             ->getId();
                     },
