@@ -295,7 +295,7 @@ abstract class TranslationSchemeConfig
             SymbolType::NT_PART => [
                 // [SymbolType::NT_ITEM, SymbolType::NT_MORE_ITEMS]
                 0 => ['s.alternative_node' => self::synSymbolAttribute(1, 's.concatenate_node')],
-                // []§
+                // []
                 1 => [
                     's.alternative_node' => function (ProductionRuleContext $context): int {
                         return $context
@@ -1454,6 +1454,7 @@ abstract class TranslationSchemeConfig
             }
         };
     }
+
     private static function synTokenAttribute(string $attribute): Closure
     {
         return function (TokenRuleContext $context) use ($attribute) {
