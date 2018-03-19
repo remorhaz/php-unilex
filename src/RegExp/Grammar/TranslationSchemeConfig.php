@@ -177,6 +177,10 @@ abstract class TranslationSchemeConfig
                         },
                     ],
                 ],
+                1 => [
+                    // SymbolType::NT_RANGE
+                    1 => ['i.symbol_node' => self::inhSymbolAttribute(0, 's.symbol_node')],
+                ],
             ],
             SymbolType::NT_FIRST_INV_CLASS_ITEM => [
                 0 => [
@@ -189,6 +193,10 @@ abstract class TranslationSchemeConfig
                                 ->getId();
                         },
                     ],
+                ],
+                1 => [
+                    // SymbolType::NT_RANGE
+                    1 => ['i.symbol_node' => self::inhSymbolAttribute(0, 's.symbol_node')],
                 ],
             ],
             SymbolType::NT_CLASS_ITEMS => [
@@ -277,7 +285,7 @@ abstract class TranslationSchemeConfig
                             ->getNodeByHeaderAttribute('i.alternatives_node')
                             ->addChild($context->getNodeByHeaderAttribute('i.alternative_node'));
                         return $context->getHeaderAttribute('i.alternatives_node');
-                    }
+                    },
                 ],
             ],
 
@@ -357,20 +365,64 @@ abstract class TranslationSchemeConfig
             ],
             SymbolType::NT_FIRST_CLASS_ITEM => [
                 // [SymbolType::NT_FIRST_CLASS_SYMBOL, SymbolType::NT_RANGE]
-                0 => [
-                    's.symbol_node' => self::synSymbolAttribute(1, 's.symbol_node'),
-                ],
+                0 => ['s.symbol_node' => self::synSymbolAttribute(1, 's.symbol_node')],
+                // [SymbolType::NT_ESC_CLASS_SYMBOL, SymbolType::NT_RANGE]
+                1 => ['s.symbol_node' => self::synSymbolAttribute(1, 's.symbol_node')],
             ],
             SymbolType::NT_FIRST_INV_CLASS_ITEM => [
                 // [SymbolType::NT_FIRST_INV_CLASS_SYMBOL, SymbolType::NT_RANGE]
-                0 => [
-                    's.symbol_node' => self::synSymbolAttribute(1, 's.symbol_node'),
-                ],
+                0 => ['s.symbol_node' => self::synSymbolAttribute(1, 's.symbol_node')],
+                // [SymbolType::NT_ESC_CLASS_SYMBOL, SymbolType::NT_RANGE]
+                1 => ['s.symbol_node' => self::synSymbolAttribute(1, 's.symbol_node')],
             ],
             SymbolType::NT_CLASS_ITEM => [
                 // [SymbolType::NT_CLASS_SYMBOL, SymbolType::NT_RANGE]
+                0 => ['s.symbol_node' => self::synSymbolAttribute(1, 's.symbol_node')],
+            ],
+            SymbolType::NT_ESC_CLASS_SYMBOL => [
+                // [SymbolType::NT_ESC, SymbolType::NT_CLASS_ESC_SEQUENCE]
+                0 => ['s.symbol_node' => self::synSymbolAttribute(1, 's.escape_node')],
+            ],
+            SymbolType::NT_CLASS_ESC_SEQUENCE => [
+                // [SymbolType::NT_ESC_SIMPLE]
                 0 => [
-                    's.symbol_node' => self::synSymbolAttribute(1, 's.symbol_node'),
+                    's.escape_node' => function (ProductionRuleContext $context): int {
+                        return $context
+                            ->createNode('esc_simple')
+                            ->setAttribute('code', $context->getSymbolAttribute(0, 's.code'))
+                            ->getId();
+                    },
+                ],
+                // [SymbolType::NT_ESC_SPECIAL]
+                1 => [
+                    's.escape_node' => function (ProductionRuleContext $context): int {
+                        return $context
+                            ->createNode('symbol')
+                            ->setAttribute('code', $context->getSymbolAttribute(0, 's.code'))
+                            ->getId();
+                    }
+                ],
+                // [SymbolType::NT_ESC_NON_PRINTABLE]
+                2 => ['s.escape_node' => self::synSymbolAttribute(0, 's.symbol_node')],
+                // [SymbolType::NT_ESC_PROP]
+                3 => [
+                    's.escape_node' => function (ProductionRuleContext $context): int {
+                        return $context
+                            ->createNode('symbol_prop')
+                            ->setAttribute('not', false)
+                            ->setAttribute('name', $context->getSymbolAttribute(0, 's.name'))
+                            ->getId();
+                    },
+                ],
+                // [SymbolType::NT_ESC_NOT_PROP]
+                4 => [
+                    's.escape_node' => function (ProductionRuleContext $context): int {
+                        return $context
+                            ->createNode('symbol_prop')
+                            ->setAttribute('not', true)
+                            ->setAttribute('name', $context->getSymbolAttribute(0, 's.name'))
+                            ->getId();
+                    },
                 ],
             ],
             SymbolType::NT_FIRST_CLASS_SYMBOL => [
@@ -527,11 +579,7 @@ abstract class TranslationSchemeConfig
             ],
             SymbolType::NT_CLASS_SYMBOL => [
                 // [SymbolType::NT_ESC_CLASS_SYMBOL]
-                0 => [
-                    function () {
-                        throw new Exception("Excaped symbols in classes are not implemented yet");
-                    },
-                ],
+                0 => ['s.symbol_node' => self::synSymbolAttribute(0, 's.symbol_node')],
                 // [SymbolType::NT_UNESC_CLASS_SYMBOL]
                 1 => [
                     's.symbol_node' => function (ProductionRuleContext $context): int {

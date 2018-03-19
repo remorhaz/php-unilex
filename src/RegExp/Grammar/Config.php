@@ -114,7 +114,11 @@ return [
             [SymbolType::NT_ESC, SymbolType::NT_CLASS_ESC_SEQUENCE],
         ],
         SymbolType::NT_CLASS_ESC_SEQUENCE => [
-            [SymbolType::NT_ESC_SEQUENCE],
+            [SymbolType::NT_ESC_SIMPLE],
+            [SymbolType::NT_ESC_SPECIAL],
+            [SymbolType::NT_ESC_NON_PRINTABLE],
+            [SymbolType::NT_ESC_PROP],
+            [SymbolType::NT_ESC_NOT_PROP],
         ],
         SymbolType::NT_RANGE => [
             [SymbolType::NT_RANGE_SEPARATOR, SymbolType::NT_CLASS_SYMBOL],

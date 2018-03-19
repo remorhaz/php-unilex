@@ -339,6 +339,70 @@ class GrammarTest extends TestCase
                     ],
                 ],
             ],
+            "Escaped symbol in first position of class" => [
+                '[\\s]',
+                (object) [
+                    'name' => 'esc_simple',
+                    'attr' => (object) ['code' => 0x73],
+                ],
+            ],
+            "Escaped symbol in first position of inverted class" => [
+                '[^\\s]',
+                (object) [
+                    'name' => 'symbol_class',
+                    'attr' => (object) ['not' => true],
+                    'nodes' => [
+                        (object) [
+                            'name' => 'esc_simple',
+                            'attr' => (object) ['code' => 0x73],
+                        ],
+                    ],
+                ],
+            ],
+            "Escaped symbol in second position of class" => [
+                '[a\\s]',
+                (object) [
+                    'name' => 'symbol_class',
+                    'attr' => (object) ['not' => false],
+                    'nodes' => [
+                        $symbolA,
+                        (object) [
+                            'name' => 'esc_simple',
+                            'attr' => (object) ['code' => 0x73],
+                        ],
+                    ],
+                ],
+            ],
+            "Escaped symbol in second position of inverted class" => [
+                '[^a\\s]',
+                (object) [
+                    'name' => 'symbol_class',
+                    'attr' => (object) ['not' => true],
+                    'nodes' => [
+                        $symbolA,
+                        (object) [
+                            'name' => 'esc_simple',
+                            'attr' => (object) ['code' => 0x73],
+                        ],
+                    ],
+                ],
+            ],
+            "Range between escaped symbols in class" => [
+                '[\\t-\\-]',
+                (object) [
+                    'name' => 'symbol_range',
+                    'nodes' => [
+                        (object) [
+                            'name' => 'esc_simple',
+                            'attr' => (object) ['code' => 0x74],
+                        ],
+                        (object) [
+                            'name' => 'symbol',
+                            'attr' => (object) ['code' => 0x2D],
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 
