@@ -202,7 +202,7 @@ return [
     SymbolType::NT_GROUP => [
         TokenType::LEFT_BRACKET => 0,
     ],
-    SymbolType::NT_CLASS_ => [
+    SymbolType::NT_CLASS => [
         TokenType::LEFT_SQUARE_BRACKET => 0,
     ],
     SymbolType::NT_CLASS_BODY => [
@@ -883,7 +883,7 @@ return [
     SymbolType::NT_CLASS_END => [
         TokenType::RIGHT_SQUARE_BRACKET => 0,
     ],
-    SymbolType::NT_CLASS_INVERTOR => [
+    SymbolType::NT_CLASS_INVERTER => [
         TokenType::CIRCUMFLEX => 0,
     ],
     SymbolType::NT_FIRST_CLASS_SYMBOL => [

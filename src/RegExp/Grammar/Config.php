@@ -77,17 +77,17 @@ return [
         ],
         SymbolType::NT_ITEM_BODY => [
             [SymbolType::NT_GROUP],
-            [SymbolType::NT_CLASS_],
+            [SymbolType::NT_CLASS],
             [SymbolType::NT_SYMBOL],
         ],
         SymbolType::NT_GROUP => [
             [SymbolType::NT_GROUP_START, SymbolType::NT_PARTS, SymbolType::NT_GROUP_END],
         ],
-        SymbolType::NT_CLASS_ => [
+        SymbolType::NT_CLASS => [
             [SymbolType::NT_CLASS_START, SymbolType::NT_CLASS_BODY, SymbolType::NT_CLASS_END],
         ],
         SymbolType::NT_CLASS_BODY => [
-            [SymbolType::NT_CLASS_INVERTOR, SymbolType::NT_FIRST_INV_CLASS_ITEM, SymbolType::NT_CLASS_ITEMS],
+            [SymbolType::NT_CLASS_INVERTER, SymbolType::NT_FIRST_INV_CLASS_ITEM, SymbolType::NT_CLASS_ITEMS],
             [SymbolType::NT_FIRST_CLASS_ITEM, SymbolType::NT_CLASS_ITEMS],
         ],
         SymbolType::NT_CLASS_ITEMS => [
@@ -278,7 +278,7 @@ return [
         SymbolType::NT_CLASS_END => [
             [SymbolType::T_RIGHT_SQUARE_BRACKET],
         ],
-        SymbolType::NT_CLASS_INVERTOR => [
+        SymbolType::NT_CLASS_INVERTER => [
             [SymbolType::T_CIRCUMFLEX],
         ],
         SymbolType::NT_FIRST_CLASS_SYMBOL => [

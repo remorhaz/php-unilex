@@ -26,7 +26,7 @@ class SymbolTranslationScheme
      * @param int $symbolIndex
      * @throws Exception
      */
-    public function applySymbolActions(ParsedProduction $production, int $symbolIndex): void
+    public function applyActions(ParsedProduction $production, int $symbolIndex): void
     {
         $this->setContext($production, $symbolIndex);
 
@@ -35,219 +35,163 @@ class SymbolTranslationScheme
             ->getSymbolId();
         $productionIndex = $production->getIndex();
 
-        if (SymbolType::NT_PARTS == $headerId) {
-            if (0 == $productionIndex) {
+        switch ("{$headerId}.{$productionIndex}.{$symbolIndex}") {
+            case SymbolType::NT_PARTS . ".0.1":
                 // [SymbolType::NT_PART, SymbolType::NT_ALT_PARTS]
-                if (1 == $symbolIndex) {
-                    // SymbolType::NT_ALT_PARTS
-                    $this
-                        ->inheritSymbolAttribute(0, 'i.alternative_node', 's.alternative_node');
-                    return;
-                }
-            }
-        } elseif (SymbolType::NT_ALT_PARTS == $headerId) {
-            if (0 == $productionIndex) {
+                // SymbolType::NT_ALT_PARTS
+                $this->inheritSymbolAttribute(0, 'i.alternative_node', 's.alternative_node');
+                break;
+
+            case SymbolType::NT_ALT_PARTS . ".0.1":
                 // [SymbolType::NT_ALT_SEPARATOR, SymbolType::NT_PART, SymbolType::NT_ALT_PARTS_TAIL]
-                if (1 == $symbolIndex) {
-                    // SymbolType::NT_PART
-                    $alternativesNode = $this
-                        ->createNode(NodeType::ALTERNATIVE)
-                        ->addChild($this->getNodeByHeaderAttribute('i.alternative_node'));
-                    $this
-                        ->setSymbolAttribute('i.alternatives_node', $alternativesNode->getId());
-                    return;
-                }
-                if (2 == $symbolIndex) {
-                    // SymbolType::NT_ALT_PARTS_TAIL
-                    $this
-                        ->inheritSymbolAttribute(1, 'i.alternatives_node')
-                        ->inheritSymbolAttribute(1, 'i.alternative_node', 's.alternative_node');
-                    return;
-                }
-            }
-        } elseif (SymbolType::NT_ALT_PARTS_TAIL) {
-            if (0 == $productionIndex) {
+                // SymbolType::NT_PART
+                $alternativesNode = $this
+                    ->createNode(NodeType::ALTERNATIVE)
+                    ->addChild($this->getNodeByHeaderAttribute('i.alternative_node'));
+                $this->setSymbolAttribute('i.alternatives_node', $alternativesNode->getId());
+                break;
+
+            case SymbolType::NT_ALT_PARTS . ".0.2":
+                // SymbolType::NT_ALT_PARTS_TAIL
+                $this
+                    ->inheritSymbolAttribute(1, 'i.alternatives_node')
+                    ->inheritSymbolAttribute(1, 'i.alternative_node', 's.alternative_node');
+                break;
+
+            case SymbolType::NT_ALT_PARTS_TAIL . ".0.1":
                 // [SymbolType::NT_ALT_SEPARATOR, SymbolType::NT_PART, SymbolType::NT_ALT_PARTS_TAIL]
-                if (1 == $symbolIndex) {
-                    // SymbolType::NT_PART
-                    $alternativesNode = $this
-                        ->getNodeByHeaderAttribute('i.alternatives_node')
-                        ->addChild($this->getNodeByHeaderAttribute('i.alternative_node'));
-                    $this
-                        ->setSymbolAttribute('i.alternatives_node', $alternativesNode->getId());
-                    return;
-                }
-                if (2 == $symbolIndex) {
-                    // SymbolType::NT_ALT_PARTS_TAIL
-                    $this
-                        ->inheritSymbolAttribute(1, 'i.alternatives_node')
-                        ->inheritSymbolAttribute(1, 'i.alternative_node', 's.alternative_node');
-                    return;
-                }
-            }
-        } elseif (SymbolType::NT_PART == $headerId) {
-            if (0 == $productionIndex) {
+                // SymbolType::NT_PART
+                $alternativesNode = $this
+                    ->getNodeByHeaderAttribute('i.alternatives_node')
+                    ->addChild($this->getNodeByHeaderAttribute('i.alternative_node'));
+                $this->setSymbolAttribute('i.alternatives_node', $alternativesNode->getId());
+                break;
+
+            case SymbolType::NT_ALT_PARTS_TAIL . ".0.2":
+                // SymbolType::NT_ALT_PARTS_TAIL
+                $this
+                    ->inheritSymbolAttribute(1, 'i.alternatives_node')
+                    ->inheritSymbolAttribute(1, 'i.alternative_node', 's.alternative_node');
+                break;
+
+            case SymbolType::NT_PART . ".0.1":
                 // [SymbolType::NT_ITEM, SymbolType::NT_MORE_ITEMS]
-                if (1 == $symbolIndex) {
-                    // SymbolType::NT_MORE_ITEMS
-                    $this
-                        ->inheritSymbolAttribute(0, 'i.concatenable_node', 's.concatenable_node');
-                    return;
-                }
-            }
-        } elseif (SymbolType::NT_MORE_ITEMS == $headerId) {
-            if (0 == $productionIndex) {
+                // SymbolType::NT_MORE_ITEMS
+                $this->inheritSymbolAttribute(0, 'i.concatenable_node', 's.concatenable_node');
+                break;
+
+            case SymbolType::NT_MORE_ITEMS . ".0.0":
                 // [SymbolType::NT_ITEM, SymbolType::NT_MORE_ITEMS_TAIL]
-                if (0 == $symbolIndex) {
-                    // SymbolType::NT_ITEM
-                    $concatenateNode = $this
-                        ->createNode(NodeType::CONCATENATE)
-                        ->addChild($this->getNodeByHeaderAttribute('i.concatenable_node'));
-                    $this
-                        ->setSymbolAttribute('i.concatenate_node', $concatenateNode->getId());
-                    return;
-                }
-                if (1 == $symbolIndex) {
-                    // SymbolType::NT_MORE_ITEMS_TAIL
-                    $this
-                        ->inheritSymbolAttribute(0, 'i.concatenable_node', 's.concatenable_node')
-                        ->inheritSymbolAttribute(0, 'i.concatenate_node');
-                    return;
-                }
-            }
-        } elseif (SymbolType::NT_MORE_ITEMS_TAIL == $headerId) {
-            if (0 == $productionIndex) {
+                // SymbolType::NT_ITEM
+                $concatenateNode = $this
+                    ->createNode(NodeType::CONCATENATE)
+                    ->addChild($this->getNodeByHeaderAttribute('i.concatenable_node'));
+                $this->setSymbolAttribute('i.concatenate_node', $concatenateNode->getId());
+                break;
+
+            case SymbolType::NT_MORE_ITEMS . ".0.1":
+                // SymbolType::NT_MORE_ITEMS_TAIL
+                $this
+                    ->inheritSymbolAttribute(0, 'i.concatenable_node', 's.concatenable_node')
+                    ->inheritSymbolAttribute(0, 'i.concatenate_node');
+                break;
+
+            case SymbolType::NT_MORE_ITEMS_TAIL . ".0.0":
                 // [SymbolType::NT_ITEM, SymbolType::NT_MORE_ITEMS_TAIL]
-                if (0 == $symbolIndex) {
-                    // SymbolType::NT_ITEM
-                    $concatenateNode = $this
-                        ->getNodeByHeaderAttribute('i.concatenate_node')
-                        ->addChild($this->getNodeByHeaderAttribute('i.concatenable_node'));
-                    $this
-                        ->setSymbolAttribute('i.concatenate_node', $concatenateNode->getId());
-                    return;
-                }
-                if (1 == $symbolIndex) {
-                    // SymbolType::NT_MORE_ITEMS_TAIL
-                    $this
-                        ->inheritSymbolAttribute(0, 'i.concatenable_node', 's.concatenable_node')
-                        ->inheritSymbolAttribute(0, 'i.concatenate_node');
-                    return;
-                }
-            }
-        } elseif (SymbolType::NT_LIMIT == $headerId) {
-            if (0 == $productionIndex) {
+                // SymbolType::NT_ITEM
+                $concatenateNode = $this
+                    ->getNodeByHeaderAttribute('i.concatenate_node')
+                    ->addChild($this->getNodeByHeaderAttribute('i.concatenable_node'));
+                $this->setSymbolAttribute('i.concatenate_node', $concatenateNode->getId());
+                break;
+
+            case SymbolType::NT_MORE_ITEMS_TAIL . ".0.1":
+                // SymbolType::NT_MORE_ITEMS_TAIL
+                $this
+                    ->inheritSymbolAttribute(0, 'i.concatenable_node', 's.concatenable_node')
+                    ->inheritSymbolAttribute(0, 'i.concatenate_node');
+                break;
+
+            case SymbolType::NT_LIMIT . ".0.2":
                 // [SymbolType::NT_LIMIT_START, SymbolType::NT_MIN, SymbolType::NT_OPT_MAX, SymbolType::NT_LIMIT_END]
-                if (2 == $symbolIndex) {
-                    // SymbolType::NT_OPT_MAX
-                    $this
-                        ->inheritSymbolAttribute(1, 'i.min', 's.number_value');
-                    return;
-                }
-            }
-        } elseif (SymbolType::NT_PROP_NAME == $headerId) {
-            if (0 == $productionIndex) {
+                // SymbolType::NT_OPT_MAX
+                $this->inheritSymbolAttribute(1, 'i.min', 's.number_value');
+                break;
+
+            case SymbolType::NT_PROP_NAME . ".0.0":
                 // [SymbolType::NT_PROP_NAME_PART]
-                if (0 == $symbolIndex) {
-                    // SymbolType::NT_PROP_NAME_PART
-                    $this
-                        ->setSymbolAttribute('i.name', []);
-                    return;
-                }
-            }
-        } elseif (SymbolType::NT_PROP_NAME_PART == $headerId) {
-            if (0 == $productionIndex) {
+                // SymbolType::NT_PROP_NAME_PART
+                $this->setSymbolAttribute('i.name', []);
+                break;
+
+            case SymbolType::NT_PROP_NAME_PART . ".0.1":
                 // [SymbolType::NT_NOT_PROP_FINISH, SymbolType::NT_PROP_NAME_PART]
-                if (1 == $symbolIndex) {
-                    // SymbolType::NT_PROP_NAME_PART
-                    $name = array_merge(
-                        $this->getHeaderAttribute('i.name'),
-                        [$this->getSymbolAttribute(0, 's.code')]
-                    );
-                    $this
-                        ->setSymbolAttribute('i.name', $name);
-                    return;
-                }
-            }
-        } elseif (SymbolType::NT_CLASS_BODY) {
-            if (0 == $productionIndex) {
-                // [SymbolType::NT_CLASS_INVERTOR, SymbolType::NT_FIRST_INV_CLASS_ITEM, SymbolType::NT_CLASS_ITEMS]
-                if (2 == $symbolIndex) {
-                    // SymbolType::NT_CLASS_ITEMS
-                    $this
-                        ->setSymbolAttribute('i.not', true)
-                        ->inheritSymbolAttribute(1, 'i.symbol_node', 's.symbol_node');
-                    return;
-                }
-            } elseif (1 == $productionIndex) {
+                // SymbolType::NT_PROP_NAME_PART
+                $name = array_merge(
+                    $this->getHeaderAttribute('i.name'),
+                    [$this->getSymbolAttribute(0, 's.code')]
+                );
+                $this->setSymbolAttribute('i.name', $name);
+                break;
+
+            case SymbolType::NT_CLASS_BODY . ".0.2":
+                // [SymbolType::NT_CLASS_INVERTER, SymbolType::NT_FIRST_INV_CLASS_ITEM, SymbolType::NT_CLASS_ITEMS]
+                // SymbolType::NT_CLASS_ITEMS
+                $this
+                    ->setSymbolAttribute('i.not', true)
+                    ->inheritSymbolAttribute(1, 'i.symbol_node', 's.symbol_node');
+                break;
+
+            case SymbolType::NT_CLASS_BODY . ".1.1":
                 // [SymbolType::NT_FIRST_CLASS_ITEM, SymbolType::NT_CLASS_ITEMS]
-                if (1 == $symbolIndex) {
-                    // SymbolType::NT_CLASS_ITEMS
-                    $this
-                        ->setSymbolAttribute('i.not', false)
-                        ->inheritSymbolAttribute(0, 'i.symbol_node', 's.symbol_node');
-                    return;
-                }
-            }
-        } elseif (SymbolType::NT_FIRST_CLASS_ITEM == $headerId || SymbolType::NT_FIRST_INV_CLASS_ITEM == $headerId) {
-            if (0 == $productionIndex) {
+                // SymbolType::NT_CLASS_ITEMS
+                $this
+                    ->setSymbolAttribute('i.not', false)
+                    ->inheritSymbolAttribute(0, 'i.symbol_node', 's.symbol_node');
+                break;
+
+            case SymbolType::NT_FIRST_CLASS_ITEM . ".0.1":
+            case SymbolType::NT_FIRST_INV_CLASS_ITEM . ".0.1":
                 // [SymbolType::NT_FIRST_CLASS_SYMBOL, SymbolType::NT_RANGE]
-                if (1 == $symbolIndex) {
-                    // SymbolType::NT_RANGE
-                    $symbolNode = $this
-                        ->createNode(NodeType::SYMBOL)
-                        ->setAttribute('code', $this->getSymbolAttribute(0, 's.code'));
-                    $this
-                        ->setSymbolAttribute('i.symbol_node', $symbolNode->getId());
-                    return;
-                }
-            } elseif (1 == $productionIndex) {
+                // SymbolType::NT_RANGE
+                $symbolNode = $this
+                    ->createNode(NodeType::SYMBOL)
+                    ->setAttribute('code', $this->getSymbolAttribute(0, 's.code'));
+                $this->setSymbolAttribute('i.symbol_node', $symbolNode->getId());
+                break;
+
+            case SymbolType::NT_FIRST_CLASS_ITEM . ".1.1":
+            case SymbolType::NT_FIRST_INV_CLASS_ITEM . ".1.1":
                 // [SymbolType::NT_ESC_CLASS_SYMBOL, SymbolType::NT_RANGE]
-                if (1 == $symbolIndex) {
-                    // SymbolType::NT_RANGE
-                    $this
-                        ->inheritSymbolAttribute(0, 'i.symbol_node', 's.symbol_node');
-                    return;
-                }
-            }
-        } elseif (SymbolType::NT_CLASS_ITEMS == $headerId) {
-            if (0 == $productionIndex) {
+                // SymbolType::NT_RANGE
+                $this->inheritSymbolAttribute(0, 'i.symbol_node', 's.symbol_node');
+                break;
+
+            case SymbolType::NT_CLASS_ITEMS . ".0.1":
                 // [SymbolType::NT_CLASS_ITEM, SymbolType::NT_CLASS_ITEMS_TAIL]
-                if (1 == $symbolIndex) {
-                    // SymbolType::NT_CLASS_ITEMS_TAIL
-                    $classNode = $this
-                        ->createNode(NodeType::SYMBOL_CLASS)
-                        ->setAttribute('not', $this->getHeaderAttribute('i.not'))
-                        ->addChild($this->getNodeByHeaderAttribute('i.symbol_node'))
-                        ->addChild($this->getNodeBySymbolAttribute(0, 's.symbol_node'));
-                    $this
-                        ->setSymbolAttribute('i.class_node', $classNode->getId());
-                    return;
-                }
-            }
-        } elseif (SymbolType::NT_CLASS_ITEMS_TAIL == $headerId) {
-            if (0 == $productionIndex) {
+                // SymbolType::NT_CLASS_ITEMS_TAIL
+                $classNode = $this
+                    ->createNode(NodeType::SYMBOL_CLASS)
+                    ->setAttribute('not', $this->getHeaderAttribute('i.not'))
+                    ->addChild($this->getNodeByHeaderAttribute('i.symbol_node'))
+                    ->addChild($this->getNodeBySymbolAttribute(0, 's.symbol_node'));
+                $this->setSymbolAttribute('i.class_node', $classNode->getId());
+                break;
+
+            case SymbolType::NT_CLASS_ITEMS_TAIL . ".0.1":
                 // [SymbolType::NT_CLASS_ITEM, SymbolType::NT_CLASS_ITEMS_TAIL]
-                if (1 == $symbolIndex) {
-                    // SymbolType::NT_CLASS_ITEMS_TAIL
-                    $classNode = $this
-                        ->getNodeByHeaderAttribute('i.class_node')
-                        ->addChild($this->getNodeBySymbolAttribute(0, 's.symbol_node'));
-                    $this
-                        ->setSymbolAttribute('i.class_node', $classNode->getId());
-                    return;
-                }
-            }
-        } elseif (SymbolType::NT_CLASS_ITEM == $headerId) {
-            if (0 == $productionIndex) {
+                // SymbolType::NT_CLASS_ITEMS_TAIL
+                $classNode = $this
+                    ->getNodeByHeaderAttribute('i.class_node')
+                    ->addChild($this->getNodeBySymbolAttribute(0, 's.symbol_node'));
+                $this->setSymbolAttribute('i.class_node', $classNode->getId());
+                break;
+
+            case SymbolType::NT_CLASS_ITEM . ".0.1":
                 // [SymbolType::NT_CLASS_SYMBOL, SymbolType::NT_RANGE]
-                if (1 == $symbolIndex) {
-                    // SymbolType::NT_RANGE
-                    $this
-                        ->inheritSymbolAttribute(0, 'i.symbol_node', 's.symbol_node');
-                    return;
-                }
-            }
+                // SymbolType::NT_RANGE
+                $this->inheritSymbolAttribute(0, 'i.symbol_node', 's.symbol_node');
+                break;
         }
     }
 

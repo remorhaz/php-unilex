@@ -10,7 +10,10 @@ use Remorhaz\UniLex\RegExp\ParserFactory;
 use Remorhaz\UniLex\Unicode\CharBufferFactory;
 
 /**
- * @covers \Remorhaz\UniLex\RegExp\Grammar\TranslationSchemeConfig
+ * @covers \Remorhaz\UniLex\RegExp\Grammar\TranslationScheme
+ * @covers \Remorhaz\UniLex\RegExp\Grammar\SymbolTranslationScheme
+ * @covers \Remorhaz\UniLex\RegExp\Grammar\ProductionTranslationScheme
+ * @covers \Remorhaz\UniLex\RegExp\Grammar\TokenTranslationScheme
  */
 class GrammarTest extends TestCase
 {

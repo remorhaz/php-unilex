@@ -16,20 +16,39 @@ class TranslationScheme implements TranslationSchemeInterface
 
     private $symbolScheme;
 
+    private $productionScheme;
+
     private $tokenScheme;
 
     public function __construct(Tree $tree)
     {
         $this->tree = $tree;
         $this->symbolScheme = new SymbolTranslationScheme($tree);
+        $this->productionScheme = new ProductionTranslationScheme($tree);
         $this->tokenScheme = new TokenTranslationScheme;
     }
 
+    /**
+     * @param ParsedProduction $production
+     * @param int $symbolIndex
+     * @throws Exception
+     */
     public function applySymbolActions(ParsedProduction $production, int $symbolIndex): void
     {
         $this
             ->symbolScheme
             ->applyActions($production, $symbolIndex);
+    }
+
+    /**
+     * @param ParsedProduction $production
+     * @throws Exception
+     */
+    public function applyProductionActions(ParsedProduction $production): void
+    {
+        $this
+            ->productionScheme
+            ->applyActions($production);
     }
 
     /**

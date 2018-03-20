@@ -23,9 +23,9 @@ abstract class SymbolType
     const NT_GROUP                      = 0x0A;
     const NT_GROUP_START                = 0x0B;
     const NT_GROUP_END                  = 0x0C;
-    const NT_CLASS_                     = 0x0D;
+    const NT_CLASS                      = 0x0D;
     const NT_CLASS_START                = 0x0E;
-    const NT_CLASS_INVERTOR             = 0x0F;
+    const NT_CLASS_INVERTER             = 0x0F;
     const NT_CLASS_BODY                 = 0x10;
     const NT_FIRST_CLASS_ITEM           = 0x11;
     const NT_CLASS_ITEM                 = 0x12;
