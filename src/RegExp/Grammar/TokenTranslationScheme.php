@@ -5,7 +5,6 @@ namespace Remorhaz\UniLex\RegExp\Grammar;
 use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\Parser\ParsedSymbol;
 use Remorhaz\UniLex\Parser\ParsedToken;
-use Remorhaz\UniLex\Unicode\Grammar\TokenAttribute;
 use Throwable;
 
 class TokenTranslationScheme
@@ -28,24 +27,24 @@ class TokenTranslationScheme
             case SymbolType::T_DIGIT_ZERO:
             case SymbolType::T_DIGIT_OCT:
                 $this
-                    ->copyTokenAttribute('s.code', TokenAttribute::UNICODE_CHAR)
-                    ->copyTokenAttribute('s.oct_digit', 'digit')
-                    ->copyTokenAttribute('s.dec_digit', 'digit')
-                    ->copyTokenAttribute('s.hex_digit', 'digit');
+                    ->copyTokenAttribute('s.code', TokenAttribute::CODE)
+                    ->copyTokenAttribute('s.oct_digit', TokenAttribute::DIGIT)
+                    ->copyTokenAttribute('s.dec_digit', TokenAttribute::DIGIT)
+                    ->copyTokenAttribute('s.hex_digit', TokenAttribute::DIGIT);
                 break;
 
             case SymbolType::T_DIGIT_DEC:
                 $this
-                    ->copyTokenAttribute('s.code', TokenAttribute::UNICODE_CHAR)
-                    ->copyTokenAttribute('s.dec_digit', 'digit')
-                    ->copyTokenAttribute('s.hex_digit', 'digit');
+                    ->copyTokenAttribute('s.code', TokenAttribute::CODE)
+                    ->copyTokenAttribute('s.dec_digit', TokenAttribute::DIGIT)
+                    ->copyTokenAttribute('s.hex_digit', TokenAttribute::DIGIT);
                 break;
 
             case SymbolType::T_SMALL_C:
             case SymbolType::T_OTHER_HEX_LETTER:
                 $this
-                    ->copyTokenAttribute('s.code', TokenAttribute::UNICODE_CHAR)
-                    ->copyTokenAttribute('s.hex_digit', 'digit');
+                    ->copyTokenAttribute('s.code', TokenAttribute::CODE)
+                    ->copyTokenAttribute('s.hex_digit', TokenAttribute::DIGIT);
                 break;
 
             case SymbolType::T_COMMA:
@@ -74,7 +73,7 @@ class TokenTranslationScheme
             case SymbolType::T_DOT:
             case SymbolType::T_OTHER_ASCII_LETTER:
                 $this
-                    ->copyTokenAttribute('s.code', TokenAttribute::UNICODE_CHAR);
+                    ->copyTokenAttribute('s.code', TokenAttribute::CODE);
                 break;
         }
     }
