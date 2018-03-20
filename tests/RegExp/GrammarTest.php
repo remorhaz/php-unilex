@@ -5,7 +5,7 @@ namespace Remorhaz\UniLex\Test\RegExp;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Parser\SyntaxTree\Node;
 use Remorhaz\UniLex\Parser\SyntaxTree\Tree;
-use Remorhaz\UniLex\RegExp\Grammar\NodeType;
+use Remorhaz\UniLex\RegExp\AST\NodeType;
 use Remorhaz\UniLex\RegExp\ParserFactory;
 use Remorhaz\UniLex\Unicode\CharBufferFactory;
 

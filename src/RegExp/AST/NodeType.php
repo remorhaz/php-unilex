@@ -1,6 +1,6 @@
 <?php
 
-namespace Remorhaz\UniLex\RegExp\Grammar;
+namespace Remorhaz\UniLex\RegExp\AST;
 
 abstract class NodeType
 {

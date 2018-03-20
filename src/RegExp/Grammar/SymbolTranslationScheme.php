@@ -6,6 +6,7 @@ use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\Parser\ParsedProduction;
 use Remorhaz\UniLex\Parser\SyntaxTree\Node;
 use Remorhaz\UniLex\Parser\SyntaxTree\Tree;
+use Remorhaz\UniLex\RegExp\AST\NodeType;
 
 class SymbolTranslationScheme
 {
