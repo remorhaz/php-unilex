@@ -3,8 +3,9 @@
 namespace Remorhaz\UniLex\Parser;
 
 use Remorhaz\UniLex\Exception;
+use Remorhaz\UniLex\Stack\StackableSymbolInterface;
 
-class Production
+class Production implements StackableSymbolInterface
 {
 
     private $header;

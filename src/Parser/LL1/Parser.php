@@ -4,7 +4,6 @@ namespace Remorhaz\UniLex\Parser\LL1;
 
 use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\Grammar\ContextFree\GrammarInterface;
-use Remorhaz\UniLex\Parser\EopSymbol;
 use Remorhaz\UniLex\Parser\LL1\Lookup\Table;
 use Remorhaz\UniLex\Parser\Production;
 use Remorhaz\UniLex\Parser\Symbol;
@@ -78,8 +77,8 @@ class Parser
                     : $this->pushMatchingProduction($symbol);
                 continue;
             }
-            if ($symbol instanceof EopSymbol) {
-                $this->listener->onFinishProduction($symbol->getProduction());
+            if ($symbol instanceof Production) {
+                $this->listener->onFinishProduction($symbol);
             }
         }
     }
@@ -175,7 +174,7 @@ class Parser
 
     private function pushProduction(Production $production): void
     {
-        $this->symbolStack->push(new EopSymbol($production));
+        $this->symbolStack->push($production);
         foreach ($production->getSymbolList() as $symbolIndexInProduction => $symbol) {
             $this->productionMap[$symbol->getIndex()] = [$symbolIndexInProduction, $production];
         }
