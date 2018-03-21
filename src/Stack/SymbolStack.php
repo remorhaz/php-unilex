@@ -4,7 +4,7 @@ namespace Remorhaz\UniLex\Stack;
 
 use Remorhaz\UniLex\Exception;
 
-class ParsedSymbolStack
+class SymbolStack
 {
 
     /**

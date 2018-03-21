@@ -8,7 +8,7 @@ use Remorhaz\UniLex\Parser\EopSymbol;
 use Remorhaz\UniLex\Parser\LL1\Lookup\Table;
 use Remorhaz\UniLex\Parser\ParsedProduction;
 use Remorhaz\UniLex\Parser\ParsedSymbol;
-use Remorhaz\UniLex\Stack\ParsedSymbolStack;
+use Remorhaz\UniLex\Stack\SymbolStack;
 use Remorhaz\UniLex\Stack\StackableSymbolInterface;
 use Remorhaz\UniLex\Token;
 use Remorhaz\UniLex\TokenReaderInterface;
@@ -45,7 +45,7 @@ class Parser
         $this->grammar = $grammar;
         $this->tokenReader = $tokenReader;
         $this->listener = $listener;
-        $this->symbolStack = new ParsedSymbolStack;
+        $this->symbolStack = new SymbolStack;
     }
 
     /**
