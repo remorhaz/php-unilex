@@ -1,6 +1,6 @@
 <?php
 
-namespace Remorhaz\UniLex\Parser\SyntaxTree;
+namespace Remorhaz\UniLex\AST;
 
 use Remorhaz\UniLex\Exception;
 

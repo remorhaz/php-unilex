@@ -7,7 +7,7 @@ use Remorhaz\UniLex\Grammar\SDD\TranslationSchemeInterface;
 use Remorhaz\UniLex\Parser\ParsedProduction;
 use Remorhaz\UniLex\Parser\ParsedSymbol;
 use Remorhaz\UniLex\Parser\ParsedToken;
-use Remorhaz\UniLex\Parser\SyntaxTree\Tree;
+use Remorhaz\UniLex\AST\Tree;
 
 class TranslationScheme implements TranslationSchemeInterface
 {

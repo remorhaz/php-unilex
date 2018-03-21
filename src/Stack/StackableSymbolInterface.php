@@ -1,6 +1,6 @@
 <?php
 
-namespace Remorhaz\UniLex\Parser;
+namespace Remorhaz\UniLex\Stack;
 
 interface StackableSymbolInterface
 {

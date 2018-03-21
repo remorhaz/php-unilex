@@ -7,7 +7,7 @@ use Remorhaz\UniLex\Grammar\ContextFree\GrammarLoader;
 use Remorhaz\UniLex\Grammar\ContextFree\TokenFactory;
 use Remorhaz\UniLex\Parser\LL1\Parser;
 use Remorhaz\UniLex\Parser\LL1\TranslationSchemeApplier;
-use Remorhaz\UniLex\Parser\SyntaxTree\Tree;
+use Remorhaz\UniLex\AST\Tree;
 use Remorhaz\UniLex\RegExp\Grammar\ConfigFile;
 use Remorhaz\UniLex\RegExp\Grammar\TranslationScheme;
 use Remorhaz\UniLex\TokenReader;

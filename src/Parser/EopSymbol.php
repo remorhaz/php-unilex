@@ -2,6 +2,8 @@
 
 namespace Remorhaz\UniLex\Parser;
 
+use Remorhaz\UniLex\Stack\StackableSymbolInterface;
+
 class EopSymbol implements StackableSymbolInterface
 {
 

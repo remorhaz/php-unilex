@@ -1,9 +1,8 @@
 <?php
 
-namespace Remorhaz\UniLex\Parser\LL1;
+namespace Remorhaz\UniLex\Stack;
 
 use Remorhaz\UniLex\Exception;
-use Remorhaz\UniLex\Parser\StackableSymbolInterface;
 
 class ParsedSymbolStack
 {

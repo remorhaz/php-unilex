@@ -3,8 +3,8 @@
 namespace Remorhaz\UniLex\Test\RegExp;
 
 use PHPUnit\Framework\TestCase;
-use Remorhaz\UniLex\Parser\SyntaxTree\Node;
-use Remorhaz\UniLex\Parser\SyntaxTree\Tree;
+use Remorhaz\UniLex\AST\Node;
+use Remorhaz\UniLex\AST\Tree;
 use Remorhaz\UniLex\RegExp\AST\NodeType;
 use Remorhaz\UniLex\RegExp\ParserFactory;
 use Remorhaz\UniLex\Unicode\CharBufferFactory;
@@ -23,7 +23,7 @@ class GrammarTest extends TestCase
      * @param $expectedValue
      * @throws \Remorhaz\UniLex\Exception
      * @dataProvider providerSyntaxTree
-     * @covers \Remorhaz\UniLex\Parser\SyntaxTree\Node
+     * @covers \Remorhaz\UniLex\AST\Node
      */
     public function testRun_ValidBuffer_CreatesMatchingSyntaxTree(string $text, $expectedValue): void
     {
