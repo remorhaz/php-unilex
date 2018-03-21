@@ -3,7 +3,7 @@
 namespace Remorhaz\UniLex\RegExp\Grammar;
 
 use Remorhaz\UniLex\Exception;
-use Remorhaz\UniLex\Parser\ParsedProduction;
+use Remorhaz\UniLex\Parser\Production;
 use Remorhaz\UniLex\AST\Node;
 use Remorhaz\UniLex\AST\Tree;
 use Remorhaz\UniLex\RegExp\AST\NodeType;
@@ -23,11 +23,11 @@ class SymbolTranslationScheme
     }
 
     /**
-     * @param ParsedProduction $production
+     * @param Production $production
      * @param int $symbolIndex
      * @throws Exception
      */
-    public function applyActions(ParsedProduction $production, int $symbolIndex): void
+    public function applyActions(Production $production, int $symbolIndex): void
     {
         $this->setContext($production, $symbolIndex);
 
@@ -291,20 +291,20 @@ class SymbolTranslationScheme
     }
 
     /**
-     * @param ParsedProduction $production
+     * @param Production $production
      * @param int $symbolIndex
      */
-    private function setContext(ParsedProduction $production, int $symbolIndex): void
+    private function setContext(Production $production, int $symbolIndex): void
     {
         $this->production = $production;
         $this->symbolIndex = $symbolIndex;
     }
 
     /**
-     * @return ParsedProduction
+     * @return Production
      * @throws Exception
      */
-    private function getProduction(): ParsedProduction
+    private function getProduction(): Production
     {
         if (!isset($this->production)) {
             throw new Exception("No production defined in symbol translation scheme");

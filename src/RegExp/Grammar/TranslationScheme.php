@@ -4,8 +4,8 @@ namespace Remorhaz\UniLex\RegExp\Grammar;
 
 use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\Grammar\SDD\TranslationSchemeInterface;
-use Remorhaz\UniLex\Parser\ParsedProduction;
-use Remorhaz\UniLex\Parser\ParsedSymbol;
+use Remorhaz\UniLex\Parser\Production;
+use Remorhaz\UniLex\Parser\Symbol;
 use Remorhaz\UniLex\AST\Tree;
 use Remorhaz\UniLex\Token;
 
@@ -29,11 +29,11 @@ class TranslationScheme implements TranslationSchemeInterface
     }
 
     /**
-     * @param ParsedProduction $production
+     * @param Production $production
      * @param int $symbolIndex
      * @throws Exception
      */
-    public function applySymbolActions(ParsedProduction $production, int $symbolIndex): void
+    public function applySymbolActions(Production $production, int $symbolIndex): void
     {
         $this
             ->symbolScheme
@@ -41,10 +41,10 @@ class TranslationScheme implements TranslationSchemeInterface
     }
 
     /**
-     * @param ParsedProduction $production
+     * @param Production $production
      * @throws Exception
      */
-    public function applyProductionActions(ParsedProduction $production): void
+    public function applyProductionActions(Production $production): void
     {
         $this
             ->productionScheme
@@ -52,11 +52,11 @@ class TranslationScheme implements TranslationSchemeInterface
     }
 
     /**
-     * @param ParsedSymbol $symbol
+     * @param Symbol $symbol
      * @param Token $token
      * @throws Exception
      */
-    public function applyTokenActions(ParsedSymbol $symbol, Token $token): void
+    public function applyTokenActions(Symbol $symbol, Token $token): void
     {
         $this
             ->tokenScheme

@@ -3,7 +3,7 @@
 namespace Remorhaz\UniLex\RegExp\Grammar;
 
 use Remorhaz\UniLex\Exception;
-use Remorhaz\UniLex\Parser\ParsedSymbol;
+use Remorhaz\UniLex\Parser\Symbol;
 use Remorhaz\UniLex\Token;
 use Throwable;
 
@@ -15,11 +15,11 @@ class TokenTranslationScheme
     private $token;
 
     /**
-     * @param ParsedSymbol $symbol
+     * @param Symbol $symbol
      * @param Token $token
      * @throws Exception
      */
-    public function applyActions(ParsedSymbol $symbol, Token $token): void
+    public function applyActions(Symbol $symbol, Token $token): void
     {
         $this->setContext($symbol, $token);
 
@@ -102,17 +102,17 @@ class TokenTranslationScheme
     }
 
 
-    private function setContext(ParsedSymbol $symbol, Token $token): void
+    private function setContext(Symbol $symbol, Token $token): void
     {
         $this->symbol = $symbol;
         $this->token = $token;
     }
 
     /**
-     * @return ParsedSymbol
+     * @return Symbol
      * @throws Exception
      */
-    private function getSymbol(): ParsedSymbol
+    private function getSymbol(): Symbol
     {
         if (!isset($this->symbol)) {
             throw new Exception("No symbol defined in token translation scheme");

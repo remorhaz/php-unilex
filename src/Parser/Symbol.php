@@ -5,7 +5,7 @@ namespace Remorhaz\UniLex\Parser;
 use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\Stack\StackableSymbolInterface;
 
-class ParsedSymbol implements StackableSymbolInterface
+class Symbol implements StackableSymbolInterface
 {
 
     private $symbolId;

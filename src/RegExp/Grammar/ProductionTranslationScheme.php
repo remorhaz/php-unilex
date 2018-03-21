@@ -3,7 +3,7 @@
 namespace Remorhaz\UniLex\RegExp\Grammar;
 
 use Remorhaz\UniLex\Exception;
-use Remorhaz\UniLex\Parser\ParsedProduction;
+use Remorhaz\UniLex\Parser\Production;
 use Remorhaz\UniLex\AST\Node;
 use Remorhaz\UniLex\AST\Tree;
 use Remorhaz\UniLex\RegExp\AST\NodeType;
@@ -21,10 +21,10 @@ class ProductionTranslationScheme
     }
 
     /**
-     * @param ParsedProduction $production
+     * @param Production $production
      * @throws Exception
      */
-    public function applyActions(ParsedProduction $production): void
+    public function applyActions(Production $production): void
     {
         $this->setContext($production);
         $headerId = $production
@@ -1052,16 +1052,16 @@ class ProductionTranslationScheme
             ->getAttribute($attr);
     }
 
-    private function setContext(ParsedProduction $production): void
+    private function setContext(Production $production): void
     {
         $this->production = $production;
     }
 
     /**
-     * @return ParsedProduction
+     * @return Production
      * @throws Exception
      */
-    private function getProduction(): ParsedProduction
+    private function getProduction(): Production
     {
         if (!isset($this->production)) {
             throw new Exception("No production defined in production translation scheme");

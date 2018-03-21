@@ -4,7 +4,7 @@ namespace Remorhaz\UniLex\Parser;
 
 use Remorhaz\UniLex\Exception;
 
-class ParsedProduction
+class Production
 {
 
     private $header;
@@ -13,7 +13,7 @@ class ParsedProduction
 
     private $symbolList;
 
-    public function __construct(ParsedSymbol $header, int $index, ParsedSymbol ...$symbolList)
+    public function __construct(Symbol $header, int $index, Symbol ...$symbolList)
     {
         $this->header = $header;
         $this->index = $index;
@@ -25,7 +25,7 @@ class ParsedProduction
         return "{$this->header->getSymbolId()}:{$this->index}";
     }
 
-    public function getHeader(): ParsedSymbol
+    public function getHeader(): Symbol
     {
         return $this->header;
     }
@@ -36,7 +36,7 @@ class ParsedProduction
     }
 
     /**
-     * @return ParsedSymbol[]
+     * @return Symbol[]
      */
     public function getSymbolList(): array
     {
@@ -45,10 +45,10 @@ class ParsedProduction
 
     /**
      * @param int $index
-     * @return ParsedSymbol
+     * @return Symbol
      * @throws Exception
      */
-    public function getSymbol(int $index): ParsedSymbol
+    public function getSymbol(int $index): Symbol
     {
         if (!isset($this->symbolList[$index])) {
             throw new Exception("Symbol at index {$index} is undefined in production {$this}");

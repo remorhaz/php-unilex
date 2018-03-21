@@ -2,27 +2,27 @@
 
 namespace Remorhaz\UniLex\Grammar\SDD;
 
-use Remorhaz\UniLex\Parser\ParsedProduction;
-use Remorhaz\UniLex\Parser\ParsedSymbol;
+use Remorhaz\UniLex\Parser\Production;
+use Remorhaz\UniLex\Parser\Symbol;
 use Remorhaz\UniLex\Token;
 
 interface TranslationSchemeInterface
 {
 
     /**
-     * @param ParsedProduction $production
+     * @param Production $production
      * @param int $symbolIndex
      */
-    public function applySymbolActions(ParsedProduction $production, int $symbolIndex): void;
+    public function applySymbolActions(Production $production, int $symbolIndex): void;
 
     /**
-     * @param ParsedSymbol $symbol
+     * @param Symbol $symbol
      * @param Token $token
      */
-    public function applyTokenActions(ParsedSymbol $symbol, Token $token): void;
+    public function applyTokenActions(Symbol $symbol, Token $token): void;
 
     /**
-     * @param ParsedProduction $production
+     * @param Production $production
      */
-    public function applyProductionActions(ParsedProduction $production): void;
+    public function applyProductionActions(Production $production): void;
 }

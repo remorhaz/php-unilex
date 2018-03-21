@@ -9,12 +9,12 @@ class EopSymbol implements StackableSymbolInterface
 
     private $production;
 
-    public function __construct(ParsedProduction $production)
+    public function __construct(Production $production)
     {
         $this->production = $production;
     }
 
-    public function getProduction(): ParsedProduction
+    public function getProduction(): Production
     {
         return $this->production;
     }

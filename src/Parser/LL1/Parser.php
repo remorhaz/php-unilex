@@ -6,8 +6,8 @@ use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\Grammar\ContextFree\GrammarInterface;
 use Remorhaz\UniLex\Parser\EopSymbol;
 use Remorhaz\UniLex\Parser\LL1\Lookup\Table;
-use Remorhaz\UniLex\Parser\ParsedProduction;
-use Remorhaz\UniLex\Parser\ParsedSymbol;
+use Remorhaz\UniLex\Parser\Production;
+use Remorhaz\UniLex\Parser\Symbol;
 use Remorhaz\UniLex\Stack\SymbolStack;
 use Remorhaz\UniLex\Stack\StackableSymbolInterface;
 use Remorhaz\UniLex\Token;
@@ -33,7 +33,7 @@ class Parser
     private $nextSymbolIndex = 0;
 
     /**
-     * @var ParsedProduction[]
+     * @var Production[]
      */
     private $productionMap = [];
 
@@ -72,7 +72,7 @@ class Parser
         $this->initRun();
         while ($this->hasSymbolInStack()) {
             $symbol = $this->popSymbol();
-            if ($symbol instanceof ParsedSymbol) {
+            if ($symbol instanceof Symbol) {
                 $this->isTerminalSymbol($symbol)
                     ? $this->readSymbolToken($symbol)
                     : $this->pushMatchingProduction($symbol);
@@ -93,9 +93,9 @@ class Parser
         $this->pushProduction($this->createRootProduction());
     }
 
-    private function createRootProduction(): ParsedProduction
+    private function createRootProduction(): Production
     {
-        $rootSymbol = new ParsedSymbol($this->getNextSymbolIndex(), $this->grammar->getRootSymbol());
+        $rootSymbol = new Symbol($this->getNextSymbolIndex(), $this->grammar->getRootSymbol());
         $this->listener->onRootSymbol($rootSymbol);
         return $this->createParsedProduction($rootSymbol, 0);
     }
@@ -110,7 +110,7 @@ class Parser
         return !$this->symbolStack->isEmpty();
     }
 
-    private function isTerminalSymbol(ParsedSymbol $symbol): bool
+    private function isTerminalSymbol(Symbol $symbol): bool
     {
         return $this->grammar->isTerminal($symbol->getSymbolId());
     }
@@ -133,10 +133,10 @@ class Parser
     }
 
     /**
-     * @param ParsedSymbol $symbol
+     * @param Symbol $symbol
      * @throws Exception
      */
-    private function onSymbol(ParsedSymbol $symbol): void
+    private function onSymbol(Symbol $symbol): void
     {
         if (!isset($this->productionMap[$symbol->getIndex()])) {
             throw new Exception("No production in map for symbol {$symbol->getIndex()}");
@@ -146,10 +146,10 @@ class Parser
     }
 
     /**
-     * @param ParsedSymbol $symbol
+     * @param Symbol $symbol
      * @throws Exception
      */
-    private function readSymbolToken(ParsedSymbol $symbol): void
+    private function readSymbolToken(Symbol $symbol): void
     {
         $token = $this->previewToken();
         if (!$this->grammar->tokenMatchesTerminal($symbol->getSymbolId(), $token->getType())) {
@@ -163,17 +163,17 @@ class Parser
     }
 
     /**
-     * @param ParsedSymbol $symbol
+     * @param Symbol $symbol
      * @throws Exception
      */
-    private function pushMatchingProduction(ParsedSymbol $symbol): void
+    private function pushMatchingProduction(Symbol $symbol): void
     {
         $this->onSymbol($symbol);
         $production = $this->getMatchingProduction($symbol, $this->previewToken());
         $this->pushProduction($production);
     }
 
-    private function pushProduction(ParsedProduction $production): void
+    private function pushProduction(Production $production): void
     {
         $this->symbolStack->push(new EopSymbol($production));
         foreach ($production->getSymbolList() as $symbolIndexInProduction => $symbol) {
@@ -184,12 +184,12 @@ class Parser
     }
 
     /**
-     * @param ParsedSymbol $symbol
+     * @param Symbol $symbol
      * @param Token $token
-     * @return ParsedProduction
+     * @return Production
      * @throws Exception
      */
-    private function getMatchingProduction(ParsedSymbol $symbol, Token $token): ParsedProduction
+    private function getMatchingProduction(Symbol $symbol, Token $token): Production
     {
         $productionIndex = $this
             ->getLookupTable()
@@ -197,16 +197,16 @@ class Parser
         return $this->createParsedProduction($symbol, $productionIndex);
     }
 
-    private function createParsedProduction(ParsedSymbol $symbol, $productionIndex): ParsedProduction
+    private function createParsedProduction(Symbol $symbol, $productionIndex): Production
     {
         $grammarProduction = $this
             ->grammar
             ->getProduction($symbol->getSymbolId(), $productionIndex);
         $symbolList = [];
         foreach ($grammarProduction->getSymbolList() as $symbolId) {
-            $symbolList[] = new ParsedSymbol($this->getNextSymbolIndex(), $symbolId);
+            $symbolList[] = new Symbol($this->getNextSymbolIndex(), $symbolId);
         }
-        return new ParsedProduction($symbol, $grammarProduction->getIndex(), ...$symbolList);
+        return new Production($symbol, $grammarProduction->getIndex(), ...$symbolList);
     }
 
     /**
