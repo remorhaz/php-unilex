@@ -64,23 +64,4 @@ class Tree
     {
         return $this->nextNodeId++;
     }
-
-    /**
-     * @return Node[]
-     * @throws Exception
-     */
-    public function walk(): array
-    {
-        $nodeList = [];
-        $this->doWalk($this->getRootNode(), $nodeList);
-        return $nodeList;
-    }
-
-    private function doWalk(Node $node, array &$nodeList)
-    {
-        $nodeList[] = $node;
-        foreach ($node->getChildList() as $childNode) {
-            $this->doWalk($childNode, $nodeList);
-        }
-    }
 }
