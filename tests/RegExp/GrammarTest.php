@@ -23,7 +23,6 @@ class GrammarTest extends TestCase
      * @param $expectedValue
      * @throws \Remorhaz\UniLex\Exception
      * @dataProvider providerSyntaxTree
-     * @covers \Remorhaz\UniLex\AST\Node
      */
     public function testRun_ValidBuffer_CreatesMatchingSyntaxTree(string $text, $expectedValue): void
     {
