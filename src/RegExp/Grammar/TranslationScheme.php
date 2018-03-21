@@ -6,8 +6,8 @@ use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\Grammar\SDD\TranslationSchemeInterface;
 use Remorhaz\UniLex\Parser\ParsedProduction;
 use Remorhaz\UniLex\Parser\ParsedSymbol;
-use Remorhaz\UniLex\Parser\ParsedToken;
 use Remorhaz\UniLex\AST\Tree;
+use Remorhaz\UniLex\Token;
 
 class TranslationScheme implements TranslationSchemeInterface
 {
@@ -53,10 +53,10 @@ class TranslationScheme implements TranslationSchemeInterface
 
     /**
      * @param ParsedSymbol $symbol
-     * @param ParsedToken $token
+     * @param Token $token
      * @throws Exception
      */
-    public function applyTokenActions(ParsedSymbol $symbol, ParsedToken $token): void
+    public function applyTokenActions(ParsedSymbol $symbol, Token $token): void
     {
         $this
             ->tokenScheme

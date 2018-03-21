@@ -4,7 +4,7 @@ namespace Remorhaz\UniLex\Parser\LL1;
 
 use Remorhaz\UniLex\Parser\ParsedProduction;
 use Remorhaz\UniLex\Parser\ParsedSymbol;
-use Remorhaz\UniLex\Parser\ParsedToken;
+use Remorhaz\UniLex\Token;
 
 abstract class AbstractParserListener implements ParserListenerInterface
 {
@@ -29,11 +29,11 @@ abstract class AbstractParserListener implements ParserListenerInterface
     {
     }
 
-    public function onToken(ParsedSymbol $symbol, ParsedToken $token): void
+    public function onToken(ParsedSymbol $symbol, Token $token): void
     {
     }
 
-    public function onEoi(ParsedSymbol $symbol, ParsedToken $token): void
+    public function onEoi(ParsedSymbol $symbol, Token $token): void
     {
     }
 }

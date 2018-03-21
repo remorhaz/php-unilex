@@ -8,7 +8,6 @@ use Remorhaz\UniLex\Parser\EopSymbol;
 use Remorhaz\UniLex\Parser\LL1\Lookup\Table;
 use Remorhaz\UniLex\Parser\ParsedProduction;
 use Remorhaz\UniLex\Parser\ParsedSymbol;
-use Remorhaz\UniLex\Parser\ParsedToken;
 use Remorhaz\UniLex\Stack\ParsedSymbolStack;
 use Remorhaz\UniLex\Stack\StackableSymbolInterface;
 use Remorhaz\UniLex\Token;
@@ -156,10 +155,9 @@ class Parser
         if (!$this->grammar->tokenMatchesTerminal($symbol->getSymbolId(), $token->getType())) {
             throw new Exception("Unexpected token {$token->getType()} for symbol {$symbol->getSymbolId()}");
         }
-        $parsedToken = new ParsedToken($this->getNextSymbolIndex(), $token);
         $token->isEoi()
-            ? $this->listener->onEoi($symbol, $parsedToken)
-            : $this->listener->onToken($symbol, $parsedToken);
+            ? $this->listener->onEoi($symbol, $token)
+            : $this->listener->onToken($symbol, $token);
         $this->onSymbol($symbol);
         unset($this->token);
     }

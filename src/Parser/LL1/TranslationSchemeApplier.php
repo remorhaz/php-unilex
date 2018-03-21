@@ -5,7 +5,7 @@ namespace Remorhaz\UniLex\Parser\LL1;
 use Remorhaz\UniLex\Grammar\SDD\TranslationSchemeInterface;
 use Remorhaz\UniLex\Parser\ParsedProduction;
 use Remorhaz\UniLex\Parser\ParsedSymbol;
-use Remorhaz\UniLex\Parser\ParsedToken;
+use Remorhaz\UniLex\Token;
 
 class TranslationSchemeApplier extends AbstractParserListener
 {
@@ -31,9 +31,9 @@ class TranslationSchemeApplier extends AbstractParserListener
 
     /**
      * @param ParsedSymbol $symbol
-     * @param ParsedToken $token
+     * @param Token $token
      */
-    public function onToken(ParsedSymbol $symbol, ParsedToken $token): void
+    public function onToken(ParsedSymbol $symbol, Token $token): void
     {
         //echo "Token {$symbol->getSymbolId()} -> {$token->getToken()->getType()}", PHP_EOL;
         $this

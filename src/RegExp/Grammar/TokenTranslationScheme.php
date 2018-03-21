@@ -4,7 +4,7 @@ namespace Remorhaz\UniLex\RegExp\Grammar;
 
 use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\Parser\ParsedSymbol;
-use Remorhaz\UniLex\Parser\ParsedToken;
+use Remorhaz\UniLex\Token;
 use Throwable;
 
 class TokenTranslationScheme
@@ -16,10 +16,10 @@ class TokenTranslationScheme
 
     /**
      * @param ParsedSymbol $symbol
-     * @param ParsedToken $token
+     * @param Token $token
      * @throws Exception
      */
-    public function applyActions(ParsedSymbol $symbol, ParsedToken $token): void
+    public function applyActions(ParsedSymbol $symbol, Token $token): void
     {
         $this->setContext($symbol, $token);
 
@@ -89,21 +89,20 @@ class TokenTranslationScheme
         try {
             $value = $this
                 ->getToken()
-                ->getToken()
                 ->getAttribute($tokenAttr);
             $this
                 ->getSymbol()
                 ->setAttribute($symbolAttr, $value);
         } catch (Throwable $e) {
             $symbolText = "{$this->getSymbol()->getSymbolId()}.{$symbolAttr}";
-            $tokenText = "{$this->getToken()->getToken()->getType()}.{$tokenAttr}";
+            $tokenText = "{$this->getToken()->getType()}.{$tokenAttr}";
             throw new Exception("Failed to synthesize attribute {$symbolText} from token {$tokenText}", 0, $e);
         }
         return $this;
     }
 
 
-    private function setContext(ParsedSymbol $symbol, ParsedToken $token): void
+    private function setContext(ParsedSymbol $symbol, Token $token): void
     {
         $this->symbol = $symbol;
         $this->token = $token;
@@ -122,10 +121,10 @@ class TokenTranslationScheme
     }
 
     /**
-     * @return ParsedToken
+     * @return Token
      * @throws Exception
      */
-    private function getToken(): ParsedToken
+    private function getToken(): Token
     {
         if (!isset($this->token)) {
             throw new Exception("No token defined in token translation scheme");
