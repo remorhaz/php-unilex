@@ -5,15 +5,15 @@ namespace Remorhaz\UniLex\Grammar\ContextFree;
 class Production
 {
 
-    private $symbolId;
+    private $headerId;
 
     private $index;
 
     private $symbolList;
 
-    public function __construct(int $symbolId, int $index, int ...$symbolList)
+    public function __construct(int $headerId, int $index, int ...$symbolList)
     {
-        $this->symbolId = $symbolId;
+        $this->headerId = $headerId;
         $this->index = $index;
         $this->symbolList = $symbolList;
     }
@@ -25,7 +25,7 @@ class Production
 
     public function getHeaderId(): int
     {
-        return $this->symbolId;
+        return $this->headerId;
     }
 
     public function getIndex(): int
