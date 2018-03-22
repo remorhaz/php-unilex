@@ -5,6 +5,9 @@ namespace Remorhaz\UniLex\Test\RegExp\FSM;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\RegExp\FSM\StateMap;
 
+/**
+ * @covers \Remorhaz\UniLex\RegExp\FSM\StateMap
+ */
 class StateMapTest extends TestCase
 {
 
