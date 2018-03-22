@@ -31,7 +31,7 @@ class Translator
         while (!$this->stack->isEmpty()) {
             $symbol = $this->stack->pop();
             if ($symbol instanceof EopSymbol) {
-               $this->listener->onFinishProduction($symbol->getNode());
+                $this->listener->onFinishProduction($symbol->getNode());
             } elseif ($symbol instanceof Node) {
                 $this->stack->push(new EopSymbol($symbol));
                 $this->listener->onBeginProduction($symbol, $this->stack);
