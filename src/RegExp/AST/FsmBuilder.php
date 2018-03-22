@@ -7,7 +7,7 @@ use Remorhaz\UniLex\AST\Node;
 use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\Stack\PushInterface;
 
-class FsaBuilder extends AbstractTranslatorListener
+class FsmBuilder extends AbstractTranslatorListener
 {
 
     /**

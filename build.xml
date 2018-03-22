@@ -2,10 +2,11 @@
 
 <project name="unilex" basedir="." default="all">
     <target name="all" depends="prepare-dir,lookup-tables"/>
+
     <target name="prepare-dir" description="Prepares build directory">
         <mkdir dir="${application.startdir}/build/logs"/>
-        <echo>Created directory ${application.startdir}/build/logs</echo>
     </target>
+
     <target name="lookup-tables" description="Build LL(1) parser lookup tables" depends="regexp-lookup-table" />
     <target name="regexp-lookup-table" description="Build RegExp LL(1) parser lookup table">
         <taskdef classname="phing.BuildRegExpLookupTable" name="regexp-lookup-table" />
