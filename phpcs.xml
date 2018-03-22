@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ruleset name="UniLex">
+    <description>The coding standards for UniLex library.</description>
+
+    <file>src</file>
+    <file>tests</file>
+    <file>examples/src</file>
+    <file>examples/tests</file>
+    <file>generated</file>
+    <file>phing</file>
+
+    <rule ref="PSR2">
+    </rule>
+
+    <rule ref="Generic.NamingConventions.CamelCapsFunctionName">
+        <exclude-pattern>tests</exclude-pattern>
+        <exclude-pattern>examples/tests</exclude-pattern>
+    </rule>
+</ruleset>
