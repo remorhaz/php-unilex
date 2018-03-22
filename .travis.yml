@@ -8,6 +8,7 @@ before_script:
   - composer self-update
   - composer install --prefer-source --no-interaction
   - vendor/bin/phing
+  - vendor/bin/phpcs -sp
 
 script: vendor/bin/phpunit --coverage-clover build/logs/clover.xml
 
