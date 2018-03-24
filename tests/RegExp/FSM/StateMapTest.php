@@ -85,30 +85,6 @@ class StateMapTest extends TestCase
 
     /**
      * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage State 0 is undefined
-     */
-    public function testAddEpsilonTransition_FromStateNotExists_ThrowsException(): void
-    {
-        $stateMap = new StateMap;
-        $stateId = $stateMap->createState();
-        $stateMap->addEpsilonTransition(0, $stateId);
-    }
-
-    /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage State 0 is undefined
-     */
-    public function testAddEpsilonTransition_ToStateNotExists_ThrowsException(): void
-    {
-        $stateMap = new StateMap;
-        $stateId = $stateMap->createState();
-        $stateMap->addEpsilonTransition($stateId, 0);
-    }
-
-    /**
-     * @throws \Remorhaz\UniLex\Exception
      */
     public function testEpsilonTransitionExists_EpsilonTransitionAdded_ReturnsTrue(): void
     {
@@ -130,29 +106,5 @@ class StateMapTest extends TestCase
         $toStateId = $stateMap->createState();
         $actualValue = $stateMap->epsilonTransitionExists($fromStateId, $toStateId);
         self::assertFalse($actualValue);
-    }
-
-    /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage State 0 is undefined
-     */
-    public function testEpsilonTransitionExists_FromStateNotExists_ThrowsException(): void
-    {
-        $stateMap = new StateMap;
-        $toStateId = $stateMap->createState();
-        $stateMap->epsilonTransitionExists(0, $toStateId);
-    }
-
-    /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage State 0 is undefined
-     */
-    public function testEpsilonTransitionExists_ToStateNotExists_ThrowsException(): void
-    {
-        $stateMap = new StateMap;
-        $fromStateId = $stateMap->createState();
-        $stateMap->epsilonTransitionExists($fromStateId, 0);
     }
 }

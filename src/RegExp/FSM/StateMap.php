@@ -4,7 +4,7 @@ namespace Remorhaz\UniLex\RegExp\FSM;
 
 use Remorhaz\UniLex\Exception;
 
-class StateMap
+class StateMap implements StateMapInterface
 {
 
     private $lastStateId = 0;
@@ -13,7 +13,15 @@ class StateMap
 
     private $startState;
 
-    private $epsilonTransitionMap = [];
+    private $epsilonTransitionMap;
+
+    private $rangeTransitionMap;
+
+    public function __construct()
+    {
+        $this->epsilonTransitionMap = new TransitionMap($this);
+        $this->rangeTransitionMap = new TransitionMap($this);
+    }
 
     public function createState(): int
     {
@@ -31,7 +39,7 @@ class StateMap
         if (isset($this->startState)) {
             throw new Exception("Start state is already set");
         }
-        $this->startState = $this->getExistingState($stateId);
+        $this->startState = $this->getValidState($stateId);
     }
 
     /**
@@ -58,9 +66,9 @@ class StateMap
      */
     public function addEpsilonTransition(int $fromStateId, int $toStateId): void
     {
-        $existingFromStateId = $this->getExistingState($fromStateId);
-        $existingToStateId = $this->getExistingState($toStateId);
-        $this->epsilonTransitionMap[$existingFromStateId][$existingToStateId] = true;
+        $this
+            ->epsilonTransitionMap
+            ->addTransition($fromStateId, $toStateId, true);
     }
 
     /**
@@ -71,9 +79,9 @@ class StateMap
      */
     public function epsilonTransitionExists(int $fromStateId, int $toStateId): bool
     {
-        $existingFromStateId = $this->getExistingState($fromStateId);
-        $existingToStateId = $this->getExistingState($toStateId);
-        return isset($this->epsilonTransitionMap[$existingFromStateId][$existingToStateId]);
+        return $this
+            ->epsilonTransitionMap
+            ->transitionExists($fromStateId, $toStateId);
     }
 
     /**
@@ -81,7 +89,7 @@ class StateMap
      * @return int
      * @throws Exception
      */
-    private function getExistingState(int $stateId): int
+    private function getValidState(int $stateId): int
     {
         if (!$this->stateExists($stateId)) {
             throw new Exception("State {$stateId} is undefined");
