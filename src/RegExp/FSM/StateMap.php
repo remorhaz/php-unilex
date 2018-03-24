@@ -17,12 +17,6 @@ class StateMap implements StateMapInterface
 
     private $rangeTransitionMap;
 
-    public function __construct()
-    {
-        $this->epsilonTransitionMap = new TransitionMap($this);
-        $this->rangeTransitionMap = new TransitionMap($this);
-    }
-
     public function createState(): int
     {
         $stateId = ++$this->lastStateId;
@@ -67,7 +61,7 @@ class StateMap implements StateMapInterface
     public function addEpsilonTransition(int $fromStateId, int $toStateId): void
     {
         $this
-            ->epsilonTransitionMap
+            ->getEpsilonTransitionMap()
             ->addTransition($fromStateId, $toStateId, true);
     }
 
@@ -80,8 +74,71 @@ class StateMap implements StateMapInterface
     public function epsilonTransitionExists(int $fromStateId, int $toStateId): bool
     {
         return $this
-            ->epsilonTransitionMap
+            ->getEpsilonTransitionMap()
             ->transitionExists($fromStateId, $toStateId);
+    }
+
+    /**
+     * @param int $fromStateId
+     * @param int $toStateId
+     * @param int $char
+     * @throws Exception
+     */
+    public function addCharTransition(int $fromStateId, int $toStateId, int $char): void
+    {
+        $this->addRangeTransition($fromStateId, $toStateId, $char, $char);
+    }
+
+    /**
+     * @param int $fromStateId
+     * @param int $toStateId
+     * @param int $startChar
+     * @param int $finishChar
+     * @throws Exception
+     */
+    public function addRangeTransition(int $fromStateId, int $toStateId, int $startChar, int $finishChar): void
+    {
+        $range = [$startChar, $finishChar];
+        $transitionExists = $this
+            ->getRangeTransitionMap()
+            ->transitionExists($fromStateId, $toStateId);
+        $rangeList = $transitionExists
+            ? $this
+                ->getRangeTransitionMap()
+                ->getTransition($fromStateId, $toStateId)
+            : [];
+        // TODO: Optimize merging ranges.
+        $rangeList[] = $range;
+        $this
+            ->getRangeTransitionMap()
+            ->replaceTransition($fromStateId, $toStateId, $rangeList);
+    }
+
+    /**
+     * @param int $fromStateId
+     * @param int $toStateId
+     * @param int $char
+     * @return bool
+     * @throws Exception
+     */
+    public function charTransitionExists(int $fromStateId, int $toStateId, int $char): bool
+    {
+        $transitionExists = $this
+            ->getRangeTransitionMap()
+            ->transitionExists($fromStateId, $toStateId);
+        if (!$transitionExists) {
+            return false;
+        }
+        $rangeList = $this
+            ->getRangeTransitionMap()
+            ->getTransition($fromStateId, $toStateId);
+        foreach ($rangeList as $range) {
+            [$startChar, $finishChar] = $range;
+            if ($char >= $startChar && $char <= $finishChar) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -95,5 +152,21 @@ class StateMap implements StateMapInterface
             throw new Exception("State {$stateId} is undefined");
         }
         return $stateId;
+    }
+
+    private function getEpsilonTransitionMap(): TransitionMap
+    {
+        if (!isset($this->epsilonTransitionMap)) {
+            $this->epsilonTransitionMap = new TransitionMap($this);
+        }
+        return $this->epsilonTransitionMap;
+    }
+
+    private function getRangeTransitionMap(): TransitionMap
+    {
+        if (!isset($this->rangeTransitionMap)) {
+            $this->rangeTransitionMap = new TransitionMap($this);
+        }
+        return $this->rangeTransitionMap;
     }
 }

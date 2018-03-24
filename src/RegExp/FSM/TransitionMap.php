@@ -24,6 +24,20 @@ class TransitionMap
      */
     public function addTransition(int $fromStateId, int $toStateId, $data): void
     {
+        if ($this->transitionExists($fromStateId, $toStateId)) {
+            throw new Exception("Transition {$fromStateId}->{$toStateId} is already added");
+        }
+        $this->replaceTransition($fromStateId, $toStateId, $data);
+    }
+
+    /**
+     * @param int $fromStateId
+     * @param int $toStateId
+     * @param $data
+     * @throws Exception
+     */
+    public function replaceTransition(int $fromStateId, int $toStateId, $data): void
+    {
         [$validFromStateId, $validToStateId] = $this->getValidTransitionStates($fromStateId, $toStateId);
         $this->transitionMap[$validFromStateId][$validToStateId] = $data;
     }

@@ -2,8 +2,9 @@
 
 namespace Remorhaz\UniLex\Test\RegExp\FSM;
 
+use Closure;
 use PHPUnit\Framework\TestCase;
-use Remorhaz\UniLex\RegExp\FSM\StateMap;
+use Remorhaz\UniLex\RegExp\FSM\StateMapInterface;
 use Remorhaz\UniLex\RegExp\FSM\TransitionMap;
 
 /**
@@ -14,76 +15,92 @@ class TransitionMapTest extends TestCase
 
     /**
      * @throws \Remorhaz\UniLex\Exception
+     * @throws \ReflectionException
      * @expectedException \Remorhaz\UniLex\Exception
      * @expectedExceptionMessage Invalid transition start state: 0
      */
     public function testAddTransition_FromStateNotExists_ThrowsException(): void
     {
-        $stateMap = new StateMap;
-        $stateId = $stateMap->createState();
-        (new TransitionMap($stateMap))->addTransition(0, $stateId, true);
+        $stateExists = function (int $stateId): bool {
+            return 1 == $stateId;
+        };
+        $stateMap = $this->createStateExistenceProvider($stateExists);
+        (new TransitionMap($stateMap))->addTransition(0, 1, true);
     }
 
     /**
      * @throws \Remorhaz\UniLex\Exception
      * @expectedException \Remorhaz\UniLex\Exception
      * @expectedExceptionMessage Invalid transition finish state: 0
+     * @throws \ReflectionException
      */
     public function testAddTransition_ToStateNotExists_ThrowsException(): void
     {
-        $stateMap = new StateMap;
-        $stateId = $stateMap->createState();
-        (new TransitionMap($stateMap))->addTransition($stateId, 0, true);
+        $stateExists = function (int $stateId): bool {
+            return 1 == $stateId;
+        };
+        $stateMap = $this->createStateExistenceProvider($stateExists);
+        (new TransitionMap($stateMap))->addTransition(1, 0, true);
     }
 
     /**
      * @throws \Remorhaz\UniLex\Exception
      * @expectedException \Remorhaz\UniLex\Exception
      * @expectedExceptionMessage Invalid transition start state: 0
+     * @throws \ReflectionException
      */
     public function testTransitionExists_FromStateNotExists_ThrowsException(): void
     {
-        $stateMap = new StateMap;
-        $toStateId = $stateMap->createState();
-        (new TransitionMap($stateMap))->transitionExists(0, $toStateId);
+        $stateExists = function (int $stateId): bool {
+            return 1 == $stateId;
+        };
+        $stateMap = $this->createStateExistenceProvider($stateExists);
+        (new TransitionMap($stateMap))->transitionExists(0, 1);
     }
 
     /**
      * @throws \Remorhaz\UniLex\Exception
      * @expectedException \Remorhaz\UniLex\Exception
      * @expectedExceptionMessage Invalid transition finish state: 0
+     * @throws \ReflectionException
      */
     public function testTransitionExists_ToStateNotExists_ThrowsException(): void
     {
-        $stateMap = new StateMap;
-        $fromStateId = $stateMap->createState();
-        (new TransitionMap($stateMap))->transitionExists($fromStateId, 0);
+        $stateExists = function (int $stateId): bool {
+            return 1 == $stateId;
+        };
+        $stateMap = $this->createStateExistenceProvider($stateExists);
+        (new TransitionMap($stateMap))->transitionExists(1, 0);
     }
 
     /**
      * @throws \Remorhaz\UniLex\Exception
+     * @throws \ReflectionException
      */
     public function testTransitionExists_TransitionAdded_ReturnsTrue(): void
     {
-        $stateMap = new StateMap;
+        $stateExists = function (): bool {
+            return true;
+        };
+        $stateMap = $this->createStateExistenceProvider($stateExists);
         $transitionMap = new TransitionMap($stateMap);
-        $fromStateId = $stateMap->createState();
-        $toStateId = $stateMap->createState();
-        $transitionMap->addTransition($fromStateId, $toStateId, true);
-        $actualValue = $transitionMap->transitionExists($fromStateId, $toStateId);
+        $transitionMap->addTransition(1, 2, true);
+        $actualValue = $transitionMap->transitionExists(1, 2);
         self::assertTrue($actualValue);
     }
 
     /**
      * @throws \Remorhaz\UniLex\Exception
+     * @throws \ReflectionException
      */
-    public function testEpsilonTransitionExists_TransitionNotAdded_ReturnsFalse(): void
+    public function testTransitionExists_TransitionNotAdded_ReturnsFalse(): void
     {
-        $stateMap = new StateMap;
+        $stateExists = function (): bool {
+            return true;
+        };
+        $stateMap = $this->createStateExistenceProvider($stateExists);
         $transitionMap = new TransitionMap($stateMap);
-        $fromStateId = $stateMap->createState();
-        $toStateId = $stateMap->createState();
-        $actualValue = $transitionMap->transitionExists($fromStateId, $toStateId);
+        $actualValue = $transitionMap->transitionExists(1, 2);
         self::assertFalse($actualValue);
     }
 
@@ -92,50 +109,125 @@ class TransitionMapTest extends TestCase
      * @throws \Remorhaz\UniLex\Exception
      * @expectedException \Remorhaz\UniLex\Exception
      * @expectedExceptionMessage Invalid transition start state: 0
+     * @throws \ReflectionException
      */
     public function testGetTransition_FromStateNotExists_ThrowsException(): void
     {
-        $stateMap = new StateMap;
-        $stateId = $stateMap->createState();
-        (new TransitionMap($stateMap))->addTransition(0, $stateId, true);
+        $stateExists = function (int $stateId): bool {
+            return 1 == $stateId;
+        };
+        $stateMap = $this->createStateExistenceProvider($stateExists);
+        (new TransitionMap($stateMap))->addTransition(0, 1, true);
     }
 
     /**
      * @throws \Remorhaz\UniLex\Exception
      * @expectedException \Remorhaz\UniLex\Exception
      * @expectedExceptionMessage Invalid transition finish state: 0
+     * @throws \ReflectionException
      */
     public function testGetTransition_ToStateNotExists_ThrowsException(): void
     {
-        $stateMap = new StateMap;
-        $stateId = $stateMap->createState();
-        (new TransitionMap($stateMap))->addTransition($stateId, 0, true);
+        $stateExists = function (int $stateId): bool {
+            return 1 == $stateId;
+        };
+        $stateMap = $this->createStateExistenceProvider($stateExists);
+        (new TransitionMap($stateMap))->addTransition(1, 0, true);
     }
 
     /**
      * @throws \Remorhaz\UniLex\Exception
+     * @throws \ReflectionException
      */
     public function testGetTransition_TransitionAdded_ReturnsMatchingData(): void
     {
-        $stateMap = new StateMap;
+        $stateExists = function (): bool {
+            return true;
+        };
+        $stateMap = $this->createStateExistenceProvider($stateExists);
         $transitionMap = new TransitionMap($stateMap);
-        $fromStateId = $stateMap->createState();
-        $toStateId = $stateMap->createState();
-        $transitionMap->addTransition($fromStateId, $toStateId, 1);
-        $actualValue = $transitionMap->getTransition($fromStateId, $toStateId);
-        self::assertSame(1, $actualValue);
+        $transitionMap->addTransition(1, 2, 3);
+        $actualValue = $transitionMap->getTransition(1, 2);
+        self::assertSame(3, $actualValue);
     }
 
     /**
      * @throws \Remorhaz\UniLex\Exception
      * @expectedException \Remorhaz\UniLex\Exception
      * @expectedExceptionMessage Transition 1->2 is not defined
+     * @throws \ReflectionException
      */
     public function testGetTransition_TransitionNotAdded_ThrowsException(): void
     {
-        $stateMap = new StateMap;
-        $fromStateId = $stateMap->createState();
-        $toStateId = $stateMap->createState();
-        (new TransitionMap($stateMap))->getTransition($fromStateId, $toStateId);
+        $stateExists = function (): bool {
+            return true;
+        };
+        $stateMap = $this->createStateExistenceProvider($stateExists);
+        (new TransitionMap($stateMap))->getTransition(1, 2);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     * @expectedException \Remorhaz\UniLex\Exception
+     * @expectedExceptionMessage Transition 1->2 is already added
+     * @throws \ReflectionException
+     */
+    public function testAddTransition_TransitionAdded_ThrowsException(): void
+    {
+        $stateExists = function (): bool {
+            return true;
+        };
+        $stateMap = $this->createStateExistenceProvider($stateExists);
+        $transitionMap = new TransitionMap($stateMap);
+        $transitionMap->addTransition(1, 2, 3);
+        $transitionMap->addTransition(1, 2, 4);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     * @throws \ReflectionException
+     */
+    public function testReplaceTransition_TransitionAdded_GetTransitionReturnsNewData(): void
+    {
+        $stateExists = function (): bool {
+            return true;
+        };
+        $stateMap = $this->createStateExistenceProvider($stateExists);
+        $transitionMap = new TransitionMap($stateMap);
+        $transitionMap->addTransition(1, 2, 3);
+        $transitionMap->replaceTransition(1, 2, 4);
+        $actualValue = $transitionMap->getTransition(1, 2);
+        self::assertSame(4, $actualValue);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     * @throws \ReflectionException
+     */
+    public function testReplaceTransition_TransitionNotAdded_GetTransitionReturnsData(): void
+    {
+        $stateExists = function (): bool {
+            return true;
+        };
+        $stateMap = $this->createStateExistenceProvider($stateExists);
+        $transitionMap = new TransitionMap($stateMap);
+        $transitionMap->replaceTransition(1, 2, 3);
+        $actualValue = $transitionMap->getTransition(1, 2);
+        self::assertSame(3, $actualValue);
+    }
+
+    /**
+     * @param Closure $stateExists
+     * @return StateMapInterface
+     * @throws \ReflectionException
+     */
+    private function createStateExistenceProvider(Closure $stateExists): StateMapInterface
+    {
+        $stateMap = $this->createMock(StateMapInterface::class);
+        $stateMap
+            ->method('stateExists')
+            ->willReturnCallback($stateExists);
+        /** @var StateMapInterface $stateMap */
+        return $stateMap;
     }
 }

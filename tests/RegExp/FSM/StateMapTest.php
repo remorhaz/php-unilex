@@ -107,4 +107,69 @@ class StateMapTest extends TestCase
         $actualValue = $stateMap->epsilonTransitionExists($fromStateId, $toStateId);
         self::assertFalse($actualValue);
     }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testCharTransitionExists_MatchingCharTransitionAdded_ReturnsTrue(): void
+    {
+        $stateMap = new StateMap;
+        $fromStateId = $stateMap->createState();
+        $toStateId = $stateMap->createState();
+        $stateMap->addCharTransition($fromStateId, $toStateId, 0x61);
+        $actualValue = $stateMap->charTransitionExists($fromStateId, $toStateId, 0x61);
+        self::assertTrue($actualValue);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testCharTransitionExists_MatchingRangeTransitionAdded_ReturnsTrue(): void
+    {
+        $stateMap = new StateMap;
+        $fromStateId = $stateMap->createState();
+        $toStateId = $stateMap->createState();
+        $stateMap->addRangeTransition($fromStateId, $toStateId, 0x60, 0x63);
+        $actualValue = $stateMap->charTransitionExists($fromStateId, $toStateId, 0x61);
+        self::assertTrue($actualValue);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testCharTransitionExists_NotMatchingRangeTransitionAdded_ReturnsTrue(): void
+    {
+        $stateMap = new StateMap;
+        $fromStateId = $stateMap->createState();
+        $toStateId = $stateMap->createState();
+        $stateMap->addRangeTransition($fromStateId, $toStateId, 0x62, 0x63);
+        $actualValue = $stateMap->charTransitionExists($fromStateId, $toStateId, 0x61);
+        self::assertFalse($actualValue);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testCharTransitionExists_TwoNotMatchingRangeTransitionsAdded_ReturnsTrue(): void
+    {
+        $stateMap = new StateMap;
+        $fromStateId = $stateMap->createState();
+        $toStateId = $stateMap->createState();
+        $stateMap->addRangeTransition($fromStateId, $toStateId, 0x59, 0x60);
+        $stateMap->addRangeTransition($fromStateId, $toStateId, 0x62, 0x63);
+        $actualValue = $stateMap->charTransitionExists($fromStateId, $toStateId, 0x61);
+        self::assertFalse($actualValue);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testCharTransitionExists_CharTransitionNotAdded_ReturnsFalse(): void
+    {
+        $stateMap = new StateMap;
+        $fromStateId = $stateMap->createState();
+        $toStateId = $stateMap->createState();
+        $actualValue = $stateMap->charTransitionExists($fromStateId, $toStateId, 0x61);
+        self::assertFalse($actualValue);
+    }
 }
