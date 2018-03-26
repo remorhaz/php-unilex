@@ -27,6 +27,7 @@ class Translator
     {
         $this->stack->reset();
         $rootNode = $this->tree->getRootNode();
+        $this->listener->onStart($rootNode);
         $this->stack->push($rootNode);
         while (!$this->stack->isEmpty()) {
             $symbol = $this->stack->pop();

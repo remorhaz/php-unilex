@@ -1,14 +1,13 @@
 <?php
 
-namespace Remorhaz\UniLex\RegExp\AST;
+namespace Remorhaz\UniLex\RegExp\FSM;
 
 use Remorhaz\UniLex\AST\AbstractTranslatorListener;
 use Remorhaz\UniLex\AST\Node;
 use Remorhaz\UniLex\Exception;
-use Remorhaz\UniLex\RegExp\FSM\StateMap;
 use Remorhaz\UniLex\Stack\PushInterface;
 
-class FsmBuilder extends AbstractTranslatorListener
+class StateMapBuilder extends AbstractTranslatorListener
 {
 
     private $stateMap;
@@ -16,6 +15,19 @@ class FsmBuilder extends AbstractTranslatorListener
     public function __construct(StateMap $stateMap)
     {
         $this->stateMap = $stateMap;
+    }
+
+    /**
+     * @param Node $node
+     * @throws Exception
+     */
+    public function onStart(Node $node): void
+    {
+        $stateIn = $this->stateMap->createState();
+        $this->stateMap->setStartState($stateIn);
+        $node->setAttribute('i.state_in', $stateIn);
+        $stateOut = $this->stateMap->createState();
+        $node->setAttribute('i.state_out', $stateOut);
     }
 
     /**
@@ -45,8 +57,8 @@ class FsmBuilder extends AbstractTranslatorListener
     {
         switch ($node->getName()) {
             case NodeType::SYMBOL:
-                $inState = $this->stateMap->createState();
-                $outState = $this->stateMap->createState();
+                $inState = $node->getAttribute('i.state_in');
+                $outState = $node->getAttribute('i.state_out');
                 $this->stateMap->addCharTransition($inState, $outState, $node->getAttribute('code'));
                 break;
         }

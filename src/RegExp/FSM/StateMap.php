@@ -141,6 +141,13 @@ class StateMap implements StateMapInterface
         return false;
     }
 
+    public function getCharTransitionList(): array
+    {
+        return $this
+            ->getRangeTransitionMap()
+            ->getTransitionList();
+    }
+
     /**
      * @param int $stateId
      * @return int

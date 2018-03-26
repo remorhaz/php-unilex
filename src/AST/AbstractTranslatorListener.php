@@ -10,6 +10,10 @@ use Remorhaz\UniLex\Stack\PushInterface;
 abstract class AbstractTranslatorListener implements TranslatorListenerInterface
 {
 
+    public function onStart(Node $node): void
+    {
+    }
+
     public function onBeginProduction(Node $node, PushInterface $stack): void
     {
     }

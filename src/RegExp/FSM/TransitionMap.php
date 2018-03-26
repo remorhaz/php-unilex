@@ -69,6 +69,11 @@ class TransitionMap
         return $this->transitionMap[$validFromStateId][$validToStateId];
     }
 
+    public function getTransitionList(): array
+    {
+        return $this->transitionMap;
+    }
+
     /**
      * @param int $fromStateId
      * @param int $toStateId
