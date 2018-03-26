@@ -10,7 +10,7 @@ use Remorhaz\UniLex\RegExp\FSM\StateMapBuilder;
 use Remorhaz\UniLex\Stack\SymbolStack;
 
 /**
- * @covers \Remorhaz\UniLex\RegExp\AST\FsmBuilder
+ * @covers \Remorhaz\UniLex\RegExp\FSM\StateMapBuilder
  */
 class StateMapBuilderTest extends TestCase
 {

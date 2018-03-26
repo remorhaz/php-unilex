@@ -5,6 +5,7 @@ namespace Remorhaz\UniLex\RegExp\FSM;
 use Remorhaz\UniLex\AST\AbstractTranslatorListener;
 use Remorhaz\UniLex\AST\Node;
 use Remorhaz\UniLex\Exception;
+use Remorhaz\UniLex\RegExp\AST\NodeType;
 use Remorhaz\UniLex\Stack\PushInterface;
 
 class StateMapBuilder extends AbstractTranslatorListener
