@@ -47,6 +47,13 @@ class StateMapBuilder extends AbstractTranslatorListener
                 }
                 break;
 
+            case NodeType::ALTERNATIVE:
+                if (!empty($node->getChildList())) {
+                    throw new Exception("AST node '{$node->getName()}' should have child nodes");
+                }
+                $stack->push(...$node->getChildList());
+                break;
+
             default:
                 throw new Exception("Unknown AST node name: {$node->getName()}");
         }
