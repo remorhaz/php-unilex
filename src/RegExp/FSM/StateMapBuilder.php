@@ -39,7 +39,9 @@ class StateMapBuilder extends AbstractTranslatorListener
     public function onBeginProduction(Node $node, PushInterface $stack): void
     {
         switch ($node->getName()) {
+            case NodeType::EMPTY:
             case NodeType::SYMBOL:
+            case NodeType::SYMBOL_ANY:
                 if (!empty($node->getChildList())) {
                     throw new Exception("AST node '{$node->getName()}' should not have child nodes");
                 }
@@ -61,6 +63,18 @@ class StateMapBuilder extends AbstractTranslatorListener
                 $inState = $node->getAttribute('i.state_in');
                 $outState = $node->getAttribute('i.state_out');
                 $this->stateMap->addCharTransition($inState, $outState, $node->getAttribute('code'));
+                break;
+
+            case NodeType::EMPTY:
+                $inState = $node->getAttribute('i.state_in');
+                $outState = $node->getAttribute('i.state_out');
+                $this->stateMap->addEpsilonTransition($inState, $outState);
+                break;
+
+            case NodeType::SYMBOL_ANY:
+                $inState = $node->getAttribute('i.state_in');
+                $outState = $node->getAttribute('i.state_out');
+                $this->stateMap->addRangeTransition($inState, $outState, 0x00, 0x10FFFF);
                 break;
         }
     }

@@ -217,6 +217,36 @@ class TransitionMapTest extends TestCase
     }
 
     /**
+     * @throws \ReflectionException
+     */
+    public function testGetTransitionList_TransitionNotAdded_ReturnsEmptyArray(): void
+    {
+        $stateExists = function (): bool {
+            return true;
+        };
+        $stateMap = $this->createStateExistenceProvider($stateExists);
+        $actualValue = (new TransitionMap($stateMap))->getTransitionList();
+        self::assertSame([], $actualValue);
+    }
+
+    /**
+     * @throws \ReflectionException
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testGetTransitionList_TransitionAdded_ReturnsArrayWithTransition(): void
+    {
+        $stateExists = function (): bool {
+            return true;
+        };
+        $stateMap = $this->createStateExistenceProvider($stateExists);
+        $transitionMap = new TransitionMap($stateMap);
+        $transitionMap->addTransition(1, 2, 3);
+        $expectedValue = [1 => [2 => 3]];
+        $actualValue = $transitionMap->getTransitionList();
+        self::assertSame($expectedValue, $actualValue);
+    }
+
+    /**
      * @param Closure $stateExists
      * @return StateMapInterface
      * @throws \ReflectionException

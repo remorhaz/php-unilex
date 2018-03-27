@@ -148,6 +148,13 @@ class StateMap implements StateMapInterface
             ->getTransitionList();
     }
 
+    public function getEpsilonTransitionList(): array
+    {
+        return $this
+            ->getEpsilonTransitionMap()
+            ->getTransitionList();
+    }
+
     /**
      * @param int $stateId
      * @return int

@@ -172,4 +172,44 @@ class StateMapTest extends TestCase
         $actualValue = $stateMap->charTransitionExists($fromStateId, $toStateId, 0x61);
         self::assertFalse($actualValue);
     }
+
+    public function testGetCharTransitionList_RangeTransitionNotAdded_ReturnsEmptyArray(): void
+    {
+        $actualValue = (new StateMap)->getCharTransitionList();
+        self::assertSame([], $actualValue);
+    }
+
+    public function testGetEpsilonTransitionList_EpsilonTransitionNotAdded_ReturnsEmptyArray(): void
+    {
+        $actualValue = (new StateMap)->getEpsilonTransitionList();
+        self::assertSame([], $actualValue);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testGetCharTransitionList_RangeTransitionAdded_ReturnsAddedTransition(): void
+    {
+        $stateMap = new StateMap;
+        $stateIn = $stateMap->createState();
+        $stateOut = $stateMap->createState();
+        $stateMap->addRangeTransition($stateIn, $stateOut, 0x61, 0x63);
+        $expectedValue[$stateIn][$stateOut] = [[0x61, 0x63]];
+        $actualValue = $stateMap->getCharTransitionList();
+        self::assertSame($expectedValue, $actualValue);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testGetEpsilonTransitionList_EpsilonTransitionAdded_ReturnsAddedTransition(): void
+    {
+        $stateMap = new StateMap;
+        $stateIn = $stateMap->createState();
+        $stateOut = $stateMap->createState();
+        $stateMap->addEpsilonTransition($stateIn, $stateOut);
+        $expectedValue[$stateIn][$stateOut] = true;
+        $actualValue = $stateMap->getEpsilonTransitionList();
+        self::assertSame($expectedValue, $actualValue);
+    }
 }
