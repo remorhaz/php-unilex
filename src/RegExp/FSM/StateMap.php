@@ -19,18 +19,6 @@ class StateMap implements StateMapInterface
 
     private $rangeTransitionMap;
 
-    /**
-     * @param Tree $tree
-     * @return StateMap
-     * @throws Exception
-     */
-    public static function buildFromTree(Tree $tree): self
-    {
-        $stateMap = new self;
-        (new Translator($tree, new StateMapBuilder($stateMap)))->run();
-        return $stateMap;
-    }
-
     public function createState(): int
     {
         $stateId = ++$this->lastStateId;

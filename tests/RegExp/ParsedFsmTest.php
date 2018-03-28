@@ -4,13 +4,12 @@ namespace Remorhaz\UniLex\Test\RegExp;
 
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\AST\Tree;
-use Remorhaz\UniLex\RegExp\FSM\StateMap;
+use Remorhaz\UniLex\RegExp\FSM\NfaBuilder;
 use Remorhaz\UniLex\RegExp\ParserFactory;
 use Remorhaz\UniLex\Unicode\CharBufferFactory;
 
 /**
- * @covers \Remorhaz\UniLex\RegExp\FSM\StateMapBuilder
- * @covers \Remorhaz\UniLex\RegExp\FSM\StateMap::buildFromTree
+ * @covers \Remorhaz\UniLex\RegExp\FSM\NfaBuilder
  */
 class ParsedFsmTest extends TestCase
 {
@@ -30,7 +29,7 @@ class ParsedFsmTest extends TestCase
         $buffer = CharBufferFactory::createFromUtf8String($text);
         $tree = new Tree;
         ParserFactory::createFromBuffer($tree, $buffer)->run();
-        $stateMap = StateMap::buildFromTree($tree);
+        $stateMap = NfaBuilder::fromTree($tree);
         self::assertEquals($expectedRangeTransitionList, $stateMap->getCharTransitionList());
         self::assertEquals($expectedEpsilonTransitionList, $stateMap->getEpsilonTransitionList());
     }

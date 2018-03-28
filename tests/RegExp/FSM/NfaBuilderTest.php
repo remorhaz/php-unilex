@@ -6,13 +6,13 @@ use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\AST\Node;
 use Remorhaz\UniLex\RegExp\AST\NodeType;
 use Remorhaz\UniLex\RegExp\FSM\StateMap;
-use Remorhaz\UniLex\RegExp\FSM\StateMapBuilder;
+use Remorhaz\UniLex\RegExp\FSM\NfaBuilder;
 use Remorhaz\UniLex\Stack\SymbolStack;
 
 /**
- * @covers \Remorhaz\UniLex\RegExp\FSM\StateMapBuilder
+ * @covers \Remorhaz\UniLex\RegExp\FSM\NfaBuilder
  */
-class StateMapBuilderTest extends TestCase
+class NfaBuilderTest extends TestCase
 {
 
     /**
@@ -23,7 +23,7 @@ class StateMapBuilderTest extends TestCase
     public function testOnBeginProduction_UnknownNodeName_ThrowsException(): void
     {
         $node = new Node(1, 'unknown');
-        $builder = new StateMapBuilder(new StateMap);
+        $builder = new NfaBuilder(new StateMap);
         $stack = new SymbolStack;
         $builder->onBeginProduction($node, $stack);
     }
@@ -39,7 +39,7 @@ class StateMapBuilderTest extends TestCase
     {
         $node = new Node(1, $name);
         $node->addChild(new Node(2, $node->getName()));
-        $builder = new StateMapBuilder(new StateMap);
+        $builder = new NfaBuilder(new StateMap);
         $stack = new SymbolStack;
         $builder->onBeginProduction($node, $stack);
     }
@@ -54,7 +54,7 @@ class StateMapBuilderTest extends TestCase
     public function testOnBeginProduction_NotTerminalNodeWithoutChildren_ThrowsException(string $name): void
     {
         $node = new Node(1, $name);
-        $builder = new StateMapBuilder(new StateMap);
+        $builder = new NfaBuilder(new StateMap);
         $stack = new SymbolStack;
         $builder->onBeginProduction($node, $stack);
     }
@@ -74,7 +74,7 @@ class StateMapBuilderTest extends TestCase
     public function testOnBeginProduction_TerminalNode_PushesNothingToStack(string $name): void
     {
         $node = new Node(1, $name);
-        $builder = new StateMapBuilder(new StateMap);
+        $builder = new NfaBuilder(new StateMap);
         $stack = new SymbolStack;
         $builder->onBeginProduction($node, $stack);
         $actualValue = $stack->isEmpty();
@@ -96,7 +96,7 @@ class StateMapBuilderTest extends TestCase
     public function testOnStartProduction_NodeWithoutStateAttributes_NodeHasPositiveStateInAttribute(): void
     {
         $stateMap = new StateMap;
-        $builder = new StateMapBuilder($stateMap);
+        $builder = new NfaBuilder($stateMap);
         $node = new Node(1, NodeType::SYMBOL);
         $builder->onStart($node);
         self::assertGreaterThan(0, $node->getAttribute('state_in'));
@@ -108,7 +108,7 @@ class StateMapBuilderTest extends TestCase
     public function testOnStartProduction_NodeWithoutStateAttributes_NodeHasPositiveStateOutAttribute(): void
     {
         $stateMap = new StateMap;
-        $builder = new StateMapBuilder($stateMap);
+        $builder = new NfaBuilder($stateMap);
         $node = new Node(1, NodeType::SYMBOL);
         $builder->onStart($node);
         self::assertGreaterThan(0, $node->getAttribute('state_out'));
@@ -120,7 +120,7 @@ class StateMapBuilderTest extends TestCase
     public function testOnStartProduction_NodeWithoutStateAttributes_NodeHasNotEqualStateAttributes(): void
     {
         $stateMap = new StateMap;
-        $builder = new StateMapBuilder($stateMap);
+        $builder = new NfaBuilder($stateMap);
         $node = new Node(1, NodeType::SYMBOL);
         $builder->onStart($node);
         self::assertNotEquals($node->getAttribute('state_in'), $node->getAttribute('state_out'));
@@ -132,7 +132,7 @@ class StateMapBuilderTest extends TestCase
     public function testOnStartProduction_NodeWithoutStateAttributes_NodeStateInAttributeIsStartState(): void
     {
         $stateMap = new StateMap;
-        $builder = new StateMapBuilder($stateMap);
+        $builder = new NfaBuilder($stateMap);
         $node = new Node(1, NodeType::SYMBOL);
         $builder->onStart($node);
         self::assertEquals($stateMap->getStartState(), $node->getAttribute('state_in'));

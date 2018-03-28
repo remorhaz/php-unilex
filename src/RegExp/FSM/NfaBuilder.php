@@ -5,11 +5,13 @@ namespace Remorhaz\UniLex\RegExp\FSM;
 use Remorhaz\UniLex\AST\AbstractTranslatorListener;
 use Remorhaz\UniLex\AST\Node;
 use Remorhaz\UniLex\AST\Symbol;
+use Remorhaz\UniLex\AST\Translator;
+use Remorhaz\UniLex\AST\Tree;
 use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\RegExp\AST\NodeType;
 use Remorhaz\UniLex\Stack\PushInterface;
 
-class StateMapBuilder extends AbstractTranslatorListener
+class NfaBuilder extends AbstractTranslatorListener
 {
 
     private $stateMap;
@@ -17,6 +19,18 @@ class StateMapBuilder extends AbstractTranslatorListener
     public function __construct(StateMap $stateMap)
     {
         $this->stateMap = $stateMap;
+    }
+
+    /**
+     * @param Tree $tree
+     * @return StateMap
+     * @throws Exception
+     */
+    public static function fromTree(Tree $tree): StateMap
+    {
+        $stateMap = new StateMap;
+        (new Translator($tree, new self($stateMap)))->run();
+        return $stateMap;
     }
 
     /**
