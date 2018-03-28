@@ -48,6 +48,7 @@ class StateMapBuilder extends AbstractTranslatorListener
                 }
                 break;
 
+            case NodeType::CONCATENATE:
             case NodeType::ALTERNATIVE:
                 if (empty($node->getChildList())) {
                     throw new Exception("AST node '{$node->getName()}' should have child nodes");
@@ -88,12 +89,17 @@ class StateMapBuilder extends AbstractTranslatorListener
                 break;
 
             case NodeType::CONCATENATE:
-                if ($symbol->getIndex() == 0) {
-                    $this
-                        ->inheritHeaderAttribute($symbol, null, 'state_in')
-                        ->inheritHeaderAttribute($symbol, null, 'state_out');
-                    break;
-                }
+                $stateIn = $symbol->getIndex() == 0
+                    ? $header->getAttribute('state_in')
+                    : $header->getChild($symbol->getIndex() - 1)->getAttribute('state_out');
+                $stateOut = $symbol->getIndex() == count($header->getChildList()) - 1
+                    ? $header->getAttribute('state_out')
+                    : $this->stateMap->createState();
+                $symbol
+                    ->getSymbol()
+                    ->setAttribute('state_in', $stateIn)
+                    ->setAttribute('state_out', $stateOut);
+                $stack->push($symbol->getSymbol());
                 break;
         }
     }

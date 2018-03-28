@@ -87,6 +87,25 @@ class ParsedFsmTest extends TestCase
         $epsilonTransitionList[8][2] = true;
         $data["Alternative of symbol and two empty strings"] = ['|a|', $rangeTransitionList, $epsilonTransitionList];
 
+        $rangeTransitionList = [];
+        $rangeTransitionList[1][3] = [[0x61, 0x61]];
+        $rangeTransitionList[3][2] = [[0x62, 0x62]];
+        $epsilonTransitionList = [];
+        $data["Concatenation of two symbols"] = ['ab', $rangeTransitionList, $epsilonTransitionList];
+
+        $rangeTransitionList = [];
+        $rangeTransitionList[1][3] = [[0x61, 0x61]];
+        $rangeTransitionList[5][6] = [[0x62, 0x62]];
+        $rangeTransitionList[7][8] = [[0x63, 0x63]];
+        $rangeTransitionList[4][2] = [[0x64, 0x64]];
+        $epsilonTransitionList = [];
+        $epsilonTransitionList[3][5] = true;
+        $epsilonTransitionList[6][4] = true;
+        $epsilonTransitionList[3][7] = true;
+        $epsilonTransitionList[8][4] = true;
+        $data["Concatenation of two symbols and grouped alternative of two symbols"] =
+            ['a(b|c)d', $rangeTransitionList, $epsilonTransitionList];
+
         return $data;
     }
 }
