@@ -37,7 +37,7 @@ class Translator
                 $this->stack->push(new EopSymbol($symbol));
                 $this->listener->onBeginProduction($symbol, $this->stack);
             } elseif ($symbol instanceof Symbol) {
-                $this->listener->onSymbol($symbol);
+                $this->listener->onSymbol($symbol, $this->stack);
             }
         }
     }

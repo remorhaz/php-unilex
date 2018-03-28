@@ -13,5 +13,5 @@ interface TranslatorListenerInterface
 
     public function onFinishProduction(Node $node): void;
 
-    public function onSymbol(Symbol $symbol): void;
+    public function onSymbol(Symbol $symbol, PushInterface $stack): void;
 }

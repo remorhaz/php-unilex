@@ -22,7 +22,7 @@ abstract class AbstractTranslatorListener implements TranslatorListenerInterface
     {
     }
 
-    public function onSymbol(Symbol $symbol): void
+    public function onSymbol(Symbol $symbol, PushInterface $stack): void
     {
     }
 }

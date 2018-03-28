@@ -87,6 +87,14 @@ class Node implements StackableSymbolInterface
         return $this->childMap;
     }
 
+    /**
+     * @return int[]
+     */
+    public function getChildIndexList(): array
+    {
+        return array_keys($this->childMap);
+    }
+
     public function getAttributeList(): array
     {
         return $this->attributeMap;

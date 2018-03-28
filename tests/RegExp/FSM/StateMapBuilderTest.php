@@ -47,6 +47,28 @@ class StateMapBuilderTest extends TestCase
     /**
      * @param string $name
      * @throws \Remorhaz\UniLex\Exception
+     * @expectedException \Remorhaz\UniLex\Exception
+     * @expectedExceptionMessageRegExp #^AST node '.+' should have child nodes$#
+     * @dataProvider providerNotTerminalNodeNames
+     */
+    public function testOnBeginProduction_NotTerminalNodeWithoutChildren_ThrowsException(string $name): void
+    {
+        $node = new Node(1, $name);
+        $builder = new StateMapBuilder(new StateMap);
+        $stack = new SymbolStack;
+        $builder->onBeginProduction($node, $stack);
+    }
+
+    public function providerNotTerminalNodeNames(): array
+    {
+        return [
+            [NodeType::ALTERNATIVE],
+        ];
+    }
+
+    /**
+     * @param string $name
+     * @throws \Remorhaz\UniLex\Exception
      * @dataProvider providerTerminalNodeNames
      */
     public function testOnBeginProduction_TerminalNode_PushesNothingToStack(string $name): void
@@ -71,68 +93,13 @@ class StateMapBuilderTest extends TestCase
     /**
      * @throws \Remorhaz\UniLex\Exception
      */
-    public function testOnFinishProduction_SymbolNode_AddsMatchingTransition(): void
-    {
-        $stateMap = new StateMap;
-        $builder = new StateMapBuilder($stateMap);
-        $node = new Node(1, NodeType::SYMBOL);
-        $node->setAttribute('code', 0x61);
-        $stateIn = $stateMap->createState();
-        $node->setAttribute('i.state_in', $stateIn);
-        $stateOut = $stateMap->createState();
-        $node->setAttribute('i.state_out', $stateOut);
-        $builder->onFinishProduction($node);
-        $expectedCharTransitionList[$stateIn][$stateOut] = [[0x61, 0x61]];
-        self::assertEquals($expectedCharTransitionList, $stateMap->getCharTransitionList());
-        self::assertEquals([], $stateMap->getEpsilonTransitionList());
-    }
-
-    /**
-     * @throws \Remorhaz\UniLex\Exception
-     */
-    public function testOnFinishProduction_EmptyNode_AddsMatchingTransition(): void
-    {
-        $stateMap = new StateMap;
-        $builder = new StateMapBuilder($stateMap);
-        $node = new Node(1, NodeType::EMPTY);
-        $stateIn = $stateMap->createState();
-        $node->setAttribute('i.state_in', $stateIn);
-        $stateOut = $stateMap->createState();
-        $node->setAttribute('i.state_out', $stateOut);
-        $builder->onFinishProduction($node);
-        $expectedEpsilonTransitionList[$stateIn][$stateOut] = true;
-        self::assertEquals([], $stateMap->getCharTransitionList());
-        self::assertEquals($expectedEpsilonTransitionList, $stateMap->getEpsilonTransitionList());
-    }
-
-    /**
-     * @throws \Remorhaz\UniLex\Exception
-     */
-    public function testOnFinishProduction_SymbolAnyNode_AddsMatchingTransition(): void
-    {
-        $stateMap = new StateMap;
-        $builder = new StateMapBuilder($stateMap);
-        $node = new Node(1, NodeType::SYMBOL_ANY);
-        $stateIn = $stateMap->createState();
-        $node->setAttribute('i.state_in', $stateIn);
-        $stateOut = $stateMap->createState();
-        $node->setAttribute('i.state_out', $stateOut);
-        $builder->onFinishProduction($node);
-        $expectedCharTransitionList[$stateIn][$stateOut] = [[0x00, 0x10FFFF]];
-        self::assertEquals($expectedCharTransitionList, $stateMap->getCharTransitionList());
-        self::assertEquals([], $stateMap->getEpsilonTransitionList());
-    }
-
-    /**
-     * @throws \Remorhaz\UniLex\Exception
-     */
     public function testOnStartProduction_NodeWithoutStateAttributes_NodeHasPositiveStateInAttribute(): void
     {
         $stateMap = new StateMap;
         $builder = new StateMapBuilder($stateMap);
         $node = new Node(1, NodeType::SYMBOL);
         $builder->onStart($node);
-        self::assertGreaterThan(0, $node->getAttribute('i.state_in'));
+        self::assertGreaterThan(0, $node->getAttribute('state_in'));
     }
 
     /**
@@ -144,7 +111,7 @@ class StateMapBuilderTest extends TestCase
         $builder = new StateMapBuilder($stateMap);
         $node = new Node(1, NodeType::SYMBOL);
         $builder->onStart($node);
-        self::assertGreaterThan(0, $node->getAttribute('i.state_out'));
+        self::assertGreaterThan(0, $node->getAttribute('state_out'));
     }
 
     /**
@@ -156,7 +123,7 @@ class StateMapBuilderTest extends TestCase
         $builder = new StateMapBuilder($stateMap);
         $node = new Node(1, NodeType::SYMBOL);
         $builder->onStart($node);
-        self::assertNotEquals($node->getAttribute('i.state_in'), $node->getAttribute('i.state_out'));
+        self::assertNotEquals($node->getAttribute('state_in'), $node->getAttribute('state_out'));
     }
 
     /**
@@ -168,6 +135,6 @@ class StateMapBuilderTest extends TestCase
         $builder = new StateMapBuilder($stateMap);
         $node = new Node(1, NodeType::SYMBOL);
         $builder->onStart($node);
-        self::assertEquals($stateMap->getStartState(), $node->getAttribute('i.state_in'));
+        self::assertEquals($stateMap->getStartState(), $node->getAttribute('state_in'));
     }
 }

@@ -2,6 +2,8 @@
 
 namespace Remorhaz\UniLex\RegExp\FSM;
 
+use Remorhaz\UniLex\AST\Translator;
+use Remorhaz\UniLex\AST\Tree;
 use Remorhaz\UniLex\Exception;
 
 class StateMap implements StateMapInterface
@@ -16,6 +18,18 @@ class StateMap implements StateMapInterface
     private $epsilonTransitionMap;
 
     private $rangeTransitionMap;
+
+    /**
+     * @param Tree $tree
+     * @return StateMap
+     * @throws Exception
+     */
+    public static function buildFromTree(Tree $tree): self
+    {
+        $stateMap = new self;
+        (new Translator($tree, new StateMapBuilder($stateMap)))->run();
+        return $stateMap;
+    }
 
     public function createState(): int
     {
