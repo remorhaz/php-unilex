@@ -78,9 +78,7 @@ class NfaBuilder extends AbstractTranslatorListener
                 $stateOut = null;
                 for ($index = 0; $index < $max; $index++) {
                     $nodeClone = $node->getChild(0)->getClone();
-                    $stateIn = isset($stateOut)
-                        ? $stateOut
-                        : $node->getAttribute('state_in');
+                    $stateIn = $stateOut ?? $node->getAttribute('state_in');
                     $stateOut = $index == $max - 1
                         ? $node->getAttribute('state_out')
                         : $this->stateMap->createState();
