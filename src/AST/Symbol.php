@@ -11,10 +11,17 @@ class Symbol implements StackableSymbolInterface
 
     private $index;
 
+    private $symbol;
+
     public function __construct(Node $header, int $index)
     {
         $this->header = $header;
         $this->index = $index;
+    }
+
+    public function setSymbol(Node $node): void
+    {
+        $this->symbol = $node;
     }
 
     public function getHeader(): Node
@@ -33,8 +40,11 @@ class Symbol implements StackableSymbolInterface
      */
     public function getSymbol(): Node
     {
-        return $this
-            ->getHeader()
-            ->getChild($this->getIndex());
+        if (!isset($this->symbol)) {
+            $this->symbol = $this
+                ->getHeader()
+                ->getChild($this->getIndex());
+        }
+        return $this->symbol;
     }
 }

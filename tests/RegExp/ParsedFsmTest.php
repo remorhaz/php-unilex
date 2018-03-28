@@ -105,6 +105,18 @@ class ParsedFsmTest extends TestCase
         $data["Concatenation of two symbols and grouped alternative of two symbols"] =
             ['a(b|c)d', $rangeTransitionList, $epsilonTransitionList];
 
+        $rangeTransitionList = [];
+        $rangeTransitionList[1][3] = [[0x61, 0x61]];
+        $rangeTransitionList[3][4] = [[0x61, 0x61]];
+        $rangeTransitionList[4][5] = [[0x61, 0x61]];
+        $rangeTransitionList[5][6] = [[0x61, 0x61]];
+        $rangeTransitionList[6][2] = [[0x61, 0x61]];
+        $epsilonTransitionList = [];
+        $epsilonTransitionList[4][2] = true;
+        $epsilonTransitionList[5][2] = true;
+        $epsilonTransitionList[6][2] = true;
+        $data["Symbol with finite limit"] = ['a{2,5}', $rangeTransitionList, $epsilonTransitionList];
+
         return $data;
     }
 }

@@ -32,6 +32,16 @@ class Node implements StackableSymbolInterface
         return $this->name;
     }
 
+    public function getClone(): self
+    {
+        $clone = clone $this;
+        $clone->childMap = [];
+        foreach ($this->getChildList() as $childNode) {
+            $clone->addChild($childNode->getClone());
+        }
+        return $clone;
+    }
+
     /**
      * @param string $name
      * @param $value

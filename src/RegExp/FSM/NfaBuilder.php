@@ -62,6 +62,42 @@ class NfaBuilder extends AbstractTranslatorListener
                 }
                 break;
 
+            case NodeType::REPEAT:
+                if (count($node->getChildList()) != 1) {
+                    throw new Exception("AST node '{$node->getName()}' should have exactly one child node");
+                }
+                $min = $node->getAttribute('min');
+                if ($node->getAttribute('is_max_infinite')) {
+                    break;
+                }
+                $max = $node->getAttribute('max');
+                if ($min > $max) {
+                    throw new Exception("AST node '{$node->getName()}' has invalid attributes: min > max");
+                }
+                $symbolList = [];
+                $stateOut = null;
+                for ($index = 0; $index < $max; $index++) {
+                    $nodeClone = $node->getChild(0)->getClone();
+                    $stateIn = isset($stateOut)
+                        ? $stateOut
+                        : $node->getAttribute('state_in');
+                    $stateOut = $index == $max - 1
+                        ? $node->getAttribute('state_out')
+                        : $this->stateMap->createState();
+                    if ($index >= $min) {
+                        $optStateOut = $node->getAttribute('state_out');
+                        $this->stateMap->addEpsilonTransition($stateIn, $optStateOut);
+                    }
+                    $nodeClone
+                        ->setAttribute('state_in', $stateIn)
+                        ->setAttribute('state_out', $stateOut);
+                    $symbol = new Symbol($node, 0);
+                    $symbol->setSymbol($nodeClone);
+                    $symbolList[] = $symbol;
+                }
+                $stack->push(...$symbolList);
+                break;
+
             case NodeType::CONCATENATE:
             case NodeType::ALTERNATIVE:
                 if (empty($node->getChildList())) {
@@ -115,6 +151,10 @@ class NfaBuilder extends AbstractTranslatorListener
                     ->setAttribute('state_out', $stateOut);
                 $stack->push($symbol->getSymbol());
                 break;
+
+            case NodeType::REPEAT:
+                $stack->push($symbol->getSymbol());
+                break;
         }
     }
 
@@ -143,45 +183,5 @@ class NfaBuilder extends AbstractTranslatorListener
                 $this->stateMap->addRangeTransition($inState, $outState, 0x00, 0x10FFFF);
                 break;
         }
-    }
-
-    /**
-     * @param Symbol $symbol
-     * @param int|null $index
-     * @param string $target
-     * @param string|null $source
-     * @return $this
-     * @throws Exception
-     */
-    private function inheritHeaderAttribute(Symbol $symbol, ?int $index, string $target, string $source = null)
-    {
-        $value = $symbol
-            ->getHeader()
-            ->getAttribute($source ?? $target);
-        $symbol
-            ->getHeader()
-            ->getChild($index ?? $symbol->getIndex())
-            ->setAttribute($target, $value);
-        return $this;
-    }
-
-    /**
-     * @param Symbol $symbol
-     * @param int $index
-     * @param string $target
-     * @param string|null $source
-     * @return $this
-     * @throws Exception
-     */
-    private function inheritSymbolAttribute(Symbol $symbol, int $index, string $target, string $source = null)
-    {
-        $value = $symbol
-            ->getHeader()
-            ->getChild($index)
-            ->getAttribute($source ?? $target);
-        $symbol
-            ->getSymbol()
-            ->setAttribute($target, $value);
-        return $this;
     }
 }
