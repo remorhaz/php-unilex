@@ -143,6 +143,21 @@ class ParsedFsmTest extends TestCase
         $epsilonTransitionList[4][3] = true;
         $data["Kleene star applied to symbol"] = ['a*', $rangeTransitionList, $epsilonTransitionList];
 
+        $rangeTransitionList = [];
+        $rangeTransitionList[1][2] = [[0x61, 0x61]];
+        $epsilonTransitionList = [];
+        $data["Escaped Unicode symbol"] = ['\\u0061', $rangeTransitionList, $epsilonTransitionList];
+
+        $rangeTransitionList = [];
+        $rangeTransitionList[1][2] = [[0x7F, 0x7F]];
+        $epsilonTransitionList = [];
+        $data["Escaped Unicode symbol"] = ['\\c?', $rangeTransitionList, $epsilonTransitionList];
+
+        $rangeTransitionList = [];
+        $rangeTransitionList[1][2] = [[0x07, 0x07]];
+        $epsilonTransitionList = [];
+        //$data["Escaped non-printable symbol"] = ['\\a', $rangeTransitionList, $epsilonTransitionList];
+
         return $data;
     }
 }

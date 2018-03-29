@@ -137,4 +137,21 @@ class NfaBuilderTest extends TestCase
         $builder->onStart($node);
         self::assertEquals($stateMap->getStartState(), $node->getAttribute('state_in'));
     }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     * @expectedException \Remorhaz\UniLex\Exception
+     * @expectedExceptionMessage Invalid control character: 0
+     */
+    public function testOnFinishProduction_ControlSymbolWithInvalidCode_ThrowsException(): void
+    {
+        $stateMap = new StateMap;
+        $builder = new NfaBuilder($stateMap);
+        $node = new Node(1, NodeType::SYMBOL_CTL);
+        $node
+            ->setAttribute('code', 0)
+            ->setAttribute('state_in', $stateMap->createState())
+            ->setAttribute('state_out', $stateMap->createState());
+        $builder->onFinishProduction($node);
+    }
 }
