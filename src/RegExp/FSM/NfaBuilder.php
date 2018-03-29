@@ -88,21 +88,14 @@ class NfaBuilder extends AbstractTranslatorListener
                     // Postfix Kleene star construction
                     $stateIn = $stateOut ?? $node->getAttribute('state_in');
                     $stateOut = $node->getAttribute('state_out');
-                    $innerStateIn = $this->stateMap->createState();
-                    $innerStateOut = $this->stateMap->createState();
-                    $this->stateMap->addEpsilonTransition($stateIn, $innerStateIn);
-                    $this->stateMap->addEpsilonTransition($innerStateOut, $stateOut);
-                    $this->stateMap->addEpsilonTransition($stateIn, $stateOut);
-                    $this->stateMap->addEpsilonTransition($innerStateOut, $innerStateIn);
-                    $symbolList[] = $this->createSymbolFromClonedNodeChild($node, $innerStateIn, $innerStateOut);
+                    $symbolList[] = $this->createKleeneStarSymbolFromNode($node, $stateIn, $stateOut);
                     $stack->push(...$symbolList);
                     break;
                 }
                 $max = $node->getAttribute('max');
                 if ($min > $max) {
-                    throw new Exception(
-                        "AST node '{$node->getName()}' has invalid attributes: min({$min}) > max({$max})"
-                    );
+                    $message = "AST node '{$node->getName()}' has invalid attributes: min({$min}) > max({$max})";
+                    throw new Exception($message);
                 }
                 // Postfix optional concatenation construction
                 for ($index = $min; $index < $max; $index++) {
@@ -139,8 +132,7 @@ class NfaBuilder extends AbstractTranslatorListener
                     throw new Exception("AST node '{$node->getName()}' should have child nodes");
                 }
                 $symbolList = [];
-                $headerStateIn = $node->getAttribute('state_in');
-                $headerStateOut = $node->getAttribute('state_out');
+                [$headerStateIn, $headerStateOut] = $this->getNodeStates($node);
                 foreach ($node->getChildIndexList() as $index) {
                     $stateIn = $this->stateMap->createState();
                     $stateOut = $this->stateMap->createState();
@@ -181,30 +173,38 @@ class NfaBuilder extends AbstractTranslatorListener
     {
         switch ($node->getName()) {
             case NodeType::SYMBOL:
-                $inState = $node->getAttribute('state_in');
-                $outState = $node->getAttribute('state_out');
-                $this->stateMap->addCharTransition($inState, $outState, $node->getAttribute('code'));
+                [$stateIn, $stateOut] = $this->getNodeStates($node);
+                $this->stateMap->addCharTransition($stateIn, $stateOut, $node->getAttribute('code'));
                 break;
 
             case NodeType::EMPTY:
-                $inState = $node->getAttribute('state_in');
-                $outState = $node->getAttribute('state_out');
-                $this->stateMap->addEpsilonTransition($inState, $outState);
+                [$stateIn, $stateOut] = $this->getNodeStates($node);
+                $this->stateMap->addEpsilonTransition($stateIn, $stateOut);
                 break;
 
             case NodeType::SYMBOL_ANY:
-                $inState = $node->getAttribute('state_in');
-                $outState = $node->getAttribute('state_out');
-                $this->stateMap->addRangeTransition($inState, $outState, 0x00, 0x10FFFF);
+                [$stateIn, $stateOut] = $this->getNodeStates($node);
+                $this->stateMap->addRangeTransition($stateIn, $stateOut, 0x00, 0x10FFFF);
                 break;
 
             case NodeType::SYMBOL_CTL:
-                $inState = $node->getAttribute('state_in');
-                $outState = $node->getAttribute('state_out');
+                [$stateIn, $stateOut] = $this->getNodeStates($node);
                 $code = $node->getAttribute('code');
-                $this->stateMap->addCharTransition($inState, $outState, $this->getControlCode($code));
+                $this->stateMap->addCharTransition($stateIn, $stateOut, $this->getControlCode($code));
                 break;
         }
+    }
+
+    /**
+     * @param Node $node
+     * @return int[]
+     * @throws Exception
+     */
+    private function getNodeStates(Node $node): array
+    {
+        $inState = $node->getAttribute('state_in');
+        $outState = $node->getAttribute('state_out');
+        return [$inState, $outState];
     }
 
     /**
@@ -219,6 +219,24 @@ class NfaBuilder extends AbstractTranslatorListener
         }
         // Lowercase ASCII letters are converted to uppercase, then bit 6 is inverted.
         return ($code < 0x61 || $code > 0x7A ? $code : $code - 0x20) ^ 0x40;
+    }
+
+    /**
+     * @param Node $node
+     * @param int $stateIn
+     * @param int $stateOut
+     * @return Symbol
+     * @throws Exception
+     */
+    private function createKleeneStarSymbolFromNode(Node $node, int $stateIn, int $stateOut): Symbol
+    {
+        $innerStateIn = $this->stateMap->createState();
+        $innerStateOut = $this->stateMap->createState();
+        $this->stateMap->addEpsilonTransition($stateIn, $innerStateIn);
+        $this->stateMap->addEpsilonTransition($innerStateOut, $stateOut);
+        $this->stateMap->addEpsilonTransition($stateIn, $stateOut);
+        $this->stateMap->addEpsilonTransition($innerStateOut, $innerStateIn);
+        return $this->createSymbolFromClonedNodeChild($node, $innerStateIn, $innerStateOut);
     }
 
     /**
