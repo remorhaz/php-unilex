@@ -77,7 +77,7 @@ class NfaBuilder extends AbstractTranslatorListener
                 [$stateIn, $stateOut] = $this->getNodeStates($node);
                 $symbolList = [];
                 foreach ($node->getChildIndexList() as $index) {
-                    $symbolList[] = $this->createSymbolFromClonedNodeChild($node, $stateIn, $stateOut, $index);
+                    $symbolList[] = $this->createSymbolFromNodeChild($node, $stateIn, $stateOut, $index);
                 }
                 $stack->push(...$symbolList);
                 break;
