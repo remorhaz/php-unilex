@@ -117,6 +117,32 @@ class ParsedFsmTest extends TestCase
         $epsilonTransitionList[6][2] = true;
         $data["Symbol with finite limit"] = ['a{2,5}', $rangeTransitionList, $epsilonTransitionList];
 
+        $rangeTransitionList = [];
+        $rangeTransitionList[1][2] = [[0x61, 0x61]];
+        $epsilonTransitionList = [];
+        $epsilonTransitionList[1][2] = true;
+        $data["Optional symbol"] = ['a?', $rangeTransitionList, $epsilonTransitionList];
+
+        $rangeTransitionList = [];
+        $rangeTransitionList[1][3] = [[0x61, 0x61]];
+        $rangeTransitionList[3][4] = [[0x61, 0x61]];
+        $rangeTransitionList[5][6] = [[0x61, 0x61]];
+        $epsilonTransitionList = [];
+        $epsilonTransitionList[4][5] = true;
+        $epsilonTransitionList[4][2] = true;
+        $epsilonTransitionList[6][2] = true;
+        $epsilonTransitionList[6][5] = true;
+        $data["Symbol with infinite limit"] = ['a{2,}', $rangeTransitionList, $epsilonTransitionList];
+
+        $rangeTransitionList = [];
+        $rangeTransitionList[3][4] = [[0x61, 0x61]];
+        $epsilonTransitionList = [];
+        $epsilonTransitionList[1][3] = true;
+        $epsilonTransitionList[1][2] = true;
+        $epsilonTransitionList[4][2] = true;
+        $epsilonTransitionList[4][3] = true;
+        $data["Kleene star applied to symbol"] = ['a*', $rangeTransitionList, $epsilonTransitionList];
+
         return $data;
     }
 }

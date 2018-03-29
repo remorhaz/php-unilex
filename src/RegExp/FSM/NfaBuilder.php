@@ -68,6 +68,25 @@ class NfaBuilder extends AbstractTranslatorListener
                 }
                 $min = $node->getAttribute('min');
                 if ($node->getAttribute('is_max_infinite')) {
+                    $symbolList = [];
+                    $stateOut = null;
+                    // Prefix concatenation construction
+                    for ($index = 0; $index < $min; $index++) {
+                        $stateIn = $stateOut ?? $node->getAttribute('state_in');
+                        $stateOut = $this->stateMap->createState();
+                        $symbolList[] = $this->createSymbolFromClonedNodeChild($node, $stateIn, $stateOut);
+                    }
+                    // Kleene star construction
+                    $stateIn = $stateOut ?? $node->getAttribute('state_in');
+                    $stateOut = $node->getAttribute('state_out');
+                    $innerStateIn = $this->stateMap->createState();
+                    $innerStateOut = $this->stateMap->createState();
+                    $this->stateMap->addEpsilonTransition($stateIn, $innerStateIn);
+                    $this->stateMap->addEpsilonTransition($innerStateOut, $stateOut);
+                    $this->stateMap->addEpsilonTransition($stateIn, $stateOut);
+                    $this->stateMap->addEpsilonTransition($innerStateOut, $innerStateIn);
+                    $symbolList[] = $this->createSymbolFromClonedNodeChild($node, $innerStateIn, $innerStateOut);
+                    $stack->push(...$symbolList);
                     break;
                 }
                 $max = $node->getAttribute('max');
@@ -77,7 +96,6 @@ class NfaBuilder extends AbstractTranslatorListener
                 $symbolList = [];
                 $stateOut = null;
                 for ($index = 0; $index < $max; $index++) {
-                    $nodeClone = $node->getChild(0)->getClone();
                     $stateIn = $stateOut ?? $node->getAttribute('state_in');
                     $stateOut = $index == $max - 1
                         ? $node->getAttribute('state_out')
@@ -86,12 +104,7 @@ class NfaBuilder extends AbstractTranslatorListener
                         $optStateOut = $node->getAttribute('state_out');
                         $this->stateMap->addEpsilonTransition($stateIn, $optStateOut);
                     }
-                    $nodeClone
-                        ->setAttribute('state_in', $stateIn)
-                        ->setAttribute('state_out', $stateOut);
-                    $symbol = new Symbol($node, 0);
-                    $symbol->setSymbol($nodeClone);
-                    $symbolList[] = $symbol;
+                    $symbolList[] = $this->createSymbolFromClonedNodeChild($node, $stateIn, $stateOut);
                 }
                 $stack->push(...$symbolList);
                 break;
@@ -181,5 +194,25 @@ class NfaBuilder extends AbstractTranslatorListener
                 $this->stateMap->addRangeTransition($inState, $outState, 0x00, 0x10FFFF);
                 break;
         }
+    }
+
+    /**
+     * @param Node $node
+     * @param int $stateIn
+     * @param int $stateOut
+     * @param int $index
+     * @return Symbol
+     * @throws Exception
+     */
+    private function createSymbolFromClonedNodeChild(Node $node, int $stateIn, int $stateOut, int $index = 0): Symbol
+    {
+        $nodeClone = $node
+            ->getChild($index)
+            ->getClone()
+            ->setAttribute('state_in', $stateIn)
+            ->setAttribute('state_out', $stateOut);
+        $symbol = new Symbol($node, $index);
+        $symbol->setSymbol($nodeClone);
+        return $symbol;
     }
 }
