@@ -166,7 +166,13 @@ class ParsedFsmTest extends TestCase
         $rangeTransitionList = [];
         $rangeTransitionList[1][2] = [[0x61, 0x62]];
         $epsilonTransitionList = [];
-        $data["Two symbols in a class"] = ['[ab]', $rangeTransitionList, $epsilonTransitionList];
+        $data["Two neighbour symbols in a class"] = ['[ab]', $rangeTransitionList, $epsilonTransitionList];
+
+        $rangeTransitionList = [];
+        $rangeTransitionList[1][2] = [[0x61, 0x61], [0x63, 0x63]];
+        $epsilonTransitionList = [];
+        $data["Two not neighbour symbols in a class in inverted order"] =
+            ['[ca]', $rangeTransitionList, $epsilonTransitionList];
 
         return $data;
     }
