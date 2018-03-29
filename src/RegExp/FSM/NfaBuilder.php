@@ -209,34 +209,34 @@ class NfaBuilder extends AbstractTranslatorListener
                     break;
                 }
                 $notImplementedMap = [
-                    0x41, // \A: a subject start assert
-                    0x42, // \B: not a word boundary assert
-                    0x43, // \C: single code unit
-                    0x44, // \D: not a decimal digit
-                    0x45, // \E: raw sequence end
-                    0x47, // \G: a first matching position assert
-                    0x48, // \H: not a horizontal whitespace
-                    0x4B, // \K: resets matching start
-                    0x4E, // \N: not a newline
-                    0x51, // \Q: raw sequence start
-                    0x52, // \R: a newline
-                    0x53, // \S: not a whitespace
-                    0x56, // \V: not a vertical whitespace
-                    0x57, // \W: not a "word" character
-                    0x58, // \X: Unicode extended grapheme cluster
-                    0x5A, // \Z: a subject end or newline before subject end assert
-                    0x62, // \b: a word boundary assert
-                    0x64, // \d: a decimal digit
-                    0x67, // \g: a back reference
-                    0x68, // \h: a horizontal whitespace
-                    0x6B, // \k: a named back reference
-                    0x73, // \s: a whitespace
-                    0x76, // \v: a vertical whitespace
-                    0x77, // \w: a "word" character
-                    0x7A, // \z: a subject end assert
+                    0x41 => "Assertion \\A (subject start)",
+                    0x42 => "Assertion \\B (not a word boundary)",
+                    0x43 => "Escape \\C (single code unit)",
+                    0x44 => "Escape \\D (not a decimal digit)",
+                    0x45 => "Escape \\E (raw sequence end)",
+                    0x47 => "Assert \\G (first matching position)",
+                    0x48 => "Escape \\H (not a horizontal whitespace)",
+                    0x4B => "Escape \\K (reset matching start)",
+                    0x4E => "Escape \\N (not a newline)",
+                    0x51 => "Escape \\Q (raw sequence start)",
+                    0x52 => "Escape \\R (newline)",
+                    0x53 => "Escape \\S (not a whitespace)",
+                    0x56 => "Escape \\V (not a vertical whitespace)",
+                    0x57 => "Escape \\W (not a \"word\" character)",
+                    0x58 => "Escape \\X (Unicode extended grapheme cluster)",
+                    0x5A => "Assertion \\Z (subject end or newline before subject end)",
+                    0x62 => "Assertion \\b (word boundary)",
+                    0x64 => "Escape \\d (decimal digit)",
+                    0x67 => "Escape \\g (back-reference)",
+                    0x68 => "Escape \\h (horizontal whitespace)",
+                    0x6B => "Escape \\k (named back-reference)",
+                    0x73 => "Escape \\s (whitespace)",
+                    0x76 => "Escape \\v (vertical whitespace)",
+                    0x77 => "Escape \\w (\"word\" character)",
+                    0x7A => "Escape \\z (subject end)",
                 ];
-                if (in_array($code, $notImplementedMap)) {
-                    throw new Exception("Escaped symbol {$code} is not implemented yet");
+                if (isset($notImplementedMap[$code])) {
+                    throw new Exception("{$notImplementedMap[$code]} is not implemented yet");
                 }
                 switch ($code) {
                     default:

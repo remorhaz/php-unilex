@@ -63,6 +63,7 @@ class NfaBuilderTest extends TestCase
     {
         return [
             [NodeType::ALTERNATIVE],
+            [NodeType::CONCATENATE],
         ];
     }
 
@@ -153,5 +154,128 @@ class NfaBuilderTest extends TestCase
             ->setAttribute('state_in', $stateMap->createState())
             ->setAttribute('state_out', $stateMap->createState());
         $builder->onFinishProduction($node);
+    }
+
+    /**
+     * @param string $name
+     * @throws \Remorhaz\UniLex\Exception
+     * @expectedException \Remorhaz\UniLex\Exception
+     * @expectedExceptionMessageRegExp #^AST nodes of type '.+' are not supported yet$#
+     * @dataProvider providerNotImplementedNodeNames
+     */
+    public function testOnBeginProduction_NotImplementedNode_ThrowsException(string $name): void
+    {
+        $stateMap = new StateMap;
+        $builder = new NfaBuilder($stateMap);
+        $node = new Node(1, $name);
+        $builder->onBeginProduction($node, new SymbolStack);
+    }
+
+    public function providerNotImplementedNodeNames(): array
+    {
+        return [
+            [NodeType::ASSERT],
+            [NodeType::SYMBOL_RANGE],
+            [NodeType::SYMBOL_CLASS],
+            [NodeType::SYMBOL_PROP],
+        ];
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     * @expectedException \Remorhaz\UniLex\Exception
+     * @expectedExceptionMessage AST node 'repeat' should have exactly one child node
+     */
+    public function testOnBeginProduction_RepeatNoteWithoutChildren_ThrowsException(): void
+    {
+        $stateMap = new StateMap;
+        $builder = new NfaBuilder($stateMap);
+        $node = new Node(1, NodeType::REPEAT);
+        $builder->onBeginProduction($node, new SymbolStack);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     * @expectedException \Remorhaz\UniLex\Exception
+     * @expectedExceptionMessage AST node 'repeat' should have exactly one child node
+     */
+    public function testOnBeginProduction_RepeatNoteWithTwoChildren_ThrowsException(): void
+    {
+        $stateMap = new StateMap;
+        $builder = new NfaBuilder($stateMap);
+        $node = new Node(1, NodeType::REPEAT);
+        $node
+            ->addChild(new Node(2, NodeType::EMPTY))
+            ->addChild(new Node(3, NodeType::EMPTY));
+        $builder->onBeginProduction($node, new SymbolStack);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     * @expectedException \Remorhaz\UniLex\Exception
+     * @expectedExceptionMessage AST node 'repeat' has invalid attributes: min(2) > max(1)
+     */
+    public function testOnBeginProduction_RepeatNoteWithFiniteMaxAttributeLessThanMinAttribute_ThrowsException(): void
+    {
+        $stateMap = new StateMap;
+        $builder = new NfaBuilder($stateMap);
+        $node = new Node(1, NodeType::REPEAT);
+        $node
+            ->setAttribute('min', 2)
+            ->setAttribute('max', 1)
+            ->setAttribute('is_max_infinite', false)
+            ->setAttribute('state_in', 1)
+            ->setAttribute('state_out', 2)
+            ->addChild(new Node(2, NodeType::EMPTY));
+        $builder->onBeginProduction($node, new SymbolStack);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     * @expectedException \Remorhaz\UniLex\Exception
+     * @expectedExceptionMessageRegExp # is not implemented yet$#
+     * @dataProvider providerNotImplementedSimpleEscapeCodes
+     */
+    public function testOnFinishProduction_SimpleEscapeWithNotImplementedCode_ThrowsEsception(int $code): void
+    {
+        $stateMap = new StateMap;
+        $builder = new NfaBuilder($stateMap);
+        $node = new Node(1, NodeType::ESC_SIMPLE);
+        $node
+            ->setAttribute('code', $code)
+            ->setAttribute('state_in', 1)
+            ->setAttribute('state_out', 2);
+        $builder->onFinishProduction($node);
+    }
+
+    public function providerNotImplementedSimpleEscapeCodes(): array
+    {
+        return [
+            [0x41],
+            [0x42],
+            [0x43],
+            [0x44],
+            [0x45],
+            [0x47],
+            [0x48],
+            [0x4B],
+            [0x4E],
+            [0x51],
+            [0x52],
+            [0x53],
+            [0x56],
+            [0x57],
+            [0x58],
+            [0x5A],
+            [0x62],
+            [0x64],
+            [0x67],
+            [0x68],
+            [0x6B],
+            [0x73],
+            [0x76],
+            [0x77],
+            [0x7A],
+        ];
     }
 }
