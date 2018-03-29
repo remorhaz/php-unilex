@@ -163,6 +163,11 @@ class ParsedFsmTest extends TestCase
         $epsilonTransitionList = [];
         $data["Escaped arbitrary symbol"] = ['\\F', $rangeTransitionList, $epsilonTransitionList];
 
+        $rangeTransitionList = [];
+        $rangeTransitionList[1][2] = [[0x61, 0x62]];
+        $epsilonTransitionList = [];
+        $data["Two symbols in a class"] = ['[ab]', $rangeTransitionList, $epsilonTransitionList];
+
         return $data;
     }
 }

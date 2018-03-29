@@ -94,6 +94,19 @@ class StateMap implements StateMapInterface
     /**
      * @param int $fromStateId
      * @param int $toStateId
+     * @return mixed
+     * @throws Exception
+     */
+    public function getRangeTransition(int $fromStateId, int $toStateId)
+    {
+        return $this
+            ->getRangeTransitionMap()
+            ->getTransition($fromStateId, $toStateId);
+    }
+
+    /**
+     * @param int $fromStateId
+     * @param int $toStateId
      * @param int $startChar
      * @param int $finishChar
      * @throws Exception
@@ -109,8 +122,19 @@ class StateMap implements StateMapInterface
                 ->getRangeTransitionMap()
                 ->getTransition($fromStateId, $toStateId)
             : [];
-        // TODO: Optimize merging ranges.
-        $rangeList[] = $range;
+        $rangeSet = new RangeSet(...$rangeList);
+        $rangeSet->addRange($range);
+        $this->replaceRangeTransition($fromStateId, $toStateId, $rangeSet->getRanges());
+    }
+
+    /**
+     * @param int $fromStateId
+     * @param int $toStateId
+     * @param array $rangeList
+     * @throws Exception
+     */
+    public function replaceRangeTransition(int $fromStateId, int $toStateId, array $rangeList): void
+    {
         $this
             ->getRangeTransitionMap()
             ->replaceTransition($fromStateId, $toStateId, $rangeList);

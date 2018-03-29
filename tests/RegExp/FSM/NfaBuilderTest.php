@@ -64,6 +64,7 @@ class NfaBuilderTest extends TestCase
         return [
             [NodeType::ALTERNATIVE],
             [NodeType::CONCATENATE],
+            [NodeType::SYMBOL_CLASS],
         ];
     }
 
@@ -176,7 +177,6 @@ class NfaBuilderTest extends TestCase
         return [
             [NodeType::ASSERT],
             [NodeType::SYMBOL_RANGE],
-            [NodeType::SYMBOL_CLASS],
             [NodeType::SYMBOL_PROP],
         ];
     }

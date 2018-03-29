@@ -56,7 +56,6 @@ class NfaBuilder extends AbstractTranslatorListener
         switch ($node->getName()) {
             case NodeType::ASSERT:
             case NodeType::SYMBOL_RANGE:
-            case NodeType::SYMBOL_CLASS:
             case NodeType::SYMBOL_PROP:
                 throw new Exception("AST nodes of type '{$node->getName()}' are not supported yet");
                 break;
@@ -69,6 +68,18 @@ class NfaBuilder extends AbstractTranslatorListener
                 if (!empty($node->getChildList())) {
                     throw new Exception("AST node '{$node->getName()}' should not have child nodes");
                 }
+                break;
+
+            case NodeType::SYMBOL_CLASS:
+                if (empty($node->getChildList())) {
+                    throw new Exception("AST node '{$node->getName()}' should have child nodes");
+                }
+                [$stateIn, $stateOut] = $this->getNodeStates($node);
+                $symbolList = [];
+                foreach ($node->getChildIndexList() as $index) {
+                    $symbolList[] = $this->createSymbolFromClonedNodeChild($node, $stateIn, $stateOut, $index);
+                }
+                $stack->push(...$symbolList);
                 break;
 
             case NodeType::REPEAT:
@@ -155,14 +166,7 @@ class NfaBuilder extends AbstractTranslatorListener
      */
     public function onSymbol(Symbol $symbol, PushInterface $stack): void
     {
-        $header = $symbol->getHeader();
-        switch ($header->getName()) {
-            case NodeType::ALTERNATIVE:
-            case NodeType::CONCATENATE:
-            case NodeType::REPEAT:
-                $stack->push($symbol->getSymbol());
-                break;
-        }
+        $stack->push($symbol->getSymbol());
     }
 
     /**
@@ -242,6 +246,19 @@ class NfaBuilder extends AbstractTranslatorListener
                     default:
                         $this->stateMap->addCharTransition($stateIn, $stateOut, $code);
                 }
+                break;
+
+            case NodeType::SYMBOL_CLASS:
+                if (!$node->getAttribute('not')) {
+                    break;
+                }
+                [$stateIn, $stateOut] = $this->getNodeStates($node);
+                $rangeList = $this->stateMap->getRangeTransition($stateIn, $stateOut);
+                $rangeSet = new RangeSet(...$rangeList);
+                $invertedRangeList = $rangeSet->getRangesDiff([0x00, 0x10FFFF]);
+                $this->stateMap->replaceRangeTransition($stateIn, $stateOut, $invertedRangeList);
+                // TODO: implement range set inversion
+                throw new Exception("Range set inversion is not implemented yet");
                 break;
         }
     }
