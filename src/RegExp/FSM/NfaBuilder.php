@@ -58,7 +58,6 @@ class NfaBuilder extends AbstractTranslatorListener
             case NodeType::SYMBOL_RANGE:
             case NodeType::SYMBOL_CLASS:
             case NodeType::SYMBOL_PROP:
-            case NodeType::ESC_SIMPLE:
                 throw new Exception("AST nodes of type '{$node->getName()}' are not supported yet");
                 break;
 
@@ -66,6 +65,7 @@ class NfaBuilder extends AbstractTranslatorListener
             case NodeType::SYMBOL:
             case NodeType::SYMBOL_ANY:
             case NodeType::SYMBOL_CTL:
+            case NodeType::ESC_SIMPLE:
                 if (!empty($node->getChildList())) {
                     throw new Exception("AST node '{$node->getName()}' should not have child nodes");
                 }
@@ -191,6 +191,57 @@ class NfaBuilder extends AbstractTranslatorListener
                 [$stateIn, $stateOut] = $this->getNodeStates($node);
                 $code = $node->getAttribute('code');
                 $this->stateMap->addCharTransition($stateIn, $stateOut, $this->getControlCode($code));
+                break;
+
+            case NodeType::ESC_SIMPLE:
+                [$stateIn, $stateOut] = $this->getNodeStates($node);
+                $code = $node->getAttribute('code');
+                $singleCharMap = [
+                    0x61 => 0x07, // \a: alert/BEL
+                    0x65 => 0x1B, // \e: escape/ESC
+                    0x66 => 0x0C, // \f: form feed/FF
+                    0x6E => 0x0A, // \n: line feed/LF
+                    0x72 => 0x0D, // \r: carriage return/CR
+                    0x74 => 0x09, // \t: tab/HT
+                ];
+                if (isset($singleCharMap[$code])) {
+                    $this->stateMap->addCharTransition($stateIn, $stateOut, $singleCharMap[$code]);
+                    break;
+                }
+                $notImplementedMap = [
+                    0x41, // \A: a subject start assert
+                    0x42, // \B: not a word boundary assert
+                    0x43, // \C: single code unit
+                    0x44, // \D: not a decimal digit
+                    0x45, // \E: raw sequence end
+                    0x47, // \G: a first matching position assert
+                    0x48, // \H: not a horizontal whitespace
+                    0x4B, // \K: resets matching start
+                    0x4E, // \N: not a newline
+                    0x51, // \Q: raw sequence start
+                    0x52, // \R: a newline
+                    0x53, // \S: not a whitespace
+                    0x56, // \V: not a vertical whitespace
+                    0x57, // \W: not a "word" character
+                    0x58, // \X: Unicode extended grapheme cluster
+                    0x5A, // \Z: a subject end or newline before subject end assert
+                    0x62, // \b: a word boundary assert
+                    0x64, // \d: a decimal digit
+                    0x67, // \g: a back reference
+                    0x68, // \h: a horizontal whitespace
+                    0x6B, // \k: a named back reference
+                    0x73, // \s: a whitespace
+                    0x76, // \v: a vertical whitespace
+                    0x77, // \w: a "word" character
+                    0x7A, // \z: a subject end assert
+                ];
+                if (in_array($code, $notImplementedMap)) {
+                    throw new Exception("Escaped symbol {$code} is not implemented yet");
+                }
+                switch ($code) {
+                    default:
+                        $this->stateMap->addCharTransition($stateIn, $stateOut, $code);
+                }
                 break;
         }
     }
