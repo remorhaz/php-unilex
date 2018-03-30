@@ -184,6 +184,35 @@ class ParsedFsmTest extends TestCase
         $epsilonTransitionList = [];
         $data["Two symbols in inverted class"] = ['[^ac]', $rangeTransitionList, $epsilonTransitionList];
 
+        $rangeTransitionList = [];
+        $rangeTransitionList[1][2] = [[0x61, 0x63]];
+        $epsilonTransitionList = [];
+        $data["Single range between symbols in class"] = ['[a-c]', $rangeTransitionList, $epsilonTransitionList];
+
+        $rangeTransitionList = [];
+        $rangeTransitionList[1][2] = [[0x46, 0x4B]];
+        $epsilonTransitionList = [];
+        $data["Single range between ordinary escape and symbol in class"] =
+            ['[\\F-K]', $rangeTransitionList, $epsilonTransitionList];
+
+        $rangeTransitionList = [];
+        $rangeTransitionList[1][2] = [[0x7F, 0x0429]];
+        $epsilonTransitionList = [];
+        $data["Single range between control and Unicode escapes in class"] =
+            ['[\\c?-\\u0429]', $rangeTransitionList, $epsilonTransitionList];
+
+        $rangeTransitionList = [];
+        $rangeTransitionList[1][2] = [[0x0410, 0x0429]];
+        $epsilonTransitionList = [];
+        $data["Single range between ordinary non-ASCII escape and raw non-ASCII symbol in class"] =
+            ['[\\А-Щ]', $rangeTransitionList, $epsilonTransitionList];
+
+        $rangeTransitionList = [];
+        $rangeTransitionList[1][2] = [[0x09, 0x7A]];
+        $epsilonTransitionList = [];
+        $data["Two intersecting ranges in class"] =
+            ['[\\t-aA-z]', $rangeTransitionList, $epsilonTransitionList];
+
         return $data;
     }
 }

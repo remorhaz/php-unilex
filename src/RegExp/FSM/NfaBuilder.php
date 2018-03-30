@@ -44,6 +44,7 @@ class NfaBuilder extends AbstractTranslatorListener
         $node->setAttribute('state_in', $stateIn);
         $stateOut = $this->stateMap->createState();
         $node->setAttribute('state_out', $stateOut);
+        $node->setAttribute('in_range', false);
     }
 
     /**
@@ -55,7 +56,6 @@ class NfaBuilder extends AbstractTranslatorListener
     {
         switch ($node->getName()) {
             case NodeType::ASSERT:
-            case NodeType::SYMBOL_RANGE:
             case NodeType::SYMBOL_PROP:
                 throw new Exception("AST nodes of type '{$node->getName()}' are not supported yet");
                 break;
@@ -73,6 +73,18 @@ class NfaBuilder extends AbstractTranslatorListener
             case NodeType::SYMBOL_CLASS:
                 if (empty($node->getChildList())) {
                     throw new Exception("AST node '{$node->getName()}' should have child nodes");
+                }
+                [$stateIn, $stateOut] = $this->getNodeStates($node);
+                $symbolList = [];
+                foreach ($node->getChildIndexList() as $index) {
+                    $symbolList[] = $this->createSymbolFromNodeChild($node, $stateIn, $stateOut, $index);
+                }
+                $stack->push(...$symbolList);
+                break;
+
+            case NodeType::SYMBOL_RANGE:
+                if (count($node->getChildList()) != 2) {
+                    throw new Exception("AST node '{$node->getName()}' should have exactly two child nodes");
                 }
                 [$stateIn, $stateOut] = $this->getNodeStates($node);
                 $symbolList = [];
@@ -166,6 +178,12 @@ class NfaBuilder extends AbstractTranslatorListener
      */
     public function onSymbol(Symbol $symbol, PushInterface $stack): void
     {
+        $inRange = $symbol->getHeader()->getName() == NodeType::SYMBOL_RANGE
+            ? true
+            : $symbol->getHeader()->getAttribute('in_range');
+        $symbol
+            ->getSymbol()
+            ->setAttribute('in_range', $inRange);
         $stack->push($symbol->getSymbol());
     }
 
@@ -175,30 +193,48 @@ class NfaBuilder extends AbstractTranslatorListener
      */
     public function onFinishProduction(Node $node): void
     {
+        [$stateIn, $stateOut] = $this->getNodeStates($node);
+        $inRange = $node->getAttribute('in_range');
         switch ($node->getName()) {
+            case NodeType::SYMBOL_RANGE:
+                $startChar = $node->getChild(0)->getAttribute('range_code');
+                $finishChar = $node->getChild(1)->getAttribute('range_code');
+                if ($startChar > $finishChar) {
+                    throw new Exception("Invalid range: start char is greater than finish char");
+                }
+                $this->stateMap->addRangeTransition($stateIn, $stateOut, $startChar, $finishChar);
+                break;
+
             case NodeType::SYMBOL:
-                [$stateIn, $stateOut] = $this->getNodeStates($node);
-                $this->stateMap->addCharTransition($stateIn, $stateOut, $node->getAttribute('code'));
+                $code = $node->getAttribute('code');
+                $inRange
+                    ? $node->setAttribute('range_code', $code)
+                    : $this->stateMap->addCharTransition($stateIn, $stateOut, $code);
                 break;
 
             case NodeType::EMPTY:
-                [$stateIn, $stateOut] = $this->getNodeStates($node);
+                if ($inRange) {
+                    throw new Exception("Invalid range component: no matching chars");
+                }
                 $this->stateMap->addEpsilonTransition($stateIn, $stateOut);
                 break;
 
             case NodeType::SYMBOL_ANY:
-                [$stateIn, $stateOut] = $this->getNodeStates($node);
+                if ($inRange) {
+                    throw new Exception("Invalid range component: any char is matching");
+                }
                 $this->stateMap->addRangeTransition($stateIn, $stateOut, 0x00, 0x10FFFF);
                 break;
 
             case NodeType::SYMBOL_CTL:
-                [$stateIn, $stateOut] = $this->getNodeStates($node);
                 $code = $node->getAttribute('code');
-                $this->stateMap->addCharTransition($stateIn, $stateOut, $this->getControlCode($code));
+                $controlCode = $this->getControlCode($code);
+                $inRange
+                    ? $node->setAttribute('range_code', $controlCode)
+                    : $this->stateMap->addCharTransition($stateIn, $stateOut, $controlCode);
                 break;
 
             case NodeType::ESC_SIMPLE:
-                [$stateIn, $stateOut] = $this->getNodeStates($node);
                 $code = $node->getAttribute('code');
                 $singleCharMap = [
                     0x61 => 0x07, // \a: alert/BEL
@@ -209,7 +245,10 @@ class NfaBuilder extends AbstractTranslatorListener
                     0x74 => 0x09, // \t: tab/HT
                 ];
                 if (isset($singleCharMap[$code])) {
-                    $this->stateMap->addCharTransition($stateIn, $stateOut, $singleCharMap[$code]);
+                    $escapedCode = $singleCharMap[$code];
+                    $inRange
+                        ? $node->setAttribute('range_code', $escapedCode)
+                        : $this->stateMap->addCharTransition($stateIn, $stateOut, $escapedCode);
                     break;
                 }
                 $notImplementedMap = [
@@ -244,7 +283,9 @@ class NfaBuilder extends AbstractTranslatorListener
                 }
                 switch ($code) {
                     default:
-                        $this->stateMap->addCharTransition($stateIn, $stateOut, $code);
+                        $inRange
+                            ? $node->setAttribute('range_code', $code)
+                            : $this->stateMap->addCharTransition($stateIn, $stateOut, $code);
                 }
                 break;
 
@@ -252,7 +293,6 @@ class NfaBuilder extends AbstractTranslatorListener
                 if (!$node->getAttribute('not')) {
                     break;
                 }
-                [$stateIn, $stateOut] = $this->getNodeStates($node);
                 $rangeList = $this->stateMap->getRangeTransition($stateIn, $stateOut);
                 $rangeSet = new RangeSet(...$rangeList);
                 $invertedRangeList = $rangeSet->getDiff([0x00, 0x10FFFF])->getRanges();

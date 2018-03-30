@@ -153,7 +153,8 @@ class NfaBuilderTest extends TestCase
         $node
             ->setAttribute('code', 0)
             ->setAttribute('state_in', $stateMap->createState())
-            ->setAttribute('state_out', $stateMap->createState());
+            ->setAttribute('state_out', $stateMap->createState())
+            ->setAttribute('in_range', false);
         $builder->onFinishProduction($node);
     }
 
@@ -176,7 +177,6 @@ class NfaBuilderTest extends TestCase
     {
         return [
             [NodeType::ASSERT],
-            [NodeType::SYMBOL_RANGE],
             [NodeType::SYMBOL_PROP],
         ];
     }
@@ -233,10 +233,120 @@ class NfaBuilderTest extends TestCase
     /**
      * @throws \Remorhaz\UniLex\Exception
      * @expectedException \Remorhaz\UniLex\Exception
+     * @expectedExceptionMessage AST node 'symbol_range' should have exactly two child nodes
+     */
+    public function testOnBeginProduction_RangeNoteWithOneChild_ThrowsException(): void
+    {
+        $stateMap = new StateMap;
+        $builder = new NfaBuilder($stateMap);
+        $node = new Node(1, NodeType::SYMBOL_RANGE);
+        $node
+            ->setAttribute('state_in', 1)
+            ->setAttribute('state_out', 2)
+            ->addChild(new Node(2, NodeType::SYMBOL));
+        $builder->onBeginProduction($node, new SymbolStack);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     * @expectedException \Remorhaz\UniLex\Exception
+     * @expectedExceptionMessage AST node 'symbol_range' should have exactly two child nodes
+     */
+    public function testOnBeginProduction_RangeNoteWithoutChildren_ThrowsException(): void
+    {
+        $stateMap = new StateMap;
+        $builder = new NfaBuilder($stateMap);
+        $node = new Node(1, NodeType::SYMBOL_RANGE);
+        $node
+            ->setAttribute('state_in', 1)
+            ->setAttribute('state_out', 2);
+        $builder->onBeginProduction($node, new SymbolStack);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     * @expectedException \Remorhaz\UniLex\Exception
+     * @expectedExceptionMessage AST node 'symbol_range' should have exactly two child nodes
+     */
+    public function testOnBeginProduction_RangeNoteWithThreeChild_ThrowsException(): void
+    {
+        $stateMap = new StateMap;
+        $builder = new NfaBuilder($stateMap);
+        $node = new Node(1, NodeType::SYMBOL_RANGE);
+        $node
+            ->setAttribute('state_in', 1)
+            ->setAttribute('state_out', 2)
+            ->addChild(new Node(2, NodeType::SYMBOL))
+            ->addChild(new Node(3, NodeType::SYMBOL))
+            ->addChild(new Node(4, NodeType::SYMBOL));
+        $builder->onBeginProduction($node, new SymbolStack);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     * @expectedException \Remorhaz\UniLex\Exception
+     * @expectedExceptionMessage Invalid range: start char is greater than finish char
+     */
+    public function testOnFinishProduction_RangeNodeWithInvalidChars_ThrowsException(): void
+    {
+        $stateMap = new StateMap;
+        $builder = new NfaBuilder($stateMap);
+        $rangeNode = new Node(1, NodeType::SYMBOL_RANGE);
+        $startCharNode = new Node(2, NodeType::SYMBOL);
+        $startCharNode->setAttribute('range_code', 2);
+        $finishCharNode = new Node(3, NodeType::SYMBOL);
+        $finishCharNode->setAttribute('range_code', 1);
+        $rangeNode
+            ->addChild($startCharNode)
+            ->addChild($finishCharNode)
+            ->setAttribute('in_range', false)
+            ->setAttribute('state_in', 1)
+            ->setAttribute('state_out', 2);
+        $builder->onFinishProduction($rangeNode);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     * @expectedException \Remorhaz\UniLex\Exception
+     * @expectedExceptionMessage Invalid range component: no matching chars
+     */
+    public function testOnFinishProduction_EmptyNodeInRange_ThrowsException(): void
+    {
+        $stateMap = new StateMap;
+        $builder = new NfaBuilder($stateMap);
+        $node = new Node(1, NodeType::EMPTY);
+        $node
+            ->setAttribute('in_range', true)
+            ->setAttribute('state_in', 1)
+            ->setAttribute('state_out', 2);
+        $builder->onFinishProduction($node);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     * @expectedException \Remorhaz\UniLex\Exception
+     * @expectedExceptionMessage Invalid range component: any char is matching
+     */
+    public function testOnFinishProduction_SymbolAnyNodeInRange_ThrowsException(): void
+    {
+        $stateMap = new StateMap;
+        $builder = new NfaBuilder($stateMap);
+        $node = new Node(1, NodeType::SYMBOL_ANY);
+        $node
+            ->setAttribute('in_range', true)
+            ->setAttribute('state_in', 1)
+            ->setAttribute('state_out', 2);
+        $builder->onFinishProduction($node);
+    }
+
+    /**
+     * @param int $code
+     * @throws \Remorhaz\UniLex\Exception
+     * @expectedException \Remorhaz\UniLex\Exception
      * @expectedExceptionMessageRegExp # is not implemented yet$#
      * @dataProvider providerNotImplementedSimpleEscapeCodes
      */
-    public function testOnFinishProduction_SimpleEscapeWithNotImplementedCode_ThrowsEsception(int $code): void
+    public function testOnFinishProduction_SimpleEscapeWithNotImplementedCode_ThrowsException(int $code): void
     {
         $stateMap = new StateMap;
         $builder = new NfaBuilder($stateMap);
@@ -244,7 +354,8 @@ class NfaBuilderTest extends TestCase
         $node
             ->setAttribute('code', $code)
             ->setAttribute('state_in', 1)
-            ->setAttribute('state_out', 2);
+            ->setAttribute('state_out', 2)
+            ->setAttribute('in_range', false);
         $builder->onFinishProduction($node);
     }
 
