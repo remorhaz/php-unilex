@@ -255,10 +255,8 @@ class NfaBuilder extends AbstractTranslatorListener
                 [$stateIn, $stateOut] = $this->getNodeStates($node);
                 $rangeList = $this->stateMap->getRangeTransition($stateIn, $stateOut);
                 $rangeSet = new RangeSet(...$rangeList);
-                $invertedRangeList = $rangeSet->getRangesDiff([0x00, 0x10FFFF]);
+                $invertedRangeList = $rangeSet->getDiff([0x00, 0x10FFFF])->getRanges();
                 $this->stateMap->replaceRangeTransition($stateIn, $stateOut, $invertedRangeList);
-                // TODO: implement range set inversion
-                throw new Exception("Range set inversion is not implemented yet");
                 break;
         }
     }
