@@ -22,12 +22,33 @@ class RangeSetTest extends TestCase
     }
 
     /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testImport_NoArguments_GetRangesReturnsEmptyArray(): void
+    {
+        $actualValue = RangeSet::import()->getRanges();
+        self::assertEquals([], $actualValue);
+    }
+
+    /**
      * @param array $ranges
      * @param array $expectedRanges
      * @throws \Remorhaz\UniLex\Exception
      * @dataProvider providerAddableRanges
      */
     public function testExport_ConstructWithRanges_ReturnsMergedRanges(array $ranges, array $expectedRanges): void
+    {
+        $actualValue = (new RangeSet(...Range::importList(...$ranges)))->export();
+        self::assertEquals($expectedRanges, $actualValue);
+    }
+
+    /**
+     * @param array $ranges
+     * @param array $expectedRanges
+     * @throws \Remorhaz\UniLex\Exception
+     * @dataProvider providerAddableRanges
+     */
+    public function testImport_ValidRanges_ExportReturnsMergedRanges(array $ranges, array $expectedRanges): void
     {
         $actualValue = RangeSet::import(...$ranges)->export();
         self::assertEquals($expectedRanges, $actualValue);
