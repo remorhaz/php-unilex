@@ -5,6 +5,7 @@ namespace Remorhaz\UniLex\Test\RegExp;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\AST\Tree;
 use Remorhaz\UniLex\RegExp\FSM\NfaBuilder;
+use Remorhaz\UniLex\RegExp\FSM\Range;
 use Remorhaz\UniLex\RegExp\ParserFactory;
 use Remorhaz\UniLex\Unicode\CharBufferFactory;
 
@@ -30,8 +31,10 @@ class ParsedFsmTest extends TestCase
         $tree = new Tree;
         ParserFactory::createFromBuffer($tree, $buffer)->run();
         $stateMap = NfaBuilder::fromTree($tree);
-        self::assertEquals($expectedRangeTransitionList, $stateMap->getCharTransitionList());
-        self::assertEquals($expectedEpsilonTransitionList, $stateMap->getEpsilonTransitionList());
+        $actualRangeTransitionList = $this->exportRangeTransitionMap($stateMap->getCharTransitionList());
+        self::assertEquals($expectedRangeTransitionList, $actualRangeTransitionList);
+        $actualEpsilonTransitionList = $stateMap->getEpsilonTransitionList();
+        self::assertEquals($expectedEpsilonTransitionList, $actualEpsilonTransitionList);
     }
 
     public function providerRegExpStateMaps(): array
@@ -214,5 +217,23 @@ class ParsedFsmTest extends TestCase
             ['[\\t-aA-z]', $rangeTransitionList, $epsilonTransitionList];
 
         return $data;
+    }
+
+    /**
+     * @param array $transitionMap
+     * @return array
+     */
+    private function exportRangeTransitionMap(array $transitionMap): array
+    {
+        $rangeDataList = [];
+        foreach ($transitionMap as $stateIn => $stateOutMap) {
+            /** @var Range[] $rangeList */
+            foreach ($stateOutMap as $stateOut => $rangeList) {
+                foreach ($rangeList as $range) {
+                    $rangeDataList[$stateIn][$stateOut][] = [$range->getFrom(), $range->getTo()];
+                }
+            }
+        }
+        return $rangeDataList;
     }
 }

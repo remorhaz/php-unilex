@@ -202,7 +202,7 @@ class NfaBuilder extends AbstractTranslatorListener
                 if ($startChar > $finishChar) {
                     throw new Exception("Invalid range: start char is greater than finish char");
                 }
-                $this->stateMap->addRangeTransition($stateIn, $stateOut, $startChar, $finishChar);
+                $this->stateMap->addRangeTransition($stateIn, $stateOut, new Range($startChar, $finishChar));
                 break;
 
             case NodeType::SYMBOL:
@@ -223,7 +223,7 @@ class NfaBuilder extends AbstractTranslatorListener
                 if ($inRange) {
                     throw new Exception("Invalid range component: any char is matching");
                 }
-                $this->stateMap->addRangeTransition($stateIn, $stateOut, 0x00, 0x10FFFF);
+                $this->stateMap->addRangeTransition($stateIn, $stateOut, new Range(0x00, 0x10FFFF));
                 break;
 
             case NodeType::SYMBOL_CTL:
@@ -295,8 +295,8 @@ class NfaBuilder extends AbstractTranslatorListener
                 }
                 $rangeList = $this->stateMap->getRangeTransition($stateIn, $stateOut);
                 $rangeSet = new RangeSet(...$rangeList);
-                $invertedRangeList = $rangeSet->getDiff([0x00, 0x10FFFF])->getRanges();
-                $this->stateMap->replaceRangeTransition($stateIn, $stateOut, $invertedRangeList);
+                $invertedRangeList = $rangeSet->getDiff(new Range(0x00, 0x10FFFF))->getRanges();
+                $this->stateMap->replaceRangeTransition($stateIn, $stateOut, ...$invertedRangeList);
                 break;
         }
     }

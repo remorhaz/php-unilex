@@ -3,6 +3,7 @@
 namespace Remorhaz\UniLex\Test\RegExp\FSM;
 
 use PHPUnit\Framework\TestCase;
+use Remorhaz\UniLex\RegExp\FSM\Range;
 use Remorhaz\UniLex\RegExp\FSM\StateMap;
 
 /**
@@ -129,7 +130,7 @@ class StateMapTest extends TestCase
         $stateMap = new StateMap;
         $fromStateId = $stateMap->createState();
         $toStateId = $stateMap->createState();
-        $stateMap->addRangeTransition($fromStateId, $toStateId, 0x60, 0x63);
+        $stateMap->addRangeTransition($fromStateId, $toStateId, new Range(0x60, 0x63));
         $actualValue = $stateMap->charTransitionExists($fromStateId, $toStateId, 0x61);
         self::assertTrue($actualValue);
     }
@@ -142,7 +143,7 @@ class StateMapTest extends TestCase
         $stateMap = new StateMap;
         $fromStateId = $stateMap->createState();
         $toStateId = $stateMap->createState();
-        $stateMap->addRangeTransition($fromStateId, $toStateId, 0x62, 0x63);
+        $stateMap->addRangeTransition($fromStateId, $toStateId, new Range(0x62, 0x63));
         $actualValue = $stateMap->charTransitionExists($fromStateId, $toStateId, 0x61);
         self::assertFalse($actualValue);
     }
@@ -155,8 +156,8 @@ class StateMapTest extends TestCase
         $stateMap = new StateMap;
         $fromStateId = $stateMap->createState();
         $toStateId = $stateMap->createState();
-        $stateMap->addRangeTransition($fromStateId, $toStateId, 0x59, 0x60);
-        $stateMap->addRangeTransition($fromStateId, $toStateId, 0x62, 0x63);
+        $stateMap->addRangeTransition($fromStateId, $toStateId, new Range(0x59, 0x60));
+        $stateMap->addRangeTransition($fromStateId, $toStateId, new Range(0x62, 0x63));
         $actualValue = $stateMap->charTransitionExists($fromStateId, $toStateId, 0x61);
         self::assertFalse($actualValue);
     }
@@ -193,9 +194,9 @@ class StateMapTest extends TestCase
         $stateMap = new StateMap;
         $stateIn = $stateMap->createState();
         $stateOut = $stateMap->createState();
-        $stateMap->addRangeTransition($stateIn, $stateOut, 0x61, 0x63);
+        $stateMap->addRangeTransition($stateIn, $stateOut, new Range(0x61, 0x63));
         $expectedValue[$stateIn][$stateOut] = [[0x61, 0x63]];
-        $actualValue = $stateMap->getCharTransitionList();
+        $actualValue = $this->exportRangeTransitionMap($stateMap->getCharTransitionList());
         self::assertSame($expectedValue, $actualValue);
     }
 
@@ -211,5 +212,19 @@ class StateMapTest extends TestCase
         $expectedValue[$stateIn][$stateOut] = true;
         $actualValue = $stateMap->getEpsilonTransitionList();
         self::assertSame($expectedValue, $actualValue);
+    }
+
+    private function exportRangeTransitionMap(array $transitionMap): array
+    {
+        $rangeDataList = [];
+        foreach ($transitionMap as $stateIn => $stateOutMap) {
+            /** @var Range[] $rangeList */
+            foreach ($stateOutMap as $stateOut => $rangeList) {
+                foreach ($rangeList as $range) {
+                    $rangeDataList[$stateIn][$stateOut][] = [$range->getFrom(), $range->getTo()];
+                }
+            }
+        }
+        return $rangeDataList;
     }
 }

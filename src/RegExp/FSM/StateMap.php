@@ -2,8 +2,6 @@
 
 namespace Remorhaz\UniLex\RegExp\FSM;
 
-use Remorhaz\UniLex\AST\Translator;
-use Remorhaz\UniLex\AST\Tree;
 use Remorhaz\UniLex\Exception;
 
 class StateMap implements StateMapInterface
@@ -88,7 +86,7 @@ class StateMap implements StateMapInterface
      */
     public function addCharTransition(int $fromStateId, int $toStateId, int $char): void
     {
-        $this->addRangeTransition($fromStateId, $toStateId, $char, $char);
+        $this->addRangeTransition($fromStateId, $toStateId, new Range($char));
     }
 
     /**
@@ -107,13 +105,12 @@ class StateMap implements StateMapInterface
     /**
      * @param int $fromStateId
      * @param int $toStateId
-     * @param int $startChar
-     * @param int $finishChar
+     * @param Range $range
      * @throws Exception
+     * @todo Support multiple ranges
      */
-    public function addRangeTransition(int $fromStateId, int $toStateId, int $startChar, int $finishChar): void
+    public function addRangeTransition(int $fromStateId, int $toStateId, Range $range): void
     {
-        $range = [$startChar, $finishChar];
         $transitionExists = $this
             ->getRangeTransitionMap()
             ->transitionExists($fromStateId, $toStateId);
@@ -124,16 +121,16 @@ class StateMap implements StateMapInterface
             : [];
         $rangeSet = new RangeSet(...$rangeList);
         $rangeSet->addRange($range);
-        $this->replaceRangeTransition($fromStateId, $toStateId, $rangeSet->getRanges());
+        $this->replaceRangeTransition($fromStateId, $toStateId, ...$rangeSet->getRanges());
     }
 
     /**
      * @param int $fromStateId
      * @param int $toStateId
-     * @param array $rangeList
+     * @param Range[] ...$rangeList
      * @throws Exception
      */
-    public function replaceRangeTransition(int $fromStateId, int $toStateId, array $rangeList): void
+    public function replaceRangeTransition(int $fromStateId, int $toStateId, Range ...$rangeList): void
     {
         $this
             ->getRangeTransitionMap()
@@ -155,12 +152,12 @@ class StateMap implements StateMapInterface
         if (!$transitionExists) {
             return false;
         }
+        /** @var Range[] $rangeList */
         $rangeList = $this
             ->getRangeTransitionMap()
             ->getTransition($fromStateId, $toStateId);
         foreach ($rangeList as $range) {
-            [$startChar, $finishChar] = $range;
-            if ($char >= $startChar && $char <= $finishChar) {
+            if ($range->containsChar($char)) {
                 return true;
             }
         }

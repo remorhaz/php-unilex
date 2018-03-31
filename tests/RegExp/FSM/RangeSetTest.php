@@ -3,6 +3,7 @@
 namespace Remorhaz\UniLex\Test\RegExp\FSM;
 
 use PHPUnit\Framework\TestCase;
+use Remorhaz\UniLex\RegExp\FSM\Range;
 use Remorhaz\UniLex\RegExp\FSM\RangeSet;
 
 /**
@@ -28,7 +29,8 @@ class RangeSetTest extends TestCase
      */
     public function testGetRanges_ConstructWithRanges_ReturnsMergedRanges(array $ranges, array $expectedRanges): void
     {
-        $actualValue = (new RangeSet(...$ranges))->getRanges();
+        $rangeList = (new RangeSet(...$this->importRangeList(...$ranges)))->getRanges();
+        $actualValue = $this->exportRangeList(...$rangeList);
         self::assertEquals($expectedRanges, $actualValue);
     }
 
@@ -41,8 +43,8 @@ class RangeSetTest extends TestCase
     public function testAddRange_ValidRanges_GetRangesReturnsMergedRanges(array $ranges, array $expectedRanges): void
     {
         $rangeSet = new RangeSet;
-        $rangeSet->addRange(...$ranges);
-        $actualValue = $rangeSet->getRanges();
+        $rangeSet->addRange(...$this->importRangeList(...$ranges));
+        $actualValue = $this->exportRangeList(...$rangeSet->getRanges());
         self::assertEquals($expectedRanges, $actualValue);
     }
 
@@ -71,9 +73,9 @@ class RangeSetTest extends TestCase
         array $expectedRanges
     ) {
         $rangeSet = new RangeSet;
-        $rangeSet->addRange(...$firstRanges);
-        $rangeSet->addRange(...$secondRanges);
-        $actualValue = $rangeSet->getRanges();
+        $rangeSet->addRange(...$this->importRangeList(...$firstRanges));
+        $rangeSet->addRange(...$this->importRangeList(...$secondRanges));
+        $actualValue = $this->exportRangeList(...$rangeSet->getRanges());
         self::assertEquals($expectedRanges, $actualValue);
     }
 
@@ -88,16 +90,6 @@ class RangeSetTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Invalid range 2..1
-     */
-    public function testAddRange_InvalidRange_ThrowsException(): void
-    {
-        (new RangeSet)->addRange([2, 1]);
-    }
-
-    /**
      * @param array $firstRanges
      * @param array $secondRanges
      * @param array $expectedDiff
@@ -109,9 +101,10 @@ class RangeSetTest extends TestCase
         array $secondRanges,
         array $expectedDiff
     ): void {
-        $actualValue = (new RangeSet(...$firstRanges))
-            ->getDiff(...$secondRanges)
+        $diffRanges = (new RangeSet(...$this->importRangeList(...$firstRanges)))
+            ->getDiff(...$this->importRangeList(...$secondRanges))
             ->getRanges();
+        $actualValue = $this->exportRangeList(...$diffRanges);
         self::assertEquals($expectedDiff, $actualValue);
     }
 
@@ -134,13 +127,21 @@ class RangeSetTest extends TestCase
         ];
     }
 
-    /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Invalid range 3..2
-     */
-    public function testGetDiffRange_InvalidRange_ThrowsException(): void
+    private function importRangeList(array ...$rangeDataList): array
     {
-        (new RangeSet([1, 2]))->getDiff([3, 2]);
+        $rangeList = [];
+        foreach ($rangeDataList as $rangeData) {
+            $rangeList[] = new Range(...$rangeData);
+        }
+        return $rangeList;
+    }
+
+    private function exportRangeList(Range ...$rangeList): array
+    {
+        $rangeDataList = [];
+        foreach ($rangeList as $range) {
+            $rangeDataList[] = [$range->getFrom(), $range->getTo()];
+        }
+        return $rangeDataList;
     }
 }
