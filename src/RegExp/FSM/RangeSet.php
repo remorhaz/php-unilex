@@ -82,8 +82,7 @@ class RangeSet
                 }
                 $rangeSet->addRange([$from, $existingFrom - 1]); // copy part of range to the left from existing one
                 $from = $existingFrom;
-            }
-            if ($existingFrom < $from) {
+            } elseif ($existingFrom < $from) {
                 // Range starts after existing range starts
                 if ($existingTo < $from) {
                     // Entire range is to the right from existing one - copy existing range as is
@@ -91,22 +90,16 @@ class RangeSet
                     continue;
                 }
                 $rangeSet->addRange([$existingFrom, $from - 1]); // copy part of existing range to the left from range
-                $existingFrom = $from;
             }
-            if ($from == $existingFrom) {
-                if ($to < $existingTo) {
-                    // Range ends before existing one ends - copy right part of existing range
-                    $rangeSet->addRange([$to + 1, $existingTo]);
-                    $isRangeProcessed = true;
-                    continue;
-                }
-                if ($to == $existingTo) {
-                    // Range end matches existion one end - nothing to copy
-                    $isRangeProcessed = true;
-                    continue;
-                }
+            if ($existingTo < $to) {
                 $from = $existingTo + 1;
+                continue;
             }
+            if ($to < $existingTo) {
+                // Range ends before existing one ends - copy right part of existing range
+                $rangeSet->addRange([$to + 1, $existingTo]);
+            }
+            $isRangeProcessed = true;
         }
         if (!$isRangeProcessed) {
             $rangeSet->addRange([$from, $to]);
