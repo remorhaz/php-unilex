@@ -124,20 +124,16 @@ class RangeSet
         $newRangeList = [];
         foreach ($this->rangeList as $existingRange) {
             [$existingFrom, $existingTo] = $existingRange;
-            $fromInExistingRange = $from >= $existingFrom && $from <= $existingTo;
-            $toInExistingRange = $to >= $existingFrom && $to <= $existingTo;
-            $nextToExistingRange = $from == $existingTo + 1;
-            $prevToExistingRange = $to + 1 == $existingFrom;
-            $rangesIntersectOrTouch =
-                $fromInExistingRange || $toInExistingRange || $nextToExistingRange || $prevToExistingRange;
-            if (!$rangesIntersectOrTouch) {
+            $extendLeft = $existingFrom <= $from && $from <= $existingTo || $from == $existingTo + 1;
+            $extendRight = $existingFrom <= $to && $to <= $existingTo || $to + 1 == $existingFrom;
+            if (!$extendLeft && !$extendRight) {
                 $newRangeList[] = $existingRange;
                 continue;
             }
-            if ($fromInExistingRange || $nextToExistingRange) {
+            if ($extendLeft) {
                 $from = $existingFrom;
             }
-            if ($toInExistingRange || $prevToExistingRange) {
+            if ($extendRight) {
                 $to = $existingTo;
             }
         }
