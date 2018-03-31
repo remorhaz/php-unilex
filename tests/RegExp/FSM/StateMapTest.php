@@ -156,8 +156,12 @@ class StateMapTest extends TestCase
         $stateMap = new StateMap;
         $fromStateId = $stateMap->createState();
         $toStateId = $stateMap->createState();
-        $stateMap->addRangeTransition($fromStateId, $toStateId, new Range(0x59, 0x60));
-        $stateMap->addRangeTransition($fromStateId, $toStateId, new Range(0x62, 0x63));
+        $rangeList = [
+            new Range(0x59, 0x60),
+            new Range(0x62, 0x63),
+        ];
+        $stateMap
+            ->addRangeTransition($fromStateId, $toStateId, ...$rangeList);
         $actualValue = $stateMap->charTransitionExists($fromStateId, $toStateId, 0x61);
         self::assertFalse($actualValue);
     }

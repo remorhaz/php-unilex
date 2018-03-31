@@ -25,6 +25,25 @@ class RangeSet
     }
 
     /**
+     * @param array[] ...$rangeDataList
+     * @return RangeSet
+     * @throws Exception
+     */
+    public static function import(array ...$rangeDataList): self
+    {
+        return new self(...Range::importList(...$rangeDataList));
+    }
+
+    public function export(): array
+    {
+        $rangeDataList = [];
+        foreach ($this->getRanges() as $range) {
+            $rangeDataList[] = $range->export();
+        }
+        return $rangeDataList;
+    }
+
+    /**
      * @param Range[] ...$rangeList
      * @throws Exception
      */
@@ -116,9 +135,6 @@ class RangeSet
      */
     private function mergeSingleRange(Range $range): void
     {
-        if ($range->getFrom() > $range->getTo()) {
-            throw new Exception("Invalid range {$range}");
-        }
         if (empty($this->rangeList)) {
             $this->rangeList = [$range];
             return;

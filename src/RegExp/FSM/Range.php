@@ -11,9 +11,16 @@ class Range
 
     private $to;
 
+    /**
+     * @param int $from
+     * @param int|null $to
+     * @throws Exception
+     */
     public function __construct(int $from, int $to = null)
     {
-        // TODO: values validation
+        if (isset($to) && $from > $to) {
+            throw new Exception("Invalid exception {$from}..{$to}");
+        }
         $this->from = $from;
         $this->to = $to ?? $from;
     }
@@ -21,6 +28,20 @@ class Range
     public function __toString(): string
     {
         return $this->from == $this->to ? "{$this->from}" : "{$this->from}..{$this->to}";
+    }
+
+    /**
+     * @param array[] ...$rangeDataList
+     * @return self[]
+     * @throws Exception
+     */
+    public static function importList(array ...$rangeDataList): array
+    {
+        $rangeList = [];
+        foreach ($rangeDataList as $rangeData) {
+            $rangeList[] = new self(...$rangeData);
+        }
+        return $rangeList;
     }
 
     public function getFrom(): int
@@ -61,5 +82,10 @@ class Range
     public function containsChar(int $char): bool
     {
         return $this->getFrom() <= $char && $char <= $this->getTo();
+    }
+
+    public function export(): array
+    {
+        return [$this->getFrom(), $this->getTo()];
     }
 }

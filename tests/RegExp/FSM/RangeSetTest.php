@@ -27,10 +27,9 @@ class RangeSetTest extends TestCase
      * @throws \Remorhaz\UniLex\Exception
      * @dataProvider providerAddableRanges
      */
-    public function testGetRanges_ConstructWithRanges_ReturnsMergedRanges(array $ranges, array $expectedRanges): void
+    public function testExport_ConstructWithRanges_ReturnsMergedRanges(array $ranges, array $expectedRanges): void
     {
-        $rangeList = (new RangeSet(...$this->importRangeList(...$ranges)))->getRanges();
-        $actualValue = $this->exportRangeList(...$rangeList);
+        $actualValue = RangeSet::import(...$ranges)->export();
         self::assertEquals($expectedRanges, $actualValue);
     }
 
@@ -40,11 +39,11 @@ class RangeSetTest extends TestCase
      * @throws \Remorhaz\UniLex\Exception
      * @dataProvider providerAddableRanges
      */
-    public function testAddRange_ValidRanges_GetRangesReturnsMergedRanges(array $ranges, array $expectedRanges): void
+    public function testAddRange_ValidRanges_ExportReturnsMergedRanges(array $ranges, array $expectedRanges): void
     {
         $rangeSet = new RangeSet;
-        $rangeSet->addRange(...$this->importRangeList(...$ranges));
-        $actualValue = $this->exportRangeList(...$rangeSet->getRanges());
+        $rangeSet->addRange(...Range::importList(...$ranges));
+        $actualValue = $rangeSet->export();
         self::assertEquals($expectedRanges, $actualValue);
     }
 
@@ -67,15 +66,15 @@ class RangeSetTest extends TestCase
      * @throws \Remorhaz\UniLex\Exception
      * @dataProvider providerDoubleAddableRanges
      */
-    public function testAddRange_CalledTwice_GetRangesReturnsMergedRanges(
+    public function testAddRange_CalledTwice_ExportReturnsMergedRanges(
         array $firstRanges,
         array $secondRanges,
         array $expectedRanges
     ) {
         $rangeSet = new RangeSet;
-        $rangeSet->addRange(...$this->importRangeList(...$firstRanges));
-        $rangeSet->addRange(...$this->importRangeList(...$secondRanges));
-        $actualValue = $this->exportRangeList(...$rangeSet->getRanges());
+        $rangeSet->addRange(...Range::importList(...$firstRanges));
+        $rangeSet->addRange(...Range::importList(...$secondRanges));
+        $actualValue = $rangeSet->export();
         self::assertEquals($expectedRanges, $actualValue);
     }
 
@@ -96,15 +95,14 @@ class RangeSetTest extends TestCase
      * @throws \Remorhaz\UniLex\Exception
      * @dataProvider providerDiffRanges
      */
-    public function testGetDiffRange_ValidRangeLists_ReturnsDiffRangeList(
+    public function testGetDiffRange_ValidRangeLists_ExportReturnsDiffRangeList(
         array $firstRanges,
         array $secondRanges,
         array $expectedDiff
     ): void {
-        $diffRanges = (new RangeSet(...$this->importRangeList(...$firstRanges)))
-            ->getDiff(...$this->importRangeList(...$secondRanges))
-            ->getRanges();
-        $actualValue = $this->exportRangeList(...$diffRanges);
+        $actualValue = RangeSet::import(...$firstRanges)
+            ->getDiff(...Range::importList(...$secondRanges))
+            ->export();
         self::assertEquals($expectedDiff, $actualValue);
     }
 
@@ -125,23 +123,5 @@ class RangeSetTest extends TestCase
             "Range partially intersects with two existing ranges" =>
                 [[[2, 5], [7, 10]], [[3, 7]], [[2, 2], [6, 6], [8, 10]]],
         ];
-    }
-
-    private function importRangeList(array ...$rangeDataList): array
-    {
-        $rangeList = [];
-        foreach ($rangeDataList as $rangeData) {
-            $rangeList[] = new Range(...$rangeData);
-        }
-        return $rangeList;
-    }
-
-    private function exportRangeList(Range ...$rangeList): array
-    {
-        $rangeDataList = [];
-        foreach ($rangeList as $range) {
-            $rangeDataList[] = [$range->getFrom(), $range->getTo()];
-        }
-        return $rangeDataList;
     }
 }

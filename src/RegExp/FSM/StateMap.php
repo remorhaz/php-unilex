@@ -105,11 +105,10 @@ class StateMap implements StateMapInterface
     /**
      * @param int $fromStateId
      * @param int $toStateId
-     * @param Range $range
+     * @param Range[] ...$newRangeList
      * @throws Exception
-     * @todo Support multiple ranges
      */
-    public function addRangeTransition(int $fromStateId, int $toStateId, Range $range): void
+    public function addRangeTransition(int $fromStateId, int $toStateId, Range ...$newRangeList): void
     {
         $transitionExists = $this
             ->getRangeTransitionMap()
@@ -120,7 +119,7 @@ class StateMap implements StateMapInterface
                 ->getTransition($fromStateId, $toStateId)
             : [];
         $rangeSet = new RangeSet(...$rangeList);
-        $rangeSet->addRange($range);
+        $rangeSet->addRange(...$newRangeList);
         $this->replaceRangeTransition($fromStateId, $toStateId, ...$rangeSet->getRanges());
     }
 
