@@ -99,7 +99,7 @@ class RangeSet
                 $rangeSet->addRange($existingRange->copyBeforeStartOf($range));
             }
             if ($existingRange->endsBeforeFinishOf($range)) {
-                $range->sliceBeforeEndOf($existingRange);
+                $range->sliceBeforeFinishOf($existingRange);
                 continue;
             } elseif ($range->endsBeforeFinishOf($existingRange)) {
                 $rangeSet->addRange($existingRange->copyAfterFinishOf($range));

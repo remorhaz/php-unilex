@@ -199,4 +199,371 @@ class RangeTest extends TestCase
         $actualValue = $range->endsBeforeFinishOf($anotherRange);
         self::assertFalse($actualValue);
     }
+
+    /**
+     * @param array $rangeData
+     * @param array $anotherRangeData
+     * @throws \Remorhaz\UniLex\Exception
+     * @dataProvider providerIntersectingRanges
+     */
+    public function testIntersects_ValuesIntersect_ReturnsTrue(array $rangeData, array $anotherRangeData): void
+    {
+        $range = new Range(...$rangeData);
+        $anotherRange = new Range(...$anotherRangeData);
+        $actualValue = $range->intersects($anotherRange);
+        self::assertTrue($actualValue);
+    }
+
+    public function providerIntersectingRanges(): array
+    {
+        return [
+            "Partially overlapping ranges" => [[1, 3], [2, 4]],
+            "Ranges with overlapping edges" => [[1, 2], [2, 3]],
+            "Strictly matching ranges" => [[1, 2], [1, 2]],
+            "One range contains another" => [[1, 4], [2, 3]],
+            "One range is contained by another" => [[2, 3], [1, 4]],
+            "One range contains another with same start" => [[1, 4], [1, 3]],
+            "One range contains another with same finish" => [[1, 4], [2, 4]],
+        ];
+    }
+
+    /**
+     * @param array $rangeData
+     * @param array $anotherRangeData
+     * @throws \Remorhaz\UniLex\Exception
+     * @dataProvider providerNotIntersectingRanges
+     */
+    public function testIntersects_ValuesNotIntersect_ReturnsFalse(array $rangeData, array $anotherRangeData): void
+    {
+        $range = new Range(...$rangeData);
+        $anotherRange = new Range(...$anotherRangeData);
+        $actualValue = $range->intersects($anotherRange);
+        self::assertFalse($actualValue);
+    }
+
+    public function providerNotIntersectingRanges(): array
+    {
+        return [
+            "One range before another" => [[1, 2], [4, 5]],
+            "One range after another" => [[4, 5], [1, 2]],
+            "One range follows another" => [[1, 2], [3, 4]],
+            "One range precedes another" => [[3, 4], [1, 2]],
+        ];
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testCopyBeforeStartOf_PartiallyOverlappingRanges_ReturnsMatchingPartOfRange(): void
+    {
+        $range = new Range(1, 3);
+        $anotherRange = new Range(2, 4);
+        $actualValue = $range->copyBeforeStartOf($anotherRange)->export();
+        self::assertEquals([1, 1], $actualValue);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testCopyBeforeFinishOf_PartiallyOverlappingRanges_ReturnsMatchingPartOfRange(): void
+    {
+        $range = new Range(1, 4);
+        $anotherRange = new Range(2, 3);
+        $actualValue = $range->copyBeforeFinishOf($anotherRange)->export();
+        self::assertEquals([1, 3], $actualValue);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testSliceBeforeStartOf_PartiallyOverlappingRanges_ReturnsMatchingPartOfRange(): void
+    {
+        $range = new Range(1, 3);
+        $anotherRange = new Range(2, 4);
+        $actualValue = $range->sliceBeforeStartOf($anotherRange)->export();
+        self::assertEquals([1, 1], $actualValue);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testSliceBeforeStartOf_PartiallyOverlappingRanges_MatchingPartOfRangeRemains(): void
+    {
+        $range = new Range(1, 3);
+        $anotherRange = new Range(2, 4);
+        $range->sliceBeforeStartOf($anotherRange);
+        $actualValue = $range->export();
+        self::assertEquals([2, 3], $actualValue);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     * @expectedException \Remorhaz\UniLex\Exception
+     * @expectedExceptionMessage Invalid range 2..0
+     */
+    public function testSliceBeforeStartOf_ArgumentStartLessThanRangeStart_ThrowsException(): void
+    {
+        $range = new Range(2, 3);
+        $anotherRange = new Range(1, 1);
+        $range->sliceBeforeStartOf($anotherRange);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testSliceBeforeFinishOf_PartiallyOverlappingRanges_ReturnsMatchingPartOfRange(): void
+    {
+        $range = new Range(1, 4);
+        $anotherRange = new Range(2, 3);
+        $actualValue = $range->sliceBeforeFinishOf($anotherRange)->export();
+        self::assertEquals([1, 3], $actualValue);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testSliceBeforeFinishOf_PartiallyOverlappingRanges_MatchingPartOfRangeRemains(): void
+    {
+        $range = new Range(1, 4);
+        $anotherRange = new Range(2, 3);
+        $range->sliceBeforeFinishOf($anotherRange);
+        $actualValue = $range->export();
+        self::assertEquals([4, 4], $actualValue);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testCopyAfterFinishOf_PartiallyOverlappingRanges_ReturnsMatchingPartOfRange(): void
+    {
+        $range = new Range(1, 4);
+        $anotherRange = new Range(2, 3);
+        $actualValue = $range->copyAfterFinishOf($anotherRange)->export();
+        self::assertEquals([4, 4], $actualValue);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     * @expectedException \Remorhaz\UniLex\Exception
+     * @expectedExceptionMessage Invalid range 6..3
+     */
+    public function testSliceBeforeFinishOf_ArgumentFinishGreaterThanRangeFinish_ThrowsException(): void
+    {
+        $range = new Range(1, 3);
+        $anotherRange = new Range(4, 5);
+        $range->sliceBeforeFinishOf($anotherRange);
+    }
+
+    /**
+     * @param array $rangeData
+     * @param array $anotherRangeData
+     * @throws \Remorhaz\UniLex\Exception
+     * @dataProvider providerStartInRange
+     */
+    public function testContainsStartOf_ValueWithStartInRange_ReturnsTrue(
+        array $rangeData,
+        array $anotherRangeData
+    ): void {
+        $range = new Range(...$rangeData);
+        $anotherRange = new Range(...$anotherRangeData);
+        $actualValue = $range->containsStartOf($anotherRange);
+        self::assertTrue($actualValue);
+    }
+
+    public function providerStartInRange(): array
+    {
+        return [
+            "Start in the middle of range" => [[1, 3], [2, 4]],
+            "Start matches start of range" => [[1, 3], [1, 4]],
+            "Start matches finish of range" => [[1, 3], [3, 4]],
+        ];
+    }
+
+    /**
+     * @param array $rangeData
+     * @param array $anotherRangeData
+     * @throws \Remorhaz\UniLex\Exception
+     * @dataProvider providerStartNotInRange
+     */
+    public function testContainsStartOf_ValueWithStartNotInRange_ReturnsFalse(
+        array $rangeData,
+        array $anotherRangeData
+    ): void {
+        $range = new Range(...$rangeData);
+        $anotherRange = new Range(...$anotherRangeData);
+        $actualValue = $range->containsStartOf($anotherRange);
+        self::assertFalse($actualValue);
+    }
+
+    public function providerStartNotInRange(): array
+    {
+        return [
+            "Start before range" => [[2, 3], [1, 4]],
+            "Start after range" => [[2, 3], [4, 4]],
+        ];
+    }
+
+    /**
+     * @param array $rangeData
+     * @param array $anotherRangeData
+     * @throws \Remorhaz\UniLex\Exception
+     * @dataProvider providerFinishInRange
+     */
+    public function testContainsFinishOf_ValueWithFinishInRange_ReturnsTrue(
+        array $rangeData,
+        array $anotherRangeData
+    ): void {
+        $range = new Range(...$rangeData);
+        $anotherRange = new Range(...$anotherRangeData);
+        $actualValue = $range->containsFinishOf($anotherRange);
+        self::assertTrue($actualValue);
+    }
+
+    public function providerFinishInRange(): array
+    {
+        return [
+            "Finish in the middle of range" => [[1, 3], [1, 2]],
+            "Finish matches start of range" => [[1, 3], [1, 1]],
+            "Finish matches finish of range" => [[1, 3], [2, 3]],
+        ];
+    }
+
+    /**
+     * @param array $rangeData
+     * @param array $anotherRangeData
+     * @throws \Remorhaz\UniLex\Exception
+     * @dataProvider providerFinishNotInRange
+     */
+    public function testContainsFinishOf_ValueWithFinishNotInRange_ReturnsFalse(
+        array $rangeData,
+        array $anotherRangeData
+    ): void {
+        $range = new Range(...$rangeData);
+        $anotherRange = new Range(...$anotherRangeData);
+        $actualValue = $range->containsFinishOf($anotherRange);
+        self::assertFalse($actualValue);
+    }
+
+    public function providerFinishNotInRange(): array
+    {
+        return [
+            "Finish before range" => [[3, 4], [1, 2]],
+            "Finish after range" => [[2, 3], [2, 4]],
+        ];
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testAlignStart_ValidRange_RangeHasMatchingStartAndSameFinish(): void
+    {
+        $range = new Range(2, 4);
+        $anotherRange = new Range(1, 3);
+        $range->alignStart($anotherRange);
+        $actualValue = $range->export();
+        self::assertEquals([1, 4], $actualValue);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     * @expectedException \Remorhaz\UniLex\Exception
+     * @expectedExceptionMessage Invalid range 4..3
+     */
+    public function testAlignStart_ArgumentStartGreaterThanRangeFinish_ThrowsException(): void
+    {
+        $range = new Range(1, 3);
+        $anotherRange = new Range(4, 5);
+        $range->alignStart($anotherRange);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testAlignFinish_ValidRange_RangeHasSameStartAndMatchingFinish(): void
+    {
+        $range = new Range(2, 4);
+        $anotherRange = new Range(1, 3);
+        $range->alignFinish($anotherRange);
+        $actualValue = $range->export();
+        self::assertEquals([2, 3], $actualValue);
+    }
+
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     * @expectedException \Remorhaz\UniLex\Exception
+     * @expectedExceptionMessage Invalid range 3..2
+     */
+    public function testAlignFinish_ArgumentFinishLessThanRangeStart_ThrowsException(): void
+    {
+        $range = new Range(3, 4);
+        $anotherRange = new Range(1, 2);
+        $range->alignFinish($anotherRange);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testFollows_RangeFollows_ReturnsTrue(): void
+    {
+        $range = new Range(3, 4);
+        $anotherRange = new Range(1, 2);
+        $actualValue = $range->follows($anotherRange);
+        self::assertTrue($actualValue);
+    }
+
+    /**
+     * @param array $rangeData
+     * @param array $anotherRangeData
+     * @throws \Remorhaz\UniLex\Exception
+     * @dataProvider providerRangesNotFollow
+     */
+    public function testFollows_RangeNotFollows_ReturnsFalse(array $rangeData, array $anotherRangeData): void
+    {
+        $range = new Range(...$rangeData);
+        $anotherRange = new Range(...$anotherRangeData);
+        $actualValue = $range->follows($anotherRange);
+        self::assertFalse($actualValue);
+    }
+
+    public function providerRangesNotFollow(): array
+    {
+        return [
+            "Overlapping ranges" => [[3, 5], [2, 4]],
+            "Ranges with gap between" => [[4, 5], [1, 2]],
+            "One range precedes another" => [[1, 2], [3, 4]],
+        ];
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testImportList_NoArguments_ReturnsEmptyArray(): void
+    {
+        $actualValue = Range::importList();
+        self::assertSame([], $actualValue);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testImportList_DataForTwoRanges_ReturnsMatchingRanges(): void
+    {
+        $rangeList = Range::importList([2, 3], [5, 6]);
+        $actualValue = [];
+        foreach ($rangeList as $range) {
+            self::assertInstanceOf(Range::class, $range);
+            $actualValue[] = $range->export();
+        }
+        self::assertEquals([[2, 3], [5, 6]], $actualValue);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testExport_Constructed_ReturnsMatchingData(): void
+    {
+        $actualValue = (new Range(3, 5))->export();
+        self::assertEquals([3, 5], $actualValue);
+    }
 }

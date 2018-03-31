@@ -61,7 +61,7 @@ class Range
     private function setStart(int $start): void
     {
         if ($start > $this->getFinish()) {
-            throw new Exception("Invalid range {$this}");
+            throw new Exception("Invalid range {$start}..{$this->getFinish()}");
         }
 
         $this->start = $start;
@@ -74,7 +74,7 @@ class Range
     private function setFinish(int $finish): void
     {
         if ($this->getStart() > $finish) {
-            throw new Exception("Invalid range {$this}");
+            throw new Exception("Invalid range {$this->getStart()}..{$finish}");
         }
         $this->finish = $finish;
     }
@@ -121,7 +121,7 @@ class Range
      * @return Range
      * @throws Exception
      */
-    public function sliceBeforeEndOf(self $range): self
+    public function sliceBeforeFinishOf(self $range): self
     {
         $piece = $this->copyBeforeFinishOf($range);
         $this->setStart($range->getFinish() + 1);
