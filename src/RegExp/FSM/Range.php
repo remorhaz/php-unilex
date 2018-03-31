@@ -7,27 +7,27 @@ use Remorhaz\UniLex\Exception;
 class Range
 {
 
-    private $from;
+    private $start;
 
-    private $to;
+    private $finish;
 
     /**
-     * @param int $from
-     * @param int|null $to
+     * @param int $start
+     * @param int|null $finish
      * @throws Exception
      */
-    public function __construct(int $from, int $to = null)
+    public function __construct(int $start, int $finish = null)
     {
-        if (isset($to) && $from > $to) {
-            throw new Exception("Invalid exception {$from}..{$to}");
+        if (isset($finish) && $start > $finish) {
+            throw new Exception("Invalid range {$start}..{$finish}");
         }
-        $this->from = $from;
-        $this->to = $to ?? $from;
+        $this->start = $start;
+        $this->finish = $finish ?? $start;
     }
 
     public function __toString(): string
     {
-        return $this->from == $this->to ? "{$this->from}" : "{$this->from}..{$this->to}";
+        return $this->start == $this->finish ? "{$this->start}" : "{$this->start}..{$this->finish}";
     }
 
     /**
@@ -44,48 +44,155 @@ class Range
         return $rangeList;
     }
 
-    public function getFrom(): int
+    public function getStart(): int
     {
-        return $this->from;
+        return $this->start;
     }
 
-    public function getTo(): int
+    public function getFinish(): int
     {
-        return $this->to;
-    }
-
-    /**
-     * @param int $from
-     * @throws Exception
-     */
-    public function setFrom(int $from): void
-    {
-        if ($from > $this->getTo()) {
-            throw new Exception("Invalid range {$this}");
-        }
-
-        $this->from = $from;
+        return $this->finish;
     }
 
     /**
-     * @param int $to
+     * @param int $start
      * @throws Exception
      */
-    public function setTo(int $to): void
+    private function setStart(int $start): void
     {
-        if ($this->getFrom() > $to) {
+        if ($start > $this->getFinish()) {
             throw new Exception("Invalid range {$this}");
         }
-        $this->to = $to;
+
+        $this->start = $start;
+    }
+
+    /**
+     * @param int $finish
+     * @throws Exception
+     */
+    private function setFinish(int $finish): void
+    {
+        if ($this->getStart() > $finish) {
+            throw new Exception("Invalid range {$this}");
+        }
+        $this->finish = $finish;
     }
 
     public function containsChar(int $char): bool
     {
-        return $this->getFrom() <= $char && $char <= $this->getTo();
+        return $this->getStart() <= $char && $char <= $this->getFinish();
+    }
+
+    public function startsBeforeStartOf(self $range): bool
+    {
+        return $this->getStart() < $range->getStart();
+    }
+
+    public function endsBeforeStartOf(self $range): bool
+    {
+        return $this->getFinish() < $range->getStart();
+    }
+
+    public function endsBeforeFinishOf(self $range): bool
+    {
+        return $this->getFinish() < $range->getFinish();
+    }
+
+    public function intersects(self $range): bool
+    {
+        return !$this->endsBeforeStartOf($range) && !$range->endsBeforeStartOf($this);
+    }
+
+    /**
+     * @param Range $range
+     * @return Range
+     * @throws Exception
+     */
+    public function sliceBeforeStartOf(self $range): self
+    {
+        $piece = $this->copyBeforeStartOf($range);
+        $this->setStart($range->getStart());
+        return $piece;
+    }
+
+    /**
+     * @param Range $range
+     * @return Range
+     * @throws Exception
+     */
+    public function sliceBeforeEndOf(self $range): self
+    {
+        $piece = $this->copyBeforeFinishOf($range);
+        $this->setStart($range->getFinish() + 1);
+        return $piece;
+    }
+
+    /**
+     * @param Range $range
+     * @return Range
+     * @throws Exception
+     */
+    public function copyBeforeStartOf(self $range): self
+    {
+        return new self($this->getStart(), $range->getStart() - 1);
+    }
+
+    /**
+     * @param Range $range
+     * @return Range
+     * @throws Exception
+     */
+    public function copyAfterFinishOf(self $range): self
+    {
+        return new self($range->getFinish() + 1, $this->getFinish());
+    }
+
+    public function containsStartOf(self $range): bool
+    {
+        return $this->getStart() <= $range->getStart() && $range->getStart() <= $this->getFinish();
+    }
+
+    public function containsFinishOf(self $range): bool
+    {
+        return $this->getStart() <= $range->getFinish() && $range->getFinish() <= $this->getFinish();
+    }
+
+    public function follows(self $range): bool
+    {
+        return $this->getStart() == $range->getFinish() + 1;
+    }
+
+    /**
+     * @param Range $range
+     * @throws Exception
+     */
+    public function alignStart(self $range)
+    {
+        $this->setStart($range->getStart());
+    }
+
+    /**
+     * @param Range $range
+     * @throws Exception
+     */
+    public function alignFinish(self $range)
+    {
+        $this->setFinish($range->getFinish());
+    }
+
+    /**
+     * @param Range $range
+     * @return Range
+     * @throws Exception
+     */
+    public function copyBeforeFinishOf(self $range): self
+    {
+        return new self($this->getStart(), $range->getFinish());
     }
 
     public function export(): array
     {
-        return [$this->getFrom(), $this->getTo()];
+        return [$this->getStart(), $this->getFinish()];
     }
 }

@@ -87,43 +87,26 @@ class RangeSet
             return;
         }
         $rangeSet = new self;
-        $isRangeProcessed = false;
+        $shouldAddRange = true;
         foreach ($this->rangeList as $existingRange) {
-            if ($range->getFrom() < $existingRange->getFrom()) {
-                // Range start before existing range starts
-                if ($range->getTo() < $existingRange->getFrom()) {
-                    // Entire range is to the left from existing one - copy both as is
-                    if (!$isRangeProcessed) {
-                        $rangeSet->addRange($range);
-                        $isRangeProcessed = true;
-                    }
-                    $rangeSet->addRange($existingRange);
-                    continue;
-                }
-                // copy part of range to the left from existing one
-                $rangeSet->addRange(new Range($range->getFrom(), $existingRange->getFrom() - 1));
-                $range->setFrom($existingRange->getFrom());
-            } elseif ($existingRange->getFrom() < $range->getFrom()) {
-                // Range starts after existing range starts
-                if ($existingRange->getTo() < $range->getFrom()) {
-                    // Entire range is to the right from existing one - copy existing range as is
-                    $rangeSet->addRange($existingRange);
-                    continue;
-                }
-                // copy part of existing range to the left from range
-                $rangeSet->addRange(new Range($existingRange->getFrom(), $range->getFrom() - 1));
-            }
-            if ($existingRange->getTo() < $range->getTo()) {
-                $range->setFrom($existingRange->getTo() + 1);
+            if (!$existingRange->intersects($range)) {
+                $rangeSet->addRange($existingRange);
                 continue;
             }
-            if ($range->getTo() < $existingRange->getTo()) {
-                // Range ends before existing one ends - copy right part of existing range
-                $rangeSet->addRange(new Range($range->getTo() + 1, $existingRange->getTo()));
+            if ($range->startsBeforeStartOf($existingRange)) {
+                $rangeSet->addRange($range->sliceBeforeStartOf($existingRange));
+            } elseif ($existingRange->startsBeforeStartOf($range)) {
+                $rangeSet->addRange($existingRange->copyBeforeStartOf($range));
             }
-            $isRangeProcessed = true;
+            if ($existingRange->endsBeforeFinishOf($range)) {
+                $range->sliceBeforeEndOf($existingRange);
+                continue;
+            } elseif ($range->endsBeforeFinishOf($existingRange)) {
+                $rangeSet->addRange($existingRange->copyAfterFinishOf($range));
+            }
+            $shouldAddRange = false;
         }
-        if (!$isRangeProcessed) {
+        if ($shouldAddRange) {
             $rangeSet->addRange($range);
         }
         $this->rangeList = $rangeSet->getRanges();
@@ -141,22 +124,15 @@ class RangeSet
         }
         $newRangeList = [];
         foreach ($this->rangeList as $existingRange) {
-            $extendLeft =
-                $existingRange->getFrom() <= $range->getFrom() && $range->getFrom() <= $existingRange->getTo() ||
-                $range->getFrom() == $existingRange->getTo() + 1;
-            $extendRight =
-                $existingRange->getFrom() <= $range->getTo() && $range->getTo() <= $existingRange->getTo() ||
-                $range->getTo() + 1 == $existingRange->getFrom();
-            if (!$extendLeft && !$extendRight) {
-                $newRangeList[] = $existingRange;
+            if ($existingRange->containsStartOf($range) || $range->follows($existingRange)) {
+                $range->alignStart($existingRange);
                 continue;
             }
-            if ($extendLeft) {
-                $range->setFrom($existingRange->getFrom());
+            if ($existingRange->containsFinishOf($range) || $existingRange->follows($range)) {
+                $range->alignFinish($existingRange);
+                continue;
             }
-            if ($extendRight) {
-                $range->setTo($existingRange->getTo());
-            }
+            $newRangeList[] = $existingRange;
         }
         $newRangeList[] = $range;
         $this->setSortedRangeList(...$newRangeList);
@@ -165,7 +141,7 @@ class RangeSet
     private function setSortedRangeList(Range ...$rangeList): void
     {
         $sortByFrom = function (Range $rangeOne, Range $rangeTwo): int {
-            return $rangeOne->getFrom() <=> $rangeTwo->getFrom();
+            return $rangeOne->getStart() <=> $rangeTwo->getStart();
         };
         usort($rangeList, $sortByFrom);
         $this->rangeList = $rangeList;

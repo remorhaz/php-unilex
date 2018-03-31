@@ -230,7 +230,7 @@ class ParsedFsmTest extends TestCase
             /** @var Range[] $rangeList */
             foreach ($stateOutMap as $stateOut => $rangeList) {
                 foreach ($rangeList as $range) {
-                    $rangeDataList[$stateIn][$stateOut][] = [$range->getFrom(), $range->getTo()];
+                    $rangeDataList[$stateIn][$stateOut][] = [$range->getStart(), $range->getFinish()];
                 }
             }
         }
