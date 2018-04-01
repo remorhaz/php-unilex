@@ -14,7 +14,7 @@ class RangeSet
 
     /**
      * RangeSet constructor.
-     * @param Range[] ...$rangeList
+     * @param Range ...$rangeList
      * @throws Exception
      */
     public function __construct(Range ...$rangeList)
@@ -25,7 +25,7 @@ class RangeSet
     }
 
     /**
-     * @param array[] ...$rangeDataList
+     * @param array ...$rangeDataList
      * @return RangeSet
      * @throws Exception
      */
@@ -44,7 +44,7 @@ class RangeSet
     }
 
     /**
-     * @param Range[] ...$rangeList
+     * @param Range ...$rangeList
      * @throws Exception
      */
     public function addRange(Range ...$rangeList): void
@@ -62,8 +62,13 @@ class RangeSet
         return $this->rangeList;
     }
 
+    public function isEmpty(): bool
+    {
+        return empty($this->rangeList);
+    }
+
     /**
-     * @param Range[] ...$rangeList
+     * @param Range ...$rangeList
      * @return self
      * @throws Exception
      */
@@ -71,14 +76,41 @@ class RangeSet
     {
         $diffRangeSet = clone $this;
         foreach ($rangeList as $range) {
-            $diffRangeSet->diffSingleRange($range);
+            $diffRangeSet->diffSingleRange(clone $range);
         }
         return $diffRangeSet;
     }
 
     /**
+     * @param Range ...$rangeList
+     * @return RangeSet
+     * @throws Exception
+     */
+    public function getAnd(Range ...$rangeList): self
+    {
+        $andRangeSet = new self;
+        foreach ($rangeList as $range) {
+            $andRangeSetPart = clone $this;
+            $andRangeSetPart->andSingleRange(clone $range);
+            $andRangeSet->addRange(...$andRangeSetPart->getRanges());
+        }
+        return $andRangeSet;
+    }
+
+    /**
+     * @param Range ...$rangeList
+     * @return bool
+     * @throws Exception
+     */
+    public function isSame(Range ...$rangeList): bool
+    {
+        return $this->getDiff(...$rangeList)->isEmpty();
+    }
+
+    /**
      * @param Range $range
      * @throws Exception
+     * @todo Rename to XOR
      */
     private function diffSingleRange(Range $range): void
     {
@@ -107,6 +139,32 @@ class RangeSet
             $shouldAddRange = false;
         }
         if ($shouldAddRange) {
+            $rangeSet->addRange($range);
+        }
+        $this->rangeList = $rangeSet->getRanges();
+    }
+
+    /**
+     * @param Range $range
+     * @throws Exception
+     */
+    private function andSingleRange(Range $range): void
+    {
+        if (empty($this->rangeList)) {
+            return;
+        }
+        $rangeSet = new self;
+        foreach ($this->rangeList as $existingRange) {
+            if (!$existingRange->intersects($range)) {
+                continue;
+            }
+            if ($range->startsBeforeStartOf($existingRange)) {
+                $range->sliceBeforeStartOf($existingRange);
+            }
+            if ($existingRange->endsBeforeFinishOf($range)) {
+                $rangeSet->addRange($range->sliceBeforeFinishOf($existingRange));
+                continue;
+            }
             $rangeSet->addRange($range);
         }
         $this->rangeList = $rangeSet->getRanges();

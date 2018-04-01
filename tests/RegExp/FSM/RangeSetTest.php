@@ -145,4 +145,41 @@ class RangeSetTest extends TestCase
                 [[[2, 5], [7, 10]], [[3, 7]], [[2, 2], [6, 6], [8, 10]]],
         ];
     }
+
+    /**
+     * @param array $firstRanges
+     * @param array $secondRanges
+     * @param array $expectedRange
+     * @throws \Remorhaz\UniLex\Exception
+     * @dataProvider providerAndRanges
+     */
+    public function testGetAnd_ValidRangeList_ExportReturnsMatchingRangeList(
+        array $firstRanges,
+        array $secondRanges,
+        array $expectedRange
+    ): void {
+        $actualValue = RangeSet::import(...$firstRanges)
+            ->getAnd(...Range::importList(...$secondRanges))
+            ->export();
+        self::assertEquals($expectedRange, $actualValue);
+    }
+
+    public function providerAndRanges(): array
+    {
+        return [
+            "Empty range" => [[[1, 2]], [], []],
+            "Empty existing range" => [[], [[1, 2]], []],
+            "Range after existing range" => [[[1, 2]], [[4, 5]], []],
+            "Range before existing range" => [[[4, 5]], [[1, 2]], []],
+            "Range right before existing range" => [[[2, 5]], [[1, 1]], []],
+            "Range partially before existing range" => [[[2, 5]], [[1, 3]], [[2, 3]]],
+            "Range entirely inside existing range" => [[[2, 5]], [[3, 3]], [[3, 3]]],
+            "Range starts before existing range with matching ends" => [[[2, 5]], [[1, 5]], [[2, 5]]],
+            "Range starts before and ends after existing range" => [[[2, 5]], [[3, 3]], [[3, 3]]],
+            "Range starts before and ends after all existing ranges" =>
+                [[[2, 5], [7, 10]], [[1, 13]], [[2, 5], [7, 10]]],
+            "Range partially intersects with two existing ranges" =>
+                [[[2, 5], [7, 10]], [[3, 7]], [[3, 5], [7, 7]]],
+        ];
+    }
 }
