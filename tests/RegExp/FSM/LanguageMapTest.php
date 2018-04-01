@@ -32,42 +32,37 @@ class LanguageMapTest extends TestCase
     }
 
     /**
+     * @param array $firstTransitionData
+     * @param array $secondTransitionData
+     * @param array $firstRangeData
+     * @param array $secondRangeData
+     * @param array $expectedValue
      * @throws \Remorhaz\UniLex\Exception
+     * @dataProvider providerAddTransitionCalledTwice
      */
-    public function testAddTransition_TransitionWithSameRangeAdded_GetTransitionListReturnsMatchingValue(): void
-    {
+    public function testAddTransition_TransitionWithSameRangeAdded_GetTransitionListReturnsMatchingValue(
+        array $firstTransitionData,
+        array $secondTransitionData,
+        array $firstRangeData,
+        array $secondRangeData,
+        array $expectedValue
+    ): void {
         $languageMap = new LanguageMap($this->createStateMap());
-        $languageMap->addTransition(1, 2, new Range(1, 2));
-        $languageMap->addTransition(1, 3, new Range(1, 2));
-        $expectedValue = [1 => [2 => [0], 3 => [0]]];
+        [$stateIn, $stateOut] = $firstTransitionData;
+        $languageMap->addTransition($stateIn, $stateOut, ...Range::importList(...$firstRangeData));
+        [$stateIn, $stateOut] = $secondTransitionData;
+        $languageMap->addTransition($stateIn, $stateOut, ...Range::importList(...$secondRangeData));
         $actualValue = $languageMap->getTranslationList();
         self::assertEquals($expectedValue, $actualValue);
     }
 
-    /**
-     * @throws \Remorhaz\UniLex\Exception
-     */
-    public function testAddTransition_TransitionWithNotIntersectingRangeAdded_GetTransitionListReturnsMatchingValue(): void
+    public function providerAddTransitionCalledTwice(): array
     {
-        $languageMap = new LanguageMap($this->createStateMap());
-        $languageMap->addTransition(1, 2, new Range(1, 2));
-        $languageMap->addTransition(1, 3, new Range(3, 4));
-        $expectedValue = [1 => [2 => [0], 3 => [1]]];
-        $actualValue = $languageMap->getTranslationList();
-        self::assertEquals($expectedValue, $actualValue);
-    }
-
-    /**
-     * @throws \Remorhaz\UniLex\Exception
-     */
-    public function testAddTransition_TransitionWithIntersectingRangeAdded_GetTransitionListReturnsMatchingValue(): void
-    {
-        $languageMap = new LanguageMap($this->createStateMap());
-        $languageMap->addTransition(1, 2, new Range(1, 2));
-        $languageMap->addTransition(1, 3, new Range(2, 4));
-        $expectedValue = [1 => [2 => [0, 1], 3 => [1, 2]]];
-        $actualValue = $languageMap->getTranslationList();
-        self::assertEquals($expectedValue, $actualValue);
+        return [
+            "Same ranges" => [[1, 2], [1, 3], [[1, 2]], [[1, 2]], [1 => [2 => [0], 3 => [0]]]],
+            "Not intersecting ranges" => [[1, 2], [1, 3], [[1, 2]], [[3, 4]], [1 => [2 => [0], 3 => [1]]]],
+            "Partially intersecting ranges" => [[1, 2], [1, 3], [[1, 2]], [[2, 4]], [1 => [2 => [0, 1], 3 => [1, 2]]]],
+        ];
     }
 
     private function createStateMap(): StateMapInterface
