@@ -1,0 +1,50 @@
+<?php
+
+namespace Remorhaz\UniLex\RegExp\FSM;
+
+use Remorhaz\UniLex\Exception;
+
+class SymbolTable
+{
+
+    /**
+     * @var RangeSet[]
+     */
+    private $rangeSetList = [];
+
+    private $nextSymbol  = 0;
+
+    /**
+     * @param RangeSet $rangeSet
+     * @return int
+     */
+    public function addSymbol(RangeSet $rangeSet): int
+    {
+        $symbolId = $this->nextSymbol++;
+        $this->rangeSetList[$symbolId] = $rangeSet;
+        return $symbolId;
+    }
+
+    /**
+     * @param int $symbolId
+     * @param RangeSet $rangeSet
+     * @return SymbolTable
+     * @throws Exception
+     */
+    public function replaceSymbol(int $symbolId, RangeSet $rangeSet): self
+    {
+        if (!isset($this->rangeSetList[$symbolId])) {
+            throw new Exception("Symbol {$symbolId} is not defined in symbol table");
+        }
+        $this->rangeSetList[$symbolId] = $rangeSet;
+        return $this;
+    }
+
+    /**
+     * @return RangeSet[]
+     */
+    public function getRangeSetList(): array
+    {
+        return $this->rangeSetList;
+    }
+}

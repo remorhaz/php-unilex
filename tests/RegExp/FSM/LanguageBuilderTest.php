@@ -7,6 +7,7 @@ use Remorhaz\UniLex\RegExp\FSM\LanguageBuilder;
 use Remorhaz\UniLex\RegExp\FSM\Range;
 use Remorhaz\UniLex\RegExp\FSM\RangeSet;
 use Remorhaz\UniLex\RegExp\FSM\StateMapInterface;
+use Remorhaz\UniLex\RegExp\FSM\SymbolTable;
 use Remorhaz\UniLex\RegExp\FSM\TransitionMap;
 
 /**
@@ -20,8 +21,9 @@ class LanguageBuilderTest extends TestCase
      */
     public function testAddTransition_NoTransitionsAdded_TransitionMapContainsMatchingList(): void
     {
+        $symbolTable = new SymbolTable;
         $transitionMap = new TransitionMap($this->createStateMap());
-        $languageBuilder = new LanguageBuilder($transitionMap);
+        $languageBuilder = new LanguageBuilder($symbolTable, $transitionMap);
         $languageBuilder->addTransition(1, 2, new Range(1, 2));
         $expectedValue = [1 => [2 => [0]]];
         $actualValue = $transitionMap->getTransitionList();
@@ -44,8 +46,9 @@ class LanguageBuilderTest extends TestCase
         array $secondRangeData,
         array $expectedValue
     ): void {
+        $symbolTable = new SymbolTable;
         $transitionMap = new TransitionMap($this->createStateMap());
-        $languageBuilder = new LanguageBuilder($transitionMap);
+        $languageBuilder = new LanguageBuilder($symbolTable, $transitionMap);
         [$stateIn, $stateOut] = $firstTransitionData;
         $languageBuilder->addTransition($stateIn, $stateOut, ...Range::importList(...$firstRangeData));
         [$stateIn, $stateOut] = $secondTransitionData;
@@ -79,13 +82,14 @@ class LanguageBuilderTest extends TestCase
         array $secondRangeData,
         array $expectedValue
     ): void {
+        $symbolTable = new SymbolTable;
         $transitionMap = new TransitionMap($this->createStateMap());
-        $languageBuilder = new LanguageBuilder($transitionMap);
+        $languageBuilder = new LanguageBuilder($symbolTable, $transitionMap);
         [$stateIn, $stateOut] = $firstTransitionData;
         $languageBuilder->addTransition($stateIn, $stateOut, ...Range::importList(...$firstRangeData));
         [$stateIn, $stateOut] = $secondTransitionData;
         $languageBuilder->addTransition($stateIn, $stateOut, ...Range::importList(...$secondRangeData));
-        $actualValue = $this->exportSymbolMap($languageBuilder->getSymbolMap());
+        $actualValue = $this->exportSymbolMap($symbolTable->getRangeSetList());
         self::assertEquals($expectedValue, $actualValue);
     }
 

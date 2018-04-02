@@ -5,26 +5,14 @@ namespace Remorhaz\UniLex\RegExp\FSM;
 class LanguageBuilder
 {
 
-    /**
-     * @var RangeSet[]
-     */
-    private $symbolMap = [];
+    private $symbolTable;
 
     private $transitionMap;
 
-    private $nextSymbolId = 0;
-
-    public function __construct(TransitionMap $transitionMap)
+    public function __construct(SymbolTable $symbolTable, TransitionMap $transitionMap)
     {
+        $this->symbolTable = $symbolTable;
         $this->transitionMap = $transitionMap;
-    }
-
-    /**
-     * @return RangeSet[]
-     */
-    public function getSymbolMap(): array
-    {
-        return $this->symbolMap;
     }
 
     /**
@@ -38,7 +26,7 @@ class LanguageBuilder
         $newRangeSet = new RangeSet(...$ranges);
         $symbolList = [];
         $shouldAddNewSymbol = true;
-        foreach ($this->symbolMap as $symbolId => $oldRangeSet) {
+        foreach ($this->symbolTable->getRangeSetList() as $symbolId => $oldRangeSet) {
             $rangeSetDiff = $oldRangeSet->getDiff(...$newRangeSet->getRanges());
             if ($rangeSetDiff->isEmpty()) { // same range sets
                 $symbolList[] = $symbolId;
@@ -49,17 +37,17 @@ class LanguageBuilder
             if ($onlyInOldRangeSet->isSame(...$oldRangeSet->getRanges())) { // range sets don't intersect
                 continue;
             }
-            $this->symbolMap[$symbolId] = $onlyInOldRangeSet;
-            $splitSymbolId = $this->nextSymbolId++;
+            $splitSymbolId = $this
+                ->symbolTable
+                ->replaceSymbol($symbolId, $onlyInOldRangeSet)
+                ->addSymbol($oldRangeSet->getAnd(...$newRangeSet->getRanges()));
             $this->splitSymbolInTransitions($symbolId, $splitSymbolId);
             $symbolList[] = $splitSymbolId;
-            $this->symbolMap[$splitSymbolId] = $oldRangeSet->getAnd(...$newRangeSet->getRanges());
             $newRangeSet = $newRangeSet->getAnd(...$rangeSetDiff->getRanges());
         }
         if ($shouldAddNewSymbol) {
-            $newSymbolId = $this->nextSymbolId++;
+            $newSymbolId = $this->symbolTable->addSymbol($newRangeSet);
             $symbolList[] = $newSymbolId;
-            $this->symbolMap[$newSymbolId] = $newRangeSet;
         }
         $this->transitionMap->addTransition($stateIn, $stateOut, $symbolList);
     }
