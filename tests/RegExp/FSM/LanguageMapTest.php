@@ -5,6 +5,7 @@ namespace Remorhaz\UniLex\Test\RegExp\FSM;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\RegExp\FSM\LanguageMap;
 use Remorhaz\UniLex\RegExp\FSM\Range;
+use Remorhaz\UniLex\RegExp\FSM\RangeSet;
 use Remorhaz\UniLex\RegExp\FSM\StateMapInterface;
 
 /**
@@ -38,7 +39,7 @@ class LanguageMapTest extends TestCase
      * @param array $secondRangeData
      * @param array $expectedValue
      * @throws \Remorhaz\UniLex\Exception
-     * @dataProvider providerAddTransitionCalledTwice
+     * @dataProvider providerAddTransitionCalledTwiceTransitions
      */
     public function testAddTransition_TransitionWithSameRangeAdded_GetTransitionListReturnsMatchingValue(
         array $firstTransitionData,
@@ -56,12 +57,51 @@ class LanguageMapTest extends TestCase
         self::assertEquals($expectedValue, $actualValue);
     }
 
-    public function providerAddTransitionCalledTwice(): array
+    public function providerAddTransitionCalledTwiceTransitions(): array
     {
         return [
             "Same ranges" => [[1, 2], [1, 3], [[1, 2]], [[1, 2]], [1 => [2 => [0], 3 => [0]]]],
             "Not intersecting ranges" => [[1, 2], [1, 3], [[1, 2]], [[3, 4]], [1 => [2 => [0], 3 => [1]]]],
             "Partially intersecting ranges" => [[1, 2], [1, 3], [[1, 2]], [[2, 4]], [1 => [2 => [0, 1], 3 => [1, 2]]]],
+        ];
+    }
+
+    /**
+     * @param array $firstTransitionData
+     * @param array $secondTransitionData
+     * @param array $firstRangeData
+     * @param array $secondRangeData
+     * @param array $expectedValue
+     * @throws \Remorhaz\UniLex\Exception
+     * @dataProvider providerAddTransitionCalledTwiceSymbols
+     */
+    public function testAddTransition_TransitionWithSameRangeAdded_GetSymbolMapReturnsMatchingValue(
+        array $firstTransitionData,
+        array $secondTransitionData,
+        array $firstRangeData,
+        array $secondRangeData,
+        array $expectedValue
+    ): void {
+        $languageMap = new LanguageMap($this->createStateMap());
+        [$stateIn, $stateOut] = $firstTransitionData;
+        $languageMap->addTransition($stateIn, $stateOut, ...Range::importList(...$firstRangeData));
+        [$stateIn, $stateOut] = $secondTransitionData;
+        $languageMap->addTransition($stateIn, $stateOut, ...Range::importList(...$secondRangeData));
+        $actualValue = $this->exportSymbolMap($languageMap->getSymbolMap());
+        self::assertEquals($expectedValue, $actualValue);
+    }
+
+    public function providerAddTransitionCalledTwiceSymbols(): array
+    {
+        return [
+            "Same ranges" => [[1, 2], [1, 3], [[1, 2]], [[1, 2]], [0 => [[1, 2]]]],
+            "Not intersecting ranges" => [[1, 2], [1, 3], [[1, 2]], [[3, 4]], [0 => [[1, 2]], 1 => [[3, 4]]]],
+            "Partially intersecting ranges" => [
+                [1, 2],
+                [1, 3],
+                [[1, 2]], [[2, 4]],
+                [0 => [[1, 1]], 1 => [[2, 2]], 2 => [[3, 4]]],
+            ],
         ];
     }
 
@@ -74,5 +114,18 @@ class LanguageMapTest extends TestCase
                 return true;
             }
         };
+    }
+
+    /**
+     * @param RangeSet[] $symbolMap
+     * @return array
+     */
+    private function exportSymbolMap(array $symbolMap): array
+    {
+        $result = [];
+        foreach ($symbolMap as $symbolId => $rangeSet) {
+            $result[$symbolId] = $rangeSet->export();
+        }
+        return $result;
     }
 }

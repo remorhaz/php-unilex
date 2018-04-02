@@ -8,7 +8,7 @@ class LanguageMap
     /**
      * @var RangeSet[]
      */
-    private $languageMap = [];
+    private $symbolMap = [];
 
     private $transitionMap;
 
@@ -19,6 +19,14 @@ class LanguageMap
     public function __construct(StateMapInterface $stateMap)
     {
         $this->stateMap = $stateMap;
+    }
+
+    /**
+     * @return RangeSet[]
+     */
+    public function getSymbolMap(): array
+    {
+        return $this->symbolMap;
     }
 
     /**
@@ -33,7 +41,7 @@ class LanguageMap
         $symbolSplitMap = [];
         $symbolList = [];
         $shouldAddNewSymbol = true;
-        foreach ($this->languageMap as $symbolId => $oldRangeSet) {
+        foreach ($this->symbolMap as $symbolId => $oldRangeSet) {
             $rangeSetDiff = $oldRangeSet->getDiff(...$newRangeSet->getRanges());
             if ($rangeSetDiff->isEmpty()) { // same range sets
                 $symbolList[] = $symbolId;
@@ -44,17 +52,18 @@ class LanguageMap
             if ($onlyInOldRangeSet->isSame(...$oldRangeSet->getRanges())) { // range sets don't intersect
                 continue;
             }
-            $this->languageMap[$symbolId] = $onlyInOldRangeSet;
+            $this->symbolMap[$symbolId] = $onlyInOldRangeSet;
             $splitSymbolId = $this->nextSymbolId++;
             $symbolList[] = $splitSymbolId;
             $symbolSplitMap[$symbolId][] = $splitSymbolId;
+            $this->symbolMap[$splitSymbolId] = $oldRangeSet->getAnd(...$newRangeSet->getRanges());
             $newRangeSet = $newRangeSet->getAnd(...$rangeSetDiff->getRanges());
         }
         $this->appendSplittedSymbols($symbolSplitMap);
         if ($shouldAddNewSymbol) {
             $newSymbolId = $this->nextSymbolId++;
             $symbolList[] = $newSymbolId;
-            $this->languageMap[$newSymbolId] = $newRangeSet;
+            $this->symbolMap[$newSymbolId] = $newRangeSet;
         }
         $this->getTransitionMap()->addTransition($stateIn, $stateOut, $symbolList);
     }
