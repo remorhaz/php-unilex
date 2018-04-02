@@ -36,7 +36,6 @@ class LanguageMap
     public function addTransition(int $stateIn, int $stateOut, Range ...$ranges): void
     {
         $newRangeSet = new RangeSet(...$ranges);
-        $symbolSplitMap = [];
         $symbolList = [];
         $shouldAddNewSymbol = true;
         foreach ($this->symbolMap as $symbolId => $oldRangeSet) {
@@ -52,12 +51,11 @@ class LanguageMap
             }
             $this->symbolMap[$symbolId] = $onlyInOldRangeSet;
             $splitSymbolId = $this->nextSymbolId++;
+            $this->splitSymbolInTransitions($symbolId, $splitSymbolId);
             $symbolList[] = $splitSymbolId;
-            $symbolSplitMap[$symbolId][] = $splitSymbolId;
             $this->symbolMap[$splitSymbolId] = $oldRangeSet->getAnd(...$newRangeSet->getRanges());
             $newRangeSet = $newRangeSet->getAnd(...$rangeSetDiff->getRanges());
         }
-        $this->appendSplittedSymbols($symbolSplitMap);
         if ($shouldAddNewSymbol) {
             $newSymbolId = $this->nextSymbolId++;
             $symbolList[] = $newSymbolId;
@@ -66,18 +64,14 @@ class LanguageMap
         $this->transitionMap->addTransition($stateIn, $stateOut, $symbolList);
     }
 
-    /**
-     * @param array $symbolSplitMap
-     */
-    private function appendSplittedSymbols(array $symbolSplitMap): void
+    private function splitSymbolInTransitions(int $symbolId, int $symbolToAdd): void
     {
-        foreach ($symbolSplitMap as $splitSymbolId => $symbolsToAdd) {
-            $addSymbols = function (array $symbolList) use ($splitSymbolId, $symbolsToAdd) {
-                return in_array($splitSymbolId, $symbolList)
-                    ? array_merge($symbolList, $symbolsToAdd)
-                    : $symbolList;
-            };
-            $this->transitionMap->replaceEachTransition($addSymbols);
-        }
+        $addSymbol = function (array $symbolList) use ($symbolId, $symbolToAdd) {
+            if (in_array($symbolId, $symbolList)) {
+                $symbolList[] = $symbolToAdd;
+            }
+            return $symbolList;
+        };
+        $this->transitionMap->replaceEachTransition($addSymbol);
     }
 }
