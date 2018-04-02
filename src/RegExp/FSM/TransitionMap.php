@@ -74,6 +74,24 @@ class TransitionMap
         return $this->transitionMap;
     }
 
+    private function onEachTransition(callable $callback): void
+    {
+        foreach ($this->transitionMap as $stateIn => $stateOutMap) {
+            foreach ($stateOutMap as $stateOut => $data) {
+                call_user_func($callback, $data, $stateIn, $stateOut);
+            }
+        }
+    }
+
+    public function replaceEachTransition(callable $callback): void
+    {
+        $replaceCallback = function ($data, int $stateIn, int $stateOut) use ($callback) {
+            $newData = call_user_func($callback, $data, $stateIn, $stateOut);
+            $this->replaceTransition($stateIn, $stateOut, $newData);
+        };
+        $this->onEachTransition($replaceCallback);
+    }
+
     /**
      * @param int $fromStateId
      * @param int $toStateId

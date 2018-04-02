@@ -12,13 +12,11 @@ class LanguageMap
 
     private $transitionMap;
 
-    private $stateMap;
-
     private $nextSymbolId = 0;
 
-    public function __construct(StateMapInterface $stateMap)
+    public function __construct(TransitionMap $transitionMap)
     {
-        $this->stateMap = $stateMap;
+        $this->transitionMap = $transitionMap;
     }
 
     /**
@@ -65,57 +63,21 @@ class LanguageMap
             $symbolList[] = $newSymbolId;
             $this->symbolMap[$newSymbolId] = $newRangeSet;
         }
-        $this->getTransitionMap()->addTransition($stateIn, $stateOut, $symbolList);
+        $this->transitionMap->addTransition($stateIn, $stateOut, $symbolList);
     }
 
     /**
      * @param array $symbolSplitMap
-     * @throws \Remorhaz\UniLex\Exception
      */
     private function appendSplittedSymbols(array $symbolSplitMap): void
     {
         foreach ($symbolSplitMap as $splitSymbolId => $symbolsToAdd) {
-            foreach ($this->getTransitionMap()->getTransitionList() as $stateIn => $stateOutMap) {
-                foreach ($stateOutMap as $stateOut => $symbolList) {
-                    if (in_array($splitSymbolId, $symbolList)) {
-                        $symbolList = array_merge($symbolList, $symbolsToAdd);
-                        $this
-                            ->getTransitionMap()
-                            ->replaceTransition($stateIn, $stateOut, $symbolList);
-                    }
-                }
-            }
+            $addSymbols = function (array $symbolList) use ($splitSymbolId, $symbolsToAdd) {
+                return in_array($splitSymbolId, $symbolList)
+                    ? array_merge($symbolList, $symbolsToAdd)
+                    : $symbolList;
+            };
+            $this->transitionMap->replaceEachTransition($addSymbols);
         }
-    }
-
-    /**
-     * @param int $stateIn
-     * @param int $stateOut
-     * @return mixed
-     * @throws \Remorhaz\UniLex\Exception
-     */
-    public function getTransition(int $stateIn, int $stateOut)
-    {
-        return $this
-            ->getTransitionMap()
-            ->getTransition($stateIn, $stateOut);
-    }
-
-    /**
-     * @return int[]
-     */
-    public function getTranslationList(): array
-    {
-        return $this
-            ->getTransitionMap()
-            ->getTransitionList();
-    }
-
-    private function getTransitionMap(): TransitionMap
-    {
-        if (!isset($this->transitionMap)) {
-            $this->transitionMap = new TransitionMap($this->stateMap);
-        }
-        return $this->transitionMap;
     }
 }
