@@ -2,7 +2,7 @@
 
 namespace Remorhaz\UniLex\RegExp\FSM;
 
-class LanguageMap
+class LanguageBuilder
 {
 
     /**

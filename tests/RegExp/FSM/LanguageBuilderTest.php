@@ -3,16 +3,16 @@
 namespace Remorhaz\UniLex\Test\RegExp\FSM;
 
 use PHPUnit\Framework\TestCase;
-use Remorhaz\UniLex\RegExp\FSM\LanguageMap;
+use Remorhaz\UniLex\RegExp\FSM\LanguageBuilder;
 use Remorhaz\UniLex\RegExp\FSM\Range;
 use Remorhaz\UniLex\RegExp\FSM\RangeSet;
 use Remorhaz\UniLex\RegExp\FSM\StateMapInterface;
 use Remorhaz\UniLex\RegExp\FSM\TransitionMap;
 
 /**
- * @covers \Remorhaz\UniLex\RegExp\FSM\LanguageMap
+ * @covers \Remorhaz\UniLex\RegExp\FSM\LanguageBuilder
  */
-class LanguageMapTest extends TestCase
+class LanguageBuilderTest extends TestCase
 {
 
     /**
@@ -21,8 +21,8 @@ class LanguageMapTest extends TestCase
     public function testAddTransition_NoTransitionsAdded_TransitionMapContainsMatchingList(): void
     {
         $transitionMap = new TransitionMap($this->createStateMap());
-        $languageMap = new LanguageMap($transitionMap);
-        $languageMap->addTransition(1, 2, new Range(1, 2));
+        $languageBuilder = new LanguageBuilder($transitionMap);
+        $languageBuilder->addTransition(1, 2, new Range(1, 2));
         $expectedValue = [1 => [2 => [0]]];
         $actualValue = $transitionMap->getTransitionList();
         self::assertEquals($expectedValue, $actualValue);
@@ -45,11 +45,11 @@ class LanguageMapTest extends TestCase
         array $expectedValue
     ): void {
         $transitionMap = new TransitionMap($this->createStateMap());
-        $languageMap = new LanguageMap($transitionMap);
+        $languageBuilder = new LanguageBuilder($transitionMap);
         [$stateIn, $stateOut] = $firstTransitionData;
-        $languageMap->addTransition($stateIn, $stateOut, ...Range::importList(...$firstRangeData));
+        $languageBuilder->addTransition($stateIn, $stateOut, ...Range::importList(...$firstRangeData));
         [$stateIn, $stateOut] = $secondTransitionData;
-        $languageMap->addTransition($stateIn, $stateOut, ...Range::importList(...$secondRangeData));
+        $languageBuilder->addTransition($stateIn, $stateOut, ...Range::importList(...$secondRangeData));
         $actualValue = $transitionMap->getTransitionList();
         self::assertEquals($expectedValue, $actualValue);
     }
@@ -80,12 +80,12 @@ class LanguageMapTest extends TestCase
         array $expectedValue
     ): void {
         $transitionMap = new TransitionMap($this->createStateMap());
-        $languageMap = new LanguageMap($transitionMap);
+        $languageBuilder = new LanguageBuilder($transitionMap);
         [$stateIn, $stateOut] = $firstTransitionData;
-        $languageMap->addTransition($stateIn, $stateOut, ...Range::importList(...$firstRangeData));
+        $languageBuilder->addTransition($stateIn, $stateOut, ...Range::importList(...$firstRangeData));
         [$stateIn, $stateOut] = $secondTransitionData;
-        $languageMap->addTransition($stateIn, $stateOut, ...Range::importList(...$secondRangeData));
-        $actualValue = $this->exportSymbolMap($languageMap->getSymbolMap());
+        $languageBuilder->addTransition($stateIn, $stateOut, ...Range::importList(...$secondRangeData));
+        $actualValue = $this->exportSymbolMap($languageBuilder->getSymbolMap());
         self::assertEquals($expectedValue, $actualValue);
     }
 
