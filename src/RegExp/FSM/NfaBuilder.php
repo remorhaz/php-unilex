@@ -18,6 +18,8 @@ class NfaBuilder extends AbstractTranslatorListener
 
     private $rangeTransitionMap;
 
+    private $languageBuilder;
+
     public function __construct(Nfa $nfa)
     {
         $this->nfa = $nfa;
@@ -307,13 +309,22 @@ class NfaBuilder extends AbstractTranslatorListener
 
     public function onFinish(): void
     {
-        $languageBuilder = LanguageBuilder::forNfa($this->nfa);
-        $addTransitionToLanguage = function (RangeSet $rangeSet, int $stateIn, int $stateOut) use ($languageBuilder) {
-            $languageBuilder->addTransition($stateIn, $stateOut, ...$rangeSet->getRanges());
+        $addTransitionToLanguage = function (RangeSet $rangeSet, int $stateIn, int $stateOut) {
+            $this
+                ->getLanguageBuilder()
+                ->addTransition($stateIn, $stateOut, ...$rangeSet->getRanges());
         };
         $this
             ->getRangeTransitionMap()
             ->onEachTransition($addTransitionToLanguage);
+    }
+
+    private function getLanguageBuilder(): LanguageBuilder
+    {
+        if (!isset($this->languageBuilder)) {
+            $this->languageBuilder = LanguageBuilder::forNfa($this->nfa);
+        }
+        return $this->languageBuilder;
     }
 
     /**
