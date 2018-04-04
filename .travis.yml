@@ -16,4 +16,4 @@ before_script:
 script: vendor/bin/phpunit --coverage-clover build/logs/clover.xml
 
 after_script:
-  - ./build/cc-test-reporter after-build
+  - ./build/cc-test-reporter after-build --id $CODECLIMATE_REPO_TOKEN
