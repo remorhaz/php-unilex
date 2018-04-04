@@ -40,5 +40,6 @@ class Translator
                 $this->listener->onSymbol($symbol, $this->stack);
             }
         }
+        $this->listener->onFinish();
     }
 }

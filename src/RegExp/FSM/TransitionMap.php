@@ -74,7 +74,7 @@ class TransitionMap
         return $this->transitionMap;
     }
 
-    private function onEachTransition(callable $callback): void
+    public function onEachTransition(callable $callback): void
     {
         foreach ($this->transitionMap as $stateIn => $stateOutMap) {
             foreach ($stateOutMap as $stateOut => $data) {

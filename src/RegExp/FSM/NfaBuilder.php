@@ -14,23 +14,25 @@ use Remorhaz\UniLex\Stack\PushInterface;
 class NfaBuilder extends AbstractTranslatorListener
 {
 
-    private $stateMap;
+    private $nfa;
 
-    public function __construct(StateMap $stateMap)
+    private $rangeTransitionMap;
+
+    public function __construct(Nfa $nfa)
     {
-        $this->stateMap = $stateMap;
+        $this->nfa = $nfa;
     }
 
     /**
      * @param Tree $tree
-     * @return StateMap
+     * @return Nfa
      * @throws Exception
      */
-    public static function fromTree(Tree $tree): StateMap
+    public static function fromTree(Tree $tree): Nfa
     {
-        $stateMap = new StateMap;
-        (new Translator($tree, new self($stateMap)))->run();
-        return $stateMap;
+        $nfa = new Nfa;
+        (new Translator($tree, new self($nfa)))->run();
+        return $nfa;
     }
 
     /**
@@ -39,10 +41,13 @@ class NfaBuilder extends AbstractTranslatorListener
      */
     public function onStart(Node $node): void
     {
-        $stateIn = $this->stateMap->createState();
-        $this->stateMap->setStartState($stateIn);
+        $stateIn = $this->createState();
+        $this
+            ->nfa
+            ->getStateMap()
+            ->setStartState($stateIn);
         $node->setAttribute('state_in', $stateIn);
-        $stateOut = $this->stateMap->createState();
+        $stateOut = $this->createState();
         $node->setAttribute('state_out', $stateOut);
         $node->setAttribute('in_range', false);
     }
@@ -104,7 +109,7 @@ class NfaBuilder extends AbstractTranslatorListener
                 // Prefix concatenation construction
                 for ($index = 0; $index < $min; $index++) {
                     $stateIn = $stateOut ?? $node->getAttribute('state_in');
-                    $stateOut = $this->stateMap->createState();
+                    $stateOut = $this->createState();
                     $symbolList[] = $this->createSymbolFromClonedNodeChild($node, $stateIn, $stateOut);
                 }
                 if ($node->getAttribute('is_max_infinite')) {
@@ -125,9 +130,9 @@ class NfaBuilder extends AbstractTranslatorListener
                     $stateIn = $stateOut ?? $node->getAttribute('state_in');
                     $stateOut = $index == $max - 1
                         ? $node->getAttribute('state_out')
-                        : $this->stateMap->createState();
+                        : $this->createState();
                     $optStateOut = $node->getAttribute('state_out');
-                    $this->stateMap->addEpsilonTransition($stateIn, $optStateOut);
+                    $this->addEpsilonTransition($stateIn, $optStateOut);
                     $symbolList[] = $this->createSymbolFromClonedNodeChild($node, $stateIn, $stateOut);
                 }
                 $stack->push(...$symbolList);
@@ -144,7 +149,7 @@ class NfaBuilder extends AbstractTranslatorListener
                     $stateIn = $stateOut ?? $node->getAttribute('state_in');
                     $stateOut = $index == $maxIndex
                         ? $node->getAttribute('state_out')
-                        : $this->stateMap->createState();
+                        : $this->createState();
                     $symbolList[] = $this->createSymbolFromNodeChild($node, $stateIn, $stateOut, $index);
                 }
                 $stack->push(...$symbolList);
@@ -157,10 +162,10 @@ class NfaBuilder extends AbstractTranslatorListener
                 $symbolList = [];
                 [$headerStateIn, $headerStateOut] = $this->getNodeStates($node);
                 foreach ($node->getChildIndexList() as $index) {
-                    $stateIn = $this->stateMap->createState();
-                    $stateOut = $this->stateMap->createState();
-                    $this->stateMap->addEpsilonTransition($headerStateIn, $stateIn);
-                    $this->stateMap->addEpsilonTransition($stateOut, $headerStateOut);
+                    $stateIn = $this->createState();
+                    $stateOut = $this->createState();
+                    $this->addEpsilonTransition($headerStateIn, $stateIn);
+                    $this->addEpsilonTransition($stateOut, $headerStateOut);
                     $symbolList[] = $this->createSymbolFromNodeChild($node, $stateIn, $stateOut, $index);
                 }
                 $stack->push(...$symbolList);
@@ -202,28 +207,28 @@ class NfaBuilder extends AbstractTranslatorListener
                 if ($startChar > $finishChar) {
                     throw new Exception("Invalid range: start char is greater than finish char");
                 }
-                $this->stateMap->addRangeTransition($stateIn, $stateOut, new Range($startChar, $finishChar));
+                $this->addRangeTransition($stateIn, $stateOut, $startChar, $finishChar);
                 break;
 
             case NodeType::SYMBOL:
                 $code = $node->getAttribute('code');
                 $inRange
                     ? $node->setAttribute('range_code', $code)
-                    : $this->stateMap->addCharTransition($stateIn, $stateOut, $code);
+                    : $this->addRangeTransition($stateIn, $stateOut, $code);
                 break;
 
             case NodeType::EMPTY:
                 if ($inRange) {
                     throw new Exception("Invalid range component: no matching chars");
                 }
-                $this->stateMap->addEpsilonTransition($stateIn, $stateOut);
+                $this->addEpsilonTransition($stateIn, $stateOut);
                 break;
 
             case NodeType::SYMBOL_ANY:
                 if ($inRange) {
                     throw new Exception("Invalid range component: any char is matching");
                 }
-                $this->stateMap->addRangeTransition($stateIn, $stateOut, new Range(0x00, 0x10FFFF));
+                $this->addRangeTransition($stateIn, $stateOut, 0x00, 0x10FFFF);
                 break;
 
             case NodeType::SYMBOL_CTL:
@@ -231,7 +236,7 @@ class NfaBuilder extends AbstractTranslatorListener
                 $controlCode = $this->getControlCode($code);
                 $inRange
                     ? $node->setAttribute('range_code', $controlCode)
-                    : $this->stateMap->addCharTransition($stateIn, $stateOut, $controlCode);
+                    : $this->addRangeTransition($stateIn, $stateOut, $controlCode);
                 break;
 
             case NodeType::ESC_SIMPLE:
@@ -248,7 +253,7 @@ class NfaBuilder extends AbstractTranslatorListener
                     $escapedCode = $singleCharMap[$code];
                     $inRange
                         ? $node->setAttribute('range_code', $escapedCode)
-                        : $this->stateMap->addCharTransition($stateIn, $stateOut, $escapedCode);
+                        : $this->addRangeTransition($stateIn, $stateOut, $escapedCode);
                     break;
                 }
                 $notImplementedMap = [
@@ -285,7 +290,7 @@ class NfaBuilder extends AbstractTranslatorListener
                     default:
                         $inRange
                             ? $node->setAttribute('range_code', $code)
-                            : $this->stateMap->addCharTransition($stateIn, $stateOut, $code);
+                            : $this->addRangeTransition($stateIn, $stateOut, $code);
                 }
                 break;
 
@@ -293,13 +298,22 @@ class NfaBuilder extends AbstractTranslatorListener
                 if (!$node->getAttribute('not')) {
                     break;
                 }
-                $rangeList = $this->stateMap->getRangeTransition($stateIn, $stateOut);
-                $invertedRangeList = (new RangeSetCalc)
-                    ->xor(new RangeSet(...$rangeList), RangeSet::import([0x00, 0x10FFFF]))
-                    ->getRanges();
-                $this->stateMap->replaceRangeTransition($stateIn, $stateOut, ...$invertedRangeList);
+                $invertedRangeSet = (new RangeSetCalc)
+                    ->xor($this->getRangeTransition($stateIn, $stateOut), RangeSet::import([0x00, 0x10FFFF]));
+                $this->setRangeTransition($stateIn, $stateOut, $invertedRangeSet);
                 break;
         }
+    }
+
+    public function onFinish(): void
+    {
+        $languageBuilder = LanguageBuilder::forNfa($this->nfa);
+        $addTransitionToLanguage = function (RangeSet $rangeSet, int $stateIn, int $stateOut) use ($languageBuilder) {
+            $languageBuilder->addTransition($stateIn, $stateOut, ...$rangeSet->getRanges());
+        };
+        $this
+            ->getRangeTransitionMap()
+            ->onEachTransition($addTransitionToLanguage);
     }
 
     /**
@@ -337,12 +351,13 @@ class NfaBuilder extends AbstractTranslatorListener
      */
     private function createKleeneStarSymbolFromNode(Node $node, int $stateIn, int $stateOut): Symbol
     {
-        $innerStateIn = $this->stateMap->createState();
-        $innerStateOut = $this->stateMap->createState();
-        $this->stateMap->addEpsilonTransition($stateIn, $innerStateIn);
-        $this->stateMap->addEpsilonTransition($innerStateOut, $stateOut);
-        $this->stateMap->addEpsilonTransition($stateIn, $stateOut);
-        $this->stateMap->addEpsilonTransition($innerStateOut, $innerStateIn);
+        $innerStateIn = $this->createState();
+        $innerStateOut = $this->createState();
+        $this
+            ->addEpsilonTransition($stateIn, $innerStateIn)
+            ->addEpsilonTransition($innerStateOut, $stateOut)
+            ->addEpsilonTransition($stateIn, $stateOut)
+            ->addEpsilonTransition($innerStateOut, $innerStateIn);
         return $this->createSymbolFromClonedNodeChild($node, $innerStateIn, $innerStateOut);
     }
 
@@ -381,5 +396,90 @@ class NfaBuilder extends AbstractTranslatorListener
             ->setAttribute('state_in', $stateIn)
             ->setAttribute('state_out', $stateOut);
         return new Symbol($node, $index);
+    }
+
+    private function createState(): int
+    {
+        return $this
+            ->nfa
+            ->getStateMap()
+            ->createState();
+    }
+
+    private function getRangeTransitionMap(): TransitionMap
+    {
+        if (!isset($this->rangeTransitionMap)) {
+            $this->rangeTransitionMap = new TransitionMap($this->nfa->getStateMap());
+        }
+        return $this->rangeTransitionMap;
+    }
+
+    /**
+     * @param int $stateIn
+     * @param int $stateOut
+     * @param int $start
+     * @param int|null $finish
+     * @return NfaBuilder
+     * @throws Exception
+     */
+    private function addRangeTransition(int $stateIn, int $stateOut, int $start, int $finish = null): self
+    {
+        $this
+            ->getRangeTransition($stateIn, $stateOut)
+            ->addRange(new Range($start, $finish ?? $start));
+        return $this;
+    }
+
+    /**
+     * @param int $stateIn
+     * @param int $stateOut
+     * @param RangeSet $rangeSet
+     * @return NfaBuilder
+     * @throws Exception
+     */
+    private function setRangeTransition(int $stateIn, int $stateOut, RangeSet $rangeSet): self
+    {
+        $this
+            ->getRangeTransitionMap()
+            ->replaceTransition($stateIn, $stateOut, $rangeSet);
+        return $this;
+    }
+
+    /**
+     * @param int $stateIn
+     * @param int $stateOut
+     * @return RangeSet
+     * @throws Exception
+     */
+    private function getRangeTransition(int $stateIn, int $stateOut): RangeSet
+    {
+        $transitionExists = $this
+            ->getRangeTransitionMap()
+            ->transitionExists($stateIn, $stateOut);
+        if ($transitionExists) {
+            return $this
+                ->getRangeTransitionMap()
+                ->getTransition($stateIn, $stateOut);
+        }
+        $rangeSet = new RangeSet;
+        $this
+            ->getRangeTransitionMap()
+            ->addTransition($stateIn, $stateOut, $rangeSet);
+        return $rangeSet;
+    }
+
+    /**
+     * @param int $stateIn
+     * @param int $stateOut
+     * @return NfaBuilder
+     * @throws Exception
+     */
+    private function addEpsilonTransition(int $stateIn, int $stateOut): self
+    {
+        $this
+            ->nfa
+            ->getEpsilonTransitionMap()
+            ->addTransition($stateIn, $stateOut, true);
+        return $this;
     }
 }

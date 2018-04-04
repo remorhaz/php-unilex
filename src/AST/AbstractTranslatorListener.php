@@ -14,6 +14,10 @@ abstract class AbstractTranslatorListener implements TranslatorListenerInterface
     {
     }
 
+    public function onFinish(): void
+    {
+    }
+
     public function onBeginProduction(Node $node, PushInterface $stack): void
     {
     }

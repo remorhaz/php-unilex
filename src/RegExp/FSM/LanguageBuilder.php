@@ -15,6 +15,11 @@ class LanguageBuilder
         $this->transitionMap = $transitionMap;
     }
 
+    public static function forNfa(Nfa $nfa): self
+    {
+        return new self($nfa->getSymbolTable(), $nfa->getSymbolTransitionMap());
+    }
+
     /**
      * @param int $stateIn
      * @param int $stateOut

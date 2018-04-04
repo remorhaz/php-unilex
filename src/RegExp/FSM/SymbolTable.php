@@ -12,7 +12,7 @@ class SymbolTable
      */
     private $rangeSetList = [];
 
-    private $nextSymbol  = 0;
+    private $nextSymbol = 0;
 
     /**
      * @param RangeSet $rangeSet
