@@ -4,6 +4,7 @@ namespace Remorhaz\UniLex\Test\RegExp\FSM;
 
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\RegExp\FSM\LanguageBuilder;
+use Remorhaz\UniLex\RegExp\FSM\Nfa;
 use Remorhaz\UniLex\RegExp\FSM\Range;
 use Remorhaz\UniLex\RegExp\FSM\RangeSet;
 use Remorhaz\UniLex\RegExp\FSM\StateMapInterface;
@@ -15,6 +16,34 @@ use Remorhaz\UniLex\RegExp\FSM\TransitionMap;
  */
 class LanguageBuilderTest extends TestCase
 {
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testFromNfa_EmptyNfa_AddTransitionAddsSymbolToNfaSymbolTable(): void
+    {
+        $nfa = new Nfa;
+        $stateIn = $nfa->getStateMap()->createState();
+        $stateOut = $nfa->getStateMap()->createState();
+        LanguageBuilder::forNfa($nfa)->addTransition($stateIn, $stateOut, new Range(1, 2));
+        $actualRangeList = $nfa->getSymbolTable()->getRangeSetList();
+        self::assertArrayHasKey(0, $actualRangeList);
+        self::assertEquals([[1, 2]], $actualRangeList[0]->export());
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testFromNfa_EmptyNfa_AddTransitionAddsTransitionToNfaSymbolTransitionMap(): void
+    {
+        $nfa = new Nfa;
+        $stateIn = $nfa->getStateMap()->createState();
+        $stateOut = $nfa->getStateMap()->createState();
+        LanguageBuilder::forNfa($nfa)->addTransition($stateIn, $stateOut, new Range(1, 2));
+        $expectedTransitionList = [$stateIn => [$stateOut => [0]]];
+        $actualTransitionList = $nfa->getSymbolTransitionMap()->getTransitionList();
+        self::assertEquals($expectedTransitionList, $actualTransitionList);
+    }
 
     /**
      * @throws \Remorhaz\UniLex\Exception

@@ -41,6 +41,19 @@ class SymbolTable
     }
 
     /**
+     * @param int $symbolId
+     * @return RangeSet
+     * @throws Exception
+     */
+    public function getRangeSet(int $symbolId): RangeSet
+    {
+        if (!isset($this->rangeSetList[$symbolId])) {
+            throw new Exception("Symbol {$symbolId} is not defined in symbol table");
+        }
+        return $this->rangeSetList[$symbolId];
+    }
+
+    /**
      * @return RangeSet[]
      */
     public function getRangeSetList(): array
