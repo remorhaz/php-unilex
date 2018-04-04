@@ -34,7 +34,7 @@ class RangeSetCalc
     {
         $result = new RangeSet;
         foreach ($anotherRangeSet->getRanges() as $range) {
-            $andRangeSetPart = $this->andSingleRange(clone $rangeSet, clone $range);
+            $andRangeSetPart = $this->andSingleRange($rangeSet, $range);
             $result->addRange(...$andRangeSetPart->getRanges());
         }
 
@@ -58,10 +58,11 @@ class RangeSetCalc
                 continue;
             }
             if ($range->startsBeforeStartOf($existingRange)) {
-                $range->sliceBeforeStartOf($existingRange);
+                $range = $range->copyAfterStartOf($existingRange);
             }
             if ($existingRange->endsBeforeFinishOf($range)) {
-                $rangeSet->addRange($range->sliceBeforeFinishOf($existingRange));
+                $rangeSet->addRange($range->copyBeforeFinishOf($existingRange));
+                $range = $range->copyAfterFinishOf($existingRange);
                 continue;
             }
             $rangeSet->addRange($range);
@@ -79,7 +80,7 @@ class RangeSetCalc
     {
         $result = clone $rangeSet;
         foreach ($anotherRangeSet->getRanges() as $range) {
-            $result = $this->xorSingleRange($result, clone $range);
+            $result = $this->xorSingleRange($result, $range);
         }
         return $result;
     }
@@ -104,12 +105,13 @@ class RangeSetCalc
                 continue;
             }
             if ($range->startsBeforeStartOf($existingRange)) {
-                $rangeSet->addRange($range->sliceBeforeStartOf($existingRange));
+                $rangeSet->addRange($range->copyBeforeStartOf($existingRange));
+                $range = $range->copyAfterStartOf($existingRange);
             } elseif ($existingRange->startsBeforeStartOf($range)) {
                 $rangeSet->addRange($existingRange->copyBeforeStartOf($range));
             }
             if ($existingRange->endsBeforeFinishOf($range)) {
-                $range->sliceBeforeFinishOf($existingRange);
+                $range = $range->copyAfterFinishOf($existingRange);
                 continue;
             } elseif ($range->endsBeforeFinishOf($existingRange)) {
                 $rangeSet->addRange($existingRange->copyAfterFinishOf($range));

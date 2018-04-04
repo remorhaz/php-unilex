@@ -54,31 +54,6 @@ class Range
         return $this->finish;
     }
 
-    /**
-     * @param int $start
-     * @throws Exception
-     */
-    private function setStart(int $start): void
-    {
-        if ($start > $this->getFinish()) {
-            throw new Exception("Invalid range {$start}..{$this->getFinish()}");
-        }
-
-        $this->start = $start;
-    }
-
-    /**
-     * @param int $finish
-     * @throws Exception
-     */
-    private function setFinish(int $finish): void
-    {
-        if ($this->getStart() > $finish) {
-            throw new Exception("Invalid range {$this->getStart()}..{$finish}");
-        }
-        $this->finish = $finish;
-    }
-
     public function containsChar(int $char): bool
     {
         return $this->getStart() <= $char && $char <= $this->getFinish();
@@ -102,30 +77,6 @@ class Range
     public function intersects(Range $range): bool
     {
         return !$this->endsBeforeStartOf($range) && !$range->endsBeforeStartOf($this);
-    }
-
-    /**
-     * @param Range $range
-     * @return Range
-     * @throws Exception
-     */
-    public function sliceBeforeStartOf(Range $range): self
-    {
-        $piece = $this->copyBeforeStartOf($range);
-        $this->setStart($range->getStart());
-        return $piece;
-    }
-
-    /**
-     * @param Range $range
-     * @return Range
-     * @throws Exception
-     */
-    public function sliceBeforeFinishOf(Range $range): self
-    {
-        $piece = $this->copyBeforeFinishOf($range);
-        $this->setStart($range->getFinish() + 1);
-        return $piece;
     }
 
     /**
@@ -165,20 +116,12 @@ class Range
 
     /**
      * @param Range $range
+     * @return Range
      * @throws Exception
      */
-    public function alignStart(Range $range)
+    public function copyAfterStartOf(Range $range): self
     {
-        $this->setStart($range->getStart());
-    }
-
-    /**
-     * @param Range $range
-     * @throws Exception
-     */
-    public function alignFinish(Range $range)
-    {
-        $this->setFinish($range->getFinish());
+        return new self($range->getStart(), $this->getFinish());
     }
 
     /**

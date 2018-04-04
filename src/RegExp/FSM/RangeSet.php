@@ -80,11 +80,11 @@ class RangeSet
         $newRangeList = [];
         foreach ($this->rangeList as $existingRange) {
             if ($existingRange->containsStartOf($range) || $range->follows($existingRange)) {
-                $range->alignStart($existingRange);
+                $range = $range->copyAfterStartOf($existingRange);
                 continue;
             }
             if ($existingRange->containsFinishOf($range) || $existingRange->follows($range)) {
-                $range->alignFinish($existingRange);
+                $range = $range->copyBeforeFinishOf($existingRange);
                 continue;
             }
             $newRangeList[] = $existingRange;

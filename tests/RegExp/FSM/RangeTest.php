@@ -276,82 +276,12 @@ class RangeTest extends TestCase
     /**
      * @throws \Remorhaz\UniLex\Exception
      */
-    public function testSliceBeforeStartOf_PartiallyOverlappingRanges_ReturnsMatchingPartOfRange(): void
-    {
-        $range = new Range(1, 3);
-        $anotherRange = new Range(2, 4);
-        $actualValue = $range->sliceBeforeStartOf($anotherRange)->export();
-        self::assertEquals([1, 1], $actualValue);
-    }
-
-    /**
-     * @throws \Remorhaz\UniLex\Exception
-     */
-    public function testSliceBeforeStartOf_PartiallyOverlappingRanges_MatchingPartOfRangeRemains(): void
-    {
-        $range = new Range(1, 3);
-        $anotherRange = new Range(2, 4);
-        $range->sliceBeforeStartOf($anotherRange);
-        $actualValue = $range->export();
-        self::assertEquals([2, 3], $actualValue);
-    }
-
-    /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Invalid range 2..0
-     */
-    public function testSliceBeforeStartOf_ArgumentStartLessThanRangeStart_ThrowsException(): void
-    {
-        $range = new Range(2, 3);
-        $anotherRange = new Range(1, 1);
-        $range->sliceBeforeStartOf($anotherRange);
-    }
-
-    /**
-     * @throws \Remorhaz\UniLex\Exception
-     */
-    public function testSliceBeforeFinishOf_PartiallyOverlappingRanges_ReturnsMatchingPartOfRange(): void
-    {
-        $range = new Range(1, 4);
-        $anotherRange = new Range(2, 3);
-        $actualValue = $range->sliceBeforeFinishOf($anotherRange)->export();
-        self::assertEquals([1, 3], $actualValue);
-    }
-
-    /**
-     * @throws \Remorhaz\UniLex\Exception
-     */
-    public function testSliceBeforeFinishOf_PartiallyOverlappingRanges_MatchingPartOfRangeRemains(): void
-    {
-        $range = new Range(1, 4);
-        $anotherRange = new Range(2, 3);
-        $range->sliceBeforeFinishOf($anotherRange);
-        $actualValue = $range->export();
-        self::assertEquals([4, 4], $actualValue);
-    }
-
-    /**
-     * @throws \Remorhaz\UniLex\Exception
-     */
     public function testCopyAfterFinishOf_PartiallyOverlappingRanges_ReturnsMatchingPartOfRange(): void
     {
         $range = new Range(1, 4);
         $anotherRange = new Range(2, 3);
         $actualValue = $range->copyAfterFinishOf($anotherRange)->export();
         self::assertEquals([4, 4], $actualValue);
-    }
-
-    /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Invalid range 6..3
-     */
-    public function testSliceBeforeFinishOf_ArgumentFinishGreaterThanRangeFinish_ThrowsException(): void
-    {
-        $range = new Range(1, 3);
-        $anotherRange = new Range(4, 5);
-        $range->sliceBeforeFinishOf($anotherRange);
     }
 
     /**
@@ -459,8 +389,7 @@ class RangeTest extends TestCase
     {
         $range = new Range(2, 4);
         $anotherRange = new Range(1, 3);
-        $range->alignStart($anotherRange);
-        $actualValue = $range->export();
+        $actualValue = $range->copyAfterStartOf($anotherRange)->export();
         self::assertEquals([1, 4], $actualValue);
     }
 
@@ -473,32 +402,7 @@ class RangeTest extends TestCase
     {
         $range = new Range(1, 3);
         $anotherRange = new Range(4, 5);
-        $range->alignStart($anotherRange);
-    }
-
-    /**
-     * @throws \Remorhaz\UniLex\Exception
-     */
-    public function testAlignFinish_ValidRange_RangeHasSameStartAndMatchingFinish(): void
-    {
-        $range = new Range(2, 4);
-        $anotherRange = new Range(1, 3);
-        $range->alignFinish($anotherRange);
-        $actualValue = $range->export();
-        self::assertEquals([2, 3], $actualValue);
-    }
-
-
-    /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Invalid range 3..2
-     */
-    public function testAlignFinish_ArgumentFinishLessThanRangeStart_ThrowsException(): void
-    {
-        $range = new Range(3, 4);
-        $anotherRange = new Range(1, 2);
-        $range->alignFinish($anotherRange);
+        $range->copyAfterStartOf($anotherRange);
     }
 
     /**
