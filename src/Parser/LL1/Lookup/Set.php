@@ -21,7 +21,7 @@ abstract class Set
      * Adds list of tokens to the set.
      *
      * @param int $symbolId
-     * @param int[] ...$tokenIdList
+     * @param int ...$tokenIdList
      */
     public function addToken(int $symbolId, int ...$tokenIdList): void
     {

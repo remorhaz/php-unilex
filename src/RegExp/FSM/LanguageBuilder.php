@@ -23,27 +23,28 @@ class LanguageBuilder
      */
     public function addTransition(int $stateIn, int $stateOut, Range ...$ranges): void
     {
+        $rangeSetCalc = new RangeSetCalc;
         $newRangeSet = new RangeSet(...$ranges);
         $symbolList = [];
         $shouldAddNewSymbol = true;
         foreach ($this->symbolTable->getRangeSetList() as $symbolId => $oldRangeSet) {
-            $rangeSetDiff = $oldRangeSet->getDiff(...$newRangeSet->getRanges());
-            if ($rangeSetDiff->isEmpty()) { // same range sets
+            if ($rangeSetCalc->equals($oldRangeSet, $newRangeSet)) {
                 $symbolList[] = $symbolId;
                 $shouldAddNewSymbol = false;
                 break;
             }
-            $onlyInOldRangeSet = $oldRangeSet->getAnd(...$rangeSetDiff->getRanges());
-            if ($onlyInOldRangeSet->isSame(...$oldRangeSet->getRanges())) { // range sets don't intersect
+            $rangeSetDiff = $rangeSetCalc->xor($oldRangeSet, $newRangeSet);
+            $onlyInOldRangeSet = $rangeSetCalc->and($oldRangeSet, $rangeSetDiff);
+            if ($rangeSetCalc->equals($onlyInOldRangeSet, $oldRangeSet)) {
                 continue;
             }
             $splitSymbolId = $this
                 ->symbolTable
                 ->replaceSymbol($symbolId, $onlyInOldRangeSet)
-                ->addSymbol($oldRangeSet->getAnd(...$newRangeSet->getRanges()));
+                ->addSymbol($rangeSetCalc->and($oldRangeSet, $newRangeSet));
             $this->splitSymbolInTransitions($symbolId, $splitSymbolId);
             $symbolList[] = $splitSymbolId;
-            $newRangeSet = $newRangeSet->getAnd(...$rangeSetDiff->getRanges());
+            $newRangeSet = $rangeSetCalc->and($newRangeSet, $rangeSetDiff);
         }
         if ($shouldAddNewSymbol) {
             $newSymbolId = $this->symbolTable->addSymbol($newRangeSet);

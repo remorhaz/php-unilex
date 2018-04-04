@@ -294,8 +294,9 @@ class NfaBuilder extends AbstractTranslatorListener
                     break;
                 }
                 $rangeList = $this->stateMap->getRangeTransition($stateIn, $stateOut);
-                $rangeSet = new RangeSet(...$rangeList);
-                $invertedRangeList = $rangeSet->getDiff(new Range(0x00, 0x10FFFF))->getRanges();
+                $invertedRangeList = (new RangeSetCalc)
+                    ->xor(new RangeSet(...$rangeList), RangeSet::import([0x00, 0x10FFFF]))
+                    ->getRanges();
                 $this->stateMap->replaceRangeTransition($stateIn, $stateOut, ...$invertedRangeList);
                 break;
         }

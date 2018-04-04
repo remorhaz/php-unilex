@@ -105,7 +105,7 @@ class StateMap implements StateMapInterface
     /**
      * @param int $fromStateId
      * @param int $toStateId
-     * @param Range[] ...$newRangeList
+     * @param Range ...$newRangeList
      * @throws Exception
      */
     public function addRangeTransition(int $fromStateId, int $toStateId, Range ...$newRangeList): void
@@ -126,7 +126,7 @@ class StateMap implements StateMapInterface
     /**
      * @param int $fromStateId
      * @param int $toStateId
-     * @param Range[] ...$rangeList
+     * @param Range ...$rangeList
      * @throws Exception
      */
     public function replaceRangeTransition(int $fromStateId, int $toStateId, Range ...$rangeList): void

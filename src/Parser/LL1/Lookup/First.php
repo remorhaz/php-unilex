@@ -14,7 +14,7 @@ class First extends Set implements FirstInterface
     /**
      * Returns FIRST(X) set.
      *
-     * @param int[] ...$symbolIdList
+     * @param int ...$symbolIdList
      * @return array
      */
     public function getProductionTokens(int ...$symbolIdList): array
@@ -46,7 +46,7 @@ class First extends Set implements FirstInterface
     /**
      * Reports presence of ε-production in FIRST(X) sets for all given X.
      *
-     * @param int[] ...$symbolIdList
+     * @param int ...$symbolIdList
      * @return bool
      */
     public function productionHasEpsilon(int ...$symbolIdList): bool
@@ -71,7 +71,7 @@ class First extends Set implements FirstInterface
      * Adds all tokens from source production's FIRST(X) to target production's FIRST(Y).
      *
      * @param int $targetSymbolId
-     * @param int[] ...$sourceSymbolIdList
+     * @param int ...$sourceSymbolIdList
      */
     public function mergeProductionTokens(int $targetSymbolId, int ...$sourceSymbolIdList): void
     {

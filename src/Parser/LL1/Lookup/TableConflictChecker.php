@@ -63,7 +63,7 @@ class TableConflictChecker
 
     /**
      * @param int $symbolId
-     * @param Production[] ...$productionList
+     * @param Production ...$productionList
      * @throws Exception
      */
     private function checkMultipleEpsilons(int $symbolId, Production ...$productionList): void

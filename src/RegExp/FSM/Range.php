@@ -31,7 +31,7 @@ class Range
     }
 
     /**
-     * @param array[] ...$rangeDataList
+     * @param array ...$rangeDataList
      * @return self[]
      * @throws Exception
      */
@@ -84,22 +84,22 @@ class Range
         return $this->getStart() <= $char && $char <= $this->getFinish();
     }
 
-    public function startsBeforeStartOf(self $range): bool
+    public function startsBeforeStartOf(Range $range): bool
     {
         return $this->getStart() < $range->getStart();
     }
 
-    public function endsBeforeStartOf(self $range): bool
+    public function endsBeforeStartOf(Range $range): bool
     {
         return $this->getFinish() < $range->getStart();
     }
 
-    public function endsBeforeFinishOf(self $range): bool
+    public function endsBeforeFinishOf(Range $range): bool
     {
         return $this->getFinish() < $range->getFinish();
     }
 
-    public function intersects(self $range): bool
+    public function intersects(Range $range): bool
     {
         return !$this->endsBeforeStartOf($range) && !$range->endsBeforeStartOf($this);
     }
@@ -109,7 +109,7 @@ class Range
      * @return Range
      * @throws Exception
      */
-    public function sliceBeforeStartOf(self $range): self
+    public function sliceBeforeStartOf(Range $range): self
     {
         $piece = $this->copyBeforeStartOf($range);
         $this->setStart($range->getStart());
@@ -121,7 +121,7 @@ class Range
      * @return Range
      * @throws Exception
      */
-    public function sliceBeforeFinishOf(self $range): self
+    public function sliceBeforeFinishOf(Range $range): self
     {
         $piece = $this->copyBeforeFinishOf($range);
         $this->setStart($range->getFinish() + 1);
@@ -133,7 +133,7 @@ class Range
      * @return Range
      * @throws Exception
      */
-    public function copyBeforeStartOf(self $range): self
+    public function copyBeforeStartOf(Range $range): self
     {
         return new self($this->getStart(), $range->getStart() - 1);
     }
@@ -143,22 +143,22 @@ class Range
      * @return Range
      * @throws Exception
      */
-    public function copyAfterFinishOf(self $range): self
+    public function copyAfterFinishOf(Range $range): self
     {
         return new self($range->getFinish() + 1, $this->getFinish());
     }
 
-    public function containsStartOf(self $range): bool
+    public function containsStartOf(Range $range): bool
     {
         return $this->getStart() <= $range->getStart() && $range->getStart() <= $this->getFinish();
     }
 
-    public function containsFinishOf(self $range): bool
+    public function containsFinishOf(Range $range): bool
     {
         return $this->getStart() <= $range->getFinish() && $range->getFinish() <= $this->getFinish();
     }
 
-    public function follows(self $range): bool
+    public function follows(Range $range): bool
     {
         return $this->getStart() == $range->getFinish() + 1;
     }
@@ -167,7 +167,7 @@ class Range
      * @param Range $range
      * @throws Exception
      */
-    public function alignStart(self $range)
+    public function alignStart(Range $range)
     {
         $this->setStart($range->getStart());
     }
@@ -176,7 +176,7 @@ class Range
      * @param Range $range
      * @throws Exception
      */
-    public function alignFinish(self $range)
+    public function alignFinish(Range $range)
     {
         $this->setFinish($range->getFinish());
     }
@@ -186,7 +186,7 @@ class Range
      * @return Range
      * @throws Exception
      */
-    public function copyBeforeFinishOf(self $range): self
+    public function copyBeforeFinishOf(Range $range): self
     {
         return new self($this->getStart(), $range->getFinish());
     }

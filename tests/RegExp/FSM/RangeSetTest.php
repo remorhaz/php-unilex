@@ -15,6 +15,26 @@ class RangeSetTest extends TestCase
     /**
      * @throws \Remorhaz\UniLex\Exception
      */
+    public function testIsEmpty_NoRangeAdded_ReturnsTrue(): void
+    {
+        $actualValue = (new RangeSet)->isEmpty();
+        self::assertTrue($actualValue);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testIsEmpty_RangeAdded_ReturnsFalse(): void
+    {
+        $rangeSet = new RangeSet;
+        $rangeSet->addRange(new Range(1, 2));
+        $actualValue = $rangeSet->isEmpty();
+        self::assertFalse($actualValue);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
     public function testGetRanges_ConstructedWithoutArguments_ReturnsEmptyArray(): void
     {
         $actualValue = (new RangeSet)->getRanges();
@@ -76,7 +96,8 @@ class RangeSetTest extends TestCase
             "Two equal single ranges" => [[[1, 2], [1, 2]], [[1, 2]]],
             "Two not neighbour ranges" => [[[1, 2], [4, 5]], [[1, 2], [4, 5]]],
             "Two neighbour ranges" => [[[1, 2], [3, 4]], [[1, 4]]],
-            "Two intersecting ranges" => [[[1, 3], [2, 4]], [[1, 4]]],
+            "First range contains another's start" => [[[1, 3], [2, 4]], [[1, 4]]],
+            "First range contains another's finish" => [[[2, 4], [1, 3]], [[1, 4]]],
         ];
     }
 
@@ -105,81 +126,8 @@ class RangeSetTest extends TestCase
             "Empty array after single range" => [[[1, 2]], [], [[1, 2]]],
             "Same single range" => [[[1, 2]], [[1, 2]], [[1, 2]]],
             "Two not neighbour ranges" => [[[1, 2]], [[4, 5]], [[1, 2], [4, 5]]],
-            "Two intersecting ranges" => [[[1, 3]], [[2, 4]], [[1, 4]]],
-        ];
-    }
-
-    /**
-     * @param array $firstRanges
-     * @param array $secondRanges
-     * @param array $expectedDiff
-     * @throws \Remorhaz\UniLex\Exception
-     * @dataProvider providerDiffRanges
-     */
-    public function testGetDiffRange_ValidRangeLists_ExportReturnsDiffRangeList(
-        array $firstRanges,
-        array $secondRanges,
-        array $expectedDiff
-    ): void {
-        $actualValue = RangeSet::import(...$firstRanges)
-            ->getDiff(...Range::importList(...$secondRanges))
-            ->export();
-        self::assertEquals($expectedDiff, $actualValue);
-    }
-
-    public function providerDiffRanges(): array
-    {
-        return [
-            "Empty range" => [[[1, 2]], [], [[1, 2]]],
-            "Empty existing range" => [[], [[1, 2]], [[1, 2]]],
-            "Range after existing range" => [[[1, 2]], [[4, 5]], [[1, 2], [4, 5]]],
-            "Range before existing range" => [[[4, 5]], [[1, 2]], [[1, 2], [4, 5]]],
-            "Range right before existing range" => [[[2, 5]], [[1, 1]], [[1, 5]]],
-            "Range partially before existing range" => [[[2, 5]], [[1, 3]], [[1, 1], [4, 5]]],
-            "Range entirely inside existing range" => [[[2, 5]], [[3, 3]], [[2, 2], [4, 5]]],
-            "Range starts before existing range with matching ends" => [[[2, 5]], [[1, 5]], [[1, 1]]],
-            "Range starts before and ends after existing range" => [[[2, 5]], [[3, 3]], [[2, 2], [4, 5]]],
-            "Range starts before and ends after all existing ranges" =>
-                [[[2, 5], [7, 10]], [[1, 13]], [[1, 1], [6, 6], [11, 13]]],
-            "Range partially intersects with two existing ranges" =>
-                [[[2, 5], [7, 10]], [[3, 7]], [[2, 2], [6, 6], [8, 10]]],
-        ];
-    }
-
-    /**
-     * @param array $firstRanges
-     * @param array $secondRanges
-     * @param array $expectedRange
-     * @throws \Remorhaz\UniLex\Exception
-     * @dataProvider providerAndRanges
-     */
-    public function testGetAnd_ValidRangeList_ExportReturnsMatchingRangeList(
-        array $firstRanges,
-        array $secondRanges,
-        array $expectedRange
-    ): void {
-        $actualValue = RangeSet::import(...$firstRanges)
-            ->getAnd(...Range::importList(...$secondRanges))
-            ->export();
-        self::assertEquals($expectedRange, $actualValue);
-    }
-
-    public function providerAndRanges(): array
-    {
-        return [
-            "Empty range" => [[[1, 2]], [], []],
-            "Empty existing range" => [[], [[1, 2]], []],
-            "Range after existing range" => [[[1, 2]], [[4, 5]], []],
-            "Range before existing range" => [[[4, 5]], [[1, 2]], []],
-            "Range right before existing range" => [[[2, 5]], [[1, 1]], []],
-            "Range partially before existing range" => [[[2, 5]], [[1, 3]], [[2, 3]]],
-            "Range entirely inside existing range" => [[[2, 5]], [[3, 3]], [[3, 3]]],
-            "Range starts before existing range with matching ends" => [[[2, 5]], [[1, 5]], [[2, 5]]],
-            "Range starts before and ends after existing range" => [[[2, 5]], [[3, 3]], [[3, 3]]],
-            "Range starts before and ends after all existing ranges" =>
-                [[[2, 5], [7, 10]], [[1, 13]], [[2, 5], [7, 10]]],
-            "Range partially intersects with two existing ranges" =>
-                [[[2, 5], [7, 10]], [[3, 7]], [[3, 5], [7, 7]]],
+            "First range contains another's start" => [[[1, 3]], [[2, 4]], [[1, 4]]],
+            "First range contains another's finish" => [[[2, 4]], [[1, 3]], [[1, 4]]],
         ];
     }
 }
