@@ -1,6 +1,6 @@
 <?php
 
-namespace Remorhaz\UniLex\RegExp\Test\FSM;
+namespace Remorhaz\UniLex\Test\RegExp\FSM;
 
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\RegExp\FSM\Nfa;
