@@ -2,6 +2,8 @@
 
 namespace Remorhaz\UniLex\RegExp\FSM;
 
+use Remorhaz\UniLex\Exception;
+
 class DfaBuilder
 {
 
@@ -12,23 +14,20 @@ class DfaBuilder
         $this->nfa = $nfa;
     }
 
-    public function getStateEpsilonMoves(int $state): array
+    public function getStateEpsilonMoves(int $stateIn): array
     {
-        $transitionList = $this
+        $moveList = $this
             ->nfa
             ->getEpsilonTransitionMap()
-            ->getTransitionList();
-        $result = array_keys($transitionList[$state] ?? []);
-        if (!in_array($state, $result)) {
-            $result[] = $state;
-        }
-        return $result;
+            ->findMoves($stateIn);
+        $moveList[$stateIn] = true;
+        return array_keys($moveList);
     }
 
-    public function getStateEpsilonClosure(int $state): array
+    public function getStateEpsilonClosure(int ...$stateList): array
     {
+        $notProcessedStateList = $stateList;
         $processedStateList = [];
-        $notProcessedStateList = [$state];
         while (!empty($notProcessedStateList)) {
             $nextState = array_pop($notProcessedStateList);
             $processedStateList[] = $nextState;

@@ -74,6 +74,11 @@ class TransitionMap
         return $this->transitionMap;
     }
 
+    public function findMoves(int $stateIn): array
+    {
+        return $this->transitionMap[$stateIn] ?? [];
+    }
+
     public function onEachTransition(callable $callback): void
     {
         foreach ($this->transitionMap as $stateIn => $stateOutMap) {
