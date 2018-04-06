@@ -3,35 +3,40 @@
 namespace Remorhaz\UniLex\Test\RegExp\FSM;
 
 use PHPUnit\Framework\TestCase;
-use Remorhaz\UniLex\RegExp\FSM\NfaCalc;
+use Remorhaz\UniLex\RegExp\FSM\Dfa;
+use Remorhaz\UniLex\RegExp\FSM\DfaBuilder;
 use Remorhaz\UniLex\RegExp\FSM\Nfa;
 use Remorhaz\UniLex\RegExp\FSM\RangeSet;
 
 /**
- * @covers \Remorhaz\UniLex\RegExp\FSM\NfaCalc
+ * @covers \Remorhaz\UniLex\RegExp\FSM\DfaBuilder
  */
-class NfaCalcTest extends TestCase
+class DfaBuilderTest extends TestCase
 {
 
     /**
      * @throws \Remorhaz\UniLex\Exception
      */
-    public function testGetEpsilonClosure_ValidNfa_ReturnsMatchingStateList(): void
+    public function testRun_ValidNfa_ReturnsMatchingDfa(): void
     {
-        $nfaCalc = new NfaCalc($this->createNfa());
-        $actualValue = $nfaCalc->getEpsilonClosure(0);
-        $expectedValue = [0, 1, 2, 4, 7];
-        self::assertSame($expectedValue, $actualValue);
-    }
-
-    /**
-     * @throws \Remorhaz\UniLex\Exception
-     */
-    public function testGetSymbolMoves_ValidNfa_ReturnsMatchingStateList(): void
-    {
-        $nfaCalc = new NfaCalc($this->createNfa());
-        $actualValue = $nfaCalc->getSymbolMoves(0, ...$nfaCalc->getEpsilonClosure(0));
-        self::assertEquals([3, 8], $actualValue);
+        $dfa = new Dfa;
+        $nfaBuilder = new DfaBuilder($dfa, $this->createNfa());
+        $nfaBuilder->run();
+        $rangeSetList = [];
+        foreach ($dfa->getSymbolTable()->getRangeSetList() as $symbolId => $rangeSet) {
+            $rangeSetList[$symbolId] = $rangeSet->export();
+        }
+        self::assertEquals([0 => [[0x61, 0x61]], 1 => [[0x62, 0x62]]], $rangeSetList);
+        self::assertEquals([1, 2, 3, 4, 5], $dfa->getStateMap()->getStateList());
+        $transitionList = $dfa->getTransitionMap()->getTransitionList();
+        $expectedTransitionList = [
+            1 => [2 => [0], 3 => [1]],
+            2 => [2 => [0], 4 => [1]],
+            3 => [2 => [0], 3 => [1]],
+            4 => [2 => [0], 5 => [1]],
+            5 => [2 => [0], 3 => [1]],
+        ];
+        self::assertEquals($expectedTransitionList, $transitionList);
     }
 
     /**

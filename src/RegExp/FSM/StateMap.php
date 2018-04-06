@@ -21,6 +21,14 @@ class StateMap implements StateMapInterface
     }
 
     /**
+     * @return int[]
+     */
+    public function getStateList(): array
+    {
+        return array_keys($this->stateList);
+    }
+
+    /**
      * @param int ...$stateList
      * @throws Exception
      */

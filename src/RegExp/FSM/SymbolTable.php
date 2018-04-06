@@ -74,4 +74,12 @@ class SymbolTable
     {
         return $this->rangeSetList;
     }
+
+    /**
+     * @return int[]
+     */
+    public function getSymbolList(): array
+    {
+        return array_keys($this->rangeSetList);
+    }
 }
