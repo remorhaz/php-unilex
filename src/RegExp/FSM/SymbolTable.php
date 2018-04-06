@@ -28,6 +28,20 @@ class SymbolTable
     /**
      * @param int $symbolId
      * @param RangeSet $rangeSet
+     * @throws Exception
+     */
+    public function importSymbol(int $symbolId, RangeSet $rangeSet): void
+    {
+        if (isset($this->rangeSetList[$symbolId])) {
+            throw new Exception("Symbol {$symbolId} already defined in symbol table");
+        }
+        $this->rangeSetList[$symbolId] = $rangeSet;
+        $this->nextSymbol = max(array_keys($this->rangeSetList));
+    }
+
+    /**
+     * @param int $symbolId
+     * @param RangeSet $rangeSet
      * @return SymbolTable
      * @throws Exception
      */

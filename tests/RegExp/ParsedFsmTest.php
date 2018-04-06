@@ -191,7 +191,6 @@ class ParsedFsmTest extends TestCase
         $rangeTransitionList[1][2] = [0];
         $epsilonTransitionList = [];
         $symbolTable = [];
-        $symbolTable = [];
         $symbolTable[0] = [[0x7F, 0x7F]];
         $data["Escaped Unicode symbol"] = ['\\c?', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
 

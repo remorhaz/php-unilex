@@ -21,6 +21,21 @@ class StateMap implements StateMapInterface
     }
 
     /**
+     * @param int ...$stateList
+     * @throws Exception
+     */
+    public function importState(int ...$stateList): void
+    {
+        foreach ($stateList as $stateId) {
+            if (isset($this->stateList[$stateId])) {
+                throw new Exception("State {$stateId} already exists");
+            }
+            $this->stateList[$stateId] = true;
+        }
+        $this->lastStateId = max(array_keys($this->stateList));
+    }
+
+    /**
      * @param int $stateId
      * @throws Exception
      */
