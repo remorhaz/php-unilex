@@ -79,16 +79,18 @@ class StateMap implements StateMapInterface
     }
 
     /**
-     * @param int $stateId
+     * @param int[] $stateList
      * @throws Exception
      */
-    public function addFinishState(int $stateId): void
+    public function addFinishState(int ...$stateList): void
     {
-        $validStateId = $this->getValidState($stateId);
-        if (isset($this->finishStateList[$validStateId])) {
-            throw new Exception("Finish state {$validStateId} is already set");
+        foreach ($stateList as $stateId) {
+            $validStateId = $this->getValidState($stateId);
+            if (isset($this->finishStateList[$validStateId])) {
+                throw new Exception("Finish state {$validStateId} is already set");
+            }
+            $this->finishStateList[$validStateId] = $this->stateList[$validStateId];
         }
-        $this->finishStateList[$validStateId] = $this->stateList[$validStateId];
     }
 
     /**
