@@ -13,10 +13,10 @@ class StateMap implements StateMapInterface
 
     private $startState;
 
-    public function createState(): int
+    public function createState($value = true): int
     {
         $stateId = ++$this->lastStateId;
-        $this->stateList[$stateId] = true;
+        $this->stateList[$stateId] = $value;
         return $stateId;
     }
 
@@ -32,13 +32,13 @@ class StateMap implements StateMapInterface
      * @param int ...$stateList
      * @throws Exception
      */
-    public function importState(int ...$stateList): void
+    public function importState($value, int ...$stateList): void
     {
         foreach ($stateList as $stateId) {
             if (isset($this->stateList[$stateId])) {
                 throw new Exception("State {$stateId} already exists");
             }
-            $this->stateList[$stateId] = true;
+            $this->stateList[$stateId] = $value;
         }
         $this->lastStateId = max(array_keys($this->stateList));
     }
@@ -70,6 +70,25 @@ class StateMap implements StateMapInterface
     public function stateExists(int $stateId): bool
     {
         return isset($this->stateList[$stateId]);
+    }
+
+    public function stateValueExists($value): bool
+    {
+        return false !== array_search($value, $this->stateList);
+    }
+
+    /**
+     * @param $value
+     * @return false|int|string
+     * @throws Exception
+     */
+    public function getValueState($value)
+    {
+        $stateId = array_search($value, $this->stateList);
+        if (false === $stateId) {
+            throw new Exception("Value not found in state map");
+        }
+        return $stateId;
     }
 
     /**

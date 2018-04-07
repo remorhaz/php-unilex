@@ -11,6 +11,8 @@ class DfaBuilder
 
     private $nfaCalc;
 
+    private $stateBuffer = [];
+
     public function __construct(Dfa $dfa, Nfa $nfa)
     {
         $this->dfa = $dfa;
@@ -22,43 +24,62 @@ class DfaBuilder
      */
     public function run(): void
     {
-        $dfaStateMap = [];
-        $notProcessedStateList = [];
-        $startStateId = $this->nfa->getStateMap()->getStartState();
-        $nfaStateList = $this->getNfaCalc()->getEpsilonClosure($startStateId);
-        $startState = $this->dfa->getStateMap()->createState();
-        $dfaStateMap[$startState] = $nfaStateList;
-        $this->dfa->getStateMap()->setStartState($startState);
-        $notProcessedStateList[] = [$startState, $nfaStateList];
-        // TODO: implement copy method in symbol table
-        foreach ($this->nfa->getSymbolTable()->getRangeSetList() as $symbolId => $rangeSet) {
-            $this->dfa->getSymbolTable()->addSymbol(clone $rangeSet);
-        }
-        while (!empty($notProcessedStateList)) {
-            [$stateIn, $nfaStateList] = array_pop($notProcessedStateList);
-            foreach ($this->dfa->getSymbolTable()->getRangeSetList() as $symbolId => $rangeSet) {
-                $symbolMoves = $this->getNfaCalc()->getSymbolMoves($symbolId, ...$nfaStateList);
-                if (empty($symbolMoves)) {
-                    continue;
+        $this->initStateBuffer();
+        while ($state = $this->getNextState()) {
+            [$dfaStateIn, $nfaStateInList] = $state;
+            foreach ($this->getMovesBySymbol(...$nfaStateInList) as $symbolId => $nfaStateOutList) {
+                $dfaStateOut = $this->createStateIfNotExists($isStateProcessed, ...$nfaStateOutList);
+                $this->mergeTransition($dfaStateIn, $dfaStateOut, $symbolId);
+                if (!$isStateProcessed) {
+                    $this->addNextState($dfaStateOut, ...$nfaStateOutList);
                 }
-                $nextStateList = $this->getNfaCalc()->getEpsilonClosure(...$symbolMoves);
-                $stateOut = array_search($nextStateList, $dfaStateMap);
-                if (false === $stateOut) {
-                    $stateOut = $this->dfa->getStateMap()->createState();
-                    $dfaStateMap[$stateOut] = $nextStateList;
-                    $notProcessedStateList[] = [$stateOut, $nextStateList];
-                }
-                $transitionExists = $this->dfa->getTransitionMap()->transitionExists($stateIn, $stateOut);
-                $symbolList = $transitionExists
-                    ? $this
-                        ->dfa
-                        ->getTransitionMap()
-                        ->getTransition($stateIn, $stateOut)
-                    : [];
-                $symbolList[] = $symbolId;
-                $this->dfa->getTransitionMap()->replaceTransition($stateIn, $stateOut, $symbolList);
             }
         }
+    }
+
+    private function getMovesBySymbol(int ...$nfaStateList): array
+    {
+        $result = [];
+        foreach ($this->dfa->getSymbolTable()->getSymbolList() as $symbolId) {
+            $symbolMoves = $this->getNfaCalc()->getSymbolMoves($symbolId, ...$nfaStateList);
+            $nextStateList = $this->getNfaCalc()->getEpsilonClosure(...$symbolMoves);
+            if (!empty($nextStateList)) {
+                $result[$symbolId] = $nextStateList;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param bool $exists
+     * @param int ...$nfaStateList
+     * @return int
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    private function createStateIfNotExists(&$exists, int ...$nfaStateList): int
+    {
+        $exists = $this->dfa->getStateMap()->stateValueExists($nfaStateList);
+        return $exists
+            ? $this->dfa->getStateMap()->getValueState($nfaStateList)
+            : $this->dfa->getStateMap()->createState($nfaStateList);
+    }
+
+    /**
+     * @param int $stateIn
+     * @param int $stateOut
+     * @param int $symbolId
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    private function mergeTransition(int $stateIn, int $stateOut, int $symbolId): void
+    {
+        $transitionMap = $this
+            ->dfa
+            ->getTransitionMap();
+        $symbolList = $transitionMap->transitionExists($stateIn, $stateOut)
+            ? $transitionMap->getTransition($stateIn, $stateOut)
+            : [];
+        $symbolList[] = $symbolId;
+        $transitionMap->replaceTransition($stateIn, $stateOut, $symbolList);
     }
 
     private function getNfaCalc(): NfaCalc
@@ -67,5 +88,28 @@ class DfaBuilder
             $this->nfaCalc = new NfaCalc($this->nfa);
         }
         return $this->nfaCalc;
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    private function initStateBuffer(): void
+    {
+        $this->dfa->setSymbolTable($this->nfa->getSymbolTable());
+        $startStateId = $this->nfa->getStateMap()->getStartState();
+        $nfaStateList = $this->getNfaCalc()->getEpsilonClosure($startStateId);
+        $startState = $this->dfa->getStateMap()->createState($nfaStateList);
+        $this->dfa->getStateMap()->setStartState($startState);
+        $this->stateBuffer = [[$startState, $nfaStateList]];
+    }
+
+    private function getNextState(): ?array
+    {
+        return array_pop($this->stateBuffer);
+    }
+
+    private function addNextState(int $dfaState, int ...$nfaStateList): void
+    {
+        $this->stateBuffer[] = [$dfaState, $nfaStateList];
     }
 }
