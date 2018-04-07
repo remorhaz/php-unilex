@@ -50,6 +50,10 @@ class NfaBuilder extends AbstractTranslatorListener
             ->setStartState($stateIn);
         $node->setAttribute('state_in', $stateIn);
         $stateOut = $this->createState();
+        $this
+            ->nfa
+            ->getStateMap()
+            ->addFinishState($stateOut);
         $node->setAttribute('state_out', $stateOut);
         $node->setAttribute('in_range', false);
     }
@@ -409,6 +413,10 @@ class NfaBuilder extends AbstractTranslatorListener
         return new Symbol($node, $index);
     }
 
+    /**
+     * @return int
+     * @throws Exception
+     */
     private function createState(): int
     {
         return $this

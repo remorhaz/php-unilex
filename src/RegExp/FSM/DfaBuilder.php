@@ -2,6 +2,8 @@
 
 namespace Remorhaz\UniLex\RegExp\FSM;
 
+use Remorhaz\UniLex\AST\Tree;
+
 class DfaBuilder
 {
 
@@ -17,6 +19,29 @@ class DfaBuilder
     {
         $this->dfa = $dfa;
         $this->nfa = $nfa;
+    }
+
+    /**
+     * @param Nfa $nfa
+     * @return Dfa
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public static function fromNfa(Nfa $nfa): Dfa
+    {
+        $dfa = new Dfa;
+        (new self($dfa, $nfa))->run();
+        return $dfa;
+    }
+
+    /**
+     * @param Tree $tree
+     * @return Dfa
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public static function fromTree(Tree $tree): Dfa
+    {
+        $nfa = NfaBuilder::fromTree($tree);
+        return self::fromNfa($nfa);
     }
 
     /**
@@ -58,10 +83,19 @@ class DfaBuilder
      */
     private function createStateIfNotExists(&$exists, int ...$nfaStateList): int
     {
-        $exists = $this->dfa->getStateMap()->stateValueExists($nfaStateList);
-        return $exists
-            ? $this->dfa->getStateMap()->getValueState($nfaStateList)
-            : $this->dfa->getStateMap()->createState($nfaStateList);
+        $dfaStateMap = $this->dfa->getStateMap();
+        $exists = $dfaStateMap->stateValueExists($nfaStateList);
+        if ($exists) {
+            return $dfaStateMap->getValueState($nfaStateList);
+        }
+        $dfaState = $dfaStateMap->createState($nfaStateList);
+        foreach ($nfaStateList as $nfaState) {
+            if ($this->nfa->getStateMap()->isFinishState($nfaState)) {
+                $dfaStateMap->addFinishState($dfaState);
+                break;
+            }
+        }
+        return $dfaState;
     }
 
     /**

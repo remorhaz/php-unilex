@@ -13,8 +13,18 @@ class StateMap implements StateMapInterface
 
     private $startState;
 
+    private $finishStateList = [];
+
+    /**
+     * @param bool $value
+     * @return int
+     * @throws Exception
+     */
     public function createState($value = true): int
     {
+        if (is_null($value)) {
+            throw new Exception("Null state value is not allowed");
+        }
         $stateId = ++$this->lastStateId;
         $this->stateList[$stateId] = $value;
         return $stateId;
@@ -29,6 +39,7 @@ class StateMap implements StateMapInterface
     }
 
     /**
+     * @param $value
      * @param int ...$stateList
      * @throws Exception
      */
@@ -65,6 +76,38 @@ class StateMap implements StateMapInterface
             throw new Exception("Start state is undefined");
         }
         return $this->startState;
+    }
+
+    /**
+     * @param int $stateId
+     * @throws Exception
+     */
+    public function addFinishState(int $stateId): void
+    {
+        $validStateId = $this->getValidState($stateId);
+        if (isset($this->finishStateList[$validStateId])) {
+            throw new Exception("Finish state {$validStateId} is already set");
+        }
+        $this->finishStateList[$validStateId] = $this->stateList[$validStateId];
+    }
+
+    /**
+     * @param int $stateId
+     * @return bool
+     * @throws Exception
+     */
+    public function isFinishState(int $stateId): bool
+    {
+        $validStateId = $this->getValidState($stateId);
+        return isset($this->finishStateList[$validStateId]);
+    }
+
+    /**
+     * @return int[]
+     */
+    public function getFinishStateList(): array
+    {
+        return array_keys($this->finishStateList);
     }
 
     public function stateExists(int $stateId): bool
