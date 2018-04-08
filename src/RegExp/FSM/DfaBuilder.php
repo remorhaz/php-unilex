@@ -3,6 +3,8 @@
 namespace Remorhaz\UniLex\RegExp\FSM;
 
 use Remorhaz\UniLex\AST\Tree;
+use Remorhaz\UniLex\CharBufferInterface;
+use Remorhaz\UniLex\RegExp\ParserFactory;
 
 class DfaBuilder
 {
@@ -31,6 +33,18 @@ class DfaBuilder
         $dfa = new Dfa;
         (new self($dfa, $nfa))->run();
         return $dfa;
+    }
+
+    /**
+     * @param CharBufferInterface $buffer
+     * @return Dfa
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public static function fromBuffer(CharBufferInterface $buffer): Dfa
+    {
+        $tree = new Tree;
+        ParserFactory::createFromBuffer($tree, $buffer)->run();
+        return DfaBuilder::fromTree($tree);
     }
 
     /**
