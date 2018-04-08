@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <project name="unilex" basedir="." default="all">
-    <target name="all" depends="prepare-dir,lookup-tables"/>
+    <target name="all" depends="prepare-dir,lookup-tables,token-matchers"/>
 
     <target name="prepare-dir" description="Prepares build directory">
         <mkdir dir="${application.startdir}/build/logs"/>
@@ -11,5 +11,11 @@
     <target name="regexp-lookup-table" description="Build RegExp LL(1) parser lookup table">
         <taskdef classname="phing.BuildRegExpLookupTable" name="regexp-lookup-table" />
         <regexp-lookup-table />
+    </target>
+
+    <target name="token-matchers" description="Generate token matchers" depends="unicode-utf8-matcher" />
+    <target name="unicode-utf8-matcher" description="Unicode UTF-8 matcher">
+        <taskdef classname="phing.BuildUnicodeUtf8TokenMatcher" name="unicode-utf8-matcher" />
+        <unicode-utf8-matcher />
     </target>
 </project>
