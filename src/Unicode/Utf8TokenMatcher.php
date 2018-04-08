@@ -2,6 +2,7 @@
 
 namespace Remorhaz\UniLex\Unicode;
 
+use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\Token;
 use Remorhaz\UniLex\TokenFactoryInterface;
 use Remorhaz\UniLex\TokenMatcherInterface;
@@ -12,23 +13,36 @@ use Remorhaz\UniLex\Unicode\Grammar\TokenType;
 class Utf8TokenMatcher implements TokenMatcherInterface
 {
 
+    private $token;
+
     /**
-     * @param CharBufferInterface $buffer
-     * @param TokenFactoryInterface $tokenFactory
      * @return Token
      * @throws \Remorhaz\UniLex\Exception
      */
-    public function match(CharBufferInterface $buffer, TokenFactoryInterface $tokenFactory): Token
+    public function getToken(): Token
     {
+        if (!isset($this->token)) {
+            throw new Exception("Token is not defined");
+        }
+        return $this->token;
+    }
+
+    /**
+     * @param CharBufferInterface $buffer
+     * @param TokenFactoryInterface $tokenFactory
+     * @return bool
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function match(CharBufferInterface $buffer, TokenFactoryInterface $tokenFactory): bool
+    {
+        unset($this->token);
         $symbol = null;
         $firstByte = $buffer->getSymbol();
         if ($firstByte >= 0 && $firstByte <= 0x7F) { // 1-byte symbol
-            //$symbolInfo = new SymbolInfo($firstByte);
             $buffer->nextSymbol();
-            $token = $tokenFactory->createToken(TokenType::SYMBOL);
-            $token->setAttribute(TokenAttribute::UNICODE_CHAR, $firstByte);
-            //$token->setMatcherInfo($symbolInfo);
-            return $token;
+            $this->token = $tokenFactory->createToken(TokenType::SYMBOL);
+            $this->token->setAttribute(TokenAttribute::UNICODE_CHAR, $firstByte);
+            return true;
         }
         if ($firstByte >= 0xC0 && $firstByte <= 0xDF) { // 2-byte symbol
             $symbol = ($firstByte & 0x1F) << 6;
@@ -97,17 +111,17 @@ class Utf8TokenMatcher implements TokenMatcherInterface
         $tailByte = $buffer->getSymbol();
         if ($tailByte >= 0x80 && $tailByte <= 0xBF) {
             $symbol |= ($tailByte & 0x3F);
-            //$symbolInfo = new SymbolInfo($symbol);
             $buffer->nextSymbol();
             $token = $tokenFactory->createToken(TokenType::SYMBOL);
             $token->setAttribute(TokenAttribute::UNICODE_CHAR, $symbol);
-            //$token->setMatcherInfo($symbolInfo);
-            return $token;
+            $this->token = $token;
+            return true;
         }
         goto invalid_byte;
 
         invalid_byte:
         $buffer->nextSymbol();
-        return $tokenFactory->createToken(TokenType::INVALID_BYTES);
+        $this->token = $tokenFactory->createToken(TokenType::INVALID_BYTES);
+        return true;
     }
 }

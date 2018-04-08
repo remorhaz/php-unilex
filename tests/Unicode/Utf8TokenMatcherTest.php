@@ -23,7 +23,9 @@ class Utf8TokenMatcherTest extends TestCase
     public function testMatch_ValidText_ReturnsSymbolToken(string $text): void
     {
         $buffer = CharBuffer::fromString($text);
-        $actual = (new Utf8TokenMatcher)->match($buffer, new TokenFactory)->getType();
+        $mather = new Utf8TokenMatcher;
+        $mather->match($buffer, new TokenFactory);
+        $actual = $mather->getToken()->getType();
         self::assertEquals(TokenType::SYMBOL, $actual);
     }
 
@@ -38,8 +40,9 @@ class Utf8TokenMatcherTest extends TestCase
         int $expectedSymbol
     ): void {
         $buffer = CharBuffer::fromString($text);
-        $actualValue = (new Utf8TokenMatcher)->match($buffer, new TokenFactory)
-            ->getAttribute(TokenAttribute::UNICODE_CHAR);
+        $matcher = new Utf8TokenMatcher;
+        $matcher->match($buffer, new TokenFactory);
+        $actualValue = $matcher->getToken()->getAttribute(TokenAttribute::UNICODE_CHAR);
         self::assertEquals($expectedSymbol, $actualValue);
     }
 
@@ -64,7 +67,9 @@ class Utf8TokenMatcherTest extends TestCase
     public function testMatch_InvalidText_ReturnsInvalidBytesToken(string $text): void
     {
         $buffer = CharBuffer::fromString($text);
-        $actual = (new Utf8TokenMatcher)->match($buffer, new TokenFactory)->getType();
+        $matcher = new Utf8TokenMatcher;
+        $matcher->match($buffer, new TokenFactory);
+        $actual = $matcher->getToken()->getType();
         self::assertEquals(TokenType::INVALID_BYTES, $actual);
     }
 

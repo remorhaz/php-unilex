@@ -3,11 +3,11 @@
 namespace Remorhaz\UniLex\Test\RegExp\FSM;
 
 use PHPUnit\Framework\TestCase;
-use Remorhaz\UniLex\AST\Tree;
 use Remorhaz\UniLex\CharBufferInterface;
 use Remorhaz\UniLex\RegExp\FSM\DfaBuilder;
 use Remorhaz\UniLex\RegExp\FSM\MatcherGenerator;
-use Remorhaz\UniLex\RegExp\ParserFactory;
+use Remorhaz\UniLex\Token;
+use Remorhaz\UniLex\TokenFactoryInterface;
 use Remorhaz\UniLex\Unicode\CharBufferFactory;
 
 /**
@@ -26,12 +26,32 @@ class MatcherGeneratorTest extends TestCase
         $generator = new MatcherGenerator($dfa);
         $generator->generate();
         $code = $generator->getOutput();
-        $closure = function (CharBufferInterface $buffer) use ($code) {
+        $closure = function (CharBufferInterface $buffer, TokenFactoryInterface $tokenFactory) use ($code) {
             return eval($code);
         };
-        $actualValue = $closure(CharBufferFactory::createFromUtf8String("aabb"));
+        $tokenFactory = $this->createTokenFactory();
+        $matchingBuffer = CharBufferFactory::createFromUtf8String("aabb");
+        $actualValue = $closure($matchingBuffer, $tokenFactory);
         self::assertTrue($actualValue);
-        $actualValue = $closure(CharBufferFactory::createFromUtf8String("bbbb"));
+        $notMatchingBuffer = CharBufferFactory::createFromUtf8String("bbbb");
+        $actualValue = $closure($notMatchingBuffer, $tokenFactory);
         self::assertFalse($actualValue);
+    }
+
+    private function createTokenFactory(): TokenFactoryInterface
+    {
+        return new class implements TokenFactoryInterface
+        {
+
+            public function createToken(int $tokenId): Token
+            {
+                return new Token($tokenId, false);
+            }
+
+            public function createEoiToken(): Token
+            {
+                return new Token(0xFF, true);
+            }
+        };
     }
 }

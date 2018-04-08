@@ -3,6 +3,7 @@
 namespace Remorhaz\UniLex\RegExp;
 
 use Remorhaz\UniLex\CharBufferInterface;
+use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\RegExp\Grammar\TokenAttribute;
 use Remorhaz\UniLex\RegExp\Grammar\TokenType;
 use Remorhaz\UniLex\Token;
@@ -12,14 +13,29 @@ use Remorhaz\UniLex\TokenMatcherInterface;
 class TokenMatcher implements TokenMatcherInterface
 {
 
+    private $token;
+
+    /**
+     * @return Token
+     * @throws Exception
+     */
+    public function getToken(): Token
+    {
+        if (!isset($this->token)) {
+            throw new Exception("Token is not defined");
+        }
+        return $this->token;
+    }
+
     /**
      * @param CharBufferInterface $buffer
      * @param TokenFactoryInterface $tokenFactory
-     * @return Token
+     * @return bool
      * @throws \Remorhaz\UniLex\Exception
      */
-    public function match(CharBufferInterface $buffer, TokenFactoryInterface $tokenFactory): Token
+    public function match(CharBufferInterface $buffer, TokenFactoryInterface $tokenFactory): bool
     {
+        unset($this->token);
         $symbol = $buffer->getSymbol();
         $attrList = [];
         if ($symbol >= 0x00 && $symbol <= 0x1F) {
@@ -212,11 +228,11 @@ class TokenMatcher implements TokenMatcherInterface
         valid_symbol:
         invalid_symbol:
         $buffer->nextSymbol();
-        $token = $tokenFactory->createToken($type);
-        $token->setAttribute(TokenAttribute::CODE, $symbol);
+        $this->token = $tokenFactory->createToken($type);
+        $this->token->setAttribute(TokenAttribute::CODE, $symbol);
         foreach ($attrList as $attrName => $attrValue) {
-            $token->setAttribute($attrName, $attrValue);
+            $this->token->setAttribute($attrName, $attrValue);
         }
-        return $token;
+        return true;
     }
 }

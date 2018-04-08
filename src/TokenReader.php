@@ -51,6 +51,7 @@ class TokenReader implements TokenReaderInterface
 
     private function matchSymbolToken(): Token
     {
-        return $this->matcher->match($this->buffer, $this->tokenFactory);
+        $this->matcher->match($this->buffer, $this->tokenFactory);
+        return $this->matcher->getToken();
     }
 }
