@@ -28,7 +28,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Remorhaz\\UniLex\\": "src/"
+      "Remorhaz\\UniLex\\": ["src/", "generated/"]
     }
   },
   "autoload-dev": {
