@@ -7,8 +7,10 @@ use Remorhaz\UniLex\AST\Node;
 use Remorhaz\UniLex\AST\Symbol;
 use Remorhaz\UniLex\AST\Translator;
 use Remorhaz\UniLex\AST\Tree;
+use Remorhaz\UniLex\CharBufferInterface;
 use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\RegExp\AST\NodeType;
+use Remorhaz\UniLex\RegExp\ParserFactory;
 use Remorhaz\UniLex\Stack\PushInterface;
 
 class NfaBuilder extends AbstractTranslatorListener
@@ -20,9 +22,23 @@ class NfaBuilder extends AbstractTranslatorListener
 
     private $languageBuilder;
 
+    private $startState;
+
     public function __construct(Nfa $nfa)
     {
         $this->nfa = $nfa;
+    }
+
+    /**
+     * @param CharBufferInterface $buffer
+     * @return Nfa
+     * @throws Exception
+     */
+    public static function fromBuffer(CharBufferInterface $buffer): Nfa
+    {
+        $tree = new Tree;
+        ParserFactory::createFromBuffer($tree, $buffer)->run();
+        return self::fromTree($tree);
     }
 
     /**
@@ -38,16 +54,24 @@ class NfaBuilder extends AbstractTranslatorListener
     }
 
     /**
+     * @param int $state
+     * @throws Exception
+     */
+    public function setStartState(int $state): void
+    {
+        if (isset($this->startState)) {
+            throw new Exception("Start state is already set");
+        }
+        $this->startState = $state;
+    }
+
+    /**
      * @param Node $node
      * @throws Exception
      */
     public function onStart(Node $node): void
     {
-        $stateIn = $this->createState();
-        $this
-            ->nfa
-            ->getStateMap()
-            ->setStartState($stateIn);
+        $stateIn = $this->getStartState();
         $node->setAttribute('state_in', $stateIn);
         $stateOut = $this->createState();
         $this
@@ -56,6 +80,22 @@ class NfaBuilder extends AbstractTranslatorListener
             ->addFinishState($stateOut);
         $node->setAttribute('state_out', $stateOut);
         $node->setAttribute('in_range', false);
+    }
+
+    /**
+     * @return int
+     * @throws Exception
+     */
+    private function getStartState(): int
+    {
+        if (!isset($this->startState)) {
+            $this->startState = $this->createState();
+            $this
+                ->nfa
+                ->getStateMap()
+                ->setStartState($this->startState);
+        }
+        return $this->startState;
     }
 
     /**
@@ -115,7 +155,12 @@ class NfaBuilder extends AbstractTranslatorListener
                 // Prefix concatenation construction
                 for ($index = 0; $index < $min; $index++) {
                     $stateIn = $stateOut ?? $node->getAttribute('state_in');
-                    $stateOut = $this->createState();
+                    $isLastNode =
+                        !$node->getAttribute('is_max_infinite') &&
+                        $index + 1 == $node->getAttribute('max');
+                    $stateOut = $isLastNode
+                        ? $node->getAttribute('state_out')
+                        : $this->createState();
                     $symbolList[] = $this->createSymbolFromClonedNodeChild($node, $stateIn, $stateOut);
                 }
                 if ($node->getAttribute('is_max_infinite')) {

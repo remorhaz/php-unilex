@@ -18,6 +18,7 @@
         <taskdef classname="phing.BuildUnicodeUtf8TokenMatcher" name="unicode-utf8-matcher" />
         <unicode-utf8-matcher
             configFile="${application.startdir}/src/Unicode/Grammar/Utf8Config.php"
+            outputFile="${application.startdir}/generated/Unicode/Grammar/Utf8TokenMatcher.php"
         />
     </target>
 </project>

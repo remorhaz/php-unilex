@@ -118,6 +118,22 @@ class ParsedFsmTest extends TestCase
 
         $rangeTransitionList = [];
         $rangeTransitionList[1][3] = [0];
+        $rangeTransitionList[3][4] = [1];
+        $rangeTransitionList[4][2] = [1];
+        $epsilonTransitionList = [];
+        $symbolTable = [];
+        $symbolTable[0] = [[0x61, 0x61]];
+        $symbolTable[1] = [[0x62, 0x62]];
+        $data["Concatenation of symbol and repeated symbol"] =
+            ['ab{2}', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
+
+        $rangeTransitionList = [];
+        $epsilonTransitionList = [];
+        $symbolTable = [];
+        $data["Single zero repeat"] = ['a{0}', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
+
+        $rangeTransitionList = [];
+        $rangeTransitionList[1][3] = [0];
         $rangeTransitionList[5][6] = [1];
         $rangeTransitionList[7][8] = [2];
         $rangeTransitionList[4][2] = [3];

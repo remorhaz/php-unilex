@@ -39,6 +39,16 @@ class StateMap implements StateMapInterface
     }
 
     /**
+     * @param int $stateId
+     * @return mixed
+     * @throws Exception
+     */
+    public function getStateValue(int $stateId)
+    {
+        return $this->stateList[$this->getValidState($stateId)];
+    }
+
+    /**
      * @param $value
      * @param int ...$stateList
      * @throws Exception
