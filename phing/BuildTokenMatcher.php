@@ -2,6 +2,9 @@
 
 use Remorhaz\UniLex\AST\Translator;
 use Remorhaz\UniLex\AST\Tree;
+use Remorhaz\UniLex\Lexer\TokenMatcherGenerator;
+use Remorhaz\UniLex\Lexer\TokenMatcherSpec;
+use Remorhaz\UniLex\Lexer\TokenSpec;
 use Remorhaz\UniLex\RegExp\FSM\DfaBuilder;
 use Remorhaz\UniLex\RegExp\FSM\Nfa;
 use Remorhaz\UniLex\RegExp\FSM\NfaBuilder;
@@ -34,6 +37,26 @@ class BuildTokenMatcher extends Task
     {
         $config = $this->getConfig();
         $this->log("Generating matcher class...");
+
+        $spec = new TokenMatcherSpec($config['class'], $config['template_class']);
+        $spec
+            ->addFileComment(...$this->getFileCommentLines())
+            ->setBeforeMatch(implode("\n", $config['before_match'] ?? []))
+            ->setOnError(implode("\n", $config['on_error'] ?? []));
+        foreach ($config['use'] ?? [] as $usedClassName) {
+            $spec->addUsedClass($usedClassName);
+        }
+        foreach ($config['token_list'] as $regExp => $tokenData) {
+            $tokenType = array_shift($tokenData);
+            $code = implode("\n", $tokenData);
+            $tokenSpec = new TokenSpec($regExp, $tokenType, $code);
+            $spec->addTokenSpec($tokenSpec);
+        }
+
+        $generator = new TokenMatcherGenerator($spec);
+        $generator->run();
+        //echo $generator->getOutput();
+
         $fullClass = $config['class'];
         $fullClassParts = explode('\\', $fullClass);
         $class = array_pop($fullClassParts);
@@ -238,5 +261,18 @@ class BuildTokenMatcher extends Task
             }
         }
         return $output;
+    }
+
+    private function getFileCommentLines(): array
+    {
+        return [
+            $this->getDescription(),
+            "",
+            "Auto-generated file, please don't edit manually.",
+            "Run following command to update this file:",
+            "    vendor/bin/phing {$this->getOwningTarget()->getName()}",
+            "",
+            "Phing version: {$this->getProject()->getPhingVersion()}"
+        ];
     }
 }
