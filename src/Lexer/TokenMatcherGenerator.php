@@ -32,16 +32,18 @@ class TokenMatcherGenerator
     }
 
     /**
-     * @throws \ReflectionException
+     * @return string
      * @throws Exception
+     * @throws \ReflectionException
      */
-    public function run(): void
+    public function buildOutput(): string
     {
-        $this->output =
+        return
             "<?php\n{$this->buildFileComment()}\n" .
             "namespace {$this->spec->getTargetNamespaceName()};\n" .
             "{$this->buildUseList()}\n" .
             "class {$this->spec->getTargetShortName()} extends {$this->spec->getTemplateClass()->getShortName()}\n" .
+            "{\n" .
             "\n" .
             "    public function match({$this->buildMatchParameters()}): bool\n" .
             "    {\n{$this->buildMatchBody()}" .
@@ -52,11 +54,12 @@ class TokenMatcherGenerator
     /**
      * @return string
      * @throws Exception
+     * @throws \ReflectionException
      */
     public function getOutput(): string
     {
         if (!isset($this->output)) {
-            throw new Exception("Token matcher output is undefined");
+            $this->output = $this->buildOutput();
         }
         return $this->output;
     }
@@ -70,7 +73,7 @@ class TokenMatcherGenerator
         $comment = "/**\n";
         $commentLineList = explode("\n", $content);
         foreach ($commentLineList as $commentLine) {
-            $comment .= " * {$commentLine}\n";
+            $comment .= rtrim(" * {$commentLine}") ."\n";
         }
         $comment .= " */\n";
         return $comment;
@@ -140,6 +143,10 @@ class TokenMatcherGenerator
         return $this->buildMethodPart("goto state{$this->getDfa()->getStateMap()->getStartState()};\n");
     }
 
+    /**
+     * @return string
+     * @throws Exception
+     */
     private function buildFsmMoves(): string
     {
         $result = '';
@@ -190,6 +197,7 @@ class TokenMatcherGenerator
                 $result .=
                     $this->buildMethodPart("\$tokenType = {$tokenSpec->getTokenType()};") .
                     $this->buildOnToken() .
+                    $this->buildMethodPart($tokenSpec->getCode()) .
                     $this->buildMethodPart("return true;\n");
                 continue;
             }
@@ -207,7 +215,7 @@ class TokenMatcherGenerator
             $this->buildMethodPart('' == $code ? "return false;" : $code);
     }
 
-    private function buildMethodPart(string $code): string
+    private function buildMethodPart(string $code, int $indent = 2): string
     {
         if ('' == $code) {
             return '';
@@ -215,19 +223,23 @@ class TokenMatcherGenerator
         $result = '';
         $codeLineList = explode("\n", $code);
         foreach ($codeLineList as $codeLine) {
-            $result .= "        {$codeLine}\n";
+            $line = '';
+            for ($i = 0; $i < $indent; $i++) {
+                $line .= "    ";
+            }
+            $result .= rtrim($line . $codeLine) . "\n";
         }
         return $result;
     }
 
     private function buildOnTransition(): string
     {
-        return '';
+        return $this->buildMethodPart($this->spec->getOnTransition(), 3);
     }
 
     private function buildOnToken(): string
     {
-        return '';
+        return $this->buildMethodPart($this->spec->getOnToken());
     }
 
     /**

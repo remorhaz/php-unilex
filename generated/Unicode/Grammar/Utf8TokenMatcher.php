@@ -1,4 +1,13 @@
 <?php
+/**
+ * Unicode UTF-8 token matcher.
+ *
+ * Auto-generated file, please don't edit manually.
+ * Run following command to update this file:
+ *     vendor/bin/phing unicode-utf8-matcher
+ *
+ * Phing version: 2.16.1
+ */
 
 namespace Remorhaz\UniLex\Unicode\Grammar;
 

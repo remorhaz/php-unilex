@@ -27,6 +27,10 @@ class TokenMatcherSpec
 
     private $onError = '';
 
+    private $onTransition = '';
+
+    private $onToken = '';
+
     private $tokenSpecList = [];
 
     public function __construct(string $targetClassName, string $templateClassName)
@@ -143,6 +147,28 @@ class TokenMatcherSpec
     public function getOnError(): string
     {
         return $this->onError;
+    }
+
+    public function setOnTransition(string $code): self
+    {
+        $this->onTransition = $code;
+        return $this;
+    }
+
+    public function getOnTransition(): string
+    {
+        return $this->onTransition;
+    }
+
+    public function setOnToken(string $code): self
+    {
+        $this->onToken = $code;
+        return $this;
+    }
+
+    public function getOnToken(): string
+    {
+        return $this->onToken;
     }
 
     /**
