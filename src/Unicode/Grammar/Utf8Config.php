@@ -20,6 +20,9 @@ return [
         "\$this->token = \$tokenFactory->createToken(\$tokenType);",
     ],
     'on_error' => [
+        "if (\$buffer->isEnd()) {",
+        "    return false;",
+        "}",
         "\$buffer->nextSymbol();",
         "\$this->token = \$tokenFactory->createToken(TokenType::INVALID_BYTES);",
         "return true;",
@@ -46,7 +49,7 @@ return [
             "\$this->token->setAttribute(TokenAttribute::UNICODE_CHAR, \$symbol);",
         ],
         // 4-byte symbol
-        '[\\xE0-\\xEF][\\x80-\\xBF]{3}' => [
+        '[\\xF0-\\xF7][\\x80-\\xBF]{3}' => [
             TokenType::SYMBOL,
             "\$symbol = (\$charList[0] & 0x07) << 18;",
             "\$symbol |= (\$charList[1] & 0x3F) << 12;",
@@ -55,7 +58,7 @@ return [
             "\$this->token->setAttribute(TokenAttribute::UNICODE_CHAR, \$symbol);",
         ],
         // 5-byte symbol
-        '[\\xE0-\\xEF][\\x80-\\xBF]{4}' => [
+        '[\\xF8-\\xFB][\\x80-\\xBF]{4}' => [
             TokenType::SYMBOL,
             "\$symbol = (\$charList[0] & 0x03) << 24;",
             "\$symbol |= (\$charList[1] & 0x3F) << 18;",
@@ -65,7 +68,7 @@ return [
             "\$this->token->setAttribute(TokenAttribute::UNICODE_CHAR, \$symbol);",
         ],
         // 6-byte symbol
-        '[\\xE0-\\xEF][\\x80-\\xBF]{5}' => [
+        '[\\xFC-\\xFD][\\x80-\\xBF]{5}' => [
             TokenType::SYMBOL,
             "\$symbol = (\$charList[0] & 0x01) << 30;",
             "\$symbol |= (\$charList[1] & 0x03) << 24;",

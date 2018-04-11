@@ -9,7 +9,7 @@ use Remorhaz\UniLex\RegExp\ParserFactory;
 use Remorhaz\UniLex\TokenMatcherInterface;
 use Remorhaz\UniLex\Unicode\CharBufferFactory;
 
-class BuildUnicodeUtf8TokenMatcher extends Task
+class BuildTokenMatcher extends Task
 {
 
     private $configFile;
@@ -84,7 +84,7 @@ class BuildUnicodeUtf8TokenMatcher extends Task
         $this->output .= "    {" . PHP_EOL;
 
         foreach ($config['before_match'] ?? [] as $codeString) {
-            $this->output .= "        " . trim($codeString) . PHP_EOL;
+            $this->output .= "        " . $codeString . PHP_EOL;
         }
 
         $nfa = new Nfa;
@@ -117,6 +117,11 @@ class BuildUnicodeUtf8TokenMatcher extends Task
             $this->output .= "        state{$stateIn}:" . PHP_EOL;
             $moves = $dfa->getTransitionMap()->findMoves($stateIn);
             if (!empty($moves)) {
+                $this->output .= "        if (\$buffer->isEnd()) {" . PHP_EOL;
+                $this->output .= $dfa->getStateMap()->isFinishState($stateIn)
+                    ? "            goto finish{$stateIn};" . PHP_EOL
+                    : "            goto error;" . PHP_EOL;
+                $this->output .= "        }" . PHP_EOL;
                 $this->output .= "        \$char = \$buffer->getSymbol();" . PHP_EOL;
             }
             foreach ($moves as $stateOut => $symbolList) {
@@ -131,7 +136,7 @@ class BuildUnicodeUtf8TokenMatcher extends Task
                     $condition = implode(" || ", $conditionList);
                     $this->output .= "        if ({$condition}) {" . PHP_EOL;
                     foreach ($config['on_transition'] ?? [] as $codeString) {
-                        $this->output .= "            " . trim($codeString) . PHP_EOL;
+                        $this->output .= "            " . $codeString . PHP_EOL;
                     }
                     $this->output .= "            \$buffer->nextSymbol();" . PHP_EOL;
                     $this->output .= "            goto state{$stateOut};" . PHP_EOL;
@@ -139,6 +144,9 @@ class BuildUnicodeUtf8TokenMatcher extends Task
                 }
             }
             if ($dfa->getStateMap()->isFinishState($stateIn)) {
+                if (!empty($moves)) {
+                    $this->output .= "        finish{$stateIn}:" . PHP_EOL;
+                }
                 $tokenData = null;
                 foreach ($dfa->getStateMap()->getStateValue($stateIn) as $nfaFinishState) {
                     if (isset($tokenNfaStateMap[$nfaFinishState])) {
@@ -154,7 +162,7 @@ class BuildUnicodeUtf8TokenMatcher extends Task
                 $this->output .= "        \$tokenType = {$tokenType};" . PHP_EOL;
                 $codeStringList = array_merge($config['on_token'] ?? [], $codeStringList);
                 foreach ($codeStringList as $codeString) {
-                    $this->output .= "        " . trim($codeString) . PHP_EOL;
+                    $this->output .= "        " . $codeString . PHP_EOL;
                 }
                 $this->output .= "        return true;" . PHP_EOL . PHP_EOL;
                 continue;
@@ -163,7 +171,7 @@ class BuildUnicodeUtf8TokenMatcher extends Task
         }
         $this->output .= "        error:" . PHP_EOL;
         foreach ($config['on_error'] ?? ["return false;"] as $codeString) {
-            $this->output .= "        " . trim($codeString) . PHP_EOL;
+            $this->output .= "        " . $codeString . PHP_EOL;
         }
 
         $this->output .= "    }" . PHP_EOL;
@@ -179,7 +187,6 @@ class BuildUnicodeUtf8TokenMatcher extends Task
             return;
         }
         $this->log("Done ({$result} bytes)!");
-
     }
 
     public function setConfigFile(string $configFile): void

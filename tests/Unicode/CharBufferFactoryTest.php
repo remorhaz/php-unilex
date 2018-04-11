@@ -5,7 +5,7 @@ namespace Remorhaz\UniLex\Test\Unicode;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\CharBuffer;
 use Remorhaz\UniLex\Unicode\CharBufferFactory;
-use Remorhaz\UniLex\Unicode\Utf8TokenMatcher;
+use Remorhaz\UniLex\Unicode\Grammar\Utf8TokenMatcher;
 
 /**
  * @covers \Remorhaz\UniLex\Unicode\CharBufferFactory

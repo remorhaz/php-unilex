@@ -1,16 +1,16 @@
 <?php
 
-namespace Remorhaz\UniLex\Test\Unicode;
+namespace Remorhaz\UniLex\Test\Unicode\Grammar;
 
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\CharBuffer;
 use Remorhaz\UniLex\Unicode\Grammar\TokenAttribute;
 use Remorhaz\UniLex\Unicode\Grammar\TokenType;
 use Remorhaz\UniLex\Unicode\Grammar\TokenFactory;
-use Remorhaz\UniLex\Unicode\Utf8TokenMatcher;
+use Remorhaz\UniLex\Unicode\Grammar\Utf8TokenMatcher;
 
 /**
- * @covers \Remorhaz\UniLex\Unicode\Utf8TokenMatcher
+ * @coversNothing
  */
 class Utf8TokenMatcherTest extends TestCase
 {

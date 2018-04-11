@@ -8,7 +8,7 @@ use Remorhaz\UniLex\TokenReader;
 use Remorhaz\UniLex\Unicode\Grammar\TokenAttribute;
 use Remorhaz\UniLex\Unicode\Grammar\TokenType;
 use Remorhaz\UniLex\Unicode\Grammar\TokenFactory;
-use Remorhaz\UniLex\Unicode\Utf8TokenMatcher;
+use Remorhaz\UniLex\Unicode\Grammar\Utf8TokenMatcher;
 
 /**
  * @covers \Remorhaz\UniLex\TokenReader

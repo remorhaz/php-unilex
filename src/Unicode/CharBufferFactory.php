@@ -8,6 +8,7 @@ use Remorhaz\UniLex\TokenReader;
 use Remorhaz\UniLex\CharBuffer;
 use Remorhaz\UniLex\CharBufferInterface;
 use Remorhaz\UniLex\Unicode\Grammar\TokenFactory;
+use Remorhaz\UniLex\Unicode\Grammar\Utf8TokenMatcher;
 
 abstract class CharBufferFactory
 {
