@@ -10,7 +10,7 @@ use Remorhaz\UniLex\Unicode\Grammar\TokenFactory;
 use Remorhaz\UniLex\Unicode\Grammar\Utf8TokenMatcher;
 
 /**
- * @coversNothing
+ * @covers \Remorhaz\UniLex\Unicode\Grammar\Utf8TokenMatcher
  */
 class Utf8TokenMatcherTest extends TestCase
 {

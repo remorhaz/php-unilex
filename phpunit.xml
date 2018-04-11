@@ -9,6 +9,7 @@
         <testsuite name="all">
             <directory>tests/</directory>
             <directory>examples/tests/</directory>
+            <directory>generated/</directory>
         </testsuite>
         <testsuite name="examples">
             <directory>examples/tests/</directory>
@@ -16,12 +17,16 @@
         <testsuite name="library">
             <directory>tests/</directory>
         </testsuite>
+        <testsuite name="generated">
+            <directory>generated/</directory>
+        </testsuite>
     </testsuites>
     <filter>
         <whitelist
                 processUncoveredFilesFromWhitelist="true">
             <directory suffix=".php">src/</directory>
             <directory suffix=".php">examples/src/</directory>
+            <directory suffix=".php">generated/</directory>
         </whitelist>
     </filter>
 </phpunit>
