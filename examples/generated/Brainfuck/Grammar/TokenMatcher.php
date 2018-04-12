@@ -9,10 +9,9 @@
  * Phing version: 2.16.1
  */
 
-namespace Remorhaz\UniLex\Example\Brainfuck;
+namespace Remorhaz\UniLex\Example\Brainfuck\Grammar;
 
 use Remorhaz\UniLex\CharBufferInterface;
-use Remorhaz\UniLex\Example\Brainfuck\Grammar\TokenType;
 use Remorhaz\UniLex\TokenFactoryInterface;
 use Remorhaz\UniLex\TokenMatcherTemplate;
 

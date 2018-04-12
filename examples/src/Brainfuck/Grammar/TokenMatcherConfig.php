@@ -5,7 +5,7 @@ namespace Remorhaz\UniLex\Example\Brainfuck\Grammar;
 use Remorhaz\UniLex\TokenMatcherTemplate;
 
 return [
-    'class' => 'Remorhaz\UniLex\Example\Brainfuck\TokenMatcher',
+    'class' => 'Remorhaz\UniLex\Example\Brainfuck\Grammar\TokenMatcher',
     'template_class' => TokenMatcherTemplate::class,
     'use' => [
         TokenType::class,

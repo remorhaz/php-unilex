@@ -20,6 +20,7 @@ return [
         SymbolType::T_INPUT => TokenType::INPUT,
         SymbolType::T_LOOP => TokenType::LOOP,
         SymbolType::T_END_LOOP => TokenType::END_LOOP,
+        SymbolType::T_EOI => TokenType::EOI,
     ],
 
     /**
@@ -40,14 +41,12 @@ return [
             [],
         ],
         SymbolType::NT_COMMAND => [
-            [
-                SymbolType::T_NEXT,
-                SymbolType::T_PREV,
-                SymbolType::T_INC,
-                SymbolType::T_DEC,
-                SymbolType::T_OUTPUT,
-                SymbolType::T_INPUT,
-            ],
+            [SymbolType::T_NEXT],
+            [SymbolType::T_PREV],
+            [SymbolType::T_INC],
+            [SymbolType::T_DEC],
+            [SymbolType::T_OUTPUT],
+            [SymbolType::T_INPUT],
         ],
         SymbolType::NT_LOOP => [
             [SymbolType::T_LOOP, SymbolType::NT_EXPRESSION, SymbolType::T_END_LOOP],
