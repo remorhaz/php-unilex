@@ -2,53 +2,77 @@
 
 namespace Remorhaz\UniLex\Example\Brainfuck;
 
-use Remorhaz\UniLex\CharBuffer;
-use Remorhaz\UniLex\CharBufferInterface;
 use Remorhaz\UniLex\Example\Brainfuck\Grammar\TokenMatcher;
 use Remorhaz\UniLex\Example\Brainfuck\Grammar\TranslationScheme;
+use Remorhaz\UniLex\Grammar\ContextFree\Grammar;
 use Remorhaz\UniLex\Grammar\ContextFree\GrammarLoader;
-use Remorhaz\UniLex\Grammar\ContextFree\TokenFactory as BrainfuckTokenFactory;
+use Remorhaz\UniLex\Grammar\ContextFree\TokenFactory;
 use Remorhaz\UniLex\Parser\LL1\Parser;
 use Remorhaz\UniLex\Parser\LL1\TranslationSchemeApplier;
-use Remorhaz\UniLex\TokenBuffer;
-use Remorhaz\UniLex\TokenMatcherInterface;
 use Remorhaz\UniLex\TokenReader;
-use Remorhaz\UniLex\Unicode\CharFactory;
-use Remorhaz\UniLex\Unicode\Grammar\Utf8TokenMatcher;
-use Remorhaz\UniLex\Unicode\Grammar\TokenFactory as UnicodeTokenFactory;
+use Remorhaz\UniLex\Unicode\CharBufferFactory;
 
 class Interpreter
 {
 
-    private $unicodeMatcher;
+    private $grammar;
+
+    private $output;
 
 
     /**
      * @param string $text
      * @throws \Remorhaz\UniLex\Exception
+     * @throws Exception
      */
     public function exec(string $text): void
     {
-        $buffer = $this->createUnicodeBuffer($text);
-        $grammar = GrammarLoader::loadFile(__DIR__ . "/Grammar/Config.php");
-        $tokenReader = new TokenReader($buffer, new TokenMatcher, new BrainfuckTokenFactory($grammar));
-        $translator = new TranslationSchemeApplier(new TranslationScheme());
-        $parser = new Parser($grammar, $tokenReader, $translator);
-        $parser->run();
+        unset($this->output);
+        $runtime = new Runtime;
+        $this
+            ->createParser($text, $runtime)
+            ->run();
+        $runtime->exec();
+        $this->output = $runtime->getOutput();
     }
 
-    private function getUnicodeMatcher(): TokenMatcherInterface
+    /**
+     * @return string
+     * @throws Exception
+     */
+    public function getOutput(): string
     {
-        if (!isset($this->unicodeMatcher)) {
-            $this->unicodeMatcher = new Utf8TokenMatcher;
+        if (!isset($this->output)) {
+            throw new Exception("Output is not defined");
         }
-        return $this->unicodeMatcher;
+        return $this->output;
     }
 
-    private function createUnicodeBuffer(string $text): CharBufferInterface
+    /**
+     * @return Grammar
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    private function getGrammar(): Grammar
     {
-        $textBuffer = CharBuffer::fromString($text);
-        $tokenReader = new TokenReader($textBuffer, $this->getUnicodeMatcher(), new UnicodeTokenFactory);
-        return new TokenBuffer($tokenReader, new CharFactory);
+        if (!isset($this->grammar)) {
+            $this->grammar = GrammarLoader::loadFile(__DIR__ . "/Grammar/Config.php");
+        }
+        return $this->grammar;
+    }
+
+    /**
+     * @param string $text
+     * @param Runtime $runtime
+     * @return Parser
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    private function createParser(string $text, Runtime $runtime): Parser
+    {
+        $buffer = CharBufferFactory::createFromUtf8String($text);
+        $tokenReader = new TokenReader($buffer, new TokenMatcher, new TokenFactory($this->getGrammar()));
+        $translator = new TranslationSchemeApplier(new TranslationScheme($runtime));
+        $parser = new Parser($this->getGrammar(), $tokenReader, $translator);
+        $parser->loadLookupTable(__DIR__ . "/../../generated/Brainfuck/Grammar/LookupTable.php");
+        return $parser;
     }
 }
