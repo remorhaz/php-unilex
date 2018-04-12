@@ -24,6 +24,6 @@ return [
         "\\." => [TokenType::OUTPUT],
         "," => [TokenType::INPUT],
         "\\[" => [TokenType::LOOP],
-        "]" => [TokenType::ENDLOOP],
+        "]" => [TokenType::END_LOOP],
     ],
 ];
