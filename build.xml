@@ -1,25 +1,49 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <project name="unilex" basedir="." default="all">
+    <taskdef classname="phing.BuildTokenMatcher" name="build-token-matcher" />
+    <taskdef classname="phing.BuildLl1LookupTable" name="build-ll1-lookup-table" />
+
     <target name="all" depends="prepare-dir,lookup-tables,token-matchers"/>
 
     <target name="prepare-dir" description="Prepares build directory">
         <mkdir dir="${application.startdir}/build/logs"/>
     </target>
 
-    <target name="lookup-tables" description="Build LL(1) parser lookup tables" depends="regexp-lookup-table" />
+    <target
+        name="lookup-tables"
+        description="Build LL(1) parser lookup tables"
+        depends="regexp-lookup-table, example-brainfuck-table" />
     <target name="regexp-lookup-table" description="Build RegExp LL(1) parser lookup table">
-        <taskdef classname="phing.BuildRegExpLookupTable" name="regexp-lookup-table" />
-        <regexp-lookup-table />
+        <build-ll1-lookup-table
+            description="RegExp LL(1) parser lookup table."
+            symbolClassName="Remorhaz\UniLex\RegExp\Grammar\SymbolType"
+            tokenClassName="Remorhaz\UniLex\RegExp\Grammar\TokenType"
+            configFile="${application.startdir}/src/RegExp/Grammar/Config.php"
+            destFile="${application.startdir}/generated/RegExp/Grammar/LookupTable.php" />
+    </target>
+    <target name="example-brainfuck-table" description="Build Brainfuck LL(1) parser lookup table">
+        <build-ll1-lookup-table
+            description="Brainfuck LL(1) parser lookup table."
+            symbolClassName="Remorhaz\UniLex\Example\Brainfuck\Grammar\SymbolType"
+            tokenClassName="Remorhaz\UniLex\Example\Brainfuck\Grammar\TokenType"
+            configFile="${application.startdir}/examples/src/Brainfuck/Grammar/Config.php"
+            destFile="${application.startdir}/examples/generated/Brainfuck/Grammar/LookupTable.php" />
     </target>
 
-    <target name="token-matchers" description="Generate token matchers" depends="unicode-utf8-matcher" />
-    <target name="unicode-utf8-matcher" description="Unicode UTF-8 matcher">
-        <taskdef classname="phing.BuildTokenMatcher" name="unicode-utf8-matcher" />
-        <unicode-utf8-matcher
+    <target name="token-matchers"
+        description="Generate token matchers"
+        depends="unicode-utf8-matcher, example-brainfuck-matcher" />
+    <target name="unicode-utf8-matcher" description="Unicode UTF-8 token matcher">
+        <build-token-matcher
             description="Unicode UTF-8 token matcher."
             configFile="${application.startdir}/src/Unicode/Grammar/Utf8Config.php"
-            outputFile="${application.startdir}/generated/Unicode/Grammar/Utf8TokenMatcher.php"
-        />
+            outputFile="${application.startdir}/generated/Unicode/Grammar/Utf8TokenMatcher.php" />
+    </target>
+    <target name="example-brainfuck-matcher" description="Example Brainfuck token matcher">
+        <build-token-matcher
+            description="Brainfuck token matcher."
+            configFile="${application.startdir}/examples/src/Brainfuck/Grammar/TokenMatcherConfig.php"
+            outputFile="${application.startdir}/examples/generated/Brainfuck/Grammar/TokenMatcher.php" />
     </target>
 </project>

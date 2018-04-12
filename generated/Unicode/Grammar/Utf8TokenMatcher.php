@@ -13,8 +13,9 @@ namespace Remorhaz\UniLex\Unicode\Grammar;
 
 use Remorhaz\UniLex\CharBufferInterface;
 use Remorhaz\UniLex\TokenFactoryInterface;
+use Remorhaz\UniLex\TokenMatcherTemplate;
 
-class Utf8TokenMatcher extends Utf8TokenMatcherTemplate
+class Utf8TokenMatcher extends TokenMatcherTemplate
 {
 
     public function match(CharBufferInterface $buffer, TokenFactoryInterface $tokenFactory): bool

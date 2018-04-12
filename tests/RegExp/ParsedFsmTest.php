@@ -228,6 +228,13 @@ class ParsedFsmTest extends TestCase
         $rangeTransitionList[1][2] = [0];
         $epsilonTransitionList = [];
         $symbolTable = [];
+        $symbolTable[0] = [[0x2E, 0x2E]];
+        $data["Escaped meta-symbol"] = ['\\.', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
+
+        $rangeTransitionList = [];
+        $rangeTransitionList[1][2] = [0];
+        $epsilonTransitionList = [];
+        $symbolTable = [];
         $symbolTable[0] = [[0x61, 0x62]];
         $data["Two neighbour symbols in a class"] =
             ['[ab]', $rangeTransitionList, $epsilonTransitionList, $symbolTable];

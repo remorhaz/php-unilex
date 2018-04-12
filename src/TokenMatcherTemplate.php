@@ -1,12 +1,8 @@
 <?php
 
-namespace Remorhaz\UniLex\Unicode\Grammar;
+namespace Remorhaz\UniLex;
 
-use Remorhaz\UniLex\Exception;
-use Remorhaz\UniLex\Token;
-use Remorhaz\UniLex\TokenMatcherInterface;
-
-abstract class Utf8TokenMatcherTemplate implements TokenMatcherInterface
+abstract class TokenMatcherTemplate implements TokenMatcherInterface
 {
 
     protected $token;
