@@ -1,6 +1,6 @@
 <?php
 /**
- * RegExp lookup table for usage with LL(1) parser.
+ * RegExp LL(1) parser lookup table.
  *
  * Auto-generated file, please don't edit manually.
  * Run following command to update this file:

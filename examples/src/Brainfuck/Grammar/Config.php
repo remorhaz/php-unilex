@@ -36,6 +36,7 @@ return [
         ],
         SymbolType::NT_EXPRESSION => [
             [SymbolType::NT_COMMAND, SymbolType::NT_EXPRESSION],
+            [SymbolType::NT_LOOP, SymbolType::NT_EXPRESSION],
             [],
         ],
         SymbolType::NT_COMMAND => [
@@ -47,6 +48,9 @@ return [
                 SymbolType::T_OUTPUT,
                 SymbolType::T_INPUT,
             ],
+        ],
+        SymbolType::NT_LOOP => [
+            [SymbolType::T_LOOP, SymbolType::NT_EXPRESSION, SymbolType::T_END_LOOP],
         ],
     ],
 

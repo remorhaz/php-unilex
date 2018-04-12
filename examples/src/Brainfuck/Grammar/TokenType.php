@@ -13,4 +13,6 @@ class TokenType
     public const INPUT      = 0x06;
     public const LOOP       = 0x07;
     public const END_LOOP   = 0x08;
+
+    public const EOI        = 0xFF;
 }
