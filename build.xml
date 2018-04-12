@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <project name="unilex" basedir="." default="all">
+    <taskdef classname="phing.BuildTokenMatcher" name="build-token-matcher" />
+
     <target name="all" depends="prepare-dir,lookup-tables,token-matchers"/>
 
     <target name="prepare-dir" description="Prepares build directory">
@@ -13,13 +15,21 @@
         <regexp-lookup-table />
     </target>
 
-    <target name="token-matchers" description="Generate token matchers" depends="unicode-utf8-matcher" />
-    <target name="unicode-utf8-matcher" description="Unicode UTF-8 matcher">
-        <taskdef classname="phing.BuildTokenMatcher" name="unicode-utf8-matcher" />
-        <unicode-utf8-matcher
+    <target name="token-matchers"
+        description="Generate token matchers"
+        depends="unicode-utf8-matcher, example-brainfuck-matcher" />
+    <target name="unicode-utf8-matcher" description="Unicode UTF-8 token matcher">
+        <build-token-matcher
             description="Unicode UTF-8 token matcher."
             configFile="${application.startdir}/src/Unicode/Grammar/Utf8Config.php"
             outputFile="${application.startdir}/generated/Unicode/Grammar/Utf8TokenMatcher.php"
+        />
+    </target>
+    <target name="example-brainfuck-matcher" description="Example Brainfuck token matcher">
+        <build-token-matcher
+            description="Brainfuck token matcher."
+            configFile="${application.startdir}/examples/src/Brainfuck/Grammar/TokenMatcherConfig.php"
+            outputFile="${application.startdir}/examples/generated/Brainfuck/Grammar/TokenMatcher.php"
         />
     </target>
 </project>

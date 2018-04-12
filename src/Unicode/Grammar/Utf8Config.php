@@ -2,9 +2,11 @@
 
 namespace Remorhaz\UniLex\Unicode\Grammar;
 
+use Remorhaz\UniLex\TokenMatcherTemplate;
+
 return [
     'class' => 'Remorhaz\UniLex\Unicode\Grammar\Utf8TokenMatcher',
-    'template_class' => Utf8TokenMatcherTemplate::class,
+    'template_class' => TokenMatcherTemplate::class,
     'use' => [
         TokenAttribute::class,
         TokenType::class,
