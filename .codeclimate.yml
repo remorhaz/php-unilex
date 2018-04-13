@@ -1,6 +1,7 @@
 version: 2
 exclude_patterns:
   - "build/"
-  - "generated/"
-  - "tests/"
+  - "doc/"
+  - "**/generated/"
+  - "**/tests/"
   - "vendor/"
