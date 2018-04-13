@@ -4,7 +4,6 @@ namespace Remorhaz\UniLex\Example\Brainfuck;
 
 use Remorhaz\UniLex\Example\Brainfuck\Grammar\TokenMatcher;
 use Remorhaz\UniLex\Example\Brainfuck\Grammar\TranslationScheme;
-use Remorhaz\UniLex\Grammar\ContextFree\Grammar;
 use Remorhaz\UniLex\Grammar\ContextFree\GrammarLoader;
 use Remorhaz\UniLex\Grammar\ContextFree\TokenFactory;
 use Remorhaz\UniLex\Parser\LL1\Parser;
@@ -14,8 +13,6 @@ use Remorhaz\UniLex\Unicode\CharBufferFactory;
 
 class Interpreter
 {
-
-    private $grammar;
 
     private $output;
 
@@ -49,18 +46,6 @@ class Interpreter
     }
 
     /**
-     * @return Grammar
-     * @throws \Remorhaz\UniLex\Exception
-     */
-    private function getGrammar(): Grammar
-    {
-        if (!isset($this->grammar)) {
-            $this->grammar = GrammarLoader::loadFile(__DIR__ . "/Grammar/Config.php");
-        }
-        return $this->grammar;
-    }
-
-    /**
      * @param string $text
      * @param Runtime $runtime
      * @return Parser
@@ -69,9 +54,10 @@ class Interpreter
     private function createParser(string $text, Runtime $runtime): Parser
     {
         $buffer = CharBufferFactory::createFromUtf8String($text);
-        $tokenReader = new TokenReader($buffer, new TokenMatcher, new TokenFactory($this->getGrammar()));
+        $grammar = GrammarLoader::loadFile(__DIR__ . "/Grammar/Config.php");
+        $tokenReader = new TokenReader($buffer, new TokenMatcher, new TokenFactory($grammar));
         $translator = new TranslationSchemeApplier(new TranslationScheme($runtime));
-        $parser = new Parser($this->getGrammar(), $tokenReader, $translator);
+        $parser = new Parser($grammar, $tokenReader, $translator);
         $parser->loadLookupTable(__DIR__ . "/../../generated/Brainfuck/Grammar/LookupTable.php");
         return $parser;
     }
