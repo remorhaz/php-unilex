@@ -24,7 +24,9 @@ vendor/bin/phing example-brainfuck-table
 ```
 Result of generation procedure is `generated/Brainfuck/Grammar/LookupTable.php` file that returns table as an array on inclusion.
 ## SDT scheme
-Interpreter uses syntax-driven translation scheme to put commands in a buffer. Most of commands can be constructed just after arriving of corresponding token in input stream (`TranslationSchemeInterface::applyTokenActions()` method), and only the "end of loop" non-terminal requires additional workaround to set up command index shifts after parsing LOOP production (`TranslationSchemeInterface::applyProductionActions()` method).
+Interpreter uses syntax-driven translation scheme to put commands in runtime buffer. Most of commands can be constructed just after arriving of corresponding token in input stream (`TranslationSchemeInterface::applyTokenActions()` method), and only the "end of loop" non-terminal requires additional workaround to set up command index shifts after parsing LOOP production (`TranslationSchemeInterface::applyProductionActions()` method).
+## Runtime
+Brainfuck runtime is very simple and consists of command buffer, data buffer and few commands that implement language semantics.
 ## Code example
 ```php
     $code =
