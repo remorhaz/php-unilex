@@ -15,7 +15,7 @@ class InterpreterTest extends TestCase
      * @throws \Remorhaz\UniLex\Example\Brainfuck\Exception
      * @throws \Remorhaz\UniLex\Exception
      */
-    public function testRun_ValidInput_MatchingOutput(): void
+    public function testExec_ValidInput_GetOutputReturnsMatchingValue(): void
     {
         $code =
             "++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++" .
@@ -25,5 +25,15 @@ class InterpreterTest extends TestCase
         $interpreter->exec($code);
         $actualValue = $interpreter->getOutput();
         self::assertSame("Hello World!\n", $actualValue);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Example\Brainfuck\Exception
+     * @expectedException \Remorhaz\UniLex\Example\Brainfuck\Exception
+     * @expectedExceptionMessage Output is not defined
+     */
+    public function testGetOutput_NoExecCalled_ThrowsException(): void
+    {
+        (new Interpreter)->getOutput();
     }
 }

@@ -19,8 +19,8 @@ class Interpreter
 
     /**
      * @param string $text
-     * @throws \Remorhaz\UniLex\Exception
      * @throws Exception
+     * @throws \Remorhaz\UniLex\Exception
      */
     public function exec(string $text): void
     {
