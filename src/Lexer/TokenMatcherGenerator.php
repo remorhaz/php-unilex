@@ -214,7 +214,12 @@ class TokenMatcherGenerator
                 ? "\$char == {$range->getStart()}"
                 : "{$range->getStart()} <= \$char && \$char <= {$range->getFinish()}";
         }
-        return implode(" || ", $conditionList);
+        $result = implode(" || ", $conditionList);
+        if (strlen($result) + 15 <= 120) {
+            return $result;
+        }
+        $result = $this->buildMethodPart(implode(" ||\n", $conditionList), 1);
+        return ltrim($result);
     }
 
     /**

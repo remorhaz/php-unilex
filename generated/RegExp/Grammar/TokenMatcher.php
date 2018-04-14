@@ -32,7 +32,14 @@ class TokenMatcher extends TokenMatcherTemplate
             $buffer->nextSymbol();
             goto state2;
         }
-        if (32 <= $char && $char <= 35 || 37 <= $char && $char <= 39 || $char == 47 || 58 <= $char && $char <= 62 || $char == 64 || 95 <= $char && $char <= 96 || $char == 126) {
+        if (32 <= $char && $char <= 35 ||
+            37 <= $char && $char <= 39 ||
+            $char == 47 ||
+            58 <= $char && $char <= 62 ||
+            $char == 64 ||
+            95 <= $char && $char <= 96 ||
+            $char == 126
+        ) {
             $buffer->nextSymbol();
             goto state3;
         }
@@ -88,7 +95,13 @@ class TokenMatcher extends TokenMatcherTemplate
             $buffer->nextSymbol();
             goto state16;
         }
-        if (71 <= $char && $char <= 79 || 81 <= $char && $char <= 90 || 103 <= $char && $char <= 110 || 113 <= $char && $char <= 116 || 118 <= $char && $char <= 119 || 121 <= $char && $char <= 122) {
+        if (71 <= $char && $char <= 79 ||
+            81 <= $char && $char <= 90 ||
+            103 <= $char && $char <= 110 ||
+            113 <= $char && $char <= 116 ||
+            118 <= $char && $char <= 119 ||
+            121 <= $char && $char <= 122
+        ) {
             $buffer->nextSymbol();
             goto state17;
         }
