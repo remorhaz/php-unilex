@@ -61,7 +61,7 @@ class TokenMatcherGenerator
      */
     public function load(): TokenMatcherInterface
     {
-        $targetClass = $this->spec->getTargetNamespaceName() . '\\' . $this->spec->getTargetShortName();
+        $targetClass = $this->spec->getTargetClassName();
         if (!class_exists($targetClass)) {
             try {
                 $source = $this->getOutput();

@@ -51,6 +51,11 @@ class TokenMatcherSpec
         return $this->templateClass;
     }
 
+    public function getTargetClassName(): string
+    {
+        return $this->targetClassName;
+    }
+
     /**
      * @param string $name
      * @param string|null $alias
@@ -198,7 +203,7 @@ class TokenMatcherSpec
     private function splitTargetClassName(): array
     {
         $nameSpaceSeparator = '\\';
-        $classNameParts = explode($nameSpaceSeparator, $this->targetClassName);
+        $classNameParts = explode($nameSpaceSeparator, $this->getTargetClassName());
         $className = array_pop($classNameParts);
         $namespaceName = implode($nameSpaceSeparator, $classNameParts);
         return [$namespaceName, $className];
