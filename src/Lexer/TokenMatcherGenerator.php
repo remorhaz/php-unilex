@@ -210,9 +210,16 @@ class TokenMatcherGenerator
     {
         $conditionList = [];
         foreach ($rangeSet->getRanges() as $range) {
-            $conditionList[] = $range->getStart() == $range->getFinish()
-                ? "\$char == {$range->getStart()}"
-                : "{$range->getStart()} <= \$char && \$char <= {$range->getFinish()}";
+            if ($range->getStart() == $range->getFinish()) {
+                $conditionList[] = "\$char == {$range->getStart()}";
+                continue;
+            }
+            if ($range->getStart() + 1 == $range->getFinish()) {
+                $conditionList[] = "\$char == {$range->getStart()}";
+                $conditionList[] = "\$char == {$range->getFinish()}";
+                continue;
+            }
+            $conditionList[] = "{$range->getStart()} <= \$char && \$char <= {$range->getFinish()}";
         }
         $result = implode(" || ", $conditionList);
         if (strlen($result) + 15 <= 120) {

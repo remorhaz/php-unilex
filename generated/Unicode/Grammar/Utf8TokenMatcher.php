@@ -54,7 +54,7 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
             $buffer->nextSymbol();
             goto state6;
         }
-        if (252 <= $char && $char <= 253) {
+        if ($char == 252 || $char == 253) {
             $charList[] = $char;
             $buffer->nextSymbol();
             goto state7;
