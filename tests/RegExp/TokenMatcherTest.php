@@ -8,11 +8,11 @@ use Remorhaz\UniLex\Grammar\ContextFree\GrammarLoader;
 use Remorhaz\UniLex\Grammar\ContextFree\TokenFactory;
 use Remorhaz\UniLex\RegExp\Grammar\ConfigFile;
 use Remorhaz\UniLex\RegExp\Grammar\TokenAttribute;
+use Remorhaz\UniLex\RegExp\Grammar\TokenMatcher;
 use Remorhaz\UniLex\RegExp\Grammar\TokenType;
-use Remorhaz\UniLex\RegExp\TokenMatcher;
 
 /**
- * @covers \Remorhaz\UniLex\RegExp\TokenMatcher
+ * @coversNothing
  */
 class TokenMatcherTest extends TestCase
 {

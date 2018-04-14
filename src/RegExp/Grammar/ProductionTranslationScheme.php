@@ -915,11 +915,17 @@ class ProductionTranslationScheme
             case SymbolType::NT_NOT_PROP_START . ".9":
             case SymbolType::NT_NOT_PROP_FINISH . ".9":
             case SymbolType::NT_UNESC_SYMBOL . ".3":
+            case SymbolType::NT_FIRST_CLASS_SYMBOL . ".25":
+            case SymbolType::NT_FIRST_INV_CLASS_SYMBOL . ".26":
+            case SymbolType::NT_UNESC_CLASS_SYMBOL . ".25":
                 // [SymbolType::T_DIGIT_OCT]
             case SymbolType::NT_ESC_SIMPLE . ".3":
             case SymbolType::NT_NOT_PROP_START . ".10":
             case SymbolType::NT_NOT_PROP_FINISH . ".10":
             case SymbolType::NT_UNESC_SYMBOL . ".4":
+            case SymbolType::NT_FIRST_CLASS_SYMBOL . ".26":
+            case SymbolType::NT_FIRST_INV_CLASS_SYMBOL . ".27":
+            case SymbolType::NT_UNESC_CLASS_SYMBOL . ".26":
                 // [SymbolType::T_DIGIT_DEC]
             case SymbolType::NT_ESC_SPECIAL . ".6":
             case SymbolType::NT_NOT_PROP_START . ".6":
@@ -935,10 +941,14 @@ class ProductionTranslationScheme
             case SymbolType::NT_NOT_PROP_START . ".7":
             case SymbolType::NT_NOT_PROP_FINISH . ".7":
             case SymbolType::NT_META_CHAR . ".7":
+            case SymbolType::NT_ESC_SPECIAL . ".19":
                 // [SymbolType::T_DOT]
             case SymbolType::NT_NOT_PROP_START . ".8":
             case SymbolType::NT_NOT_PROP_FINISH . ".8":
             case SymbolType::NT_UNESC_SYMBOL . ".2":
+            case SymbolType::NT_FIRST_CLASS_SYMBOL . ".24":
+            case SymbolType::NT_FIRST_INV_CLASS_SYMBOL . ".25":
+            case SymbolType::NT_UNESC_CLASS_SYMBOL . ".24":
                 // [SymbolType::T_DIGIT_ZERO]
                 $this->synthesizeSymbolAttribute(0, 's.code');
                 break;

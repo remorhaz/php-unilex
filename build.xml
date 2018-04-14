@@ -33,12 +33,18 @@
 
     <target name="token-matchers"
         description="Generate token matchers"
-        depends="unicode-utf8-matcher, example-brainfuck-matcher" />
+        depends="unicode-utf8-matcher, regexp-matcher, example-brainfuck-matcher" />
     <target name="unicode-utf8-matcher" description="Unicode UTF-8 token matcher">
         <build-token-matcher
             description="Unicode UTF-8 token matcher."
             configFile="${application.startdir}/src/Unicode/Grammar/Utf8Config.php"
             outputFile="${application.startdir}/generated/Unicode/Grammar/Utf8TokenMatcher.php" />
+    </target>
+    <target name="regexp-matcher" description="RegExp token matcher">
+        <build-token-matcher
+            description="RegExp token matcher."
+            configFile="${application.startdir}/src/RegExp/Grammar/TokenMatcherConfig.php"
+            outputFile="${application.startdir}/generated/RegExp/Grammar/TokenMatcher.php" />
     </target>
     <target name="example-brainfuck-matcher" description="Example Brainfuck token matcher">
         <build-token-matcher

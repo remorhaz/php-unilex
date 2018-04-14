@@ -9,6 +9,7 @@ use Remorhaz\UniLex\Parser\LL1\Parser;
 use Remorhaz\UniLex\Parser\LL1\TranslationSchemeApplier;
 use Remorhaz\UniLex\AST\Tree;
 use Remorhaz\UniLex\RegExp\Grammar\ConfigFile;
+use Remorhaz\UniLex\RegExp\Grammar\TokenMatcher;
 use Remorhaz\UniLex\RegExp\Grammar\TranslationScheme;
 use Remorhaz\UniLex\TokenReader;
 
