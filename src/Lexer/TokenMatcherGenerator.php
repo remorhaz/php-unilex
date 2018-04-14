@@ -9,9 +9,12 @@ use Remorhaz\UniLex\RegExp\FSM\Dfa;
 use Remorhaz\UniLex\RegExp\FSM\DfaBuilder;
 use Remorhaz\UniLex\RegExp\FSM\Nfa;
 use Remorhaz\UniLex\RegExp\FSM\NfaBuilder;
+use Remorhaz\UniLex\RegExp\FSM\Range;
 use Remorhaz\UniLex\RegExp\FSM\RangeSet;
 use Remorhaz\UniLex\RegExp\ParserFactory;
+use Remorhaz\UniLex\TokenMatcherInterface;
 use Remorhaz\UniLex\Unicode\CharBufferFactory;
+use Throwable;
 
 class TokenMatcherGenerator
 {
@@ -37,7 +40,7 @@ class TokenMatcherGenerator
      * @throws Exception
      * @throws \ReflectionException
      */
-    public function buildOutput(): string
+    private function buildOutput(): string
     {
         return
             "<?php\n{$this->buildFileComment()}\n" .
@@ -50,6 +53,27 @@ class TokenMatcherGenerator
             "    {\n{$this->buildMatchBody()}" .
             "    }\n" .
             "}\n";
+    }
+
+    /**
+     * @return TokenMatcherInterface
+     * @throws Exception
+     */
+    public function load(): TokenMatcherInterface
+    {
+        $targetClass = $this->spec->getTargetNamespaceName() . '\\' . $this->spec->getTargetShortName();
+        if (!class_exists($targetClass)) {
+            try {
+                $source = $this->getOutput();
+                eval("?>{$source}");
+            } catch (Throwable $e) {
+                throw new Exception("Invalid PHP code generated", 0, $e);
+            }
+            if (!class_exists($targetClass)) {
+                throw new Exception("Failed to generate target class");
+            }
+        }
+        return new $targetClass;
     }
 
     /**
@@ -239,25 +263,30 @@ class TokenMatcherGenerator
         return "0x{$hexChar}";
     }
 
+    private function buildRangeCondition(Range $range): array
+    {
+        $startChar = $this->buildHex($range->getStart());
+        if ($range->getStart() == $range->getFinish()) {
+            return ["{$startChar} == \$char"];
+        }
+        $finishChar = $this->buildHex($range->getFinish());
+        if ($range->getStart() + 1 == $range->getFinish()) {
+            return [
+                "{$startChar} == \$char",
+                "{$finishChar} == \$char",
+            ];
+        }
+        return ["{$startChar} <= \$char && \$char <= {$finishChar}"];
+    }
+
     private function buildRangeSetCondition(RangeSet $rangeSet): string
     {
         $conditionList = [];
         foreach ($rangeSet->getRanges() as $range) {
-            $startChar = $this->buildHex($range->getStart());
-            if ($range->getStart() == $range->getFinish()) {
-                $conditionList[] = "{$startChar} == \$char";
-                continue;
-            }
-            $finishChar = $this->buildHex($range->getFinish());
-            if ($range->getStart() + 1 == $range->getFinish()) {
-                $conditionList[] = "{$startChar} == \$char";
-                $conditionList[] = "{$finishChar} == \$char";
-                continue;
-            }
-            $conditionList[] = "{$startChar} <= \$char && \$char <= {$finishChar}";
+            $conditionList = array_merge($conditionList, $this->buildRangeCondition($range));
         }
         $result = implode(" || ", $conditionList);
-        if (strlen($result) + 15 <= 120) {
+        if (strlen($result) + 15 <= 120 || count($conditionList) == 1) {
             return $result;
         }
         $result = $this->buildMethodPart(implode(" ||\n", $conditionList), 1);
@@ -381,12 +410,7 @@ class TokenMatcherGenerator
             $nfa
                 ->getEpsilonTransitionMap()
                 ->addTransition($startState, $regExpEntryState, true);
-            $buffer = CharBufferFactory::createFromUtf8String($tokenSpec->getRegExp());
-            $tree = new Tree;
-            ParserFactory::createFromBuffer($tree, $buffer)->run();
-            $nfaBuilder = new NfaBuilder($nfa);
-            $nfaBuilder->setStartState($regExpEntryState);
-            (new Translator($tree, $nfaBuilder))->run();
+            $this->buildRegExp($nfa, $regExpEntryState, $tokenSpec->getRegExp());
             $finishStates = $nfa->getStateMap()->getFinishStateList();
             $newFinishStates = array_diff($finishStates, $oldFinishStates);
             foreach ($newFinishStates as $finishState) {
@@ -395,5 +419,21 @@ class TokenMatcherGenerator
             $oldFinishStates = $finishStates;
         }
         return DfaBuilder::fromNfa($nfa);
+    }
+
+    /**
+     * @param Nfa $nfa
+     * @param int $entryState
+     * @param string $regExp
+     * @throws Exception
+     */
+    private function buildRegExp(Nfa $nfa, int $entryState, string $regExp): void
+    {
+        $buffer = CharBufferFactory::createFromUtf8String($regExp);
+        $tree = new Tree;
+        ParserFactory::createFromBuffer($tree, $buffer)->run();
+        $nfaBuilder = new NfaBuilder($nfa);
+        $nfaBuilder->setStartState($entryState);
+        (new Translator($tree, $nfaBuilder))->run();
     }
 }

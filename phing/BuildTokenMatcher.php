@@ -47,6 +47,7 @@ class BuildTokenMatcher extends Task
             $spec->addTokenSpec($tokenSpec);
         }
         $generator = new TokenMatcherGenerator($spec);
+        $generator->load(); // To ensure that output contains valid matcher class
         $output = $generator->getOutput();
         $lineCount = count(explode("\n", $output));
         $this->log("Done ({$lineCount} lines)!");
