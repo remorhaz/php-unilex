@@ -28,143 +28,143 @@ class TokenMatcher extends TokenMatcherTemplate
             goto error;
         }
         $char = $buffer->getSymbol();
-        if (0 <= $char && $char <= 31) {
+        if (0x00 <= $char && $char <= 0x1F) {
             $buffer->nextSymbol();
             goto state2;
         }
-        if (32 <= $char && $char <= 35 ||
-            37 <= $char && $char <= 39 ||
-            $char == 47 ||
-            58 <= $char && $char <= 62 ||
-            $char == 64 ||
-            $char == 95 ||
-            $char == 96 ||
-            $char == 126
+        if (0x20 <= $char && $char <= 0x23 ||
+            0x25 <= $char && $char <= 0x27 ||
+            0x2F == $char ||
+            0x3A <= $char && $char <= 0x3E ||
+            0x40 == $char ||
+            0x5F == $char ||
+            0x60 == $char ||
+            0x7E == $char
         ) {
             $buffer->nextSymbol();
             goto state3;
         }
-        if ($char == 36) {
+        if (0x24 == $char) {
             $buffer->nextSymbol();
             goto state4;
         }
-        if ($char == 40) {
+        if (0x28 == $char) {
             $buffer->nextSymbol();
             goto state5;
         }
-        if ($char == 41) {
+        if (0x29 == $char) {
             $buffer->nextSymbol();
             goto state6;
         }
-        if ($char == 42) {
+        if (0x2A == $char) {
             $buffer->nextSymbol();
             goto state7;
         }
-        if ($char == 43) {
+        if (0x2B == $char) {
             $buffer->nextSymbol();
             goto state8;
         }
-        if ($char == 44) {
+        if (0x2C == $char) {
             $buffer->nextSymbol();
             goto state9;
         }
-        if ($char == 45) {
+        if (0x2D == $char) {
             $buffer->nextSymbol();
             goto state10;
         }
-        if ($char == 46) {
+        if (0x2E == $char) {
             $buffer->nextSymbol();
             goto state11;
         }
-        if ($char == 48) {
+        if (0x30 == $char) {
             $buffer->nextSymbol();
             goto state12;
         }
-        if (49 <= $char && $char <= 55) {
+        if (0x31 <= $char && $char <= 0x37) {
             $buffer->nextSymbol();
             goto state13;
         }
-        if ($char == 56 || $char == 57) {
+        if (0x38 == $char || 0x39 == $char) {
             $buffer->nextSymbol();
             goto state14;
         }
-        if ($char == 63) {
+        if (0x3F == $char) {
             $buffer->nextSymbol();
             goto state15;
         }
-        if (65 <= $char && $char <= 70 || $char == 97 || $char == 98 || 100 <= $char && $char <= 102) {
+        if (0x41 <= $char && $char <= 0x46 || 0x61 == $char || 0x62 == $char || 0x64 <= $char && $char <= 0x66) {
             $buffer->nextSymbol();
             goto state16;
         }
-        if (71 <= $char && $char <= 79 ||
-            81 <= $char && $char <= 90 ||
-            103 <= $char && $char <= 110 ||
-            113 <= $char && $char <= 116 ||
-            $char == 118 ||
-            $char == 119 ||
-            $char == 121 ||
-            $char == 122
+        if (0x47 <= $char && $char <= 0x4F ||
+            0x51 <= $char && $char <= 0x5A ||
+            0x67 <= $char && $char <= 0x6E ||
+            0x71 <= $char && $char <= 0x74 ||
+            0x76 == $char ||
+            0x77 == $char ||
+            0x79 == $char ||
+            0x7A == $char
         ) {
             $buffer->nextSymbol();
             goto state17;
         }
-        if ($char == 80) {
+        if (0x50 == $char) {
             $buffer->nextSymbol();
             goto state18;
         }
-        if ($char == 91) {
+        if (0x5B == $char) {
             $buffer->nextSymbol();
             goto state19;
         }
-        if ($char == 92) {
+        if (0x5C == $char) {
             $buffer->nextSymbol();
             goto state20;
         }
-        if ($char == 93) {
+        if (0x5D == $char) {
             $buffer->nextSymbol();
             goto state21;
         }
-        if ($char == 94) {
+        if (0x5E == $char) {
             $buffer->nextSymbol();
             goto state22;
         }
-        if ($char == 99) {
+        if (0x63 == $char) {
             $buffer->nextSymbol();
             goto state23;
         }
-        if ($char == 111) {
+        if (0x6F == $char) {
             $buffer->nextSymbol();
             goto state24;
         }
-        if ($char == 112) {
+        if (0x70 == $char) {
             $buffer->nextSymbol();
             goto state25;
         }
-        if ($char == 117) {
+        if (0x75 == $char) {
             $buffer->nextSymbol();
             goto state26;
         }
-        if ($char == 120) {
+        if (0x78 == $char) {
             $buffer->nextSymbol();
             goto state27;
         }
-        if ($char == 123) {
+        if (0x7B == $char) {
             $buffer->nextSymbol();
             goto state28;
         }
-        if ($char == 124) {
+        if (0x7C == $char) {
             $buffer->nextSymbol();
             goto state29;
         }
-        if ($char == 125) {
+        if (0x7D == $char) {
             $buffer->nextSymbol();
             goto state30;
         }
-        if ($char == 127) {
+        if (0x7F == $char) {
             $buffer->nextSymbol();
             goto state31;
         }
-        if (128 <= $char && $char <= 1114111) {
+        if (0x80 <= $char && $char <= 0x10FFFF) {
             $buffer->nextSymbol();
             goto state32;
         }

@@ -206,20 +206,31 @@ class TokenMatcherGenerator
         return $result;
     }
 
+    private function buildHex(int $char): string
+    {
+        $hexChar = strtoupper(dechex($char));
+        if (strlen($hexChar) % 2 != 0) {
+            $hexChar = "0{$hexChar}";
+        }
+        return "0x{$hexChar}";
+    }
+
     private function buildRangeSetCondition(RangeSet $rangeSet): string
     {
         $conditionList = [];
         foreach ($rangeSet->getRanges() as $range) {
+            $startChar = $this->buildHex($range->getStart());
             if ($range->getStart() == $range->getFinish()) {
-                $conditionList[] = "\$char == {$range->getStart()}";
+                $conditionList[] = "{$startChar} == \$char";
                 continue;
             }
+            $finishChar = $this->buildHex($range->getFinish());
             if ($range->getStart() + 1 == $range->getFinish()) {
-                $conditionList[] = "\$char == {$range->getStart()}";
-                $conditionList[] = "\$char == {$range->getFinish()}";
+                $conditionList[] = "{$startChar} == \$char";
+                $conditionList[] = "{$finishChar} == \$char";
                 continue;
             }
-            $conditionList[] = "{$range->getStart()} <= \$char && \$char <= {$range->getFinish()}";
+            $conditionList[] = "{$startChar} <= \$char && \$char <= {$finishChar}";
         }
         $result = implode(" || ", $conditionList);
         if (strlen($result) + 15 <= 120) {

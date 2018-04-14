@@ -28,35 +28,35 @@ class TokenMatcher extends TokenMatcherTemplate
             goto error;
         }
         $char = $buffer->getSymbol();
-        if ($char == 62) {
+        if (0x3E == $char) {
             $buffer->nextSymbol();
             goto state2;
         }
-        if ($char == 60) {
+        if (0x3C == $char) {
             $buffer->nextSymbol();
             goto state3;
         }
-        if ($char == 43) {
+        if (0x2B == $char) {
             $buffer->nextSymbol();
             goto state4;
         }
-        if ($char == 45) {
+        if (0x2D == $char) {
             $buffer->nextSymbol();
             goto state5;
         }
-        if ($char == 46) {
+        if (0x2E == $char) {
             $buffer->nextSymbol();
             goto state6;
         }
-        if ($char == 44) {
+        if (0x2C == $char) {
             $buffer->nextSymbol();
             goto state7;
         }
-        if ($char == 91) {
+        if (0x5B == $char) {
             $buffer->nextSymbol();
             goto state8;
         }
-        if ($char == 93) {
+        if (0x5D == $char) {
             $buffer->nextSymbol();
             goto state9;
         }

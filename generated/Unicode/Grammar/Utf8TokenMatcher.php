@@ -29,32 +29,32 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
             goto error;
         }
         $char = $buffer->getSymbol();
-        if (0 <= $char && $char <= 127) {
+        if (0x00 <= $char && $char <= 0x7F) {
             $charList[] = $char;
             $buffer->nextSymbol();
             goto state2;
         }
-        if (192 <= $char && $char <= 223) {
+        if (0xC0 <= $char && $char <= 0xDF) {
             $charList[] = $char;
             $buffer->nextSymbol();
             goto state3;
         }
-        if (224 <= $char && $char <= 239) {
+        if (0xE0 <= $char && $char <= 0xEF) {
             $charList[] = $char;
             $buffer->nextSymbol();
             goto state4;
         }
-        if (240 <= $char && $char <= 247) {
+        if (0xF0 <= $char && $char <= 0xF7) {
             $charList[] = $char;
             $buffer->nextSymbol();
             goto state5;
         }
-        if (248 <= $char && $char <= 251) {
+        if (0xF8 <= $char && $char <= 0xFB) {
             $charList[] = $char;
             $buffer->nextSymbol();
             goto state6;
         }
-        if ($char == 252 || $char == 253) {
+        if (0xFC == $char || 0xFD == $char) {
             $charList[] = $char;
             $buffer->nextSymbol();
             goto state7;
@@ -72,7 +72,7 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
             goto error;
         }
         $char = $buffer->getSymbol();
-        if (128 <= $char && $char <= 191) {
+        if (0x80 <= $char && $char <= 0xBF) {
             $charList[] = $char;
             $buffer->nextSymbol();
             goto state22;
@@ -84,7 +84,7 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
             goto error;
         }
         $char = $buffer->getSymbol();
-        if (128 <= $char && $char <= 191) {
+        if (0x80 <= $char && $char <= 0xBF) {
             $charList[] = $char;
             $buffer->nextSymbol();
             goto state20;
@@ -96,7 +96,7 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
             goto error;
         }
         $char = $buffer->getSymbol();
-        if (128 <= $char && $char <= 191) {
+        if (0x80 <= $char && $char <= 0xBF) {
             $charList[] = $char;
             $buffer->nextSymbol();
             goto state17;
@@ -108,7 +108,7 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
             goto error;
         }
         $char = $buffer->getSymbol();
-        if (128 <= $char && $char <= 191) {
+        if (0x80 <= $char && $char <= 0xBF) {
             $charList[] = $char;
             $buffer->nextSymbol();
             goto state13;
@@ -120,7 +120,7 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
             goto error;
         }
         $char = $buffer->getSymbol();
-        if (128 <= $char && $char <= 191) {
+        if (0x80 <= $char && $char <= 0xBF) {
             $charList[] = $char;
             $buffer->nextSymbol();
             goto state8;
@@ -132,7 +132,7 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
             goto error;
         }
         $char = $buffer->getSymbol();
-        if (128 <= $char && $char <= 191) {
+        if (0x80 <= $char && $char <= 0xBF) {
             $charList[] = $char;
             $buffer->nextSymbol();
             goto state9;
@@ -144,7 +144,7 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
             goto error;
         }
         $char = $buffer->getSymbol();
-        if (128 <= $char && $char <= 191) {
+        if (0x80 <= $char && $char <= 0xBF) {
             $charList[] = $char;
             $buffer->nextSymbol();
             goto state10;
@@ -156,7 +156,7 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
             goto error;
         }
         $char = $buffer->getSymbol();
-        if (128 <= $char && $char <= 191) {
+        if (0x80 <= $char && $char <= 0xBF) {
             $charList[] = $char;
             $buffer->nextSymbol();
             goto state11;
@@ -168,7 +168,7 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
             goto error;
         }
         $char = $buffer->getSymbol();
-        if (128 <= $char && $char <= 191) {
+        if (0x80 <= $char && $char <= 0xBF) {
             $charList[] = $char;
             $buffer->nextSymbol();
             goto state12;
@@ -192,7 +192,7 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
             goto error;
         }
         $char = $buffer->getSymbol();
-        if (128 <= $char && $char <= 191) {
+        if (0x80 <= $char && $char <= 0xBF) {
             $charList[] = $char;
             $buffer->nextSymbol();
             goto state14;
@@ -204,7 +204,7 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
             goto error;
         }
         $char = $buffer->getSymbol();
-        if (128 <= $char && $char <= 191) {
+        if (0x80 <= $char && $char <= 0xBF) {
             $charList[] = $char;
             $buffer->nextSymbol();
             goto state15;
@@ -216,7 +216,7 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
             goto error;
         }
         $char = $buffer->getSymbol();
-        if (128 <= $char && $char <= 191) {
+        if (0x80 <= $char && $char <= 0xBF) {
             $charList[] = $char;
             $buffer->nextSymbol();
             goto state16;
@@ -239,7 +239,7 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
             goto error;
         }
         $char = $buffer->getSymbol();
-        if (128 <= $char && $char <= 191) {
+        if (0x80 <= $char && $char <= 0xBF) {
             $charList[] = $char;
             $buffer->nextSymbol();
             goto state18;
@@ -251,7 +251,7 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
             goto error;
         }
         $char = $buffer->getSymbol();
-        if (128 <= $char && $char <= 191) {
+        if (0x80 <= $char && $char <= 0xBF) {
             $charList[] = $char;
             $buffer->nextSymbol();
             goto state19;
@@ -273,7 +273,7 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
             goto error;
         }
         $char = $buffer->getSymbol();
-        if (128 <= $char && $char <= 191) {
+        if (0x80 <= $char && $char <= 0xBF) {
             $charList[] = $char;
             $buffer->nextSymbol();
             goto state21;
