@@ -10,19 +10,13 @@ class TokenSpecTest extends TestCase
 
     public function testGetRegExp_ConstructWithValue_ReturnsSameValue(): void
     {
-        $actualValue = (new TokenSpec("a", 1, ""))->getRegExp();
+        $actualValue = (new TokenSpec("a", ""))->getRegExp();
         self::assertSame("a", $actualValue);
-    }
-
-    public function testGetTokenType_ConstructWithValue_ReturnsSameValue(): void
-    {
-        $actualValue = (new TokenSpec("a", 1, ""))->getTokenType();
-        self::assertSame(1, $actualValue);
     }
 
     public function testGetCode_ConstructWithValue_ReturnsSameValue(): void
     {
-        $actualValue = (new TokenSpec("a", 1, "//"))->getCode();
+        $actualValue = (new TokenSpec("a", "//"))->getCode();
         self::assertSame("//", $actualValue);
     }
 }

@@ -38,7 +38,7 @@ class TokenMatcherGeneratorTest extends TestCase
     {
         $matcherClass = $this->createTokenMatcherClassName();
         $spec = new TokenMatcherSpec($matcherClass, TokenMatcherTemplate::class);
-        $tokenSpec = new TokenSpec("a", 1, "");
+        $tokenSpec = new TokenSpec("a", "");
         $spec->addTokenSpec($tokenSpec);
         $matcher = (new TokenMatcherGenerator($spec))->load();
         $grammar = new Grammar(0, 1, 2);
@@ -55,7 +55,7 @@ class TokenMatcherGeneratorTest extends TestCase
         $matcherClass = $this->createTokenMatcherClassName();
         $spec = new TokenMatcherSpec($matcherClass, TokenMatcherTemplate::class);
         $spec->setOnToken("\$context->setNewToken(1);");
-        $tokenSpec = new TokenSpec("a", 1, "");
+        $tokenSpec = new TokenSpec("a", "");
         $spec->addTokenSpec($tokenSpec);
         $matcher = (new TokenMatcherGenerator($spec))->load();
         $grammar = new Grammar(0, 1, 2);
@@ -75,7 +75,7 @@ class TokenMatcherGeneratorTest extends TestCase
         $matcherClass = $this->createTokenMatcherClassName();
         $spec = new TokenMatcherSpec($matcherClass, TokenMatcherTemplate::class);
         $spec->setOnToken("\$context->setNewToken(1);");
-        $tokenSpec = new TokenSpec("a", 1, "");
+        $tokenSpec = new TokenSpec("a", "");
         $spec->addTokenSpec($tokenSpec);
         $matcher = (new TokenMatcherGenerator($spec))->load();
         $grammar = new Grammar(0, 1, 2);
@@ -96,7 +96,7 @@ class TokenMatcherGeneratorTest extends TestCase
         $matcherClass = $this->createTokenMatcherClassName();
         $spec = new TokenMatcherSpec($matcherClass, TokenMatcherTemplate::class);
         $spec->setOnToken("\$this->token = \$tokenFactory->createToken(\$tokenType);");
-        $tokenSpec = new TokenSpec("a", 1, "");
+        $tokenSpec = new TokenSpec("a", "");
         $spec->addTokenSpec($tokenSpec);
         $matcher = (new TokenMatcherGenerator($spec))->load();
         $grammar = new Grammar(0, 1, 2);

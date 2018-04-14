@@ -41,9 +41,8 @@ class BuildTokenMatcher extends Task
             $spec->addUsedClass($usedClassName);
         }
         foreach ($config['token_list'] as $regExp => $tokenData) {
-            $tokenType = array_shift($tokenData);
             $code = implode("\n", $tokenData);
-            $tokenSpec = new TokenSpec($regExp, $tokenType, $code);
+            $tokenSpec = new TokenSpec($regExp, $code);
             $spec->addTokenSpec($tokenSpec);
         }
         $generator = new TokenMatcherGenerator($spec);

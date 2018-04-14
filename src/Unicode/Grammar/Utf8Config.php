@@ -28,14 +28,12 @@ return [
     'token_list' => [
         // 1-byte symbol
         '[\\x00-\\x7F]' => [
-            TokenType::SYMBOL,
             "\$context",
             "   ->setNewToken(TokenType::SYMBOL)",
             "   ->setTokenAttribute(TokenAttribute::UNICODE_CHAR, \$char);",
         ],
         // 2-byte symbol
         '[\\xC0-\\xDF][\\x80-\\xBF]' => [
-            TokenType::SYMBOL,
             "\$symbol = (\$charList[0] & 0x1F) << 6;",
             "\$symbol |= (\$charList[1] & 0x3F);",
             "\$context",
@@ -44,7 +42,6 @@ return [
         ],
         // 3-byte symbol
         '[\\xE0-\\xEF][\\x80-\\xBF]{2}' => [
-            TokenType::SYMBOL,
             "\$symbol = (\$charList[0] & 0x0F) << 12;",
             "\$symbol |= (\$charList[1] & 0x3F) << 6;",
             "\$symbol |= (\$charList[2] & 0x3F);",
@@ -54,7 +51,6 @@ return [
         ],
         // 4-byte symbol
         '[\\xF0-\\xF7][\\x80-\\xBF]{3}' => [
-            TokenType::SYMBOL,
             "\$symbol = (\$charList[0] & 0x07) << 18;",
             "\$symbol |= (\$charList[1] & 0x3F) << 12;",
             "\$symbol |= (\$charList[2] & 0x3F) << 6;",
@@ -65,7 +61,6 @@ return [
         ],
         // 5-byte symbol
         '[\\xF8-\\xFB][\\x80-\\xBF]{4}' => [
-            TokenType::SYMBOL,
             "\$symbol = (\$charList[0] & 0x03) << 24;",
             "\$symbol |= (\$charList[1] & 0x3F) << 18;",
             "\$symbol |= (\$charList[2] & 0x3F) << 12;",
@@ -77,7 +72,6 @@ return [
         ],
         // 6-byte symbol
         '[\\xFC-\\xFD][\\x80-\\xBF]{5}' => [
-            TokenType::SYMBOL,
             "\$symbol = (\$charList[0] & 0x01) << 30;",
             "\$symbol |= (\$charList[1] & 0x03) << 24;",
             "\$symbol |= (\$charList[2] & 0x3F) << 18;",
