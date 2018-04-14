@@ -20,19 +20,19 @@ class TokenMatcher extends TokenMatcherTemplate
 
     public function match(CharBufferInterface $buffer, TokenFactoryInterface $tokenFactory): bool
     {
-        unset($this->token);
+        $context = $this->createContext($buffer, $tokenFactory);
         goto state1;
 
         state1:
-        if ($buffer->isEnd()) {
+        if ($context->getBuffer()->isEnd()) {
             goto error;
         }
-        $char = $buffer->getSymbol();
+        $char = $context->getBuffer()->getSymbol();
         if (0x00 <= $char && $char <= 0x1F) {
-            $buffer->nextSymbol();
-            $tokenType = 1;
-            $this->token = $tokenFactory->createToken($tokenType);
-            $this->token->setAttribute(TokenAttribute::CODE, $char);
+            $context->getBuffer()->nextSymbol();
+            $context
+               ->setNewToken(TokenType::CTL_ASCII)
+               ->setTokenAttribute(TokenAttribute::CODE, $char);
             return true;
         }
         if (0x20 <= $char && $char <= 0x23 ||
@@ -44,105 +44,105 @@ class TokenMatcher extends TokenMatcherTemplate
             0x60 == $char ||
             0x7E == $char
         ) {
-            $buffer->nextSymbol();
-            $tokenType = 29;
-            $this->token = $tokenFactory->createToken($tokenType);
-            $this->token->setAttribute(TokenAttribute::CODE, $char);
+            $context->getBuffer()->nextSymbol();
+            $context
+               ->setNewToken(TokenType::PRINTABLE_ASCII_OTHER)
+               ->setTokenAttribute(TokenAttribute::CODE, $char);
             return true;
         }
         if (0x24 == $char) {
-            $buffer->nextSymbol();
-            $tokenType = 2;
-            $this->token = $tokenFactory->createToken($tokenType);
-            $this->token->setAttribute(TokenAttribute::CODE, $char);
+            $context->getBuffer()->nextSymbol();
+            $context
+               ->setNewToken(TokenType::DOLLAR)
+               ->setTokenAttribute(TokenAttribute::CODE, $char);
             return true;
         }
         if (0x28 == $char) {
-            $buffer->nextSymbol();
-            $tokenType = 3;
-            $this->token = $tokenFactory->createToken($tokenType);
-            $this->token->setAttribute(TokenAttribute::CODE, $char);
+            $context->getBuffer()->nextSymbol();
+            $context
+               ->setNewToken(TokenType::LEFT_BRACKET)
+               ->setTokenAttribute(TokenAttribute::CODE, $char);
             return true;
         }
         if (0x29 == $char) {
-            $buffer->nextSymbol();
-            $tokenType = 4;
-            $this->token = $tokenFactory->createToken($tokenType);
-            $this->token->setAttribute(TokenAttribute::CODE, $char);
+            $context->getBuffer()->nextSymbol();
+            $context
+               ->setNewToken(TokenType::RIGHT_BRACKET)
+               ->setTokenAttribute(TokenAttribute::CODE, $char);
             return true;
         }
         if (0x2A == $char) {
-            $buffer->nextSymbol();
-            $tokenType = 5;
-            $this->token = $tokenFactory->createToken($tokenType);
-            $this->token->setAttribute(TokenAttribute::CODE, $char);
+            $context->getBuffer()->nextSymbol();
+            $context
+               ->setNewToken(TokenType::STAR)
+               ->setTokenAttribute(TokenAttribute::CODE, $char);
             return true;
         }
         if (0x2B == $char) {
-            $buffer->nextSymbol();
-            $tokenType = 6;
-            $this->token = $tokenFactory->createToken($tokenType);
-            $this->token->setAttribute(TokenAttribute::CODE, $char);
+            $context->getBuffer()->nextSymbol();
+            $context
+               ->setNewToken(TokenType::PLUS)
+               ->setTokenAttribute(TokenAttribute::CODE, $char);
             return true;
         }
         if (0x2C == $char) {
-            $buffer->nextSymbol();
-            $tokenType = 7;
-            $this->token = $tokenFactory->createToken($tokenType);
-            $this->token->setAttribute(TokenAttribute::CODE, $char);
+            $context->getBuffer()->nextSymbol();
+            $context
+               ->setNewToken(TokenType::COMMA)
+               ->setTokenAttribute(TokenAttribute::CODE, $char);
             return true;
         }
         if (0x2D == $char) {
-            $buffer->nextSymbol();
-            $tokenType = 8;
-            $this->token = $tokenFactory->createToken($tokenType);
-            $this->token->setAttribute(TokenAttribute::CODE, $char);
+            $context->getBuffer()->nextSymbol();
+            $context
+               ->setNewToken(TokenType::HYPHEN)
+               ->setTokenAttribute(TokenAttribute::CODE, $char);
             return true;
         }
         if (0x2E == $char) {
-            $buffer->nextSymbol();
-            $tokenType = 9;
-            $this->token = $tokenFactory->createToken($tokenType);
-            $this->token->setAttribute(TokenAttribute::CODE, $char);
+            $context->getBuffer()->nextSymbol();
+            $context
+               ->setNewToken(TokenType::DOT)
+               ->setTokenAttribute(TokenAttribute::CODE, $char);
             return true;
         }
         if (0x30 == $char) {
-            $buffer->nextSymbol();
-            $tokenType = 10;
-            $this->token = $tokenFactory->createToken($tokenType);
-            $this->token->setAttribute(TokenAttribute::CODE, $char);
-            $this->token->setAttribute(TokenAttribute::DIGIT, chr($char));
+            $context->getBuffer()->nextSymbol();
+            $context
+               ->setNewToken(TokenType::DIGIT_ZERO)
+               ->setTokenAttribute(TokenAttribute::CODE, $char)
+               ->setTokenAttribute(TokenAttribute::DIGIT, chr($char));
             return true;
         }
         if (0x31 <= $char && $char <= 0x37) {
-            $buffer->nextSymbol();
-            $tokenType = 11;
-            $this->token = $tokenFactory->createToken($tokenType);
-            $this->token->setAttribute(TokenAttribute::CODE, $char);
-            $this->token->setAttribute(TokenAttribute::DIGIT, chr($char));
+            $context->getBuffer()->nextSymbol();
+            $context
+               ->setNewToken(TokenType::DIGIT_OCT)
+               ->setTokenAttribute(TokenAttribute::CODE, $char)
+               ->setTokenAttribute(TokenAttribute::DIGIT, chr($char));
             return true;
         }
         if (0x38 == $char || 0x39 == $char) {
-            $buffer->nextSymbol();
-            $tokenType = 12;
-            $this->token = $tokenFactory->createToken($tokenType);
-            $this->token->setAttribute(TokenAttribute::CODE, $char);
-            $this->token->setAttribute(TokenAttribute::DIGIT, chr($char));
+            $context->getBuffer()->nextSymbol();
+            $context
+               ->setNewToken(TokenType::DIGIT_DEC)
+               ->setTokenAttribute(TokenAttribute::CODE, $char)
+               ->setTokenAttribute(TokenAttribute::DIGIT, chr($char));
             return true;
         }
         if (0x3F == $char) {
-            $buffer->nextSymbol();
-            $tokenType = 13;
-            $this->token = $tokenFactory->createToken($tokenType);
-            $this->token->setAttribute(TokenAttribute::CODE, $char);
+            $context->getBuffer()->nextSymbol();
+            $context
+               ->setNewToken(TokenType::QUESTION)
+               ->setTokenAttribute(TokenAttribute::CODE, $char);
             return true;
         }
         if (0x41 <= $char && $char <= 0x46 || 0x61 == $char || 0x62 == $char || 0x64 <= $char && $char <= 0x66) {
-            $buffer->nextSymbol();
-            $tokenType = 27;
-            $this->token = $tokenFactory->createToken($tokenType);
-            $this->token->setAttribute(TokenAttribute::CODE, $char);
-            $this->token->setAttribute(TokenAttribute::DIGIT, chr($char));
+            $context->getBuffer()->nextSymbol();
+            $context
+               ->setNewToken(TokenType::OTHER_HEX_LETTER)
+               ->setTokenAttribute(TokenAttribute::CODE, $char)
+               ->setTokenAttribute(TokenAttribute::DIGIT, chr($char));
             return true;
         }
         if (0x47 <= $char && $char <= 0x4F ||
@@ -154,127 +154,129 @@ class TokenMatcher extends TokenMatcherTemplate
             0x79 == $char ||
             0x7A == $char
         ) {
-            $buffer->nextSymbol();
-            $tokenType = 28;
-            $this->token = $tokenFactory->createToken($tokenType);
-            $this->token->setAttribute(TokenAttribute::CODE, $char);
+            $context->getBuffer()->nextSymbol();
+            $context
+               ->setNewToken(TokenType::OTHER_ASCII_LETTER)
+               ->setTokenAttribute(TokenAttribute::CODE, $char);
             return true;
         }
         if (0x50 == $char) {
-            $buffer->nextSymbol();
-            $tokenType = 14;
-            $this->token = $tokenFactory->createToken($tokenType);
-            $this->token->setAttribute(TokenAttribute::CODE, $char);
+            $context->getBuffer()->nextSymbol();
+            $context
+               ->setNewToken(TokenType::CAPITAL_P)
+               ->setTokenAttribute(TokenAttribute::CODE, $char);
             return true;
         }
         if (0x5B == $char) {
-            $buffer->nextSymbol();
-            $tokenType = 15;
-            $this->token = $tokenFactory->createToken($tokenType);
-            $this->token->setAttribute(TokenAttribute::CODE, $char);
+            $context->getBuffer()->nextSymbol();
+            $context
+               ->setNewToken(TokenType::LEFT_SQUARE_BRACKET)
+               ->setTokenAttribute(TokenAttribute::CODE, $char);
             return true;
         }
         if (0x5C == $char) {
-            $buffer->nextSymbol();
-            $tokenType = 16;
-            $this->token = $tokenFactory->createToken($tokenType);
-            $this->token->setAttribute(TokenAttribute::CODE, $char);
+            $context->getBuffer()->nextSymbol();
+            $context
+               ->setNewToken(TokenType::BACKSLASH)
+               ->setTokenAttribute(TokenAttribute::CODE, $char);
             return true;
         }
         if (0x5D == $char) {
-            $buffer->nextSymbol();
-            $tokenType = 17;
-            $this->token = $tokenFactory->createToken($tokenType);
-            $this->token->setAttribute(TokenAttribute::CODE, $char);
+            $context->getBuffer()->nextSymbol();
+            $context
+               ->setNewToken(TokenType::RIGHT_SQUARE_BRACKET)
+               ->setTokenAttribute(TokenAttribute::CODE, $char);
             return true;
         }
         if (0x5E == $char) {
-            $buffer->nextSymbol();
-            $tokenType = 18;
-            $this->token = $tokenFactory->createToken($tokenType);
-            $this->token->setAttribute(TokenAttribute::CODE, $char);
+            $context->getBuffer()->nextSymbol();
+            $context
+               ->setNewToken(TokenType::CIRCUMFLEX)
+               ->setTokenAttribute(TokenAttribute::CODE, $char);
             return true;
         }
         if (0x63 == $char) {
-            $buffer->nextSymbol();
-            $tokenType = 19;
-            $this->token = $tokenFactory->createToken($tokenType);
-            $this->token->setAttribute(TokenAttribute::CODE, $char);
-            $this->token->setAttribute(TokenAttribute::DIGIT, chr($char));
+            $context->getBuffer()->nextSymbol();
+            $context
+               ->setNewToken(TokenType::SMALL_C)
+               ->setTokenAttribute(TokenAttribute::CODE, $char)
+               ->setTokenAttribute(TokenAttribute::DIGIT, chr($char));
             return true;
         }
         if (0x6F == $char) {
-            $buffer->nextSymbol();
-            $tokenType = 20;
-            $this->token = $tokenFactory->createToken($tokenType);
-            $this->token->setAttribute(TokenAttribute::CODE, $char);
+            $context->getBuffer()->nextSymbol();
+            $context
+               ->setNewToken(TokenType::SMALL_O)
+               ->setTokenAttribute(TokenAttribute::CODE, $char);
             return true;
         }
         if (0x70 == $char) {
-            $buffer->nextSymbol();
-            $tokenType = 21;
-            $this->token = $tokenFactory->createToken($tokenType);
-            $this->token->setAttribute(TokenAttribute::CODE, $char);
+            $context->getBuffer()->nextSymbol();
+            $context
+               ->setNewToken(TokenType::SMALL_P)
+               ->setTokenAttribute(TokenAttribute::CODE, $char);
             return true;
         }
         if (0x75 == $char) {
-            $buffer->nextSymbol();
-            $tokenType = 22;
-            $this->token = $tokenFactory->createToken($tokenType);
-            $this->token->setAttribute(TokenAttribute::CODE, $char);
+            $context->getBuffer()->nextSymbol();
+            $context
+               ->setNewToken(TokenType::SMALL_U)
+               ->setTokenAttribute(TokenAttribute::CODE, $char);
             return true;
         }
         if (0x78 == $char) {
-            $buffer->nextSymbol();
-            $tokenType = 23;
-            $this->token = $tokenFactory->createToken($tokenType);
-            $this->token->setAttribute(TokenAttribute::CODE, $char);
+            $context->getBuffer()->nextSymbol();
+            $context
+               ->setNewToken(TokenType::SMALL_X)
+               ->setTokenAttribute(TokenAttribute::CODE, $char);
             return true;
         }
         if (0x7B == $char) {
-            $buffer->nextSymbol();
-            $tokenType = 24;
-            $this->token = $tokenFactory->createToken($tokenType);
-            $this->token->setAttribute(TokenAttribute::CODE, $char);
+            $context->getBuffer()->nextSymbol();
+            $context
+               ->setNewToken(TokenType::LEFT_CURLY_BRACKET)
+               ->setTokenAttribute(TokenAttribute::CODE, $char);
             return true;
         }
         if (0x7C == $char) {
-            $buffer->nextSymbol();
-            $tokenType = 25;
-            $this->token = $tokenFactory->createToken($tokenType);
-            $this->token->setAttribute(TokenAttribute::CODE, $char);
+            $context->getBuffer()->nextSymbol();
+            $context
+               ->setNewToken(TokenType::VERTICAL_LINE)
+               ->setTokenAttribute(TokenAttribute::CODE, $char);
             return true;
         }
         if (0x7D == $char) {
-            $buffer->nextSymbol();
-            $tokenType = 26;
-            $this->token = $tokenFactory->createToken($tokenType);
-            $this->token->setAttribute(TokenAttribute::CODE, $char);
+            $context->getBuffer()->nextSymbol();
+            $context
+               ->setNewToken(TokenType::RIGHT_CURLY_BRACKET)
+               ->setTokenAttribute(TokenAttribute::CODE, $char);
             return true;
         }
         if (0x7F == $char) {
-            $buffer->nextSymbol();
-            $tokenType = 31;
-            $this->token = $tokenFactory->createToken($tokenType);
-            $this->token->setAttribute(TokenAttribute::CODE, $char);
+            $context->getBuffer()->nextSymbol();
+            $context
+               ->setNewToken(TokenType::OTHER_ASCII)
+               ->setTokenAttribute(TokenAttribute::CODE, $char);
             return true;
         }
         if (0x80 <= $char && $char <= 0x10FFFF) {
-            $buffer->nextSymbol();
-            $tokenType = 32;
-            $this->token = $tokenFactory->createToken($tokenType);
-            $this->token->setAttribute(TokenAttribute::CODE, $char);
+            $context->getBuffer()->nextSymbol();
+            $context
+               ->setNewToken(TokenType::NOT_ASCII)
+               ->setTokenAttribute(TokenAttribute::CODE, $char);
             return true;
         }
         goto error;
 
         error:
-        if ($buffer->isEnd()) {
+        if ($context->getBuffer()->isEnd()) {
             return false;
         }
-        $buffer->nextSymbol();
-        $this->token = $tokenFactory->createToken(TokenType::INVALID);
-        $this->token->setAttribute(TokenAttribute::CODE, $char);
+        $char = $context->getBuffer()->getSymbol();
+        $context->getBuffer()->nextSymbol();
+        $context
+           ->setNewToken(TokenType::INVALID)
+           ->setTokenAttribute(TokenAttribute::CODE, $char);
         return true;
     }
 }

@@ -56,13 +56,26 @@ abstract class TokenMatcherTemplate implements TokenMatcherInterface
 
             public function setNewToken(int $tokenType): TokenMatcherContextInterface
             {
-                call_user_func($this->onSetNewToken);
+                call_user_func($this->onSetNewToken, $tokenType);
+                return $this;
+            }
+
+            public function setTokenAttribute(string $name, $value): TokenMatcherContextInterface
+            {
+                $this
+                    ->getToken()
+                    ->setAttribute($name, $value);
                 return $this;
             }
 
             public function getToken(): Token
             {
                 return call_user_func($this->onGetToken);
+            }
+
+            public function getBuffer(): CharBufferInterface
+            {
+                return $this->buffer;
             }
         };
     }

@@ -54,7 +54,7 @@ class TokenMatcherGeneratorTest extends TestCase
     {
         $matcherClass = $this->createTokenMatcherClassName();
         $spec = new TokenMatcherSpec($matcherClass, TokenMatcherTemplate::class);
-        $spec->setOnToken("\$this->token = \$tokenFactory->createToken(\$tokenType);");
+        $spec->setOnToken("\$context->setNewToken(1);");
         $tokenSpec = new TokenSpec("a", 1, "");
         $spec->addTokenSpec($tokenSpec);
         $matcher = (new TokenMatcherGenerator($spec))->load();
@@ -74,7 +74,7 @@ class TokenMatcherGeneratorTest extends TestCase
     {
         $matcherClass = $this->createTokenMatcherClassName();
         $spec = new TokenMatcherSpec($matcherClass, TokenMatcherTemplate::class);
-        $spec->setOnToken("\$this->token = \$tokenFactory->createToken(\$tokenType);");
+        $spec->setOnToken("\$context->setNewToken(1);");
         $tokenSpec = new TokenSpec("a", 1, "");
         $spec->addTokenSpec($tokenSpec);
         $matcher = (new TokenMatcherGenerator($spec))->load();

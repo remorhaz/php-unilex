@@ -10,20 +10,38 @@ return [
     'use' => [
         TokenType::class,
     ],
-    'before_match' => [
-        "unset(\$this->token);",
-    ],
-    'on_token' => [
-        "\$this->token = \$tokenFactory->createToken(\$tokenType);",
-    ],
     'token_list' => [
-        ">" => [TokenType::NEXT],
-        "<" => [TokenType::PREV],
-        "\\+" => [TokenType::INC],
-        "-" => [TokenType::DEC],
-        "\\." => [TokenType::OUTPUT],
-        "," => [TokenType::INPUT],
-        "\\[" => [TokenType::LOOP],
-        "]" => [TokenType::END_LOOP],
+        ">" => [
+            TokenType::NEXT,
+            "\$context->setNewToken(TokenType::NEXT);",
+        ],
+        "<" => [
+            TokenType::PREV,
+            "\$context->setNewToken(TokenType::PREV);",
+        ],
+        "\\+" => [
+            TokenType::INC,
+            "\$context->setNewToken(TokenType::INC);",
+        ],
+        "-" => [
+            TokenType::DEC,
+            "\$context->setNewToken(TokenType::DEC);",
+        ],
+        "\\." => [
+            TokenType::OUTPUT,
+            "\$context->setNewToken(TokenType::OUTPUT);",
+        ],
+        "," => [
+            TokenType::INPUT,
+            "\$context->setNewToken(TokenType::INPUT);",
+        ],
+        "\\[" => [
+            TokenType::LOOP,
+            "\$context->setNewToken(TokenType::LOOP);",
+        ],
+        "]" => [
+            TokenType::END_LOOP,
+            "\$context->setNewToken(TokenType::END_LOOP);",
+        ],
     ],
 ];

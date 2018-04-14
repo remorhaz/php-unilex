@@ -156,7 +156,9 @@ class TokenMatcherGenerator
     private function buildBeforeMatch(): string
     {
         $code = $this->spec->getBeforeMatch();
-        return $this->buildMethodPart($code);
+        return
+            $this->buildMethodPart("\$context = \$this->createContext(\$buffer, \$tokenFactory);") .
+            $this->buildMethodPart($code);
     }
 
     /**
@@ -201,13 +203,13 @@ class TokenMatcherGenerator
         if (empty($moves)) {
             return $result;
         }
-        $result .= $this->buildMethodPart("if (\$buffer->isEnd()) {");
+        $result .= $this->buildMethodPart("if (\$context->getBuffer()->isEnd()) {");
         $result .= $this->getDfa()->getStateMap()->isFinishState($stateIn)
             ? $this->buildMethodPart("goto finish{$stateIn};", 3)
             : $this->buildMethodPart("goto error;", 3);
         $result .=
             $this->buildMethodPart("}") .
-            $this->buildMethodPart("\$char = \$buffer->getSymbol();");
+            $this->buildMethodPart("\$char = \$context->getBuffer()->getSymbol();");
         return $result;
     }
 
@@ -225,7 +227,7 @@ class TokenMatcherGenerator
                 $result .=
                     $this->buildMethodPart("if ({$this->buildRangeSetCondition($rangeSet)}) {") .
                     $this->buildOnTransition() .
-                    $this->buildMethodPart("\$buffer->nextSymbol();", 3);
+                    $this->buildMethodPart("\$context->getBuffer()->nextSymbol();", 3);
                 $result .= $this->isFinishStateWithSingleEnteringTransition($stateOut)
                     ? $this->buildToken($stateOut, 3)
                     : $this->buildMethodPart("goto state{$stateOut};", 3);
@@ -321,9 +323,8 @@ class TokenMatcherGenerator
     {
         $tokenSpec = $this->getTokenSpec($stateIn);
         return
-            $this->buildMethodPart("\$tokenType = {$tokenSpec->getTokenType()};", $indent) .
-            $this->buildOnToken($indent) .
             $this->buildMethodPart($tokenSpec->getCode(), $indent) .
+            $this->buildOnToken($indent) .
             $this->buildMethodPart("return true;", $indent);
     }
 
