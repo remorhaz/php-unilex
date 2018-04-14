@@ -25,7 +25,7 @@ class MatcherGenerator
         $statementList[] = "goto state{$this->dfa->getStateMap()->getStartState()};";
         foreach ($this->dfa->getStateMap()->getStateList() as $stateIn) {
             $statementList[] = "state{$stateIn}:";
-            foreach ($this->dfa->getTransitionMap()->findMoves($stateIn) as $stateOut => $symbolList) {
+            foreach ($this->dfa->getTransitionMap()->getExitList($stateIn) as $stateOut => $symbolList) {
                 foreach ($symbolList as $symbol) {
                     $rangeSet = $this->dfa->getSymbolTable()->getRangeSet($symbol);
                     $conditionList = [];

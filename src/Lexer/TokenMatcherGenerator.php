@@ -152,6 +152,9 @@ class TokenMatcherGenerator
     {
         $result = '';
         foreach ($this->getDfa()->getStateMap()->getStateList() as $stateIn) {
+            if ($this->isFinishStateWithSingleEnteringTransition($stateIn)) {
+                continue;
+            }
             $result .=
                 $this->buildStateEntry($stateIn) .
                 $this->buildStateTransitionList($stateIn) .
@@ -170,7 +173,7 @@ class TokenMatcherGenerator
     {
         $result = '';
         $result .= $this->buildMethodPart("state{$stateIn}:");
-        $moves = $this->getDfa()->getTransitionMap()->findMoves($stateIn);
+        $moves = $this->getDfa()->getTransitionMap()->getExitList($stateIn);
         if (empty($moves)) {
             return $result;
         }
@@ -192,18 +195,39 @@ class TokenMatcherGenerator
     private function buildStateTransitionList(int $stateIn): string
     {
         $result = '';
-        foreach ($this->getDfa()->getTransitionMap()->findMoves($stateIn) as $stateOut => $symbolList) {
+        foreach ($this->getDfa()->getTransitionMap()->getExitList($stateIn) as $stateOut => $symbolList) {
             foreach ($symbolList as $symbol) {
                 $rangeSet = $this->getDfa()->getSymbolTable()->getRangeSet($symbol);
                 $result .=
                     $this->buildMethodPart("if ({$this->buildRangeSetCondition($rangeSet)}) {") .
                     $this->buildOnTransition() .
-                    $this->buildMethodPart("\$buffer->nextSymbol();", 3) .
-                    $this->buildMethodPart("goto state{$stateOut};", 3) .
-                    $this->buildMethodPart("}");
+                    $this->buildMethodPart("\$buffer->nextSymbol();", 3);
+                $result .= $this->isFinishStateWithSingleEnteringTransition($stateOut)
+                    ? $this->buildToken($stateOut, 3)
+                    : $this->buildMethodPart("goto state{$stateOut};", 3);
+                $result .= $this->buildMethodPart("}");
             }
         }
         return $result;
+    }
+
+    /**
+     * @param int $stateOut
+     * @return bool
+     * @throws Exception
+     */
+    private function isFinishStateWithSingleEnteringTransition(int $stateOut): bool
+    {
+        if (!$this->getDfa()->getStateMap()->isFinishState($stateOut)) {
+            return false;
+        }
+        $enters = $this->getDfa()->getTransitionMap()->getEnterList($stateOut);
+        $exits = $this->getDfa()->getTransitionMap()->getExitList($stateOut);
+        if (!(count($enters) == 1 && count($exits) == 0)) {
+            return false;
+        }
+        $symbolList = array_pop($enters);
+        return count($symbolList) == 1;
     }
 
     private function buildHex(int $char): string
@@ -251,16 +275,27 @@ class TokenMatcherGenerator
             return $this->buildMethodPart("goto error;\n");
         }
         $result = '';
-        if (!empty($this->getDfa()->getTransitionMap()->findMoves($stateIn))) {
+        if (!empty($this->getDfa()->getTransitionMap()->getExitList($stateIn))) {
             $result .= $this->buildMethodPart("finish{$stateIn}:");
         }
-        $tokenSpec = $this->getTokenSpec($stateIn);
-        $result .=
-            $this->buildMethodPart("\$tokenType = {$tokenSpec->getTokenType()};") .
-            $this->buildOnToken() .
-            $this->buildMethodPart($tokenSpec->getCode()) .
-            $this->buildMethodPart("return true;\n");
+        $result .= "{$this->buildToken($stateIn)}\n";
         return $result;
+    }
+
+    /**
+     * @param int $stateIn
+     * @param int $indent
+     * @return string
+     * @throws Exception
+     */
+    private function buildToken(int $stateIn, int $indent = 2): string
+    {
+        $tokenSpec = $this->getTokenSpec($stateIn);
+        return
+            $this->buildMethodPart("\$tokenType = {$tokenSpec->getTokenType()};", $indent) .
+            $this->buildOnToken($indent) .
+            $this->buildMethodPart($tokenSpec->getCode(), $indent) .
+            $this->buildMethodPart("return true;", $indent);
     }
 
     /**
@@ -313,9 +348,9 @@ class TokenMatcherGenerator
         return $this->buildMethodPart($this->spec->getOnTransition(), 3);
     }
 
-    private function buildOnToken(): string
+    private function buildOnToken(int $indent = 2): string
     {
-        return $this->buildMethodPart($this->spec->getOnToken());
+        return $this->buildMethodPart($this->spec->getOnToken(), $indent);
     }
 
     /**

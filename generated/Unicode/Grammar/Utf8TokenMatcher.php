@@ -32,7 +32,10 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
         if (0x00 <= $char && $char <= 0x7F) {
             $charList[] = $char;
             $buffer->nextSymbol();
-            goto state2;
+            $tokenType = 1;
+            $this->token = $tokenFactory->createToken($tokenType);
+            $this->token->setAttribute(TokenAttribute::UNICODE_CHAR, $char);
+            return true;
         }
         if (0xC0 <= $char && $char <= 0xDF) {
             $charList[] = $char;
@@ -61,12 +64,6 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
         }
         goto error;
 
-        state2:
-        $tokenType = 1;
-        $this->token = $tokenFactory->createToken($tokenType);
-        $this->token->setAttribute(TokenAttribute::UNICODE_CHAR, $char);
-        return true;
-
         state3:
         if ($buffer->isEnd()) {
             goto error;
@@ -75,7 +72,12 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
         if (0x80 <= $char && $char <= 0xBF) {
             $charList[] = $char;
             $buffer->nextSymbol();
-            goto state22;
+            $tokenType = 1;
+            $this->token = $tokenFactory->createToken($tokenType);
+            $symbol = ($charList[0] & 0x1F) << 6;
+            $symbol |= ($charList[1] & 0x3F);
+            $this->token->setAttribute(TokenAttribute::UNICODE_CHAR, $symbol);
+            return true;
         }
         goto error;
 
@@ -171,21 +173,18 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
         if (0x80 <= $char && $char <= 0xBF) {
             $charList[] = $char;
             $buffer->nextSymbol();
-            goto state12;
+            $tokenType = 1;
+            $this->token = $tokenFactory->createToken($tokenType);
+            $symbol = ($charList[0] & 0x01) << 30;
+            $symbol |= ($charList[1] & 0x03) << 24;
+            $symbol |= ($charList[2] & 0x3F) << 18;
+            $symbol |= ($charList[3] & 0x3F) << 12;
+            $symbol |= ($charList[4] & 0x3F) << 6;
+            $symbol |= ($charList[5] & 0x3F);
+            $this->token->setAttribute(TokenAttribute::UNICODE_CHAR, $symbol);
+            return true;
         }
         goto error;
-
-        state12:
-        $tokenType = 1;
-        $this->token = $tokenFactory->createToken($tokenType);
-        $symbol = ($charList[0] & 0x01) << 30;
-        $symbol |= ($charList[1] & 0x03) << 24;
-        $symbol |= ($charList[2] & 0x3F) << 18;
-        $symbol |= ($charList[3] & 0x3F) << 12;
-        $symbol |= ($charList[4] & 0x3F) << 6;
-        $symbol |= ($charList[5] & 0x3F);
-        $this->token->setAttribute(TokenAttribute::UNICODE_CHAR, $symbol);
-        return true;
 
         state13:
         if ($buffer->isEnd()) {
@@ -219,20 +218,17 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
         if (0x80 <= $char && $char <= 0xBF) {
             $charList[] = $char;
             $buffer->nextSymbol();
-            goto state16;
+            $tokenType = 1;
+            $this->token = $tokenFactory->createToken($tokenType);
+            $symbol = ($charList[0] & 0x03) << 24;
+            $symbol |= ($charList[1] & 0x3F) << 18;
+            $symbol |= ($charList[2] & 0x3F) << 12;
+            $symbol |= ($charList[3] & 0x3F) << 6;
+            $symbol |= ($charList[4] & 0x3F);
+            $this->token->setAttribute(TokenAttribute::UNICODE_CHAR, $symbol);
+            return true;
         }
         goto error;
-
-        state16:
-        $tokenType = 1;
-        $this->token = $tokenFactory->createToken($tokenType);
-        $symbol = ($charList[0] & 0x03) << 24;
-        $symbol |= ($charList[1] & 0x3F) << 18;
-        $symbol |= ($charList[2] & 0x3F) << 12;
-        $symbol |= ($charList[3] & 0x3F) << 6;
-        $symbol |= ($charList[4] & 0x3F);
-        $this->token->setAttribute(TokenAttribute::UNICODE_CHAR, $symbol);
-        return true;
 
         state17:
         if ($buffer->isEnd()) {
@@ -254,19 +250,16 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
         if (0x80 <= $char && $char <= 0xBF) {
             $charList[] = $char;
             $buffer->nextSymbol();
-            goto state19;
+            $tokenType = 1;
+            $this->token = $tokenFactory->createToken($tokenType);
+            $symbol = ($charList[0] & 0x07) << 18;
+            $symbol |= ($charList[1] & 0x3F) << 12;
+            $symbol |= ($charList[2] & 0x3F) << 6;
+            $symbol |= ($charList[3] & 0x3F);
+            $this->token->setAttribute(TokenAttribute::UNICODE_CHAR, $symbol);
+            return true;
         }
         goto error;
-
-        state19:
-        $tokenType = 1;
-        $this->token = $tokenFactory->createToken($tokenType);
-        $symbol = ($charList[0] & 0x07) << 18;
-        $symbol |= ($charList[1] & 0x3F) << 12;
-        $symbol |= ($charList[2] & 0x3F) << 6;
-        $symbol |= ($charList[3] & 0x3F);
-        $this->token->setAttribute(TokenAttribute::UNICODE_CHAR, $symbol);
-        return true;
 
         state20:
         if ($buffer->isEnd()) {
@@ -276,26 +269,15 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
         if (0x80 <= $char && $char <= 0xBF) {
             $charList[] = $char;
             $buffer->nextSymbol();
-            goto state21;
+            $tokenType = 1;
+            $this->token = $tokenFactory->createToken($tokenType);
+            $symbol = ($charList[0] & 0x0F) << 12;
+            $symbol |= ($charList[1] & 0x3F) << 6;
+            $symbol |= ($charList[2] & 0x3F);
+            $this->token->setAttribute(TokenAttribute::UNICODE_CHAR, $symbol);
+            return true;
         }
         goto error;
-
-        state21:
-        $tokenType = 1;
-        $this->token = $tokenFactory->createToken($tokenType);
-        $symbol = ($charList[0] & 0x0F) << 12;
-        $symbol |= ($charList[1] & 0x3F) << 6;
-        $symbol |= ($charList[2] & 0x3F);
-        $this->token->setAttribute(TokenAttribute::UNICODE_CHAR, $symbol);
-        return true;
-
-        state22:
-        $tokenType = 1;
-        $this->token = $tokenFactory->createToken($tokenType);
-        $symbol = ($charList[0] & 0x1F) << 6;
-        $symbol |= ($charList[1] & 0x3F);
-        $this->token->setAttribute(TokenAttribute::UNICODE_CHAR, $symbol);
-        return true;
 
         error:
         if ($buffer->isEnd()) {

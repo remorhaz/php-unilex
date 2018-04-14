@@ -30,77 +30,53 @@ class TokenMatcher extends TokenMatcherTemplate
         $char = $buffer->getSymbol();
         if (0x3E == $char) {
             $buffer->nextSymbol();
-            goto state2;
+            $tokenType = 1;
+            $this->token = $tokenFactory->createToken($tokenType);
+            return true;
         }
         if (0x3C == $char) {
             $buffer->nextSymbol();
-            goto state3;
+            $tokenType = 2;
+            $this->token = $tokenFactory->createToken($tokenType);
+            return true;
         }
         if (0x2B == $char) {
             $buffer->nextSymbol();
-            goto state4;
+            $tokenType = 3;
+            $this->token = $tokenFactory->createToken($tokenType);
+            return true;
         }
         if (0x2D == $char) {
             $buffer->nextSymbol();
-            goto state5;
+            $tokenType = 4;
+            $this->token = $tokenFactory->createToken($tokenType);
+            return true;
         }
         if (0x2E == $char) {
             $buffer->nextSymbol();
-            goto state6;
+            $tokenType = 5;
+            $this->token = $tokenFactory->createToken($tokenType);
+            return true;
         }
         if (0x2C == $char) {
             $buffer->nextSymbol();
-            goto state7;
+            $tokenType = 6;
+            $this->token = $tokenFactory->createToken($tokenType);
+            return true;
         }
         if (0x5B == $char) {
             $buffer->nextSymbol();
-            goto state8;
+            $tokenType = 7;
+            $this->token = $tokenFactory->createToken($tokenType);
+            return true;
         }
         if (0x5D == $char) {
             $buffer->nextSymbol();
-            goto state9;
+            $tokenType = 8;
+            $this->token = $tokenFactory->createToken($tokenType);
+            return true;
         }
         goto error;
-
-        state2:
-        $tokenType = 1;
-        $this->token = $tokenFactory->createToken($tokenType);
-        return true;
-
-        state3:
-        $tokenType = 2;
-        $this->token = $tokenFactory->createToken($tokenType);
-        return true;
-
-        state4:
-        $tokenType = 3;
-        $this->token = $tokenFactory->createToken($tokenType);
-        return true;
-
-        state5:
-        $tokenType = 4;
-        $this->token = $tokenFactory->createToken($tokenType);
-        return true;
-
-        state6:
-        $tokenType = 5;
-        $this->token = $tokenFactory->createToken($tokenType);
-        return true;
-
-        state7:
-        $tokenType = 6;
-        $this->token = $tokenFactory->createToken($tokenType);
-        return true;
-
-        state8:
-        $tokenType = 7;
-        $this->token = $tokenFactory->createToken($tokenType);
-        return true;
-
-        state9:
-        $tokenType = 8;
-        $this->token = $tokenFactory->createToken($tokenType);
-        return true;
 
         error:
         return false;

@@ -44,7 +44,7 @@ class NfaCalc
         $moveList = $this
             ->nfa
             ->getSymbolTransitionMap()
-            ->findMoves($stateIn);
+            ->getExitList($stateIn);
         $stateOutList = [];
         foreach ($moveList as $stateOut => $symbolList) {
             if (in_array($symbolId, $symbolList)) {
@@ -59,7 +59,7 @@ class NfaCalc
         $moveList = $this
             ->nfa
             ->getEpsilonTransitionMap()
-            ->findMoves($stateIn);
+            ->getExitList($stateIn);
         $moveList[$stateIn] = true;
         return array_keys($moveList);
     }
