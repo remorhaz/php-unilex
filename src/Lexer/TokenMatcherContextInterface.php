@@ -1,7 +1,13 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: zooh
- * Date: 4/14/18
- * Time: 3:03 PM
- */
+
+namespace Remorhaz\UniLex\Lexer;
+
+use Remorhaz\UniLex\Token;
+
+interface TokenMatcherContextInterface
+{
+
+    public function setNewToken(int $tokenType): self;
+
+    public function getToken(): Token;
+}
