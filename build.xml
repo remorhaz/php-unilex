@@ -34,7 +34,7 @@
 
     <target name="token-matchers"
         description="Generate token matchers"
-        depends="unicode-utf8-matcher, regexp-matcher, example-brainfuck-matcher, lex-matcher" />
+        depends="unicode-utf8-matcher, regexp-matcher, example-brainfuck-matcher" />
     <target name="unicode-utf8-matcher" description="Unicode UTF-8 token matcher">
         <build-token-matcher
             description="Unicode UTF-8 token matcher."
