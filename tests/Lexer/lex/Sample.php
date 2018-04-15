@@ -1,0 +1,4 @@
+<?php
+/**
+ * @lexTargetClass SampleTokenMatcher
+ */

@@ -14,6 +14,9 @@ class TokenMatcherSpecParser
     private const TAG_LEX_TARGET_CLASS = 'lexTargetClass';
     private const TAG_LEX_TEMPLATE_CLASS = 'lexTemplateClass';
     private const TAG_LEX_HEADER = 'lexHeader';
+    private const TAG_LEX_BEFORE_MATCH = 'lexBeforeMatch';
+    private const TAG_LEX_ON_TRANSITION = 'lexOnTransition';
+    private const TAG_LEX_ON_ERROR = 'lexOnError';
 
     private $source;
 
@@ -80,7 +83,11 @@ class TokenMatcherSpecParser
             $this->templateClassName = TokenMatcherTemplate::class;
         }
         $matcherSpec = new TokenMatcherSpec($this->targetClassName, $this->templateClassName);
-        $matcherSpec->setHeader(trim($this->codeBlockList[self::TAG_LEX_HEADER] ?? ''));
+        $matcherSpec
+            ->setHeader(trim($this->codeBlockList[self::TAG_LEX_HEADER] ?? ''))
+            ->setBeforeMatch(trim($this->codeBlockList[self::TAG_LEX_BEFORE_MATCH] ?? ''))
+            ->setOnTransition(trim($this->codeBlockList[self::TAG_LEX_ON_TRANSITION] ?? ''))
+            ->setOnError(trim($this->codeBlockList[self::TAG_LEX_ON_ERROR] ?? "return false;"));
         return $matcherSpec;
     }
 
@@ -92,6 +99,9 @@ class TokenMatcherSpecParser
     private function processPhpToken(?int $tokenId, string $code): void
     {
         $this->skipToken = false;
+        if (T_NAMESPACE === $tokenId) {
+            var_dump($code);
+        }
         if (T_DOC_COMMENT === $tokenId) {
             $docBlock = $this->getDocBlockFactory()->create($code);
             $this->detectTargetClassName($docBlock);
@@ -150,12 +160,15 @@ class TokenMatcherSpecParser
     {
         $codeBlockKeyList = [
             self::TAG_LEX_HEADER,
+            self::TAG_LEX_BEFORE_MATCH,
+            self::TAG_LEX_ON_TRANSITION,
+            self::TAG_LEX_ON_ERROR,
         ];
         $codeBlockKey = null;
         foreach ($codeBlockKeyList as $tagName) {
             if ($docBlock->hasTag($tagName)) {
                 if (isset($codeBlockKey)) {
-                    throw new Exception("Invalid lexer specification: @{$tagName} conflicts with @{$codeBlockKey}");
+                    throw new Exception("Invalid lexer specification: @{$tagName} tag conflicts with @{$codeBlockKey}");
                 }
                 $codeBlockKey = $tagName;
             }
