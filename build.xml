@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <project name="unilex" basedir="." default="all">
+    <taskdef classname="phing.BuildLexer" name="build-lexer" />
     <taskdef classname="phing.BuildTokenMatcher" name="build-token-matcher" />
     <taskdef classname="phing.BuildLl1LookupTable" name="build-ll1-lookup-table" />
 
@@ -33,7 +34,7 @@
 
     <target name="token-matchers"
         description="Generate token matchers"
-        depends="unicode-utf8-matcher, regexp-matcher, example-brainfuck-matcher" />
+        depends="unicode-utf8-matcher, regexp-matcher, example-brainfuck-matcher, lex-matcher" />
     <target name="unicode-utf8-matcher" description="Unicode UTF-8 token matcher">
         <build-token-matcher
             description="Unicode UTF-8 token matcher."
@@ -51,5 +52,8 @@
             description="Brainfuck token matcher."
             configFile="${application.startdir}/examples/src/Brainfuck/Grammar/TokenMatcherConfig.php"
             outputFile="${application.startdir}/examples/generated/Brainfuck/Grammar/TokenMatcher.php" />
+    </target>
+    <target name="lex-matcher">
+        <build-lexer />
     </target>
 </project>

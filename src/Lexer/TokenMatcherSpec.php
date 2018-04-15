@@ -23,6 +23,8 @@ class TokenMatcherSpec
 
     private $fileCommentList = [];
 
+    private $header = '';
+
     private $beforeMatch = '';
 
     private $onError = '';
@@ -130,6 +132,17 @@ class TokenMatcherSpec
     public function getMatchMethod(): ReflectionMethod
     {
         return $this->getTemplateClass()->getMethod('match');
+    }
+
+    public function setHeader(string $code): self
+    {
+        $this->header = $code;
+        return $this;
+    }
+
+    public function getHeader(): string
+    {
+        return $this->header;
     }
 
     public function setBeforeMatch(string $code): self

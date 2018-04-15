@@ -25,16 +25,16 @@ $charList[] = $char;
 /**
  * 1-byte symbol
  *
- * @lexToken [\x00-\x7F]
+ * @lexToken /[\x00-\x7F]/
  */
 $context
     ->setNewToken(TokenType::SYMBOL)
-    ->setTokenAttribute(TokenAttribute::UNICODE_CHAR, \$char);
+    ->setTokenAttribute(TokenAttribute::UNICODE_CHAR, $char);
 
 /**
  * 2-byte symbol
  *
- * @lexToken [\xC0-\xDF][\x80-\xBF]
+ * @lexToken /[\xC0-\xDF][\x80-\xBF]/
  */
 $symbol = ($charList[0] & 0x1F) << 6;
 $symbol |= ($charList[1] & 0x3F);
@@ -45,7 +45,7 @@ $context
 /**
  * 3-byte symbol
  *
- * @lexToken [\xE0-\xEF][\x80-\xBF]{2}
+ * @lexToken /[\xE0-\xEF][\x80-\xBF]{2}/
  */
 $symbol = ($charList[0] & 0x0F) << 12;
 $symbol |= ($charList[1] & 0x3F) << 6;
@@ -57,7 +57,7 @@ $context
 /**
  * 4-byte symbol
  *
- * @lexToken [\xF0-\xF7][\x80-\xBF]{3}
+ * @lexToken /[\xF0-\xF7][\x80-\xBF]{3}/
  */
 $symbol = ($charList[0] & 0x07) << 18;
 $symbol |= ($charList[1] & 0x3F) << 12;
@@ -70,7 +70,7 @@ $context
 /**
  * 5-byte symbol
  *
- * @lexToken [\xF8-\xFB][\x80-\xBF]{4}
+ * @lexToken /[\xF8-\xFB][\x80-\xBF]{4}/
  */
 $symbol = ($charList[0] & 0x03) << 24;
 $symbol |= ($charList[1] & 0x3F) << 18;
@@ -84,7 +84,7 @@ $context
 /**
  * 6-byte symbol
  *
- * @lexToken [\xFC-\xFD][\x80-\xBF]{5}
+ * @lexToken /[\xFC-\xFD][\x80-\xBF]{5}/
  */
 $symbol = ($charList[0] & 0x01) << 30;
 $symbol |= ($charList[1] & 0x03) << 24;
