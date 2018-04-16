@@ -1,7 +1,7 @@
 <?php
 /**
  * @lexHeader
- * @lexTargetClass \Remorhaz\UniLex\Unicode\Grammar\Utf8TokenMatcher
+ * @lexTargetClass Utf8TokenMatcher
  * @lexTemplateClass \Remorhaz\UniLex\TokenMatcherTemplate
  */
 

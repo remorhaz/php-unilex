@@ -35,12 +35,6 @@
     <target name="token-matchers"
         description="Generate token matchers"
         depends="unicode-utf8-matcher, regexp-matcher, example-brainfuck-matcher" />
-    <target name="unicode-utf8-matcher" description="Unicode UTF-8 token matcher">
-        <build-token-matcher
-            description="Unicode UTF-8 token matcher."
-            configFile="${application.startdir}/src/Unicode/Grammar/Utf8Config.php"
-            outputFile="${application.startdir}/generated/Unicode/Grammar/Utf8TokenMatcher.php" />
-    </target>
     <target name="regexp-matcher" description="RegExp token matcher">
         <build-token-matcher
             description="RegExp token matcher."
@@ -53,7 +47,10 @@
             configFile="${application.startdir}/examples/src/Brainfuck/Grammar/TokenMatcherConfig.php"
             outputFile="${application.startdir}/examples/generated/Brainfuck/Grammar/TokenMatcher.php" />
     </target>
-    <target name="lex-matcher">
-        <build-lexer />
+    <target name="unicode-utf8-matcher">
+        <build-lexer
+            description="Unicode UTF-8 token matcher."
+            sourceFile="${application.startdir}/lex/Unicode/Utf8LexerSpec.php"
+            destFile="${application.startdir}/generated/Unicode/Grammar/Utf8TokenMatcher.php" />
     </target>
 </project>

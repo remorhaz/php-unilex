@@ -33,8 +33,8 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
             $charList[] = $char;
             $context->getBuffer()->nextSymbol();
             $context
-               ->setNewToken(TokenType::SYMBOL)
-               ->setTokenAttribute(TokenAttribute::UNICODE_CHAR, $char);
+                ->setNewToken(TokenType::SYMBOL)
+                ->setTokenAttribute(TokenAttribute::UNICODE_CHAR, $char);
             return true;
         }
         if (0xC0 <= $char && $char <= 0xDF) {
@@ -75,8 +75,8 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
             $symbol = ($charList[0] & 0x1F) << 6;
             $symbol |= ($charList[1] & 0x3F);
             $context
-               ->setNewToken(TokenType::SYMBOL)
-               ->setTokenAttribute(TokenAttribute::UNICODE_CHAR, $symbol);
+                ->setNewToken(TokenType::SYMBOL)
+                ->setTokenAttribute(TokenAttribute::UNICODE_CHAR, $symbol);
             return true;
         }
         goto error;
@@ -180,8 +180,8 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
             $symbol |= ($charList[4] & 0x3F) << 6;
             $symbol |= ($charList[5] & 0x3F);
             $context
-               ->setNewToken(TokenType::SYMBOL)
-               ->setTokenAttribute(TokenAttribute::UNICODE_CHAR, $symbol);
+                ->setNewToken(TokenType::SYMBOL)
+                ->setTokenAttribute(TokenAttribute::UNICODE_CHAR, $symbol);
             return true;
         }
         goto error;
@@ -224,8 +224,8 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
             $symbol |= ($charList[3] & 0x3F) << 6;
             $symbol |= ($charList[4] & 0x3F);
             $context
-               ->setNewToken(TokenType::SYMBOL)
-               ->setTokenAttribute(TokenAttribute::UNICODE_CHAR, $symbol);
+                ->setNewToken(TokenType::SYMBOL)
+                ->setTokenAttribute(TokenAttribute::UNICODE_CHAR, $symbol);
             return true;
         }
         goto error;
@@ -255,8 +255,8 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
             $symbol |= ($charList[2] & 0x3F) << 6;
             $symbol |= ($charList[3] & 0x3F);
             $context
-               ->setNewToken(TokenType::SYMBOL)
-               ->setTokenAttribute(TokenAttribute::UNICODE_CHAR, $symbol);
+                ->setNewToken(TokenType::SYMBOL)
+                ->setTokenAttribute(TokenAttribute::UNICODE_CHAR, $symbol);
             return true;
         }
         goto error;
@@ -273,8 +273,8 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
             $symbol |= ($charList[1] & 0x3F) << 6;
             $symbol |= ($charList[2] & 0x3F);
             $context
-               ->setNewToken(TokenType::SYMBOL)
-               ->setTokenAttribute(TokenAttribute::UNICODE_CHAR, $symbol);
+                ->setNewToken(TokenType::SYMBOL)
+                ->setTokenAttribute(TokenAttribute::UNICODE_CHAR, $symbol);
             return true;
         }
         goto error;

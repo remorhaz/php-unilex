@@ -1,101 +1,75 @@
 <?php
 
-use Remorhaz\UniLex\Lexer\TokenMatcherSpec;
+use Remorhaz\UniLex\Lexer\TokenMatcherGenerator;
+use Remorhaz\UniLex\Lexer\TokenMatcherSpecParser;
 
 class BuildLexer extends Task
 {
 
+    /**
+     * @var PhingFile
+     */
+    private $destFile;
+
+    private $sourceFile;
+
+    public function setDestFile(PhingFile $file): void
+    {
+        $this->destFile = $file;
+    }
+
+    public function setSourceFile(PhingFile $file): void
+    {
+        $this->sourceFile = $file;
+    }
+
+    public function init()
+    {
+    }
+
+    /**
+     * @throws ReflectionException
+     * @throws \Remorhaz\UniLex\Exception
+     */
     public function main()
     {
-        $specFile = __DIR__ . "/../lex/Unicode/Utf8Lex.php";
-        $specData = file_get_contents($specFile);
-        $buffer = [];
-        $docBlockFactory = \phpDocumentor\Reflection\DocBlockFactory::createInstance();
-        $concatenableBlockList = [
-            'lexHeader',
-            'lexBeforeMatch',
-            'lexOnTransition',
-            'lexOnToken',
-            'lexOnError',
-            'lexToken',
+        if (!isset($this->sourceFile)) {
+            throw new BuildException("Source file is not defined");
+        }
+        if (!isset($this->destFile)) {
+            throw new BuildException("Destination file is not defined");
+        }
+
+        $this->log("Generating matcher class...");
+        $matcherSpec = TokenMatcherSpecParser::loadFromFile((string) $this->sourceFile)
+            ->getMatcherSpec()
+            ->addFileComment(...$this->getFileCommentLines());
+        $generator = new TokenMatcherGenerator($matcherSpec);
+        $output = $generator->getOutput();
+        $lineCount = count(explode("\n", $output));
+        $this->log("Done ({$lineCount} lines)!");
+
+        $this->log("Dumping generated data to file {$this->destFile}...");
+        $writer = new FileWriter($this->destFile);
+        $writer->write($output);
+        $writer->close();
+        $byteCount = strlen($output);
+        $this->log("Done ({$byteCount} bytes)!");
+    }
+
+    private function getFileCommentLines(): array
+    {
+        $result = [
+            "Auto-generated file, please don't edit manually.",
+            "Run following command to update this file:",
+            "    vendor/bin/phing {$this->getOwningTarget()->getName()}",
+            "",
+            "Phing version: {$this->getProject()->getPhingVersion()}"
         ];
-        $tokenBlockList = [];
-        $tokenList = token_get_all($specData);
-        $bufferIndex = null;
-        $regExp = null;
-        $targetClassName = null;
-        $templateClassName = null;
-        foreach ($tokenList as $tokenData) {
-            if (is_array($tokenData)) {
-                [$tokenId, $code] = $tokenData;
-                if (T_DOC_COMMENT == $tokenId) {
-                    $docBlock = $docBlockFactory->create($code);
-                    if ($docBlock->hasTag('lexTargetClass') && !isset($targetClassName)) {
-                        $targetClassName = (string) $docBlock->getTagsByName('lexTargetClass')[0];
-                    }
-                    if ($docBlock->hasTag('lexTemplateClass') && !isset($templateClassName)) {
-                        $templateClassName = (string) $docBlock->getTagsByName('lexTemplateClass')[0];
-                    }
-                    $concatenableBlock = null;
-                    foreach ($concatenableBlockList as $tagName) {
-                        if ($docBlock->hasTag($tagName)) {
-                            if (isset($concatenableBlock) && $tagName != $concatenableBlock) {
-                                throw new BuildException(
-                                    "Lex spec block conflict: {$tagName} and {$concatenableBlock}"
-                                );
-                            }
-                            $concatenableBlock = $tagName;
-                        }
-                    }
-                    if (isset($concatenableBlock)) {
-                        if ($concatenableBlock == 'lexToken') {
-                            $regExpList = $docBlock->getTagsByName($concatenableBlock);
-                            if (count($regExpList) != 1) {
-                                throw new BuildException("Exactly one @lexToken tag allowed");
-                            }
-                            $desc = (string) $regExpList[0];
-                            $matchResult = preg_match('#^/(.*)/$#', $desc, $matches);
-                            if (1 !== $matchResult) {
-                                throw new BuildException("Regular expression must be framed by \"/\" symbols");
-                            }
-                            $regExp = $matches[1];
-                            if (isset($tokenBlockList[$regExp])) {
-                                throw new BuildException("Token block for {$regExp} already exists");
-                            }
-                            $tokenBlockList[$regExp] = '';
-                            $bufferIndex = null;
-                            continue;
-                        }
-                        $bufferIndex = $concatenableBlock;
-                        $regExp = null;
-                        if (!isset($buffer[$bufferIndex])) {
-                            $buffer[$bufferIndex] = '';
-                        }
-                        continue;
-                    }
-                }
-            } else {
-                $code = $tokenData;
-            }
-            if (isset($bufferIndex)) {
-                $buffer[$bufferIndex] .= $code;
-            }
-            if (isset($regExp)) {
-                $tokenBlockList[$regExp] .= $code;
-            }
+        $description = $this->getDescription();
+        if (isset($description)) {
+            array_unshift($result, $description, "");
         }
-        $spec = new TokenMatcherSpec($targetClassName, $templateClassName);
-        $spec
-            ->setHeader(trim($buffer['lexHeader'] ?? ''))
-            ->setBeforeMatch(trim($buffer['lexBeforeMatch'] ?? ''))
-            ->setOnToken(trim($buffer['lexOnToken'] ?? ''))
-            ->setOnTransition(trim($buffer['lexOnTransition'] ?? ''))
-            ->setOnError(trim($buffer['lexOnError'] ?? 'return false;'));
-        foreach ($tokenBlockList as $regExp => $code) {
-            $tokenSpec = new \Remorhaz\UniLex\Lexer\TokenSpec($regExp, trim($code));
-            $spec->addTokenSpec($tokenSpec);
-        }
-        $generator = new \Remorhaz\UniLex\Lexer\TokenMatcherGenerator($spec);
-        echo $generator->getOutput();
+        return $result;
     }
 }
