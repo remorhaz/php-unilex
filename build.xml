@@ -50,7 +50,7 @@
     <target name="unicode-utf8-matcher">
         <build-lexer
             description="Unicode UTF-8 token matcher."
-            sourceFile="${application.startdir}/lex/Unicode/Utf8LexerSpec.php"
+            sourceFile="${application.startdir}/spec/Unicode/Utf8LexerSpec.php"
             destFile="${application.startdir}/generated/Unicode/Grammar/Utf8TokenMatcher.php" />
     </target>
 </project>
