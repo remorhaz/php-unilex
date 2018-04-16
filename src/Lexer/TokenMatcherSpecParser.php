@@ -34,9 +34,9 @@ class TokenMatcherSpecParser
 
     private $codeBlockKey;
 
-    private $skipToken = false;
-
     private $codeBlockStack = [];
+
+    private $skipToken = false;
 
     private $usedClassList = [];
 
@@ -87,19 +87,14 @@ class TokenMatcherSpecParser
         if (!isset($this->targetClassName)) {
             throw new Exception("Invalid lexer specification: target class is not defined");
         }
-        if (!isset($this->templateClassName)) {
-            $this->templateClassName = TokenMatcherTemplate::class;
-        }
-        $targetNamespace = trim($this->codeBlockList[self::LEX_NAMESPACE] ?? '');
-        $matcherSpec = new TokenMatcherSpec(
-            $targetNamespace . $this->targetClassName,
-            $this->templateClassName
-        );
+        $targetClassName = $this->getCodeBlock(self::LEX_NAMESPACE) . $this->targetClassName;
+        $templateClassName = $this->templateClassName ?? TokenMatcherTemplate::class;
+        $matcherSpec = new TokenMatcherSpec($targetClassName, $templateClassName);
         $matcherSpec
-            ->setHeader(trim($this->codeBlockList[self::TAG_LEX_HEADER] ?? ''))
-            ->setBeforeMatch(trim($this->codeBlockList[self::TAG_LEX_BEFORE_MATCH] ?? ''))
-            ->setOnTransition(trim($this->codeBlockList[self::TAG_LEX_ON_TRANSITION] ?? ''))
-            ->setOnError(trim($this->codeBlockList[self::TAG_LEX_ON_ERROR] ?? "return false;"));
+            ->setHeader($this->getCodeBlock(self::TAG_LEX_HEADER))
+            ->setBeforeMatch($this->getCodeBlock(self::TAG_LEX_BEFORE_MATCH))
+            ->setOnTransition($this->getCodeBlock(self::TAG_LEX_ON_TRANSITION))
+            ->setOnError($this->getCodeBlock(self::TAG_LEX_ON_ERROR, "return false;"));
         foreach ($this->usedClassList as $usedClassAlias => $usedClassName) {
             $matcherSpec->addUsedClass($usedClassName, is_string($usedClassAlias) ? $usedClassAlias : null);
         }
@@ -114,35 +109,31 @@ class TokenMatcherSpecParser
     private function processPhpToken(?int $tokenId, string $code): void
     {
         $this->skipToken = false;
-        if (T_NAMESPACE === $tokenId &&
-            self::TAG_LEX_HEADER === $this->codeBlockKey &&
-            !isset($this->codeBlockList[self::LEX_NAMESPACE])
-        ) {
-            $this->codeBlockStack[] = $this->codeBlockKey;
-            $this->codeBlockKey = self::LEX_NAMESPACE;
-            $this->codeBlockList[$this->codeBlockKey] = '';
+        if ($this->isCurrentCodeBlock(self::TAG_LEX_HEADER)) {
+            if (T_NAMESPACE === $tokenId && !$this->codeBlockExists(self::LEX_NAMESPACE)
+            ) {
+                $this->replaceCurrentCodeBlock(self::LEX_NAMESPACE);
+                $this->skipToken = true;
+            }
+            if (T_USE === $tokenId) {
+                $this->replaceCurrentCodeBlock(self::LEX_USE);
+                $this->skipToken = true;
+            }
+        }
+        if ($this->isCurrentCodeBlock(self::LEX_NAMESPACE) && null === $tokenId && ';' == $code) {
+            $this->appendCurrentCodeBlock("\\");
+            $this->restoreCurrentCodeBlock();
             $this->skipToken = true;
         }
-        if (self::LEX_NAMESPACE === $this->codeBlockKey && null === $tokenId && ';' == $code) {
-            $this->codeBlockList[$this->codeBlockKey] .= "\\";
-            $this->codeBlockKey = array_pop($this->codeBlockStack);
-            $this->skipToken = true;
-        }
-        if (T_USE === $tokenId && self::TAG_LEX_HEADER === $this->codeBlockKey) {
-            $this->codeBlockStack[] = $this->codeBlockKey;
-            $this->codeBlockKey = self::LEX_USE;
-            $this->codeBlockList[$this->codeBlockKey] = '';
-            $this->skipToken = true;
-        }
-        if (self::LEX_USE === $this->codeBlockKey && null === $tokenId && ';' == $code) {
-            [$usedClass, $alias] = $this->parseUsedClass($this->codeBlockList[self::LEX_USE]);
+        if ($this->isCurrentCodeBlock(self::LEX_USE) && null === $tokenId && ';' == $code) {
+            [$usedClass, $alias] = $this->parseUsedClass($this->getCodeBlock(self::LEX_USE));
             if (isset($alias)) {
                 $this->usedClassList[$alias] = $usedClass;
             } else {
                 $this->usedClassList[] = $usedClass;
             }
-            unset($this->codeBlockList[self::LEX_USE]);
-            $this->codeBlockKey = array_pop($this->codeBlockStack);
+            $this->resetCurrentCodeBlock();
+            $this->restoreCurrentCodeBlock();
             $this->skipToken = true;
         }
         if (T_DOC_COMMENT === $tokenId) {
@@ -151,11 +142,8 @@ class TokenMatcherSpecParser
             $this->detectTemplateClassName($docBlock);
             $this->detectCodeBlock($docBlock);
         }
-        if ($this->skipToken) {
-            return;
-        }
-        if (isset($this->codeBlockKey)) {
-            $this->codeBlockList[$this->codeBlockKey] .= $code;
+        if (!$this->skipToken) {
+            $this->appendCurrentCodeBlock($code);
         }
     }
 
@@ -166,7 +154,7 @@ class TokenMatcherSpecParser
      */
     private function parseUsedClass(string $usedClass): array
     {
-        $pattern = '#^\s*(?P<className>\S+)(?:\s+(?:as\s+)?(?P<alias>\S+))?\s*$#i';
+        $pattern = '#^(?P<className>\S+)(?:\s+(?:as\s+)?(?P<alias>\S+))?$#i';
         $pregResult = preg_match($pattern, $usedClass, $matches);
         if (1 !== $pregResult) {
             throw new Exception("Invalid lexer specification: invalid used class expression");
@@ -232,12 +220,11 @@ class TokenMatcherSpecParser
             }
         }
         if (isset($codeBlockKey)) {
-            if (isset($this->codeBlockList[$codeBlockKey])) {
+            if ($this->codeBlockExists($codeBlockKey)) {
                 throw new Exception("Invalid lexer specification: duplicated @{$codeBlockKey} tag");
             }
             $this->skipToken = true;
-            $this->codeBlockList[$codeBlockKey] = '';
-            $this->codeBlockKey = $codeBlockKey;
+            $this->switchCurrentCodeBlock($codeBlockKey);
         }
     }
 
@@ -247,5 +234,49 @@ class TokenMatcherSpecParser
             $this->docBlockFactory = DocBlockFactory::createInstance();
         }
         return $this->docBlockFactory;
+    }
+
+    private function switchCurrentCodeBlock(string $key): void
+    {
+        $this->codeBlockKey = $key;
+        $this->codeBlockList[$this->codeBlockKey] = '';
+    }
+
+    private function replaceCurrentCodeBlock(string $key): void
+    {
+        $this->codeBlockStack[] = $this->codeBlockKey;
+        $this->switchCurrentCodeBlock($key);
+    }
+
+    private function restoreCurrentCodeBlock(): void
+    {
+        $this->codeBlockKey = array_pop($this->codeBlockStack);
+    }
+
+    private function codeBlockExists(string $key): bool
+    {
+        return isset($this->codeBlockList[$key]);
+    }
+
+    private function getCodeBlock(string $key, string $defaultValue = ''): string
+    {
+        return trim($this->codeBlockList[$key] ?? $defaultValue);
+    }
+
+    private function resetCurrentCodeBlock(): void
+    {
+        unset($this->codeBlockList[$this->codeBlockKey]);
+    }
+
+    private function appendCurrentCodeBlock(string $code): void
+    {
+        if (isset($this->codeBlockKey)) {
+            $this->codeBlockList[$this->codeBlockKey] .= $code;
+        }
+    }
+
+    private function isCurrentCodeBlock(string $key): bool
+    {
+        return $key === $this->codeBlockKey;
     }
 }
