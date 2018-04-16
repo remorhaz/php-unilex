@@ -135,7 +135,12 @@ class TokenMatcherSpecParser
             $this->skipToken = true;
         }
         if (self::LEX_USE === $this->codeBlockKey && null === $tokenId && ';' == $code) {
-            $this->usedClassList[] = trim($this->codeBlockList[self::LEX_USE]);
+            [$usedClass, $alias] = $this->parseUsedClass($this->codeBlockList[self::LEX_USE]);
+            if (isset($alias)) {
+                $this->usedClassList[$alias] = $usedClass;
+            } else {
+                $this->usedClassList[] = $usedClass;
+            }
             unset($this->codeBlockList[self::LEX_USE]);
             $this->codeBlockKey = array_pop($this->codeBlockStack);
             $this->skipToken = true;
@@ -152,6 +157,21 @@ class TokenMatcherSpecParser
         if (isset($this->codeBlockKey)) {
             $this->codeBlockList[$this->codeBlockKey] .= $code;
         }
+    }
+
+    /**
+     * @param string $usedClass
+     * @return array
+     * @throws Exception
+     */
+    private function parseUsedClass(string $usedClass): array
+    {
+        $pattern = '#^\s*(?P<className>\S+)(?:\s+(?:as\s+)?(?P<alias>\S+))?\s*$#i';
+        $pregResult = preg_match($pattern, $usedClass, $matches);
+        if (1 !== $pregResult) {
+            throw new Exception("Invalid lexer specification: invalid used class expression");
+        }
+        return [$matches['className'], $matches['alias'] ?? null];
     }
 
     /**

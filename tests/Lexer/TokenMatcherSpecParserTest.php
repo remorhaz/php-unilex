@@ -197,6 +197,27 @@ SOURCE;
      * @throws \ReflectionException
      * @throws \Remorhaz\UniLex\Exception
      */
+    public function testGetMatcherSpec_SourceUseAsAliasInHeader_MatcherSpecHasMatchingUseInList(): void
+    {
+        $class = __CLASS__;
+        $source = <<<SOURCE
+<?php
+/**
+ * @lexTargetClass ClassName
+ * @lexHeader
+ */
+use {$class} as FooBar;
+SOURCE;
+        $matcherSpec = (new TokenMatcherSpecParser($source))->getMatcherSpec();
+        $useList = $matcherSpec->getUsedClassList();
+        self::assertArrayHasKey('FooBar', $useList);
+        self::assertSame($class, $useList['FooBar']);
+    }
+
+    /**
+     * @throws \ReflectionException
+     * @throws \Remorhaz\UniLex\Exception
+     */
     public function testGetMatcherSpec_SourceUseInHeader_ReturnsBlockWithoutUse(): void
     {
         $class = __CLASS__;
