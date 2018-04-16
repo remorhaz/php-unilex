@@ -17,8 +17,10 @@ class TokenMatcherSpecParser
     private const TAG_LEX_BEFORE_MATCH = 'lexBeforeMatch';
     private const TAG_LEX_ON_TRANSITION = 'lexOnTransition';
     private const TAG_LEX_ON_ERROR = 'lexOnError';
+    private const TAG_LEX_TOKEN = 'lexToken';
     private const LEX_NAMESPACE = 'namespace';
     private const LEX_USE = 'use';
+    private const LEX_TOKEN_REGEXP = 'token_regexp';
 
     private $source;
 
@@ -39,6 +41,8 @@ class TokenMatcherSpecParser
     private $skipToken = false;
 
     private $usedClassList = [];
+
+    private $tokenSpecList = [];
 
     public function __construct(string $source)
     {
@@ -84,6 +88,7 @@ class TokenMatcherSpecParser
             $argList = is_array($phpToken) ? $phpToken : [null, $phpToken];
             $this->processPhpToken(...$argList);
         }
+        $this->afterProcessingSource();
         if (!isset($this->targetClassName)) {
             throw new Exception("Invalid lexer specification: target class is not defined");
         }
@@ -94,7 +99,8 @@ class TokenMatcherSpecParser
             ->setHeader($this->getCodeBlock(self::TAG_LEX_HEADER))
             ->setBeforeMatch($this->getCodeBlock(self::TAG_LEX_BEFORE_MATCH))
             ->setOnTransition($this->getCodeBlock(self::TAG_LEX_ON_TRANSITION))
-            ->setOnError($this->getCodeBlock(self::TAG_LEX_ON_ERROR, "return false;"));
+            ->setOnError($this->getCodeBlock(self::TAG_LEX_ON_ERROR, "return false;"))
+            ->addTokenSpec(...array_values($this->tokenSpecList));
         foreach ($this->usedClassList as $usedClassAlias => $usedClassName) {
             $matcherSpec->addUsedClass($usedClassName, is_string($usedClassAlias) ? $usedClassAlias : null);
         }
@@ -121,7 +127,7 @@ class TokenMatcherSpecParser
             }
         }
         if ($this->isCurrentCodeBlock(self::LEX_NAMESPACE) && null === $tokenId && ';' == $code) {
-            $this->appendCurrentCodeBlock("\\");
+            $this->appendCodeBlock("\\");
             $this->restoreCurrentCodeBlock();
             $this->skipToken = true;
         }
@@ -132,7 +138,7 @@ class TokenMatcherSpecParser
             } else {
                 $this->usedClassList[] = $usedClass;
             }
-            $this->resetCurrentCodeBlock();
+            $this->resetCodeBlock();
             $this->restoreCurrentCodeBlock();
             $this->skipToken = true;
         }
@@ -141,10 +147,19 @@ class TokenMatcherSpecParser
             $this->detectTargetClassName($docBlock);
             $this->detectTemplateClassName($docBlock);
             $this->detectCodeBlock($docBlock);
+            $this->detectTokenRegExp($docBlock);
         }
         if (!$this->skipToken) {
-            $this->appendCurrentCodeBlock($code);
+            $this->appendCodeBlock($code);
         }
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function afterProcessingSource(): void
+    {
+        $this->detectUnprocessedTokenBlock();
     }
 
     /**
@@ -209,6 +224,7 @@ class TokenMatcherSpecParser
             self::TAG_LEX_BEFORE_MATCH,
             self::TAG_LEX_ON_TRANSITION,
             self::TAG_LEX_ON_ERROR,
+            self::TAG_LEX_TOKEN,
         ];
         $codeBlockKey = null;
         foreach ($codeBlockKeyList as $tagName) {
@@ -220,12 +236,53 @@ class TokenMatcherSpecParser
             }
         }
         if (isset($codeBlockKey)) {
+            $this->detectUnprocessedTokenBlock();
             if ($this->codeBlockExists($codeBlockKey)) {
                 throw new Exception("Invalid lexer specification: duplicated @{$codeBlockKey} tag");
             }
             $this->skipToken = true;
             $this->switchCurrentCodeBlock($codeBlockKey);
         }
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function detectUnprocessedTokenBlock(): void
+    {
+        $codeBlockKey = self::TAG_LEX_TOKEN;
+        if (!$this->codeBlockExists($codeBlockKey)) {
+            return;
+        }
+        $tokenRegExp = $this->getCodeBlock(self::LEX_TOKEN_REGEXP);
+        if (isset($this->tokenSpecList[$tokenRegExp])) {
+            throw new Exception("Invalid lexer specification: duplicated @{$codeBlockKey} /{$tokenRegExp}/ tag");
+        }
+        $this->resetCodeBlock(self::LEX_TOKEN_REGEXP);
+        $tokenCode = $this->getCodeBlock($codeBlockKey);
+        $this->resetCodeBlock($codeBlockKey);
+        $tokenSpec = new TokenSpec($tokenRegExp, $tokenCode);
+        $this->tokenSpecList[$tokenSpec->getRegExp()] = $tokenSpec;
+    }
+
+    /**
+     * @param DocBlock $docBlock
+     * @throws Exception
+     */
+    private function detectTokenRegExp(DocBlock $docBlock): void
+    {
+        if (!$this->isCurrentCodeBlock(self::TAG_LEX_TOKEN)) {
+            return;
+        }
+        $tagValue = $docBlock->getTagsByName(self::TAG_LEX_TOKEN)[0];
+        $matchResult = preg_match('#^/(?P<regexp>.*)/$#', $tagValue, $matches);
+        if (1 !== $matchResult) {
+            throw new Exception("Invalid lexer specification: regular expression is not framed by \"/\"");
+        }
+        $regExp = $matches['regexp'];
+        $this->replaceCurrentCodeBlock(self::LEX_TOKEN_REGEXP);
+        $this->appendCodeBlock($regExp);
+        $this->restoreCurrentCodeBlock();
     }
 
     private function getDocBlockFactory(): DocBlockFactoryInterface
@@ -258,20 +315,27 @@ class TokenMatcherSpecParser
         return isset($this->codeBlockList[$key]);
     }
 
-    private function getCodeBlock(string $key, string $defaultValue = ''): string
+    private function getCodeBlock(string $key = null, string $defaultValue = ''): string
     {
-        return trim($this->codeBlockList[$key] ?? $defaultValue);
+        $effectiveKey = $key ?? $this->codeBlockKey;
+        return isset($effectiveKey)
+            ? trim($this->codeBlockList[$effectiveKey] ?? $defaultValue)
+            : trim($defaultValue);
     }
 
-    private function resetCurrentCodeBlock(): void
+    private function resetCodeBlock(string $key = null): void
     {
-        unset($this->codeBlockList[$this->codeBlockKey]);
+        $effectiveKey = $key ?? $this->codeBlockKey;
+        if (isset($effectiveKey)) {
+            unset($this->codeBlockList[$key]);
+        }
     }
 
-    private function appendCurrentCodeBlock(string $code): void
+    private function appendCodeBlock(string $code, string $key = null): void
     {
-        if (isset($this->codeBlockKey)) {
-            $this->codeBlockList[$this->codeBlockKey] .= $code;
+        $effectiveKey = $key ?? $this->codeBlockKey;
+        if (isset($effectiveKey)) {
+            $this->codeBlockList[$effectiveKey] .= $code;
         }
     }
 

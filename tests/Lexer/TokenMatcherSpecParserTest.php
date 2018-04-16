@@ -217,6 +217,25 @@ SOURCE;
     /**
      * @throws \ReflectionException
      * @throws \Remorhaz\UniLex\Exception
+     * @expectedException \Remorhaz\UniLex\Exception
+     * @expectedExceptionMessage Invalid lexer specification: invalid used class expression
+     */
+    public function testGetMatcherSpec_SourceInvalidUseInHeader_ThrowsException(): void
+    {
+        $source = <<<SOURCE
+<?php
+/**
+ * @lexTargetClass ClassName
+ * @lexHeader
+ */
+use Namespace\Class aas FooBar;
+SOURCE;
+        (new TokenMatcherSpecParser($source))->getMatcherSpec();
+    }
+
+    /**
+     * @throws \ReflectionException
+     * @throws \Remorhaz\UniLex\Exception
      */
     public function testGetMatcherSpec_SourceUseInHeader_ReturnsBlockWithoutUse(): void
     {
@@ -373,5 +392,89 @@ SOURCE;
         $matcherSpec = (new TokenMatcherSpecParser($source))->getMatcherSpec();
         $actualValue = $matcherSpec->getOnError();
         self::assertSame("return true;", $actualValue);
+    }
+
+    /**
+     * @throws \ReflectionException
+     * @throws \Remorhaz\UniLex\Exception
+     * @expectedException \Remorhaz\UniLex\Exception
+     * @expectedExceptionMessage Invalid lexer specification: regular expression is not framed by "/"
+     */
+    public function testGetMatcherSpec_SourceWithInvalidRegExp_ThrowsException(): void
+    {
+        $source = <<<SOURCE
+<?php
+/**
+ * @lexTargetClass ClassName
+ * @lexToken abc
+ */
+SOURCE;
+        (new TokenMatcherSpecParser($source))->getMatcherSpec();
+    }
+
+    /**
+     * @throws \ReflectionException
+     * @throws \Remorhaz\UniLex\Exception
+     * @expectedException \Remorhaz\UniLex\Exception
+     * @expectedExceptionMessage Invalid lexer specification: duplicated @lexToken /abc/ tag
+     */
+    public function testGetMatcherSpec_DuplicatedRegExp_ThrowsException(): void
+    {
+        $source = <<<SOURCE
+<?php
+/**
+ * @lexTargetClass ClassName
+ * @lexToken /abc/
+ */
+\$x = 0;
+/** @lexToken /abc/ */
+\$y = 1;
+SOURCE;
+        (new TokenMatcherSpecParser($source))->getMatcherSpec();
+    }
+
+    /**
+     * @throws \ReflectionException
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testGetMatcherSpec_TwoValidTokens_MatcherSpecGetTokenSpecListReturnsTwoElements(): void
+    {
+        $source = <<<SOURCE
+<?php
+/**
+ * @lexTargetClass ClassName
+ * @lexToken /a/
+ */
+\$x = 0;
+/** @lexToken /b/ */
+\$y = 1;
+SOURCE;
+        $matcherSpec = (new TokenMatcherSpecParser($source))->getMatcherSpec();
+        $actualValue = $matcherSpec->getTokenSpecList();
+        self::assertCount(2, $actualValue);
+    }
+
+    /**
+     * @throws \ReflectionException
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testGetMatcherSpec_TwoValidTokens_MatcherSpecGetTokenSpecListContainsBothMatchingTokens(): void
+    {
+        $source = <<<SOURCE
+<?php
+/**
+ * @lexTargetClass ClassName
+ * @lexToken /a/
+ */
+\$x = 0;
+/** @lexToken /b/ */
+\$y = 1;
+SOURCE;
+        $matcherSpec = (new TokenMatcherSpecParser($source))->getMatcherSpec();
+        $tokenSpecList = $matcherSpec->getTokenSpecList();
+        self::assertArrayHasKey('a', $tokenSpecList);
+        self::assertSame("\$x = 0;", $tokenSpecList['a']->getCode());
+        self::assertArrayHasKey('b', $tokenSpecList);
+        self::assertSame("\$y = 1;", $tokenSpecList['b']->getCode());
     }
 }
