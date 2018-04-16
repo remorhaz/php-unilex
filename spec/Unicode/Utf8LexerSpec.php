@@ -2,7 +2,6 @@
 /**
  * @lexHeader
  * @lexTargetClass Utf8TokenMatcher
- * @lexTemplateClass \Remorhaz\UniLex\TokenMatcherTemplate
  */
 
 namespace Remorhaz\UniLex\Unicode\Grammar;
@@ -96,9 +95,7 @@ $context
     ->setNewToken(TokenType::SYMBOL)
     ->setTokenAttribute(TokenAttribute::UNICODE_CHAR, $symbol);
 
-/**
- * @lexOnError
- */
+/** @lexOnError */
 if ($context->getBuffer()->isEnd()) {
     return false;
 }

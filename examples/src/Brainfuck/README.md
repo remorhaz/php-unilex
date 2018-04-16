@@ -12,7 +12,7 @@ This grammar is configured in `Grammar/Config.php`. Configuration includes:
 * Production list.
 * Some additional data: "root", "start" and "end of input" symbols.
 ## Lexer
-Lexer converts raw input stream into stream of tokens. Interpreter utilizes `Remorhaz\UniLex\TokenReader` class for that purpose. To recognize Brainfuck tokens we need to build a matcher. Matcher configuration is defined in `Grammar/TokenMatcherConfig.php`, and matcher itself can be generated with Phing using this command:
+Lexer converts raw input stream into stream of tokens. Interpreter utilizes `Remorhaz\UniLex\TokenReader` class for that purpose. To recognize Brainfuck tokens we need to build a matcher. Matcher specification is defined in `spec/Brainfuck/LexerSpec.php`, and matcher itself can be generated with Phing using this command:
 ```
 vendor/bin/phing example-brainfuck-matcher
 ```
