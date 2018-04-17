@@ -17,6 +17,7 @@
       "role": "Developer"
     }
   ],
+  "bin": ["bin/unilex"],
   "require": {
     "php": "^7.1",
     "vanilla/garden-cli": "^2.0",
