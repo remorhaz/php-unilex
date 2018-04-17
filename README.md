@@ -30,7 +30,7 @@ Library includes custom Phing tasks to build token matcher from specification:
 
 <project name="unilex" basedir="." default="example-matcher">
     <taskdef classname="vendor.remorhaz.unilex.phing.BuildTokenMatcher" name="build-lexer" />
-    <target name="example-matcher"">
+    <target name="example-matcher">
         <build-lexer
             description="My example matcher."
             sourceFile="${application.startdir}/path/to/spec/LexerSpec.php"
