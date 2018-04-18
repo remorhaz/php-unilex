@@ -1,6 +1,7 @@
 # UniLex
 
 [![Build Status](https://travis-ci.org/remorhaz/php-unilex.svg?branch=master)](https://travis-ci.org/remorhaz/php-unilex)
+[![Latest Stable Version](https://poser.pugx.org/remorhaz/php-unilex/version)](https://packagist.org/packages/remorhaz/php-unilex)
 [![Maintainability](https://api.codeclimate.com/v1/badges/86f9f83bebfb4d44a210/maintainability)](https://codeclimate.com/github/remorhaz/php-unilex/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/86f9f83bebfb4d44a210/test_coverage)](https://codeclimate.com/github/remorhaz/php-unilex/test_coverage)
 
