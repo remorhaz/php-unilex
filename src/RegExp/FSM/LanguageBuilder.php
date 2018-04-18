@@ -55,7 +55,7 @@ class LanguageBuilder
             $symbolList[] = $splitSymbolId;
             $newRangeSet = $rangeSetCalc->and($newRangeSet, $rangeSetDiff);
         }
-        if ($shouldAddNewSymbol) {
+        if ($shouldAddNewSymbol && !$newRangeSet->isEmpty()) {
             $newSymbolId = $this->symbolTable->addSymbol($newRangeSet);
             $symbolList[] = $newSymbolId;
         }

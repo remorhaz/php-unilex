@@ -133,6 +133,13 @@ class LanguageBuilderTest extends TestCase
                 [[1, 2]], [[2, 4]],
                 [0 => [[1, 1]], 1 => [[2, 2]], 2 => [[3, 4]]],
             ],
+            "Second range in the middle of first" => [
+                [1, 2],
+                [1, 3],
+                [[1, 4]],
+                [[2, 3]],
+                [0 => [[1, 1], [4, 4]], 1 => [[2, 3]]],
+            ],
             "First range in the middle of second" => [
                 [1, 2],
                 [1, 3],
