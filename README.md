@@ -59,7 +59,35 @@ Next step is building a token matcher from specification:
 ```
 vendor/bin/unilex LexerSpec.php > TokenMatcher.php
 ```
-Now we have a compiled token matcher in `TokenMatcher.php` file.
+Now we have a compiled token matcher in `TokenMatcher.php` file. Let's use it and read all tokens from the buffer:
+```php
+<?php
+
+use Remorhaz\UniLex\Lexer\TokenFactory;
+use Remorhaz\UniLex\TokenReader;
+use Remorhaz\UniLex\Unicode\CharBufferFactory;
+
+require_once "vendor/autoload.php";
+require_once "TokenMatcher.php";
+
+$buffer = CharBufferFactory::createFromUtf8String("x+2*3");
+$tokenReader = new TokenReader($buffer, new TokenMatcher, new TokenFactory(0xFF));
+
+do {
+    $token = $tokenReader->read();
+    echo "Token ID: {$token->getType()}\n";
+} while (!$token->isEoi());
+```
+On execution this script outputs:
+```
+Token ID: 1
+Token ID: 2
+Token ID: 3
+Token ID: 2
+Token ID: 3
+Token ID: 255
+```
+
 ### CLI
 You can use command-line utility to build token matcher from specification:
 ```
