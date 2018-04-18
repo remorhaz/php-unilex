@@ -59,7 +59,7 @@ Next step is building a token matcher from specification:
 ```
 vendor/bin/unilex LexerSpec.php > TokenMatcher.php
 ```
-
+Now we have a compiled token matcher in `TokenMatcher.php` file.
 ### CLI
 You can use command-line utility to build token matcher from specification:
 ```
