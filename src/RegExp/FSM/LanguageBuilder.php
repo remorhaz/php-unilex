@@ -40,13 +40,17 @@ class LanguageBuilder
             }
             $rangeSetDiff = $rangeSetCalc->xor($oldRangeSet, $newRangeSet);
             $onlyInOldRangeSet = $rangeSetCalc->and($oldRangeSet, $rangeSetDiff);
+            if ($onlyInOldRangeSet->isEmpty()) {
+                $newRangeSet = $rangeSetDiff;
+                continue;
+            }
             if ($rangeSetCalc->equals($onlyInOldRangeSet, $oldRangeSet)) {
                 continue;
             }
             $splitSymbolId = $this
                 ->symbolTable
                 ->replaceSymbol($symbolId, $onlyInOldRangeSet)
-                ->addSymbol($rangeSetCalc->and($oldRangeSet, $newRangeSet));
+                ->addSymbol($and = $rangeSetCalc->and($oldRangeSet, $newRangeSet));
             $this->splitSymbolInTransitions($symbolId, $splitSymbolId);
             $symbolList[] = $splitSymbolId;
             $newRangeSet = $rangeSetCalc->and($newRangeSet, $rangeSetDiff);
