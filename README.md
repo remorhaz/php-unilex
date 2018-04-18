@@ -7,16 +7,16 @@
 Unilex is lexical analyzer generator (similar to `lex` and `flex`) with Unicode support.
 It's written in PHP and generates code in PHP.
 
-## Requirements
-* PHP 7.1+
-
 ```
 [WIP] Work in progress
 ```
+## Requirements
+* PHP 7.1+
 
 ***
 ## License
 UniLex library is licensed under MIT license.
+
 ## Installation
 Installation is as simple as any other [composer](https://getcomposer.org/) library's one:
 ```
@@ -24,6 +24,13 @@ composer require remorhaz/php-unilex
 ```
 
 ## Usage
+### CLI
+You can use command-line utility to build token matcher from specification:
+```
+vendor/bin/unilex -desc="My example matcher." path/to/spec/LexerSpec.php > path/to/target/TokenMatcher.php
+```
+
+### Phing
 Library includes custom Phing tasks to build token matcher from specification:
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>
