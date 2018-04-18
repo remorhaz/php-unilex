@@ -44,8 +44,7 @@ class TokenMatcherGenerator
     {
         return
             "<?php\n{$this->buildFileComment()}\n" .
-            "namespace {$this->spec->getTargetNamespaceName()};\n" .
-            "{$this->buildUseList()}\n" .
+            "{$this->buildHeader()}\n" .
             "class {$this->spec->getTargetShortName()} extends {$this->spec->getTemplateClass()->getShortName()}\n" .
             "{\n" .
             "\n" .
@@ -108,14 +107,36 @@ class TokenMatcherGenerator
      * @return string
      * @throws \ReflectionException
      */
+    public function buildHeader(): string
+    {
+        $headerParts = [];
+        $namespace = $this->spec->getTargetNamespaceName();
+        if ($namespace != '') {
+            $headerParts[] = $this->buildMethodPart("namespace {$namespace};", 0);
+        }
+        $useList = $this->buildUseList();
+        if ('' != $useList) {
+            $headerParts[] = $useList;
+        }
+        $header = $this->buildMethodPart($this->spec->getHeader(), 0);
+        if ('' != $header) {
+            $headerParts[] = $header;
+        }
+        return implode("\n", $headerParts);
+    }
+
+    /**
+     * @return string
+     * @throws \ReflectionException
+     */
     private function buildUseList(): string
     {
         $result = '';
         foreach ($this->spec->getUsedClassList() as $alias => $className) {
             $classWithAlias = is_string($alias) ? "{$className} {$alias}" : $className;
-            $result .= "use {$classWithAlias};\n";
+            $result .= $this->buildMethodPart("use {$classWithAlias};", 0);
         }
-        return $result == '' ? $result : "\n{$result}";
+        return $result;
     }
 
     /**

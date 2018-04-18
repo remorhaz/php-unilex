@@ -6,7 +6,7 @@ use Remorhaz\UniLex\Lexer\TokenMatcherGenerator;
 use Remorhaz\UniLex\Lexer\TokenMatcherSpecParser;
 
 $isComposerLoaded = false;
-foreach (['..', '../vendor'] as $composerAutoloadPath) {
+foreach (['../../..', '..', '../vendor'] as $composerAutoloadPath) {
     $composerAutoloadFile = __DIR__ . "/{$composerAutoloadPath}/autoload.php";
     if (is_file($composerAutoloadFile) === true) {
         /** @noinspection PhpIncludeInspection */
