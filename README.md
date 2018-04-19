@@ -44,9 +44,7 @@ const TOKEN_ID = 1;
 const TOKEN_OPERATOR = 2;
 const TOKEN_NUMBER = 3;
 
-/**
- * @lexToken /[a-zA-Z][0-9a-zA-Z]*()/
- */
+/** @lexToken /[a-zA-Z][0-9a-zA-Z]*()/ */
 $context->setNewToken(TOKEN_ID);
 
 /** @lexToken /[+\-*\/]/ */
@@ -85,6 +83,55 @@ Token ID: 2
 Token ID: 3
 Token ID: 2
 Token ID: 3
+Token ID: 255
+```
+Let's go a bit further and make it possible to retrieve text presentation of every token from input buffer. We need to modify a lexer specification to store characters and to attach the result to each non-EOI token as an attribute:
+```php
+<?php
+/**
+ * @var \Remorhaz\UniLex\Lexer\TokenMatcherContextInterface $context
+ * @lexTargetClass TokenMatcher
+ * @lexHeader
+ */
+
+const TOKEN_ID = 1;
+const TOKEN_OPERATOR = 2;
+const TOKEN_NUMBER = 3;
+
+/** @lexOnTransition */
+$context->storeCurrentSymbol();
+
+/** @lexToken /[a-zA-Z][0-9a-zA-Z]*()/ */
+$context
+    ->setNewToken(TOKEN_ID)
+    ->setTokenAttribute('text', $context->getSymbolString());
+
+/** @lexToken /[+\-*\/]/ */
+$context
+    ->setNewToken(TOKEN_OPERATOR)
+    ->setTokenAttribute('text', $context->getSymbolString());
+
+/** @lexToken /[0-9]+/ */
+$context
+    ->setNewToken(TOKEN_NUMBER)
+    ->setTokenAttribute('text', $context->getSymbolString());
+```
+After rebuilding token matcher with CLI utility we need to modify output cycle of our example program to make it print text with token IDs:
+```php
+do {
+    $token = $tokenReader->read();
+    echo
+        "Token ID: {$token->getType()}",
+        $token->isEoi() ? "\n" : " / '{$token->getAttribute('text')}'\n";
+} while (!$token->isEoi());
+```
+And now program prints:
+```
+Token ID: 1 / 'x'
+Token ID: 2 / '+'
+Token ID: 3 / '2'
+Token ID: 2 / '*'
+Token ID: 3 / '3'
 Token ID: 255
 ```
 
