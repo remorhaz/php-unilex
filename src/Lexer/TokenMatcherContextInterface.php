@@ -15,4 +15,11 @@ interface TokenMatcherContextInterface
     public function getToken(): Token;
 
     public function getBuffer(): CharBufferInterface;
+
+    public function storeCurrentSymbol(): self;
+
+    /**
+     * @return int[]
+     */
+    public function getStoredSymbolList(): array;
 }

@@ -42,6 +42,8 @@ abstract class TokenMatcherTemplate implements TokenMatcherInterface
 
             private $onGetToken;
 
+            private $symbolList = [];
+
             public function __construct(
                 CharBufferInterface $buffer,
                 callable $onConstruct,
@@ -60,6 +62,11 @@ abstract class TokenMatcherTemplate implements TokenMatcherInterface
                 return $this;
             }
 
+            /**
+             * @param string $name
+             * @param $value
+             * @return TokenMatcherContextInterface
+             */
             public function setTokenAttribute(string $name, $value): TokenMatcherContextInterface
             {
                 $this
@@ -76,6 +83,17 @@ abstract class TokenMatcherTemplate implements TokenMatcherInterface
             public function getBuffer(): CharBufferInterface
             {
                 return $this->buffer;
+            }
+
+            public function storeCurrentSymbol(): TokenMatcherContextInterface
+            {
+                $this->symbolList[] = $this->getBuffer()->getSymbol();
+                return $this;
+            }
+
+            public function getStoredSymbolList(): array
+            {
+                return $this->symbolList;
             }
         };
     }
