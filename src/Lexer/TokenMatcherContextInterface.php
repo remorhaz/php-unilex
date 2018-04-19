@@ -22,4 +22,6 @@ interface TokenMatcherContextInterface
      * @return int[]
      */
     public function getStoredSymbolList(): array;
+
+    public function getSymbolString(): string;
 }
