@@ -2,7 +2,7 @@
 
 namespace Remorhaz\UniLex\RegExp;
 
-use Remorhaz\UniLex\CharBufferInterface;
+use Remorhaz\UniLex\IO\CharBufferInterface;
 use Remorhaz\UniLex\Grammar\ContextFree\GrammarLoader;
 use Remorhaz\UniLex\Grammar\ContextFree\TokenFactory;
 use Remorhaz\UniLex\Parser\LL1\Parser;
@@ -11,7 +11,7 @@ use Remorhaz\UniLex\AST\Tree;
 use Remorhaz\UniLex\RegExp\Grammar\ConfigFile;
 use Remorhaz\UniLex\RegExp\Grammar\TokenMatcher;
 use Remorhaz\UniLex\RegExp\Grammar\TranslationScheme;
-use Remorhaz\UniLex\TokenReader;
+use Remorhaz\UniLex\Lexer\TokenReader;
 
 abstract class ParserFactory
 {

@@ -3,8 +3,8 @@
 namespace Remorhaz\UniLex\Unicode;
 
 use Remorhaz\UniLex\Exception;
-use Remorhaz\UniLex\Token;
-use Remorhaz\UniLex\CharFactoryInterface;
+use Remorhaz\UniLex\Lexer\Token;
+use Remorhaz\UniLex\IO\CharFactoryInterface;
 use Remorhaz\UniLex\Unicode\Grammar\TokenAttribute;
 
 class CharFactory implements CharFactoryInterface

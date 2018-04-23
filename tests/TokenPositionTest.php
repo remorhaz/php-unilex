@@ -3,10 +3,10 @@
 namespace Remorhaz\UniLex\Test;
 
 use PHPUnit\Framework\TestCase;
-use Remorhaz\UniLex\TokenPosition;
+use Remorhaz\UniLex\Lexer\TokenPosition;
 
 /**
- * @covers \Remorhaz\UniLex\TokenPosition
+ * @covers \Remorhaz\UniLex\Lexer\TokenPosition
  */
 class TokenPositionTest extends TestCase
 {

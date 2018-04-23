@@ -3,15 +3,15 @@
 namespace Remorhaz\UniLex\Test;
 
 use PHPUnit\Framework\TestCase;
-use Remorhaz\UniLex\TokenBuffer;
-use Remorhaz\UniLex\TokenReader;
-use Remorhaz\UniLex\CharBuffer;
+use Remorhaz\UniLex\Lexer\TokenBuffer;
+use Remorhaz\UniLex\Lexer\TokenReader;
+use Remorhaz\UniLex\IO\CharBuffer;
 use Remorhaz\UniLex\Unicode\CharFactory;
 use Remorhaz\UniLex\Unicode\Grammar\TokenFactory;
 use Remorhaz\UniLex\Unicode\Grammar\Utf8TokenMatcher;
 
 /**
- * @covers \Remorhaz\UniLex\TokenBuffer
+ * @covers \Remorhaz\UniLex\Lexer\TokenBuffer
  */
 class TokenBufferTest extends TestCase
 {

@@ -1,7 +1,8 @@
 <?php
 
-namespace Remorhaz\UniLex;
+namespace Remorhaz\UniLex\IO;
 
+use Remorhaz\UniLex\Lexer\TokenPosition;
 use SplFixedArray;
 
 interface TokenExtractInterface

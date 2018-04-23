@@ -6,7 +6,6 @@ use phpDocumentor\Reflection\DocBlock;
 use phpDocumentor\Reflection\DocBlockFactory;
 use phpDocumentor\Reflection\DocBlockFactoryInterface;
 use Remorhaz\UniLex\Exception;
-use Remorhaz\UniLex\TokenMatcherTemplate;
 
 class TokenMatcherSpecParser
 {

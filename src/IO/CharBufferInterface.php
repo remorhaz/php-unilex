@@ -1,6 +1,8 @@
 <?php
 
-namespace Remorhaz\UniLex;
+namespace Remorhaz\UniLex\IO;
+
+use Remorhaz\UniLex\Lexer\Token;
 
 interface CharBufferInterface
 {

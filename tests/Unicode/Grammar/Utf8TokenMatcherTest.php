@@ -3,7 +3,7 @@
 namespace Remorhaz\UniLex\Test\Unicode\Grammar;
 
 use PHPUnit\Framework\TestCase;
-use Remorhaz\UniLex\CharBuffer;
+use Remorhaz\UniLex\IO\CharBuffer;
 use Remorhaz\UniLex\Unicode\Grammar\TokenAttribute;
 use Remorhaz\UniLex\Unicode\Grammar\TokenType;
 use Remorhaz\UniLex\Unicode\Grammar\TokenFactory;

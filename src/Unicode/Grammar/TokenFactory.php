@@ -2,8 +2,8 @@
 
 namespace Remorhaz\UniLex\Unicode\Grammar;
 
-use Remorhaz\UniLex\Token;
-use Remorhaz\UniLex\TokenFactoryInterface;
+use Remorhaz\UniLex\Lexer\Token;
+use Remorhaz\UniLex\Lexer\TokenFactoryInterface;
 
 class TokenFactory implements TokenFactoryInterface
 {

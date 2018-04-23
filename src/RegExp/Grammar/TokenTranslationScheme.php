@@ -4,7 +4,7 @@ namespace Remorhaz\UniLex\RegExp\Grammar;
 
 use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\Parser\Symbol;
-use Remorhaz\UniLex\Token;
+use Remorhaz\UniLex\Lexer\Token;
 use Throwable;
 
 class TokenTranslationScheme

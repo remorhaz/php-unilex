@@ -1,6 +1,6 @@
 <?php
 
-namespace Remorhaz\UniLex;
+namespace Remorhaz\UniLex\Lexer;
 
 interface TokenReaderInterface
 {

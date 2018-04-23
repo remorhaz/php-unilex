@@ -1,6 +1,9 @@
 <?php
 
-namespace Remorhaz\UniLex;
+namespace Remorhaz\UniLex\Lexer;
+
+use Remorhaz\UniLex\Exception;
+use Remorhaz\UniLex\IO\CharBufferInterface;
 
 class TokenMatcherByType implements TokenMatcherInterface
 {

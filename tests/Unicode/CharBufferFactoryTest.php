@@ -3,7 +3,7 @@
 namespace Remorhaz\UniLex\Test\Unicode;
 
 use PHPUnit\Framework\TestCase;
-use Remorhaz\UniLex\CharBuffer;
+use Remorhaz\UniLex\IO\CharBuffer;
 use Remorhaz\UniLex\Unicode\CharBufferFactory;
 use Remorhaz\UniLex\Unicode\Grammar\Utf8TokenMatcher;
 

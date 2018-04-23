@@ -4,7 +4,7 @@ namespace Remorhaz\UniLex\Test\Lexer;
 
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Lexer\TokenMatcherSpecParser;
-use Remorhaz\UniLex\TokenMatcherTemplate;
+use Remorhaz\UniLex\Lexer\TokenMatcherTemplate;
 
 /**
  * @covers \Remorhaz\UniLex\Lexer\TokenMatcherSpecParser

@@ -9,9 +9,9 @@ use Remorhaz\UniLex\Grammar\ContextFree\GrammarLoader;
 use Remorhaz\UniLex\Grammar\ContextFree\TokenFactory;
 use Remorhaz\UniLex\Parser\LL1\AbstractParserListener;
 use Remorhaz\UniLex\Parser\LL1\Parser;
-use Remorhaz\UniLex\CharBuffer;
-use Remorhaz\UniLex\TokenReader;
-use Remorhaz\UniLex\TokenMatcherByType;
+use Remorhaz\UniLex\IO\CharBuffer;
+use Remorhaz\UniLex\Lexer\TokenReader;
+use Remorhaz\UniLex\Lexer\TokenMatcherByType;
 
 /**
  * @covers \Remorhaz\UniLex\Parser\LL1\Parser

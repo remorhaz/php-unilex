@@ -12,7 +12,6 @@ use Remorhaz\UniLex\RegExp\FSM\NfaBuilder;
 use Remorhaz\UniLex\RegExp\FSM\Range;
 use Remorhaz\UniLex\RegExp\FSM\RangeSet;
 use Remorhaz\UniLex\RegExp\ParserFactory;
-use Remorhaz\UniLex\TokenMatcherInterface;
 use Remorhaz\UniLex\Unicode\CharBufferFactory;
 use Throwable;
 

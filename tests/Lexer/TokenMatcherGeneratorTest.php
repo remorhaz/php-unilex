@@ -8,7 +8,7 @@ use Remorhaz\UniLex\Grammar\ContextFree\TokenFactory;
 use Remorhaz\UniLex\Lexer\TokenMatcherGenerator;
 use Remorhaz\UniLex\Lexer\TokenMatcherSpec;
 use Remorhaz\UniLex\Lexer\TokenSpec;
-use Remorhaz\UniLex\TokenMatcherTemplate;
+use Remorhaz\UniLex\Lexer\TokenMatcherTemplate;
 use Remorhaz\UniLex\Unicode\CharBufferFactory;
 
 /**

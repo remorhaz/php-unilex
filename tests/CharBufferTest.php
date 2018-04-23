@@ -3,12 +3,12 @@
 namespace Remorhaz\UniLex\Test;
 
 use PHPUnit\Framework\TestCase;
-use Remorhaz\UniLex\Token;
-use Remorhaz\UniLex\TokenPosition;
-use Remorhaz\UniLex\CharBuffer;
+use Remorhaz\UniLex\Lexer\Token;
+use Remorhaz\UniLex\Lexer\TokenPosition;
+use Remorhaz\UniLex\IO\CharBuffer;
 
 /**
- * @covers \Remorhaz\UniLex\CharBuffer
+ * @covers \Remorhaz\UniLex\IO\CharBuffer
  */
 class CharBufferTest extends TestCase
 {

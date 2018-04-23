@@ -1,7 +1,10 @@
 <?php
 
-namespace Remorhaz\UniLex;
+namespace Remorhaz\UniLex\IO;
 
+use Remorhaz\UniLex\Exception;
+use Remorhaz\UniLex\Lexer\Token;
+use Remorhaz\UniLex\Lexer\TokenPosition;
 use SplFixedArray;
 
 class CharBuffer implements CharBufferInterface, TokenExtractInterface

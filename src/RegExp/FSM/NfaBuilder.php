@@ -7,7 +7,7 @@ use Remorhaz\UniLex\AST\Node;
 use Remorhaz\UniLex\AST\Symbol;
 use Remorhaz\UniLex\AST\Translator;
 use Remorhaz\UniLex\AST\Tree;
-use Remorhaz\UniLex\CharBufferInterface;
+use Remorhaz\UniLex\IO\CharBufferInterface;
 use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\RegExp\AST\NodeType;
 use Remorhaz\UniLex\RegExp\ParserFactory;

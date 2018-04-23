@@ -3,7 +3,7 @@
 namespace Remorhaz\UniLex\RegExp\FSM;
 
 use Remorhaz\UniLex\AST\Tree;
-use Remorhaz\UniLex\CharBufferInterface;
+use Remorhaz\UniLex\IO\CharBufferInterface;
 
 class DfaBuilder
 {

@@ -5,7 +5,7 @@ namespace Remorhaz\UniLex\Parser\LL1;
 use Remorhaz\UniLex\Grammar\SDD\TranslationSchemeInterface;
 use Remorhaz\UniLex\Parser\Production;
 use Remorhaz\UniLex\Parser\Symbol;
-use Remorhaz\UniLex\Token;
+use Remorhaz\UniLex\Lexer\Token;
 
 class TranslationSchemeApplier extends AbstractParserListener
 {

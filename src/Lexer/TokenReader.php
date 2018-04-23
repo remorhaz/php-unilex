@@ -1,6 +1,9 @@
 <?php
 
-namespace Remorhaz\UniLex;
+namespace Remorhaz\UniLex\Lexer;
+
+use Remorhaz\UniLex\IO\CharBufferInterface;
+use Remorhaz\UniLex\Exception;
 
 class TokenReader implements TokenReaderInterface
 {

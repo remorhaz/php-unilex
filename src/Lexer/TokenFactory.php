@@ -2,9 +2,6 @@
 
 namespace Remorhaz\UniLex\Lexer;
 
-use Remorhaz\UniLex\Token;
-use Remorhaz\UniLex\TokenFactoryInterface;
-
 class TokenFactory implements TokenFactoryInterface
 {
 

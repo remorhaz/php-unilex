@@ -3,10 +3,10 @@
 namespace Remorhaz\UniLex\Test;
 
 use PHPUnit\Framework\TestCase;
-use Remorhaz\UniLex\Token;
+use Remorhaz\UniLex\Lexer\Token;
 
 /**
- * @covers \Remorhaz\UniLex\Token
+ * @covers \Remorhaz\UniLex\Lexer\Token
  */
 class TokenTest extends TestCase
 {

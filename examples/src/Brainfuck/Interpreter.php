@@ -8,7 +8,7 @@ use Remorhaz\UniLex\Grammar\ContextFree\GrammarLoader;
 use Remorhaz\UniLex\Grammar\ContextFree\TokenFactory;
 use Remorhaz\UniLex\Parser\LL1\Parser;
 use Remorhaz\UniLex\Parser\LL1\TranslationSchemeApplier;
-use Remorhaz\UniLex\TokenReader;
+use Remorhaz\UniLex\Lexer\TokenReader;
 use Remorhaz\UniLex\Unicode\CharBufferFactory;
 
 class Interpreter

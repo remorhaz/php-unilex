@@ -12,7 +12,7 @@ use Remorhaz\UniLex\Example\Brainfuck\Command\ShiftDataValueCommand;
 use Remorhaz\UniLex\Grammar\SDD\TranslationSchemeInterface;
 use Remorhaz\UniLex\Parser\Production;
 use Remorhaz\UniLex\Parser\Symbol;
-use Remorhaz\UniLex\Token;
+use Remorhaz\UniLex\Lexer\Token;
 use Throwable;
 
 class TranslationScheme implements TranslationSchemeInterface

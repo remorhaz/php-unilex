@@ -4,7 +4,7 @@ namespace Remorhaz\UniLex\Grammar\SDD;
 
 use Remorhaz\UniLex\Parser\Production;
 use Remorhaz\UniLex\Parser\Symbol;
-use Remorhaz\UniLex\Token;
+use Remorhaz\UniLex\Lexer\Token;
 
 interface TranslationSchemeInterface
 {

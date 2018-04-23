@@ -1,8 +1,9 @@
 <?php
 
-namespace Remorhaz\UniLex;
+namespace Remorhaz\UniLex\Lexer;
 
-use Remorhaz\UniLex\Lexer\TokenMatcherContextInterface;
+use Remorhaz\UniLex\Exception;
+use Remorhaz\UniLex\IO\CharBufferInterface;
 use Remorhaz\UniLex\Unicode\Utf8Encoder;
 
 abstract class TokenMatcherTemplate implements TokenMatcherInterface

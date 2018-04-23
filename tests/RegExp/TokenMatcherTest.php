@@ -3,7 +3,7 @@
 namespace Remorhaz\UniLex\Test\RegExp;
 
 use PHPUnit\Framework\TestCase;
-use Remorhaz\UniLex\CharBuffer;
+use Remorhaz\UniLex\IO\CharBuffer;
 use Remorhaz\UniLex\Grammar\ContextFree\GrammarLoader;
 use Remorhaz\UniLex\Grammar\ContextFree\TokenFactory;
 use Remorhaz\UniLex\RegExp\Grammar\ConfigFile;

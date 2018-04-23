@@ -11,9 +11,9 @@
 
 namespace Remorhaz\UniLex\RegExp\Grammar;
 
-use Remorhaz\UniLex\CharBufferInterface;
-use Remorhaz\UniLex\TokenFactoryInterface;
-use Remorhaz\UniLex\TokenMatcherTemplate;
+use Remorhaz\UniLex\IO\CharBufferInterface;
+use Remorhaz\UniLex\Lexer\TokenFactoryInterface;
+use Remorhaz\UniLex\Lexer\TokenMatcherTemplate;
 
 class TokenMatcher extends TokenMatcherTemplate
 {

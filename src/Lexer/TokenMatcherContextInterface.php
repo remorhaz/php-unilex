@@ -2,8 +2,7 @@
 
 namespace Remorhaz\UniLex\Lexer;
 
-use Remorhaz\UniLex\CharBufferInterface;
-use Remorhaz\UniLex\Token;
+use Remorhaz\UniLex\IO\CharBufferInterface;
 
 interface TokenMatcherContextInterface
 {

@@ -9,8 +9,8 @@ use Remorhaz\UniLex\Parser\Production;
 use Remorhaz\UniLex\Parser\Symbol;
 use Remorhaz\UniLex\Stack\SymbolStack;
 use Remorhaz\UniLex\Stack\StackableSymbolInterface;
-use Remorhaz\UniLex\Token;
-use Remorhaz\UniLex\TokenReaderInterface;
+use Remorhaz\UniLex\Lexer\Token;
+use Remorhaz\UniLex\Lexer\TokenReaderInterface;
 use Remorhaz\UniLex\Parser\LL1\Lookup\TableInterface;
 use Remorhaz\UniLex\Parser\LL1\Lookup\TableBuilder;
 

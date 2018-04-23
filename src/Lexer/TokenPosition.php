@@ -1,6 +1,8 @@
 <?php
 
-namespace Remorhaz\UniLex;
+namespace Remorhaz\UniLex\Lexer;
+
+use Remorhaz\UniLex\Exception;
 
 /**
  * Describes token position in symbol buffer.
