@@ -22,7 +22,7 @@ class CharBuffer implements CharBufferInterface
 
     private $symbol;
 
-    private $charTokenFactory;
+    private $tokenFactory;
 
     private $startOffset = 0;
 
@@ -50,7 +50,7 @@ class CharBuffer implements CharBufferInterface
     public function getSymbol(): int
     {
         if (!isset($this->symbol)) {
-            $this->symbol = $this->matchChar();
+            $this->symbol = $this->getMatchedChar();
         }
         return $this->symbol;
     }
@@ -59,11 +59,14 @@ class CharBuffer implements CharBufferInterface
      * @return int
      * @throws Exception
      */
-    private function matchChar(): int
+    private function getMatchedChar(): int
     {
+        if ($this->source->isEnd()) {
+            throw new Exception("Unexpected end of source buffer on preview at index {$this->previewOffset}");
+        }
         $result = $this
             ->getMatcher()
-            ->match($this->source, $this->getCharTokenFactory());
+            ->match($this->source, $this->getTokenFactory());
         if (!$result) {
             throw new Exception("Failed to match Unicode char from source buffer");
         }
@@ -71,7 +74,7 @@ class CharBuffer implements CharBufferInterface
             ->getMatcher()
             ->getToken();
         if ($token->getType() != TokenType::SYMBOL) {
-            throw new Exception("Invalid Unicode char in source buffer");
+            throw new Exception("Invalid Unicode char token");
         }
         return $token->getAttribute(TokenAttribute::UNICODE_CHAR);
     }
@@ -82,10 +85,7 @@ class CharBuffer implements CharBufferInterface
     public function nextSymbol(): void
     {
         if (!isset($this->symbol)) {
-            if ($this->isEnd()) {
-                throw new Exception("Unexpected end of buffer on preview at index {$this->previewOffset}");
-            }
-            $this->matchChar();
+            $this->getMatchedChar();
         }
         unset($this->symbol);
         $this->previewOffset++;
@@ -130,11 +130,11 @@ class CharBuffer implements CharBufferInterface
         return $this->matcher;
     }
 
-    private function getCharTokenFactory(): TokenFactoryInterface
+    private function getTokenFactory(): TokenFactoryInterface
     {
-        if (!isset($this->charTokenFactory)) {
-            $this->charTokenFactory = new TokenFactory;
+        if (!isset($this->tokenFactory)) {
+            $this->tokenFactory = new TokenFactory;
         }
-        return $this->charTokenFactory;
+        return $this->tokenFactory;
     }
 }
