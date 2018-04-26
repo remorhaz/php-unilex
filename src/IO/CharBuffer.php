@@ -104,4 +104,13 @@ class CharBuffer implements CharBufferInterface, TokenExtractInterface
         }
         return $output;
     }
+
+    /**
+     * @return TokenPosition
+     * @throws Exception
+     */
+    public function getTokenPosition(): TokenPosition
+    {
+        return new TokenPosition($this->startOffset, $this->previewOffset);
+    }
 }

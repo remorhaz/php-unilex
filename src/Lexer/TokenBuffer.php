@@ -83,6 +83,15 @@ class TokenBuffer implements CharBufferInterface, TokenExtractInterface
         return $this->symbolFactory->getChar($this->getToken());
     }
 
+    /**
+     * @return TokenPosition
+     * @throws Exception
+     */
+    public function getTokenPosition(): TokenPosition
+    {
+        return new TokenPosition($this->startOffset, $this->previewOffset);
+    }
+
     public function extractToken(TokenPosition $position): SplFixedArray
     {
         $startOffset = $position->getStartOffset();

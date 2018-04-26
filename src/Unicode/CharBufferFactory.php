@@ -2,12 +2,9 @@
 
 namespace Remorhaz\UniLex\Unicode;
 
-use Remorhaz\UniLex\Lexer\TokenBuffer;
+use Remorhaz\UniLex\IO\StringBuffer;
 use Remorhaz\UniLex\Lexer\TokenMatcherInterface;
-use Remorhaz\UniLex\Lexer\TokenReader;
-use Remorhaz\UniLex\IO\CharBuffer;
 use Remorhaz\UniLex\IO\CharBufferInterface;
-use Remorhaz\UniLex\Unicode\Grammar\TokenFactory;
 use Remorhaz\UniLex\Unicode\Grammar\Utf8TokenMatcher;
 
 abstract class CharBufferFactory
@@ -17,13 +14,14 @@ abstract class CharBufferFactory
         CharBufferInterface $source,
         TokenMatcherInterface $matcher
     ): CharBufferInterface {
-        $reader = new TokenReader($source, $matcher, new TokenFactory());
-        return new TokenBuffer($reader, new CharFactory);
+        $buffer = new CharBuffer($source);
+        $buffer->setMatcher($matcher);
+        return $buffer;
     }
 
     public static function createFromString(string $text, TokenMatcherInterface $matcher): CharBufferInterface
     {
-        $source = CharBuffer::fromString($text);
+        $source = new StringBuffer($text);
         return self::createFromBuffer($source, $matcher);
     }
 

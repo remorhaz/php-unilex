@@ -3,6 +3,7 @@
 namespace Remorhaz\UniLex\IO;
 
 use Remorhaz\UniLex\Lexer\Token;
+use Remorhaz\UniLex\Lexer\TokenPosition;
 
 interface CharBufferInterface
 {
@@ -16,4 +17,6 @@ interface CharBufferInterface
     public function finishToken(Token $token): void;
 
     public function getSymbol(): int;
+
+    public function getTokenPosition(): TokenPosition;
 }
