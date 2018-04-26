@@ -29,7 +29,7 @@ class ParsedFsmTest extends TestCase
         array $expectedEpsilonTransitionList,
         array $expectedSymbolTable
     ): void {
-        $buffer = CharBufferFactory::createFromUtf8String($text);
+        $buffer = CharBufferFactory::createFromString($text);
         $tree = new Tree;
         ParserFactory::createFromBuffer($tree, $buffer)->run();
         $nfa = NfaBuilder::fromTree($tree);

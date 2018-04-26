@@ -68,7 +68,7 @@ use Remorhaz\UniLex\Unicode\CharBufferFactory;
 require_once "vendor/autoload.php";
 require_once "TokenMatcher.php";
 
-$buffer = CharBufferFactory::createFromUtf8String("x+2*3");
+$buffer = CharBufferFactory::createFrom("x+2*3");
 $tokenReader = new TokenReader($buffer, new TokenMatcher, new TokenFactory(0xFF));
 
 do {

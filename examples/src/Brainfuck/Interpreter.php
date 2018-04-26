@@ -53,7 +53,7 @@ class Interpreter
      */
     private function createParser(string $text, Runtime $runtime): Parser
     {
-        $buffer = CharBufferFactory::createFromUtf8String($text);
+        $buffer = CharBufferFactory::createFromString($text);
         $grammar = GrammarLoader::loadFile(__DIR__ . "/Grammar/Config.php");
         $tokenReader = new TokenReader($buffer, new TokenMatcher, new TokenFactory($grammar));
         $translator = new TranslationSchemeApplier(new TranslationScheme($runtime));

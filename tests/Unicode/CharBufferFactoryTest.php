@@ -3,7 +3,7 @@
 namespace Remorhaz\UniLex\Test\Unicode;
 
 use PHPUnit\Framework\TestCase;
-use Remorhaz\UniLex\IO\CharBuffer;
+use Remorhaz\UniLex\IO\StringBuffer;
 use Remorhaz\UniLex\Unicode\CharBufferFactory;
 use Remorhaz\UniLex\Unicode\Grammar\Utf8TokenMatcher;
 
@@ -13,22 +13,29 @@ use Remorhaz\UniLex\Unicode\Grammar\Utf8TokenMatcher;
 class CharBufferFactoryTest extends TestCase
 {
 
-    public function testCreateFromBuffer_CreateFromBuffer_ResultGetSymbolReturnsUnicodeCharacter(): void
+    public function testCreateFromBuffer_BufferWithCharacter_ResultGetSymbolReturnsCharacterCode(): void
     {
-        $source = CharBuffer::fromString('本');
+        $source = new StringBuffer('本');
         $actualValue = CharBufferFactory::createFromBuffer($source, new Utf8TokenMatcher)->getSymbol();
         self::assertSame(0x672C, $actualValue);
     }
 
-    public function testCreateFromString_CreateFromBuffer_ResultGetSymbolReturnsUnicodeCharacter(): void
+    public function testCreateFromBuffer_BufferWithCharacterNoMatcher_ResultGetSymbolReturnsCharacterCode(): void
+    {
+        $source = new StringBuffer('本');
+        $actualValue = CharBufferFactory::createFromBuffer($source)->getSymbol();
+        self::assertSame(0x672C, $actualValue);
+    }
+
+    public function testCreateFromString_StringWithCharacter_ResultGetSymbolReturnsCharacterCode(): void
     {
         $actualValue = CharBufferFactory::createFromString('本', new Utf8TokenMatcher)->getSymbol();
         self::assertSame(0x672C, $actualValue);
     }
 
-    public function testCreateFromUtf8String_CreateFromBuffer_ResultGetSymbolReturnsUnicodeCharacter(): void
+    public function testCreateFromString_StringWithCharacterNoMatcher_ResultGetSymbolReturnsCharacterCode(): void
     {
-        $actualValue = CharBufferFactory::createFromUtf8String('本')->getSymbol();
+        $actualValue = CharBufferFactory::createFromString('本')->getSymbol();
         self::assertSame(0x672C, $actualValue);
     }
 }

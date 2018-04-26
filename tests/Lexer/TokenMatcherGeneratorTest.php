@@ -26,7 +26,7 @@ class TokenMatcherGeneratorTest extends TestCase
         $spec = new TokenMatcherSpec($matcherClass, TokenMatcherTemplate::class);
         $matcher = (new TokenMatcherGenerator($spec))->load();
         $grammar = new Grammar(0, 1, 2);
-        $buffer = CharBufferFactory::createFromUtf8String("a");
+        $buffer = CharBufferFactory::createFromString("a");
         $actualValue = $matcher->match($buffer, new TokenFactory($grammar));
         self::assertFalse($actualValue);
     }
@@ -42,7 +42,7 @@ class TokenMatcherGeneratorTest extends TestCase
         $spec->addTokenSpec($tokenSpec);
         $matcher = (new TokenMatcherGenerator($spec))->load();
         $grammar = new Grammar(0, 1, 2);
-        $buffer = CharBufferFactory::createFromUtf8String("ab");
+        $buffer = CharBufferFactory::createFromString("ab");
         $actualValue = $matcher->match($buffer, new TokenFactory($grammar));
         self::assertTrue($actualValue);
     }
@@ -61,7 +61,7 @@ class TokenMatcherGeneratorTest extends TestCase
         $grammar = new Grammar(0, 1, 2);
         $grammar->addToken(1, 1);
         $grammar->addToken(2, 2);
-        $buffer = CharBufferFactory::createFromUtf8String("ab");
+        $buffer = CharBufferFactory::createFromString("ab");
         $matcher->match($buffer, new TokenFactory($grammar));
         $token = $matcher->getToken();
         self::assertSame(1, $token->getType());
@@ -81,7 +81,7 @@ class TokenMatcherGeneratorTest extends TestCase
         $grammar = new Grammar(0, 1, 2);
         $grammar->addToken(1, 1);
         $grammar->addToken(2, 2);
-        $buffer = CharBufferFactory::createFromUtf8String("ba");
+        $buffer = CharBufferFactory::createFromString("ba");
         $actualValue = $matcher->match($buffer, new TokenFactory($grammar));
         self::assertFalse($actualValue);
     }
@@ -102,7 +102,7 @@ class TokenMatcherGeneratorTest extends TestCase
         $grammar = new Grammar(0, 1, 2);
         $grammar->addToken(1, 1);
         $grammar->addToken(2, 2);
-        $buffer = CharBufferFactory::createFromUtf8String("ba");
+        $buffer = CharBufferFactory::createFromString("ba");
         $matcher->match($buffer, new TokenFactory($grammar));
         $matcher->getToken();
     }

@@ -450,7 +450,7 @@ class TokenMatcherGenerator
      */
     private function buildRegExp(Nfa $nfa, int $entryState, string $regExp): void
     {
-        $buffer = CharBufferFactory::createFromUtf8String($regExp);
+        $buffer = CharBufferFactory::createFromString($regExp);
         $tree = new Tree;
         ParserFactory::createFromBuffer($tree, $buffer)->run();
         $nfaBuilder = new NfaBuilder($nfa);
