@@ -20,7 +20,7 @@ class CharBuffer implements CharBufferInterface
 
     private $matcher;
 
-    private $symbol;
+    private $char;
 
     private $tokenFactory;
 
@@ -38,6 +38,11 @@ class CharBuffer implements CharBufferInterface
         $this->matcher = $matcher;
     }
 
+    public function setTokenFactory(TokenFactoryInterface $tokenFactory): void
+    {
+        $this->tokenFactory = $tokenFactory;
+    }
+
     public function isEnd(): bool
     {
         return $this->source->isEnd();
@@ -49,10 +54,10 @@ class CharBuffer implements CharBufferInterface
      */
     public function getSymbol(): int
     {
-        if (!isset($this->symbol)) {
-            $this->symbol = $this->getMatchedChar();
+        if (!isset($this->char)) {
+            $this->char = $this->getMatchedChar();
         }
-        return $this->symbol;
+        return $this->char;
     }
 
     /**
@@ -84,10 +89,10 @@ class CharBuffer implements CharBufferInterface
      */
     public function nextSymbol(): void
     {
-        if (!isset($this->symbol)) {
+        if (!isset($this->char)) {
             $this->getMatchedChar();
         }
-        unset($this->symbol);
+        unset($this->char);
         $this->previewOffset++;
     }
 
@@ -110,7 +115,7 @@ class CharBuffer implements CharBufferInterface
     {
         $this->previewOffset = $this->startOffset;
         $this->source->resetToken();
-        unset($this->symbol);
+        unset($this->char);
     }
 
     /**
