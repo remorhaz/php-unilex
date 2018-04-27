@@ -41,6 +41,7 @@ class LanguageBuilder
             $rangeSetDiff = $rangeSetCalc->xor($oldRangeSet, $newRangeSet);
             $onlyInOldRangeSet = $rangeSetCalc->and($oldRangeSet, $rangeSetDiff);
             if ($onlyInOldRangeSet->isEmpty()) {
+                $symbolList[] = $symbolId;
                 $newRangeSet = $rangeSetDiff;
                 continue;
             }

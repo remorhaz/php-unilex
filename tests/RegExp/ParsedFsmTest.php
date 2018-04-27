@@ -301,6 +301,22 @@ class ParsedFsmTest extends TestCase
         $data["Two intersecting ranges in class"] =
             ['[\\t-aA-z]', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
 
+        $rangeTransitionList = [];
+        $rangeTransitionList[3][4] = [0];
+        $rangeTransitionList[5][7] = [1];
+        $rangeTransitionList[7][6] = [0, 2];
+        $epsilonTransitionList = [];
+        $epsilonTransitionList[1][3] = true;
+        $epsilonTransitionList[1][5] = true;
+        $epsilonTransitionList[4][2] = true;
+        $epsilonTransitionList[6][2] = true;
+        $symbolTable = [];
+        $symbolTable[0] = [[0x35, 0x35]];
+        $symbolTable[1] = [[0x61, 0x61]];
+        $symbolTable[2] = [[0x30, 0x34], [0x36, 0x39]];
+        $data["One alternative is a part of another's class"] =
+            ['5|a[0-9]', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
+
         return $data;
     }
 
