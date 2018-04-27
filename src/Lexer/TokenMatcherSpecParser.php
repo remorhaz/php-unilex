@@ -17,9 +17,11 @@ class TokenMatcherSpecParser
     private const TAG_LEX_ON_TRANSITION = 'lexOnTransition';
     private const TAG_LEX_ON_ERROR = 'lexOnError';
     private const TAG_LEX_TOKEN = 'lexToken';
+    private const TAG_LEX_CONTEXT = 'lexContext';
     private const LEX_NAMESPACE = 'namespace';
     private const LEX_USE = 'use';
     private const LEX_TOKEN_REGEXP = 'token_regexp';
+    private const LEX_TOKEN_CONTEXT = 'token_context';
 
     private $source;
 
@@ -255,7 +257,8 @@ class TokenMatcherSpecParser
         if (!$this->codeBlockExists($codeBlockKey)) {
             return;
         }
-        $context = TokenMatcherInterface::DEFAULT_CONTEXT;
+        $context = $this->getCodeBlock(self::LEX_TOKEN_CONTEXT);
+        $this->resetCodeBlock(self::LEX_TOKEN_CONTEXT);
         $tokenRegExp = $this->getCodeBlock(self::LEX_TOKEN_REGEXP);
         if (isset($this->tokenSpecList[$context][$tokenRegExp])) {
             throw new Exception("Invalid lexer specification: duplicated @{$codeBlockKey} /{$tokenRegExp}/ tag");
@@ -284,6 +287,16 @@ class TokenMatcherSpecParser
         $regExp = $matches['regexp'];
         $this->replaceCurrentCodeBlock(self::LEX_TOKEN_REGEXP);
         $this->appendCodeBlock($regExp);
+        $this->restoreCurrentCodeBlock();
+        $context = $docBlock->hasTag(self::TAG_LEX_CONTEXT)
+            ? $docBlock->getTagsByName(self::TAG_LEX_CONTEXT)[0]
+            : TokenMatcherInterface::DEFAULT_CONTEXT;
+        $matchResult = preg_match('#^[a-zA-Z][0-9a-zA-Z]*$#i', $context);
+        if (1 !== $matchResult) {
+            throw new Exception("Invalid lexer specification: invalid context name {$context}");
+        }
+        $this->replaceCurrentCodeBlock(self::LEX_TOKEN_CONTEXT);
+        $this->appendCodeBlock($context);
         $this->restoreCurrentCodeBlock();
     }
 

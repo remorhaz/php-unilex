@@ -478,4 +478,50 @@ SOURCE;
         self::assertArrayHasKey('b', $tokenSpecList);
         self::assertSame("\$y = 1;", $tokenSpecList['b']->getCode());
     }
+
+    /**
+     * @throws \ReflectionException
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testGetMatcherSpec_TwoTokensNotSameContext_MatcherSpecGetTokenSpecListsContainMatchingTokens(): void
+    {
+        $source = <<<SOURCE
+<?php
+/**
+ * @lexTargetClass ClassName
+ * @lexContext custom
+ * @lexToken /a/
+ */
+\$x = 0;
+/** @lexToken /a/ */
+\$y = 1;
+SOURCE;
+        $matcherSpec = (new TokenMatcherSpecParser($source))->getMatcherSpec();
+        $defaultTokenSpecList = $matcherSpec->getTokenSpecList(TokenMatcherInterface::DEFAULT_CONTEXT);
+        self::assertArrayHasKey('a', $defaultTokenSpecList);
+        self::assertSame("\$y = 1;", $defaultTokenSpecList['a']->getCode());
+        $customTokenSpecList = $matcherSpec->getTokenSpecList('custom');
+        self::assertArrayHasKey('a', $customTokenSpecList);
+        self::assertSame("\$x = 0;", $customTokenSpecList['a']->getCode());
+    }
+
+    /**
+     * @throws \ReflectionException
+     * @throws \Remorhaz\UniLex\Exception
+     * @expectedException \Remorhaz\UniLex\Exception
+     * @expectedExceptionMessage Invalid lexer specification: invalid context name #invalid
+     */
+    public function testGetMatcherSpec_InvalidContext_ThrowsException(): void
+    {
+        $source = <<<SOURCE
+<?php
+/**
+ * @lexTargetClass ClassName
+ * @lexContext #invalid
+ * @lexToken /a/
+ */
+\$x = 0;
+SOURCE;
+        (new TokenMatcherSpecParser($source))->getMatcherSpec();
+    }
 }
