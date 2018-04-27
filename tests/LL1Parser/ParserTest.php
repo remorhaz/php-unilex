@@ -29,7 +29,7 @@ class ParserTest extends TestCase
     public function testParse_ValidBuffer_OnTokenTriggeredForEachToken(string $configFile, array $input): void
     {
         $grammar = GrammarLoader::loadFile($configFile);
-        $buffer = CharBuffer::fromSymbols(...$input);
+        $buffer = new CharBuffer(...$input);
         $reader = new TokenReader($buffer, new TokenMatcherByType, new TokenFactory($grammar));
         $listener = $this
             ->createMock(AbstractParserListener::class);

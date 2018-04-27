@@ -25,7 +25,7 @@ class TokenMatcherTest extends TestCase
      */
     public function testMatch_ValidBuffer_ReturnsTokenWithMatchingType(int $expectedType, int $symbol): void
     {
-        $buffer = CharBuffer::fromSymbols($symbol);
+        $buffer = new CharBuffer($symbol);
         $grammar = GrammarLoader::loadFile(ConfigFile::getPath());
         $matcher = new TokenMatcher;
         $matcher->match($buffer, new TokenFactory($grammar));
@@ -90,7 +90,7 @@ class TokenMatcherTest extends TestCase
      */
     public function testMatch_ValidBuffer_ReturnsTokenWithMatchingSymbolAttribute(int $symbol): void
     {
-        $buffer = CharBuffer::fromSymbols($symbol);
+        $buffer = new CharBuffer($symbol);
         $grammar = GrammarLoader::loadFile(ConfigFile::getPath());
         $matcher = new TokenMatcher;
         $matcher->match($buffer, new TokenFactory($grammar));
@@ -112,7 +112,7 @@ class TokenMatcherTest extends TestCase
      */
     public function testMatch_InvalidBuffer_ReturnsInvalidToken(): void
     {
-        $buffer = CharBuffer::fromSymbols(0x110000);
+        $buffer = new CharBuffer(0x110000);
         $matcher = new TokenMatcher;
         $grammar = GrammarLoader::loadFile(ConfigFile::getPath());
         $matcher->match($buffer, new TokenFactory($grammar));

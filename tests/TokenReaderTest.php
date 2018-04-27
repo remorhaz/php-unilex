@@ -3,7 +3,7 @@
 namespace Remorhaz\UniLex\Test;
 
 use PHPUnit\Framework\TestCase;
-use Remorhaz\UniLex\IO\CharBuffer;
+use Remorhaz\UniLex\IO\StringBuffer;
 use Remorhaz\UniLex\Lexer\TokenReader;
 use Remorhaz\UniLex\Unicode\Grammar\TokenAttribute;
 use Remorhaz\UniLex\Unicode\Grammar\TokenType;
@@ -21,15 +21,12 @@ class TokenReaderTest extends TestCase
      */
     public function testRead_NotEmptyValidBufferStart_ReturnsMatchingSymbolToken(): void
     {
-        $buffer = CharBuffer::fromString('a');
+        $buffer = new StringBuffer('a');
         $tokenFactory = new TokenFactory;
-        $expectedValue = $tokenFactory->createToken(TokenType::SYMBOL);
-        $expectedValue->setAttribute('char.position.start', 0);
-        $expectedValue->setAttribute('char.position.finish', 1);
-        $expectedValue->setAttribute(TokenAttribute::UNICODE_CHAR, 0x61);
         $scanner = new TokenReader($buffer, new Utf8TokenMatcher, $tokenFactory);
-        $actualValue = $scanner->read();
-        self::assertEquals($expectedValue, $actualValue);
+        $token = $scanner->read();
+        self::assertSame(TokenType::SYMBOL, $token->getType());
+        self::assertSame(0x61, $token->getAttribute(TokenAttribute::UNICODE_CHAR));
     }
 
     /**
@@ -37,16 +34,13 @@ class TokenReaderTest extends TestCase
      */
     public function testRead_NotEmptyValidBufferMiddle_ReturnsMatchingSymbolToken(): void
     {
-        $buffer = CharBuffer::fromString('ab');
+        $buffer = new StringBuffer('ab');
         $tokenFactory = new TokenFactory;
-        $expectedValue = $tokenFactory->createToken(TokenType::SYMBOL);
-        $expectedValue->setAttribute('char.position.start', 1);
-        $expectedValue->setAttribute('char.position.finish', 2);
-        $expectedValue->setAttribute(TokenAttribute::UNICODE_CHAR, 0x62);
         $scanner = new TokenReader($buffer, new Utf8TokenMatcher, $tokenFactory);
         $scanner->read();
-        $actualValue = $scanner->read();
-        self::assertEquals($expectedValue, $actualValue);
+        $token = $scanner->read();
+        self::assertSame(TokenType::SYMBOL, $token->getType());
+        self::assertSame(0x62, $token->getAttribute(TokenAttribute::UNICODE_CHAR));
     }
 
     /**
@@ -54,7 +48,7 @@ class TokenReaderTest extends TestCase
      */
     public function testRead_NotEmptyBufferEnd_ReturnsEoiToken(): void
     {
-        $buffer = CharBuffer::fromString('a');
+        $buffer = new StringBuffer('a');
         $scanner = new TokenReader($buffer, new Utf8TokenMatcher, new TokenFactory);
         $scanner->read();
         $actualValue = $scanner->read()->isEoi();
@@ -66,7 +60,7 @@ class TokenReaderTest extends TestCase
      */
     public function testRead_EmptyBuffer_ReturnsEoiToken(): void
     {
-        $buffer = CharBuffer::fromString('');
+        $buffer = new StringBuffer('');
         $scanner = new TokenReader($buffer, new Utf8TokenMatcher, new TokenFactory);
         $actualValue = $scanner->read()->isEoi();
         self::assertTrue($actualValue);
@@ -79,7 +73,7 @@ class TokenReaderTest extends TestCase
      */
     public function testRead_AfterBufferEnd_ThrowsException(): void
     {
-        $buffer = CharBuffer::fromString('');
+        $buffer = new StringBuffer('');
         $scanner = new TokenReader($buffer, new Utf8TokenMatcher, new TokenFactory);
         $scanner->read();
         $scanner->read();
@@ -88,15 +82,12 @@ class TokenReaderTest extends TestCase
     /**
      * @throws \Remorhaz\UniLex\Exception
      */
-    public function testRead_NotEmptyInvalidBufferStart_ReturnsMatch(): void
+    public function testRead_NotEmptyInvalidBufferStart_ReturnsMatchingToken(): void
     {
-        $buffer = CharBuffer::fromString("\x80");
+        $buffer = new StringBuffer("\x80");
         $tokenFactory = new TokenFactory;
-        $expectedValue = $tokenFactory->createToken(TokenType::INVALID_BYTES);
-        $expectedValue->setAttribute('char.position.start', 0);
-        $expectedValue->setAttribute('char.position.finish', 1);
         $scanner = new TokenReader($buffer, new Utf8TokenMatcher, $tokenFactory);
-        $actualValue = $scanner->read();
-        self::assertEquals($expectedValue, $actualValue);
+        $token = $scanner->read();
+        self::assertSame(TokenType::INVALID_BYTES, $token->getType());
     }
 }

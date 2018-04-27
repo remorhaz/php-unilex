@@ -3,7 +3,7 @@
 namespace Remorhaz\UniLex\Test\Unicode\Grammar;
 
 use PHPUnit\Framework\TestCase;
-use Remorhaz\UniLex\IO\CharBuffer;
+use Remorhaz\UniLex\IO\StringBuffer;
 use Remorhaz\UniLex\Unicode\Grammar\TokenAttribute;
 use Remorhaz\UniLex\Unicode\Grammar\TokenType;
 use Remorhaz\UniLex\Unicode\Grammar\TokenFactory;
@@ -22,7 +22,7 @@ class Utf8TokenMatcherTest extends TestCase
      */
     public function testMatch_ValidText_ReturnsSymbolToken(string $text): void
     {
-        $buffer = CharBuffer::fromString($text);
+        $buffer = new StringBuffer($text);
         $mather = new Utf8TokenMatcher;
         $mather->match($buffer, new TokenFactory);
         $actual = $mather->getToken()->getType();
@@ -39,7 +39,7 @@ class Utf8TokenMatcherTest extends TestCase
         string $text,
         int $expectedSymbol
     ): void {
-        $buffer = CharBuffer::fromString($text);
+        $buffer = new StringBuffer($text);
         $matcher = new Utf8TokenMatcher;
         $matcher->match($buffer, new TokenFactory);
         $actualValue = $matcher->getToken()->getAttribute(TokenAttribute::UNICODE_CHAR);
@@ -66,7 +66,7 @@ class Utf8TokenMatcherTest extends TestCase
      */
     public function testMatch_InvalidText_ReturnsInvalidBytesToken(string $text): void
     {
-        $buffer = CharBuffer::fromString($text);
+        $buffer = new StringBuffer($text);
         $matcher = new Utf8TokenMatcher;
         $matcher->match($buffer, new TokenFactory);
         $actual = $matcher->getToken()->getType();

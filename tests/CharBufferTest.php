@@ -14,13 +14,13 @@ class CharBufferTest extends TestCase
 
     public function testIsEnd_EmptyString_ReturnsTrue(): void
     {
-        $actualValue = CharBuffer::fromString('')->isEnd();
+        $actualValue = (new CharBuffer)->isEnd();
         self::assertTrue($actualValue);
     }
 
     public function testIsEnd_NotEmptyString_ReturnsFalse(): void
     {
-        $actualValue = CharBuffer::fromString('a')->isEnd();
+        $actualValue = (new CharBuffer(0x61))->isEnd();
         self::assertFalse($actualValue);
     }
 
@@ -31,7 +31,7 @@ class CharBufferTest extends TestCase
      */
     public function testGetSymbol_EmptyString_ThrowsException(): void
     {
-        CharBuffer::fromString('')->getSymbol();
+        (new CharBuffer)->getSymbol();
     }
 
     /**
@@ -39,7 +39,7 @@ class CharBufferTest extends TestCase
      */
     public function testGetSymbol_NotEmptyString_ReturnsFirstByte(): void
     {
-        $actualValue = CharBuffer::fromString('a')->getSymbol();
+        $actualValue = (new CharBuffer(0x61))->getSymbol();
         self::assertSame(0x61, $actualValue);
     }
 
@@ -50,7 +50,7 @@ class CharBufferTest extends TestCase
      */
     public function testNextSymbol_EmptyString_ThrowsException(): void
     {
-        CharBuffer::fromString('')->nextSymbol();
+        (new CharBuffer)->nextSymbol();
     }
 
     /**
@@ -58,7 +58,7 @@ class CharBufferTest extends TestCase
      */
     public function testNextSymbol_NotEmptyString_GetSymbolReturnsSecondByte(): void
     {
-        $buffer = CharBuffer::fromString('ab');
+        $buffer = new CharBuffer(0x61, 0x62);
         $buffer->nextSymbol();
         $actualValue = $buffer->getSymbol();
         self::assertSame(0x62, $actualValue);
@@ -69,7 +69,7 @@ class CharBufferTest extends TestCase
      */
     public function testResetToken_NextSymbolCalled_GetSymbolReturnsFirstByte(): void
     {
-        $buffer = CharBuffer::fromString('ab');
+        $buffer = new CharBuffer(0x61, 0x62);
         $buffer->nextSymbol();
         $buffer->resetToken();
         $actualValue = $buffer->getSymbol();
@@ -81,7 +81,7 @@ class CharBufferTest extends TestCase
      */
     public function testFinishToken_NotAtBufferEnd_GetSymbolAfterResetTokenReturnsSecondByte(): void
     {
-        $buffer = CharBuffer::fromString('ab');
+        $buffer = new CharBuffer(0x61, 0x62);
         $buffer->nextSymbol();
         $buffer->finishToken(new Token(1, false));
         $buffer->resetToken();

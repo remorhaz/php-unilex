@@ -5,16 +5,10 @@ namespace Remorhaz\UniLex\IO;
 use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\Lexer\Token;
 use Remorhaz\UniLex\Lexer\TokenPosition;
-use SplFixedArray;
 
 class CharBuffer implements CharBufferInterface, TokenExtractInterface
 {
 
-    private const DEFAULT_TOKEN_ATTRIBUTE_PREFIX = 'char';
-
-    /**
-     * @var SplFixedArray
-     */
     private $data;
 
     private $length;
@@ -23,30 +17,10 @@ class CharBuffer implements CharBufferInterface, TokenExtractInterface
 
     private $previewOffset = 0;
 
-    private $tokenAttributePrefix;
-
-    public function __construct(SplFixedArray $data, $tokenAttributePrefix = self::DEFAULT_TOKEN_ATTRIBUTE_PREFIX)
+    public function __construct(int ...$data)
     {
         $this->data = $data;
-        $this->length = $data->count();
-        $this->tokenAttributePrefix = $tokenAttributePrefix;
-    }
-
-    public static function fromString(string $text): self
-    {
-        $length = strlen($text);
-        $data = new SplFixedArray($length);
-        for ($i = 0; $i < $length; $i++) {
-            $data->offsetSet($i, ord($text[$i]));
-        }
-        return new self($data);
-    }
-
-    public static function fromSymbols(int ...$array): self
-    {
-
-        $data = SplFixedArray::fromArray($array);
-        return new self($data);
+        $this->length = count($data);
     }
 
     public function isEnd(): bool
@@ -63,7 +37,7 @@ class CharBuffer implements CharBufferInterface, TokenExtractInterface
         if ($this->previewOffset == $this->length) {
             throw new Exception("No symbol to preview at index {$this->previewOffset}");
         }
-        return $this->data->offsetGet($this->previewOffset);
+        return $this->data[$this->previewOffset];
     }
 
     /**
@@ -84,12 +58,9 @@ class CharBuffer implements CharBufferInterface, TokenExtractInterface
 
     /**
      * @param Token $token
-     * @throws Exception
      */
     public function finishToken(Token $token): void
     {
-        $token->setAttribute("{$this->tokenAttributePrefix}.position.start", $this->startOffset);
-        $token->setAttribute("{$this->tokenAttributePrefix}.position.finish", $this->previewOffset);
         $this->startOffset = $this->previewOffset;
     }
 
@@ -97,18 +68,22 @@ class CharBuffer implements CharBufferInterface, TokenExtractInterface
     {
         $result = [];
         for ($i = $this->startOffset; $i < $this->previewOffset; $i++) {
-            $result[] = $this->data->offsetGet($i);
+            $result[] = $this->data[$i];
         }
         return $result;
     }
 
     /**
      * @return string
+     * @throws Exception
      */
     public function asString(): string
     {
         $result = '';
         foreach ($this->asArray() as $char) {
+            if ($char < 0 || $char > 0xFF) {
+                throw new Exception("Converting to string of non-8-bit symbols is not supported");
+            }
             $result .= chr($char);
         }
         return $result;
