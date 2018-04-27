@@ -4,7 +4,6 @@ namespace Remorhaz\UniLex\Test;
 
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Lexer\Token;
-use Remorhaz\UniLex\Lexer\TokenPosition;
 use Remorhaz\UniLex\IO\CharBuffer;
 
 /**
@@ -88,37 +87,5 @@ class CharBufferTest extends TestCase
         $buffer->resetToken();
         $actualValue = $buffer->getSymbol();
         self::assertSame(0x62, $actualValue);
-    }
-
-    /**
-     * @throws \Remorhaz\UniLex\Exception
-     */
-    public function testExtractToken_NoTokenPreviewed_ReturnsEmptyBuffer(): void
-    {
-        $buffer = CharBuffer::fromString('a');
-        $token = $buffer->extractToken(new TokenPosition(0, 0));
-        self::assertEquals(0, $token->count());
-    }
-
-    /**
-     * @param string $text
-     * @dataProvider providerSingleSymbolToken
-     * @throws \Remorhaz\UniLex\Exception
-     */
-    public function testExtractToken_SingleSymbolTokenPreviewed_ReturnsBufferOfMatchingSize(string $text): void
-    {
-        $buffer = CharBuffer::fromString($text);
-        $token = $buffer->extractToken(new TokenPosition(0, 1));
-        self::assertEquals(1, $token->count());
-    }
-
-    public function providerSingleSymbolToken(): array
-    {
-        return [
-            'ASCII char' => ['a', 0x61],
-            'Cyrillic char' => ['б', 0x0431],
-            'Japanese hieroglyph' => ['本', 0x672C],
-            'Cuneiform char' => ["\u{0122F0}", 0x122F0],
-        ];
     }
 }

@@ -93,16 +93,25 @@ class CharBuffer implements CharBufferInterface, TokenExtractInterface
         $this->startOffset = $this->previewOffset;
     }
 
-    public function extractToken(TokenPosition $position): SplFixedArray
+    public function asArray(): array
     {
-        $startOffset = $position->getStartOffset();
-        $tokenLength = $position->getLength();
-        $output = new SplFixedArray($tokenLength);
-        for ($i = 0; $i < $tokenLength; $i++) {
-            $symbol = $this->data->offsetGet($startOffset + $i);
-            $output->offsetSet($i, $symbol);
+        $result = [];
+        for ($i = $this->startOffset; $i < $this->previewOffset; $i++) {
+            $result[] = $this->data->offsetGet($i);
         }
-        return $output;
+        return $result;
+    }
+
+    /**
+     * @return string
+     */
+    public function asString(): string
+    {
+        $result = '';
+        foreach ($this->asArray() as $char) {
+            $result .= chr($char);
+        }
+        return $result;
     }
 
     /**
