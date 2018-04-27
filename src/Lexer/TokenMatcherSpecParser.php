@@ -98,8 +98,10 @@ class TokenMatcherSpecParser
             ->setHeader($this->getCodeBlock(self::TAG_LEX_HEADER))
             ->setBeforeMatch($this->getCodeBlock(self::TAG_LEX_BEFORE_MATCH))
             ->setOnTransition($this->getCodeBlock(self::TAG_LEX_ON_TRANSITION))
-            ->setOnError($this->getCodeBlock(self::TAG_LEX_ON_ERROR, "return false;"))
-            ->addTokenSpec(...array_values($this->tokenSpecList));
+            ->setOnError($this->getCodeBlock(self::TAG_LEX_ON_ERROR, "return false;"));
+        foreach ($this->tokenSpecList as $context => $tokenSpecList) {
+            $matcherSpec->addTokenSpec($context, ...array_values($tokenSpecList));
+        }
         foreach ($this->usedClassList as $usedClassAlias => $usedClassName) {
             $matcherSpec->addUsedClass($usedClassName, is_string($usedClassAlias) ? $usedClassAlias : null);
         }
@@ -253,15 +255,16 @@ class TokenMatcherSpecParser
         if (!$this->codeBlockExists($codeBlockKey)) {
             return;
         }
+        $context = TokenMatcherInterface::DEFAULT_CONTEXT;
         $tokenRegExp = $this->getCodeBlock(self::LEX_TOKEN_REGEXP);
-        if (isset($this->tokenSpecList[$tokenRegExp])) {
+        if (isset($this->tokenSpecList[$context][$tokenRegExp])) {
             throw new Exception("Invalid lexer specification: duplicated @{$codeBlockKey} /{$tokenRegExp}/ tag");
         }
         $this->resetCodeBlock(self::LEX_TOKEN_REGEXP);
         $tokenCode = $this->getCodeBlock($codeBlockKey);
         $this->resetCodeBlock($codeBlockKey);
         $tokenSpec = new TokenSpec($tokenRegExp, $tokenCode);
-        $this->tokenSpecList[$tokenSpec->getRegExp()] = $tokenSpec;
+        $this->tokenSpecList[$context][$tokenSpec->getRegExp()] = $tokenSpec;
     }
 
     /**

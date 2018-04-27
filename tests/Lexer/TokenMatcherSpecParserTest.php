@@ -3,6 +3,7 @@
 namespace Remorhaz\UniLex\Test\Lexer;
 
 use PHPUnit\Framework\TestCase;
+use Remorhaz\UniLex\Lexer\TokenMatcherInterface;
 use Remorhaz\UniLex\Lexer\TokenMatcherSpecParser;
 use Remorhaz\UniLex\Lexer\TokenMatcherTemplate;
 
@@ -450,7 +451,7 @@ SOURCE;
 \$y = 1;
 SOURCE;
         $matcherSpec = (new TokenMatcherSpecParser($source))->getMatcherSpec();
-        $actualValue = $matcherSpec->getTokenSpecList();
+        $actualValue = $matcherSpec->getTokenSpecList(TokenMatcherInterface::DEFAULT_CONTEXT);
         self::assertCount(2, $actualValue);
     }
 
@@ -471,7 +472,7 @@ SOURCE;
 \$y = 1;
 SOURCE;
         $matcherSpec = (new TokenMatcherSpecParser($source))->getMatcherSpec();
-        $tokenSpecList = $matcherSpec->getTokenSpecList();
+        $tokenSpecList = $matcherSpec->getTokenSpecList(TokenMatcherInterface::DEFAULT_CONTEXT);
         self::assertArrayHasKey('a', $tokenSpecList);
         self::assertSame("\$x = 0;", $tokenSpecList['a']->getCode());
         self::assertArrayHasKey('b', $tokenSpecList);

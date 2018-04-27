@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Grammar\ContextFree\Grammar;
 use Remorhaz\UniLex\Grammar\ContextFree\TokenFactory;
 use Remorhaz\UniLex\Lexer\TokenMatcherGenerator;
+use Remorhaz\UniLex\Lexer\TokenMatcherInterface;
 use Remorhaz\UniLex\Lexer\TokenMatcherSpec;
 use Remorhaz\UniLex\Lexer\TokenSpec;
 use Remorhaz\UniLex\Lexer\TokenMatcherTemplate;
@@ -39,7 +40,7 @@ class TokenMatcherGeneratorTest extends TestCase
         $matcherClass = $this->createTokenMatcherClassName();
         $spec = new TokenMatcherSpec($matcherClass, TokenMatcherTemplate::class);
         $tokenSpec = new TokenSpec("a", "");
-        $spec->addTokenSpec($tokenSpec);
+        $spec->addTokenSpec(TokenMatcherInterface::DEFAULT_CONTEXT, $tokenSpec);
         $matcher = (new TokenMatcherGenerator($spec))->load();
         $grammar = new Grammar(0, 1, 2);
         $buffer = CharBufferFactory::createFromString("ab");
@@ -56,7 +57,7 @@ class TokenMatcherGeneratorTest extends TestCase
         $spec = new TokenMatcherSpec($matcherClass, TokenMatcherTemplate::class);
         $spec->setOnToken("\$context->setNewToken(1);");
         $tokenSpec = new TokenSpec("a", "");
-        $spec->addTokenSpec($tokenSpec);
+        $spec->addTokenSpec(TokenMatcherInterface::DEFAULT_CONTEXT, $tokenSpec);
         $matcher = (new TokenMatcherGenerator($spec))->load();
         $grammar = new Grammar(0, 1, 2);
         $grammar->addToken(1, 1);
@@ -76,7 +77,7 @@ class TokenMatcherGeneratorTest extends TestCase
         $spec = new TokenMatcherSpec($matcherClass, TokenMatcherTemplate::class);
         $spec->setOnToken("\$context->setNewToken(1);");
         $tokenSpec = new TokenSpec("a", "");
-        $spec->addTokenSpec($tokenSpec);
+        $spec->addTokenSpec(TokenMatcherInterface::DEFAULT_CONTEXT, $tokenSpec);
         $matcher = (new TokenMatcherGenerator($spec))->load();
         $grammar = new Grammar(0, 1, 2);
         $grammar->addToken(1, 1);
@@ -97,7 +98,7 @@ class TokenMatcherGeneratorTest extends TestCase
         $spec = new TokenMatcherSpec($matcherClass, TokenMatcherTemplate::class);
         $spec->setOnToken("\$this->token = \$tokenFactory->createToken(\$tokenType);");
         $tokenSpec = new TokenSpec("a", "");
-        $spec->addTokenSpec($tokenSpec);
+        $spec->addTokenSpec(TokenMatcherInterface::DEFAULT_CONTEXT, $tokenSpec);
         $matcher = (new TokenMatcherGenerator($spec))->load();
         $grammar = new Grammar(0, 1, 2);
         $grammar->addToken(1, 1);

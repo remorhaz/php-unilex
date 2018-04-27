@@ -9,7 +9,9 @@ use Remorhaz\UniLex\IO\TokenExtractInterface;
 abstract class TokenMatcherTemplate implements TokenMatcherInterface
 {
 
-    protected $token;
+    private $token;
+
+    private $context = self::DEFAULT_CONTEXT;
 
     /**
      * @return Token
@@ -36,7 +38,20 @@ abstract class TokenMatcherTemplate implements TokenMatcherInterface
         $onGetToken = function (): Token {
             return $this->getToken();
         };
-        return new class($buffer, $onConstruct, $onSetNewToken, $onGetToken) implements TokenMatcherContextInterface {
+        $onSetContext = function (string $context): void {
+            $this->context = $context;
+        };
+        $onGetContext = function (): string {
+            return $this->context;
+        };
+        return new class(
+            $buffer,
+            $onConstruct,
+            $onSetNewToken,
+            $onGetToken,
+            $onSetContext,
+            $onGetContext
+        ) implements TokenMatcherContextInterface {
 
             private $buffer;
 
@@ -44,15 +59,23 @@ abstract class TokenMatcherTemplate implements TokenMatcherInterface
 
             private $onGetToken;
 
+            private $onSetContext;
+
+            private $onGetContext;
+
             public function __construct(
                 CharBufferInterface $buffer,
                 callable $onConstruct,
                 callable $onSetNewToken,
-                callable $onGetToken
+                callable $onGetToken,
+                callable $onSetContext,
+                callable $onGetContext
             ) {
                 $this->buffer = $buffer;
                 $this->onSetNewToken = $onSetNewToken;
                 $this->onGetToken = $onGetToken;
+                $this->onSetContext = $onSetContext;
+                $this->onGetContext = $onGetContext;
                 call_user_func($onConstruct);
             }
 
@@ -101,6 +124,17 @@ abstract class TokenMatcherTemplate implements TokenMatcherInterface
                     return $buffer->getTokenAsArray();
                 }
                 throw new Exception("Extracting arrays is not supported by buffer");
+            }
+
+            public function getContext(): string
+            {
+                return call_user_func($this->onGetContext);
+            }
+
+            public function setContext(string $context): TokenMatcherContextInterface
+            {
+                call_user_func($this->onSetContext, $context);
+                return $this;
             }
         };
     }

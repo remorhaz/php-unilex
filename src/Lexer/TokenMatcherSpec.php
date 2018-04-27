@@ -190,27 +190,38 @@ class TokenMatcherSpec
     }
 
     /**
+     * @param string $context
      * @param TokenSpec ...$tokenSpecList
      * @return TokenMatcherSpec
      * @throws Exception
      */
-    public function addTokenSpec(TokenSpec ...$tokenSpecList): self
+    public function addTokenSpec(string $context, TokenSpec ...$tokenSpecList): self
     {
         foreach ($tokenSpecList as $tokenSpec) {
-            if (isset($this->tokenSpecList[$tokenSpec->getRegExp()])) {
-                throw new Exception("Token spec for pattern {$tokenSpec->getRegExp()} is already set");
+            $regExp = $tokenSpec->getRegExp();
+            if (isset($this->tokenSpecList[$context][$regExp])) {
+                throw new Exception("Token spec for pattern {$regExp} is already set");
             }
-            $this->tokenSpecList[$tokenSpec->getRegExp()] = $tokenSpec;
+            $this->tokenSpecList[$context][$regExp] = $tokenSpec;
         }
         return $this;
     }
 
     /**
+     * @param string $context
      * @return TokenSpec[]
      */
-    public function getTokenSpecList(): array
+    public function getTokenSpecList(string $context): array
     {
-        return $this->tokenSpecList;
+        return $this->tokenSpecList[$context] ?? [];
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getContextList(): array
+    {
+        return array_keys($this->tokenSpecList);
     }
 
     private function splitTargetClassName(): array
