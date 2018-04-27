@@ -62,13 +62,13 @@ Now we have a compiled token matcher in `TokenMatcher.php` file. Let's use it an
 <?php
 
 use Remorhaz\UniLex\Lexer\TokenFactory;
-use Remorhaz\UniLex\TokenReader;
+use Remorhaz\UniLex\Lexer\TokenReader;
 use Remorhaz\UniLex\Unicode\CharBufferFactory;
 
 require_once "vendor/autoload.php";
 require_once "TokenMatcher.php";
 
-$buffer = CharBufferFactory::createFrom("x+2*3");
+$buffer = CharBufferFactory::createFromString("x+2*3");
 $tokenReader = new TokenReader($buffer, new TokenMatcher, new TokenFactory(0xFF));
 
 do {
@@ -85,7 +85,7 @@ Token ID: 2
 Token ID: 3
 Token ID: 255
 ```
-Let's go a bit further and make it possible to retrieve text presentation of every token from input buffer. We need to modify a lexer specification to store characters and to attach the result to each non-EOI token as an attribute:
+Let's go a bit further and make it possible to retrieve text presentation of every token from input buffer. We need to modify a lexer specification to attach the result to each non-EOI token as an attribute:
 ```php
 <?php
 /**
@@ -97,9 +97,6 @@ Let's go a bit further and make it possible to retrieve text presentation of eve
 const TOKEN_ID = 1;
 const TOKEN_OPERATOR = 2;
 const TOKEN_NUMBER = 3;
-
-/** @lexOnTransition */
-$context->storeCurrentSymbol();
 
 /** @lexToken /[a-zA-Z][0-9a-zA-Z]*()/ */
 $context

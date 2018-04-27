@@ -20,7 +20,7 @@ class StringBufferTest extends TestCase
 
     public function testIsEnd_NotEmptyBuffer_ReturnsFalse(): void
     {
-        $actualValue = (new StringBuffer(0x61))->isEnd();
+        $actualValue = (new StringBuffer('a'))->isEnd();
         self::assertFalse($actualValue);
     }
 

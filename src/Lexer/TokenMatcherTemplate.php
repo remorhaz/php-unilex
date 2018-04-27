@@ -4,7 +4,7 @@ namespace Remorhaz\UniLex\Lexer;
 
 use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\IO\CharBufferInterface;
-use Remorhaz\UniLex\Unicode\Utf8Encoder;
+use Remorhaz\UniLex\IO\TokenExtractInterface;
 
 abstract class TokenMatcherTemplate implements TokenMatcherInterface
 {
@@ -43,8 +43,6 @@ abstract class TokenMatcherTemplate implements TokenMatcherInterface
             private $onSetNewToken;
 
             private $onGetToken;
-
-            private $symbolList = [];
 
             public function __construct(
                 CharBufferInterface $buffer,
@@ -87,20 +85,22 @@ abstract class TokenMatcherTemplate implements TokenMatcherInterface
                 return $this->buffer;
             }
 
-            public function storeCurrentSymbol(): TokenMatcherContextInterface
-            {
-                $this->symbolList[] = $this->getBuffer()->getSymbol();
-                return $this;
-            }
-
-            public function getStoredSymbolList(): array
-            {
-                return $this->symbolList;
-            }
-
             public function getSymbolString(): string
             {
-                return (new Utf8Encoder)->encode(...$this->symbolList);
+                $buffer = $this->getBuffer();
+                if ($buffer instanceof TokenExtractInterface) {
+                    return $buffer->getTokenAsString();
+                }
+                throw new Exception("Extracting strings is not supported by buffer");
+            }
+
+            public function getSymbolList(): array
+            {
+                $buffer = $this->getBuffer();
+                if ($buffer instanceof TokenExtractInterface) {
+                    return $buffer->getTokenAsArray();
+                }
+                throw new Exception("Extracting arrays is not supported by buffer");
             }
         };
     }

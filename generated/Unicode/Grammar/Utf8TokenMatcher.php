@@ -29,7 +29,6 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
         }
         $char = $context->getBuffer()->getSymbol();
         if (0x00 <= $char && $char <= 0x7F) {
-            $context->storeCurrentSymbol();
             $context->getBuffer()->nextSymbol();
             $context
                 ->setNewToken(TokenType::SYMBOL)
@@ -37,27 +36,22 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
             return true;
         }
         if (0xC0 <= $char && $char <= 0xDF) {
-            $context->storeCurrentSymbol();
             $context->getBuffer()->nextSymbol();
             goto state3;
         }
         if (0xE0 <= $char && $char <= 0xEF) {
-            $context->storeCurrentSymbol();
             $context->getBuffer()->nextSymbol();
             goto state4;
         }
         if (0xF0 <= $char && $char <= 0xF7) {
-            $context->storeCurrentSymbol();
             $context->getBuffer()->nextSymbol();
             goto state5;
         }
         if (0xF8 <= $char && $char <= 0xFB) {
-            $context->storeCurrentSymbol();
             $context->getBuffer()->nextSymbol();
             goto state6;
         }
         if (0xFC == $char || 0xFD == $char) {
-            $context->storeCurrentSymbol();
             $context->getBuffer()->nextSymbol();
             goto state7;
         }
@@ -69,9 +63,8 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
         }
         $char = $context->getBuffer()->getSymbol();
         if (0x80 <= $char && $char <= 0xBF) {
-            $context->storeCurrentSymbol();
             $context->getBuffer()->nextSymbol();
-            $charList = $context->getStoredSymbolList();
+            $charList = $context->getSymbolList();
             $symbol = ($charList[0] & 0x1F) << 6;
             $symbol |= ($charList[1] & 0x3F);
             $context
@@ -87,7 +80,6 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
         }
         $char = $context->getBuffer()->getSymbol();
         if (0x80 <= $char && $char <= 0xBF) {
-            $context->storeCurrentSymbol();
             $context->getBuffer()->nextSymbol();
             goto state20;
         }
@@ -99,7 +91,6 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
         }
         $char = $context->getBuffer()->getSymbol();
         if (0x80 <= $char && $char <= 0xBF) {
-            $context->storeCurrentSymbol();
             $context->getBuffer()->nextSymbol();
             goto state17;
         }
@@ -111,7 +102,6 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
         }
         $char = $context->getBuffer()->getSymbol();
         if (0x80 <= $char && $char <= 0xBF) {
-            $context->storeCurrentSymbol();
             $context->getBuffer()->nextSymbol();
             goto state13;
         }
@@ -123,7 +113,6 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
         }
         $char = $context->getBuffer()->getSymbol();
         if (0x80 <= $char && $char <= 0xBF) {
-            $context->storeCurrentSymbol();
             $context->getBuffer()->nextSymbol();
             goto state8;
         }
@@ -135,7 +124,6 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
         }
         $char = $context->getBuffer()->getSymbol();
         if (0x80 <= $char && $char <= 0xBF) {
-            $context->storeCurrentSymbol();
             $context->getBuffer()->nextSymbol();
             goto state9;
         }
@@ -147,7 +135,6 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
         }
         $char = $context->getBuffer()->getSymbol();
         if (0x80 <= $char && $char <= 0xBF) {
-            $context->storeCurrentSymbol();
             $context->getBuffer()->nextSymbol();
             goto state10;
         }
@@ -159,7 +146,6 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
         }
         $char = $context->getBuffer()->getSymbol();
         if (0x80 <= $char && $char <= 0xBF) {
-            $context->storeCurrentSymbol();
             $context->getBuffer()->nextSymbol();
             goto state11;
         }
@@ -171,9 +157,8 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
         }
         $char = $context->getBuffer()->getSymbol();
         if (0x80 <= $char && $char <= 0xBF) {
-            $context->storeCurrentSymbol();
             $context->getBuffer()->nextSymbol();
-            $charList = $context->getStoredSymbolList();
+            $charList = $context->getSymbolList();
             $symbol = ($charList[0] & 0x01) << 30;
             $symbol |= ($charList[1] & 0x03) << 24;
             $symbol |= ($charList[2] & 0x3F) << 18;
@@ -193,7 +178,6 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
         }
         $char = $context->getBuffer()->getSymbol();
         if (0x80 <= $char && $char <= 0xBF) {
-            $context->storeCurrentSymbol();
             $context->getBuffer()->nextSymbol();
             goto state14;
         }
@@ -205,7 +189,6 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
         }
         $char = $context->getBuffer()->getSymbol();
         if (0x80 <= $char && $char <= 0xBF) {
-            $context->storeCurrentSymbol();
             $context->getBuffer()->nextSymbol();
             goto state15;
         }
@@ -217,9 +200,8 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
         }
         $char = $context->getBuffer()->getSymbol();
         if (0x80 <= $char && $char <= 0xBF) {
-            $context->storeCurrentSymbol();
             $context->getBuffer()->nextSymbol();
-            $charList = $context->getStoredSymbolList();
+            $charList = $context->getSymbolList();
             $symbol = ($charList[0] & 0x03) << 24;
             $symbol |= ($charList[1] & 0x3F) << 18;
             $symbol |= ($charList[2] & 0x3F) << 12;
@@ -238,7 +220,6 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
         }
         $char = $context->getBuffer()->getSymbol();
         if (0x80 <= $char && $char <= 0xBF) {
-            $context->storeCurrentSymbol();
             $context->getBuffer()->nextSymbol();
             goto state18;
         }
@@ -250,9 +231,8 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
         }
         $char = $context->getBuffer()->getSymbol();
         if (0x80 <= $char && $char <= 0xBF) {
-            $context->storeCurrentSymbol();
             $context->getBuffer()->nextSymbol();
-            $charList = $context->getStoredSymbolList();
+            $charList = $context->getSymbolList();
             $symbol = ($charList[0] & 0x07) << 18;
             $symbol |= ($charList[1] & 0x3F) << 12;
             $symbol |= ($charList[2] & 0x3F) << 6;
@@ -270,9 +250,8 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
         }
         $char = $context->getBuffer()->getSymbol();
         if (0x80 <= $char && $char <= 0xBF) {
-            $context->storeCurrentSymbol();
             $context->getBuffer()->nextSymbol();
-            $charList = $context->getStoredSymbolList();
+            $charList = $context->getSymbolList();
             $symbol = ($charList[0] & 0x0F) << 12;
             $symbol |= ($charList[1] & 0x3F) << 6;
             $symbol |= ($charList[2] & 0x3F);
