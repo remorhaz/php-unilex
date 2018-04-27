@@ -141,6 +141,7 @@ class CharBufferTest extends TestCase
         $actualValue = $buffer->getTokenAsArray();
         self::assertSame([0x61, 0x62], $actualValue);
     }
+
     /**
      * @throws \Remorhaz\UniLex\Exception
      */
@@ -149,7 +150,6 @@ class CharBufferTest extends TestCase
         $actualValue = (new CharBuffer(0x61))->getTokenAsString();
         self::assertSame('', $actualValue);
     }
-
 
     /**
      * @throws \Remorhaz\UniLex\Exception
