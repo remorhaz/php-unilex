@@ -4,23 +4,23 @@ namespace Remorhaz\UniLex\Test;
 
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Lexer\Token;
-use Remorhaz\UniLex\IO\CharBuffer;
+use Remorhaz\UniLex\IO\StringBuffer;
 
 /**
- * @covers \Remorhaz\UniLex\IO\CharBuffer
+ * @covers \Remorhaz\UniLex\IO\StringBuffer
  */
-class CharBufferTest extends TestCase
+class StringBufferTest extends TestCase
 {
 
     public function testIsEnd_EmptyBuffer_ReturnsTrue(): void
     {
-        $actualValue = (new CharBuffer)->isEnd();
+        $actualValue = (new StringBuffer(''))->isEnd();
         self::assertTrue($actualValue);
     }
 
     public function testIsEnd_NotEmptyBuffer_ReturnsFalse(): void
     {
-        $actualValue = (new CharBuffer(0x61))->isEnd();
+        $actualValue = (new StringBuffer(0x61))->isEnd();
         self::assertFalse($actualValue);
     }
 
@@ -31,7 +31,7 @@ class CharBufferTest extends TestCase
      */
     public function testGetSymbol_EmptyBuffer_ThrowsException(): void
     {
-        (new CharBuffer)->getSymbol();
+        (new StringBuffer(''))->getSymbol();
     }
 
     /**
@@ -39,7 +39,7 @@ class CharBufferTest extends TestCase
      */
     public function testGetSymbol_NotEmptyBuffer_ReturnsFirstValue(): void
     {
-        $actualValue = (new CharBuffer(0x61))->getSymbol();
+        $actualValue = (new StringBuffer('a'))->getSymbol();
         self::assertSame(0x61, $actualValue);
     }
 
@@ -50,7 +50,7 @@ class CharBufferTest extends TestCase
      */
     public function testNextSymbol_EmptyBuffer_ThrowsException(): void
     {
-        (new CharBuffer)->nextSymbol();
+        (new StringBuffer(''))->nextSymbol();
     }
 
     /**
@@ -58,7 +58,7 @@ class CharBufferTest extends TestCase
      */
     public function testNextSymbol_NotEmptyBuffer_GetSymbolReturnsSecondValue(): void
     {
-        $buffer = new CharBuffer(0x61, 0x62);
+        $buffer = new StringBuffer('ab');
         $buffer->nextSymbol();
         $actualValue = $buffer->getSymbol();
         self::assertSame(0x62, $actualValue);
@@ -69,7 +69,7 @@ class CharBufferTest extends TestCase
      */
     public function testResetToken_NextSymbolCalled_GetSymbolReturnsFirstValue(): void
     {
-        $buffer = new CharBuffer(0x61, 0x62);
+        $buffer = new StringBuffer('ab');
         $buffer->nextSymbol();
         $buffer->resetToken();
         $actualValue = $buffer->getSymbol();
@@ -81,7 +81,7 @@ class CharBufferTest extends TestCase
      */
     public function testFinishToken_NotAtBufferEnd_GetSymbolAfterResetTokenReturnsSecondValue(): void
     {
-        $buffer = new CharBuffer(0x61, 0x62);
+        $buffer = new StringBuffer('ab');
         $buffer->nextSymbol();
         $buffer->finishToken(new Token(1, false));
         $buffer->resetToken();
@@ -94,7 +94,7 @@ class CharBufferTest extends TestCase
      */
     public function testGetTokenPosition_NextSymbolNotCalled_ReturnsZeroOffsets(): void
     {
-        $position = (new CharBuffer(0x61))->getTokenPosition();
+        $position = (new StringBuffer('a'))->getTokenPosition();
         self::assertSame(0, $position->getStartOffset());
         self::assertSame(0, $position->getFinishOffset());
     }
@@ -104,7 +104,7 @@ class CharBufferTest extends TestCase
      */
     public function testGetTokenPosition_NextSymbolCalled_ReturnsMatchingOffsets(): void
     {
-        $buffer = new CharBuffer(0x61);
+        $buffer = new StringBuffer('a');
         $buffer->nextSymbol();
         $position = $buffer->getTokenPosition();
         self::assertSame(0, $position->getStartOffset());
@@ -116,7 +116,7 @@ class CharBufferTest extends TestCase
      */
     public function testGetTokenPosition_NextSymbolAndFinishTokenCalled_ReturnsMatchingOffsets(): void
     {
-        $buffer = new CharBuffer(0x61);
+        $buffer = new StringBuffer('a');
         $buffer->nextSymbol();
         $buffer->finishToken(new Token(0, true));
         $position = $buffer->getTokenPosition();
@@ -126,7 +126,7 @@ class CharBufferTest extends TestCase
 
     public function testGetTokenAsArray_EmptyPosition_ReturnsEmptyArray(): void
     {
-        $actualValue = (new CharBuffer(0x61))->getTokenAsArray();
+        $actualValue = (new StringBuffer('a'))->getTokenAsArray();
         self::assertSame([], $actualValue);
     }
 
@@ -135,18 +135,16 @@ class CharBufferTest extends TestCase
      */
     public function testGetTokenAsArray_NotEmptyPosition_ReturnsMatchingArray(): void
     {
-        $buffer = new CharBuffer(0x61, 0x62);
+        $buffer = new StringBuffer('ab');
         $buffer->nextSymbol();
         $buffer->nextSymbol();
         $actualValue = $buffer->getTokenAsArray();
         self::assertSame([0x61, 0x62], $actualValue);
     }
-    /**
-     * @throws \Remorhaz\UniLex\Exception
-     */
+
     public function testGetTokenAsString_EmptyPosition_ReturnsEmptyString(): void
     {
-        $actualValue = (new CharBuffer(0x61))->getTokenAsString();
+        $actualValue = (new StringBuffer('a'))->getTokenAsString();
         self::assertSame('', $actualValue);
     }
 
@@ -156,22 +154,10 @@ class CharBufferTest extends TestCase
      */
     public function testGetTokenAsString_NotEmptyPosition_ReturnsMatchingArray(): void
     {
-        $buffer = new CharBuffer(0x61, 0x62);
+        $buffer = new StringBuffer('ab');
         $buffer->nextSymbol();
         $buffer->nextSymbol();
         $actualValue = $buffer->getTokenAsString();
         self::assertSame('ab', $actualValue);
-    }
-
-    /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Only 8-bit symbols can be converted to string, 256 found at index 0
-     */
-    public function testGetTokenAsString_Not8BitSymbolAtPosition_ThrowsException(): void
-    {
-        $buffer = new CharBuffer(0x100);
-        $buffer->nextSymbol();
-        $buffer->getTokenAsString();
     }
 }

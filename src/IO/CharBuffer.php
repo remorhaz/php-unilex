@@ -64,7 +64,7 @@ class CharBuffer implements CharBufferInterface, TokenExtractInterface
         $this->startOffset = $this->previewOffset;
     }
 
-    public function asArray(): array
+    public function getTokenAsArray(): array
     {
         $result = [];
         for ($i = $this->startOffset; $i < $this->previewOffset; $i++) {
@@ -77,12 +77,13 @@ class CharBuffer implements CharBufferInterface, TokenExtractInterface
      * @return string
      * @throws Exception
      */
-    public function asString(): string
+    public function getTokenAsString(): string
     {
         $result = '';
-        foreach ($this->asArray() as $char) {
+        foreach ($this->getTokenAsArray() as $index => $char) {
             if ($char < 0 || $char > 0xFF) {
-                throw new Exception("Converting to string of non-8-bit symbols is not supported");
+                $offset = $this->startOffset + $index;
+                throw new Exception("Only 8-bit symbols can be converted to string, {$char} found at index {$offset}");
             }
             $result .= chr($char);
         }

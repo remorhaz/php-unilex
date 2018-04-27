@@ -6,7 +6,7 @@ use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\Lexer\Token;
 use Remorhaz\UniLex\Lexer\TokenPosition;
 
-class StringBuffer implements CharBufferInterface
+class StringBuffer implements CharBufferInterface, TokenExtractInterface
 {
 
     private $data;
@@ -56,22 +56,6 @@ class StringBuffer implements CharBufferInterface
         $this->previewOffset = $this->startOffset;
     }
 
-    /**
-     * @param int $offset
-     * @throws Exception
-     */
-    public function setToken(int $offset): void
-    {
-        if ($offset < 0) {
-            throw new Exception("Negative token offset at index {$offset}");
-        }
-        if ($offset >= $this->length) {
-            throw new Exception("Token offset outside of buffer at index {$offset}");
-        }
-        $this->startOffset = $offset;
-        $this->previewOffset = $offset;
-    }
-
     public function finishToken(Token $token): void
     {
         $this->startOffset = $this->previewOffset;
@@ -84,5 +68,19 @@ class StringBuffer implements CharBufferInterface
     public function getTokenPosition(): TokenPosition
     {
         return new TokenPosition($this->startOffset, $this->previewOffset);
+    }
+
+    public function getTokenAsString(): string
+    {
+        return substr($this->data, $this->startOffset, $this->previewOffset);
+    }
+
+    public function getTokenAsArray(): array
+    {
+        $result = [];
+        for ($i = $this->startOffset; $i < $this->previewOffset; $i++) {
+            $result[] = ord($this->data{$i});
+        }
+        return $result;
     }
 }

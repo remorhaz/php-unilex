@@ -5,7 +5,7 @@ namespace Remorhaz\UniLex\IO;
 interface TokenExtractInterface
 {
 
-    public function asString(): string;
+    public function getTokenAsString(): string;
 
-    public function asArray(): array;
+    public function getTokenAsArray(): array;
 }
