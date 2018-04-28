@@ -72,7 +72,7 @@ class StringBuffer implements CharBufferInterface, TokenExtractInterface
 
     public function getTokenAsString(): string
     {
-        return substr($this->data, $this->startOffset, $this->previewOffset);
+        return substr($this->data, $this->startOffset, $this->previewOffset - $this->startOffset);
     }
 
     public function getTokenAsArray(): array

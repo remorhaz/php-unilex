@@ -4,6 +4,7 @@ namespace Remorhaz\UniLex\Unicode;
 
 use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\IO\CharBufferInterface;
+use Remorhaz\UniLex\IO\TokenExtractInterface;
 use Remorhaz\UniLex\Lexer\Token;
 use Remorhaz\UniLex\Lexer\TokenFactoryInterface;
 use Remorhaz\UniLex\Lexer\TokenMatcherInterface;
@@ -13,7 +14,7 @@ use Remorhaz\UniLex\Unicode\Grammar\TokenFactory;
 use Remorhaz\UniLex\Unicode\Grammar\TokenType;
 use Remorhaz\UniLex\Unicode\Grammar\Utf8TokenMatcher;
 
-class CharBuffer implements CharBufferInterface
+class CharBuffer implements CharBufferInterface, TokenExtractInterface
 {
 
     private $source;
@@ -27,6 +28,8 @@ class CharBuffer implements CharBufferInterface
     private $startOffset = 0;
 
     private $previewOffset = 0;
+
+    private $buffer = [];
 
     public function __construct(CharBufferInterface $source)
     {
@@ -81,7 +84,9 @@ class CharBuffer implements CharBufferInterface
         if ($token->getType() != TokenType::SYMBOL) {
             throw new Exception("Invalid Unicode char token");
         }
-        return $token->getAttribute(TokenAttribute::UNICODE_CHAR);
+        $char = $token->getAttribute(TokenAttribute::UNICODE_CHAR);
+        $this->buffer[] = $char;
+        return $char;
     }
 
     /**
@@ -109,12 +114,14 @@ class CharBuffer implements CharBufferInterface
         $token->setAttribute(TokenAttribute::UNICODE_CHAR_OFFSET_START, $this->startOffset);
         $token->setAttribute(TokenAttribute::UNICODE_CHAR_OFFSET_FINISH, $this->previewOffset);
         $this->startOffset = $this->previewOffset;
+        $this->buffer = [];
     }
 
     public function resetToken(): void
     {
         $this->previewOffset = $this->startOffset;
         $this->source->resetToken();
+        $this->buffer = [];
         unset($this->char);
     }
 
@@ -125,6 +132,26 @@ class CharBuffer implements CharBufferInterface
     public function getTokenPosition(): TokenPosition
     {
         return new TokenPosition($this->startOffset, $this->previewOffset);
+    }
+
+    /**
+     * @return string
+     * @throws Exception
+     */
+    public function getTokenAsString(): string
+    {
+        if ($this->source instanceof TokenExtractInterface) {
+            return $this->source->getTokenAsString();
+        }
+        throw new Exception("Source buffer doesn't support extracting strings");
+    }
+
+    /**
+     * @return array
+     */
+    public function getTokenAsArray(): array
+    {
+        return $this->buffer;
     }
 
     private function getMatcher(): TokenMatcherInterface

@@ -124,7 +124,7 @@ class CharBufferTest extends TestCase
         self::assertSame(1, $position->getFinishOffset());
     }
 
-    public function testGetTokenAsArray_EmptyPosition_ReturnsEmptyArray(): void
+    public function testGetTokenAsArray_NextSymbolNotCalled_ReturnsEmptyArray(): void
     {
         $actualValue = (new CharBuffer(0x61))->getTokenAsArray();
         self::assertSame([], $actualValue);
@@ -133,7 +133,7 @@ class CharBufferTest extends TestCase
     /**
      * @throws \Remorhaz\UniLex\Exception
      */
-    public function testGetTokenAsArray_NotEmptyPosition_ReturnsMatchingArray(): void
+    public function testGetTokenAsArray_NextSymbolCalledTwice_ReturnsMatchingArray(): void
     {
         $buffer = new CharBuffer(0x61, 0x62);
         $buffer->nextSymbol();
@@ -145,7 +145,31 @@ class CharBufferTest extends TestCase
     /**
      * @throws \Remorhaz\UniLex\Exception
      */
-    public function testGetTokenAsString_EmptyPosition_ReturnsEmptyString(): void
+    public function testGetTokenAsArray_NextSymbolAndResetTokenCalled_ReturnsEmptyArray(): void
+    {
+        $buffer = new CharBuffer(0x61, 0x62);
+        $buffer->nextSymbol();
+        $buffer->resetToken();
+        $actualValue = $buffer->getTokenAsArray();
+        self::assertSame([], $actualValue);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testGetTokenAsArray_NextSymbolAndFinishTokenCalled_ReturnsEmptyArray(): void
+    {
+        $buffer = new CharBuffer(0x61, 0x62);
+        $buffer->nextSymbol();
+        $buffer->finishToken(new Token(0, false));
+        $actualValue = $buffer->getTokenAsArray();
+        self::assertSame([], $actualValue);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testGetTokenAsString_NextSymbolNotCalled_ReturnsEmptyString(): void
     {
         $actualValue = (new CharBuffer(0x61))->getTokenAsString();
         self::assertSame('', $actualValue);
@@ -154,13 +178,37 @@ class CharBufferTest extends TestCase
     /**
      * @throws \Remorhaz\UniLex\Exception
      */
-    public function testGetTokenAsString_NotEmptyPosition_ReturnsMatchingArray(): void
+    public function testGetTokenAsString_NextSymbolCalledTwice_ReturnsMatchingString(): void
     {
         $buffer = new CharBuffer(0x61, 0x62);
         $buffer->nextSymbol();
         $buffer->nextSymbol();
         $actualValue = $buffer->getTokenAsString();
         self::assertSame('ab', $actualValue);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testGetTokenAsString_NextSymbolAndResetTokenCalled_ReturnsEmptyString(): void
+    {
+        $buffer = new CharBuffer(0x61, 0x62);
+        $buffer->nextSymbol();
+        $buffer->resetToken();
+        $actualValue = $buffer->getTokenAsString();
+        self::assertSame('', $actualValue);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testGetTokenAsString_NextSymbolAndFinishTokenCalled_ReturnsEmptyString(): void
+    {
+        $buffer = new CharBuffer(0x61, 0x62);
+        $buffer->nextSymbol();
+        $buffer->finishToken(new Token(0, false));
+        $actualValue = $buffer->getTokenAsString();
+        self::assertSame('', $actualValue);
     }
 
     /**

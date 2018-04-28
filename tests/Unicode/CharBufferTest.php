@@ -211,6 +211,103 @@ class CharBufferTest extends TestCase
         self::assertSame(0, $token->getAttribute(TokenAttribute::UNICODE_BYTE_OFFSET_FINISH));
     }
 
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testGetTokenAsString_NextSymbolNotCalled_ReturnsEmptyString(): void
+    {
+        $source = new StringBuffer('a');
+        $buffer = new CharBuffer($source);
+        $actualValue = $buffer->getTokenAsString();
+        self::assertSame('', $actualValue);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testGetTokenAsString_NextSymbolCalledTwice_ReturnsMatchingString(): void
+    {
+        $source = new StringBuffer('ab');
+        $buffer = new CharBuffer($source);
+        $buffer->nextSymbol();
+        $buffer->nextSymbol();
+        $actualValue = $buffer->getTokenAsString();
+        self::assertSame('ab', $actualValue);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testGetTokenAsString_NextSymbolAndResetTokenCalled_ReturnsEmptyString(): void
+    {
+        $source = new StringBuffer('ab');
+        $buffer = new CharBuffer($source);
+        $buffer->nextSymbol();
+        $buffer->resetToken();
+        $actualValue = $buffer->getTokenAsString();
+        self::assertSame('', $actualValue);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testGetTokenAsString_NextSymbolAndFinishTokenCalled_ReturnsEmptyString(): void
+    {
+        $source = new StringBuffer('ab');
+        $buffer = new CharBuffer($source);
+        $buffer->nextSymbol();
+        $buffer->finishToken(new Token(0, false));
+        $actualValue = $buffer->getTokenAsString();
+        self::assertSame('', $actualValue);
+    }
+
+    public function testGetTokenAsArray_NextSymbolNotCalled_ReturnsEmptyArray(): void
+    {
+        $source = new StringBuffer('ab');
+        $buffer = new CharBuffer($source);
+        $actualValue = $buffer->getTokenAsArray();
+        self::assertSame([], $actualValue);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testGetTokenAsArray_NextSymbolCalledTwice_ReturnsMatchingArray(): void
+    {
+        $source = new StringBuffer('ab');
+        $buffer = new CharBuffer($source);
+        $buffer->nextSymbol();
+        $buffer->nextSymbol();
+        $actualValue = $buffer->getTokenAsArray();
+        self::assertSame([0x61, 0x62], $actualValue);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testGetTokenAsArray_NextSymbolAndResetTokenCalled_ReturnsEmptyArray(): void
+    {
+        $source = new StringBuffer('ab');
+        $buffer = new CharBuffer($source);
+        $buffer->nextSymbol();
+        $buffer->resetToken();
+        $actualValue = $buffer->getTokenAsArray();
+        self::assertSame([], $actualValue);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testGetTokenAsArray_NextSymbolAndFinishTokenCalled_ReturnsEmptyArray(): void
+    {
+        $source = new StringBuffer('ab');
+        $buffer = new CharBuffer($source);
+        $buffer->nextSymbol();
+        $buffer->finishToken(new Token(0, false));
+        $actualValue = $buffer->getTokenAsArray();
+        self::assertSame([], $actualValue);
+    }
+
     private function createTokenMatcherThatNeverMatches(): TokenMatcherInterface
     {
         return new class implements TokenMatcherInterface
@@ -221,6 +318,10 @@ class CharBufferTest extends TestCase
                 return false;
             }
 
+            /**
+             * @return Token
+             * @throws Exception
+             */
             public function getToken(): Token
             {
                 throw new Exception("Not implemented");
@@ -238,6 +339,10 @@ class CharBufferTest extends TestCase
                 return new Token(TokenType::INVALID_BYTES, false);
             }
 
+            /**
+             * @return Token
+             * @throws Exception
+             */
             public function createEoiToken(): Token
             {
                 throw new Exception("Not implemented");
