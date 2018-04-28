@@ -31,6 +31,8 @@ class CharBuffer implements CharBufferInterface, TokenExtractInterface
 
     private $buffer = [];
 
+    private $sourcePreviewOffset = 0;
+
     public function __construct(CharBufferInterface $source)
     {
         $this->source = $source;
@@ -72,6 +74,7 @@ class CharBuffer implements CharBufferInterface, TokenExtractInterface
         if ($this->source->isEnd()) {
             throw new Exception("Unexpected end of source buffer on preview at index {$this->previewOffset}");
         }
+        $positionBeforeMatch = $this->source->getTokenPosition();
         $result = $this
             ->getMatcher()
             ->match($this->source, $this->getTokenFactory());
@@ -84,9 +87,9 @@ class CharBuffer implements CharBufferInterface, TokenExtractInterface
         if ($token->getType() != TokenType::SYMBOL) {
             throw new Exception("Invalid Unicode char token");
         }
-        $char = $token->getAttribute(TokenAttribute::UNICODE_CHAR);
-        $this->buffer[] = $char;
-        return $char;
+        $positionAfterMatch = $this->source->getTokenPosition();
+        $this->sourcePreviewOffset = $positionAfterMatch->getFinishOffset() - $positionBeforeMatch->getFinishOffset();
+        return $token->getAttribute(TokenAttribute::UNICODE_CHAR);
     }
 
     /**
@@ -94,9 +97,8 @@ class CharBuffer implements CharBufferInterface, TokenExtractInterface
      */
     public function nextSymbol(): void
     {
-        if (!isset($this->char)) {
-            $this->getMatchedChar();
-        }
+        $this->buffer[] = $this->char ?? $this->getMatchedChar();
+        $this->sourcePreviewOffset = 0;
         unset($this->char);
         $this->previewOffset++;
     }
@@ -122,6 +124,7 @@ class CharBuffer implements CharBufferInterface, TokenExtractInterface
         $this->previewOffset = $this->startOffset;
         $this->source->resetToken();
         $this->buffer = [];
+        $this->sourcePreviewOffset = 0;
         unset($this->char);
     }
 
@@ -141,7 +144,11 @@ class CharBuffer implements CharBufferInterface, TokenExtractInterface
     public function getTokenAsString(): string
     {
         if ($this->source instanceof TokenExtractInterface) {
-            return $this->source->getTokenAsString();
+            $result = $this->source->getTokenAsString();
+            if ($this->sourcePreviewOffset > 0) {
+                $result = substr($result, 0, -$this->sourcePreviewOffset);
+            }
+            return $result;
         }
         throw new Exception("Source buffer doesn't support extracting strings");
     }

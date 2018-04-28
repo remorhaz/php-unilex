@@ -8,6 +8,7 @@ use Remorhaz\UniLex\Grammar\ContextFree\TokenFactory;
 use Remorhaz\UniLex\Lexer\TokenMatcherGenerator;
 use Remorhaz\UniLex\Lexer\TokenMatcherInterface;
 use Remorhaz\UniLex\Lexer\TokenMatcherSpec;
+use Remorhaz\UniLex\Lexer\TokenReader;
 use Remorhaz\UniLex\Lexer\TokenSpec;
 use Remorhaz\UniLex\Lexer\TokenMatcherTemplate;
 use Remorhaz\UniLex\Unicode\CharBufferFactory;
@@ -165,6 +166,42 @@ class TokenMatcherGeneratorTest extends TestCase
 
         /** @var TokenMatcherGenerator $generator */
         $generator->load();
+    }
+
+    /**
+     * @param string $text
+     * @param string $regExp
+     * @param string $expectedValue
+     * @throws \Remorhaz\UniLex\Exception
+     * @dataProvider providerValidRegExpInput
+     */
+    public function testLoad_ValidInput_MatchesValidToken(string $text, string $regExp, string $expectedValue): void
+    {
+        $matcherClass = $this->createTokenMatcherClassName();
+        $spec = new TokenMatcherSpec($matcherClass, TokenMatcherTemplate::class);
+        $code = <<<SOURCE
+\$context
+    ->setNewToken(0)
+    ->setTokenAttribute('text', \$context->getSymbolString());
+SOURCE;
+        $tokenSpec = new TokenSpec($regExp, $code);
+        $spec->addTokenSpec(TokenMatcherInterface::DEFAULT_CONTEXT, $tokenSpec);
+        $generator = new TokenMatcherGenerator($spec);
+        $buffer = CharBufferFactory::createFromString($text);
+        $lexer = new TokenReader($buffer, $generator->load(), new \Remorhaz\UniLex\Lexer\TokenFactory(0xFF));
+        $actualValue = $lexer
+            ->read()
+            ->getAttribute('text');
+        self::assertSame($expectedValue, $actualValue);
+    }
+
+    public function providerValidRegExpInput(): array
+    {
+        return [
+            "Single latin char" => ['ab', 'a', 'a'],
+            "Zero or many latin char" => ['aabc', 'a*', 'aa'],
+            "Number without leading zero" => ['103abc', '[1-9][0-9]*', '103'],
+        ];
     }
 
     private function createTokenMatcherClassName(): string
