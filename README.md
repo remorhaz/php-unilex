@@ -144,7 +144,7 @@ Library includes custom Phing tasks to build token matcher from specification:
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <project name="unilex" basedir="." default="example-matcher">
-    <taskdef classname="vendor.remorhaz.unilex.phing.BuildTokenMatcher" name="build-lexer" />
+    <taskdef classname="vendor.remorhaz.php-unilex.phing.BuildTokenMatcher" name="build-lexer" />
     <target name="example-matcher">
         <build-lexer
             description="My example matcher."
