@@ -156,6 +156,7 @@ class CharBuffer implements CharBufferInterface, TokenExtractInterface
             if ($this->sourcePreviewOffset > 0) {
                 $this->source->prevSymbol($this->sourcePreviewOffset);
                 $this->sourcePreviewOffset = 0;
+                unset($this->char);
             }
             $result = $this->source->getTokenAsString();
             return $result;
