@@ -51,6 +51,21 @@ class CharBuffer implements CharBufferInterface, TokenExtractInterface
         $this->previewOffset++;
     }
 
+    /**
+     * @param int $repeat
+     * @throws Exception
+     */
+    public function prevSymbol(int $repeat = 1): void
+    {
+        if ($repeat < 1) {
+            throw new Exception("Non-positive unread repeat counter: {$repeat}");
+        }
+        if ($this->previewOffset - $repeat < $this->startOffset) {
+            throw new Exception("Invalid unread repeat counter: {$repeat}");
+        }
+        $this->previewOffset -= $repeat;
+    }
+
     public function resetToken(): void
     {
         $this->previewOffset = $this->startOffset;

@@ -12,6 +12,8 @@ interface CharBufferInterface
 
     public function nextSymbol(): void;
 
+    public function prevSymbol(int $repeat = 1): void;
+
     public function resetToken(): void;
 
     public function finishToken(Token $token): void;

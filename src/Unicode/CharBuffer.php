@@ -104,6 +104,15 @@ class CharBuffer implements CharBufferInterface, TokenExtractInterface
     }
 
     /**
+     * @param int $repeat
+     * @throws Exception
+     */
+    public function prevSymbol(int $repeat = 1): void
+    {
+        throw new Exception("Unread operation is not supported");
+    }
+
+    /**
      * @param Token $token
      * @throws Exception
      */
@@ -144,10 +153,11 @@ class CharBuffer implements CharBufferInterface, TokenExtractInterface
     public function getTokenAsString(): string
     {
         if ($this->source instanceof TokenExtractInterface) {
-            $result = $this->source->getTokenAsString();
             if ($this->sourcePreviewOffset > 0) {
-                $result = substr($result, 0, -$this->sourcePreviewOffset);
+                $this->source->prevSymbol($this->sourcePreviewOffset);
+                $this->sourcePreviewOffset = 0;
             }
+            $result = $this->source->getTokenAsString();
             return $result;
         }
         throw new Exception("Source buffer doesn't support extracting strings");

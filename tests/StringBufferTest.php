@@ -208,4 +208,50 @@ class StringBufferTest extends TestCase
         $actualValue = $buffer->getTokenAsString();
         self::assertSame('', $actualValue);
     }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     * @expectedException \Remorhaz\UniLex\Exception
+     * @expectedExceptionMessage Non-positive unread repeat counter: 0
+     */
+    public function testPrevSymbol_ZeroRepeat_ThrowsException(): void
+    {
+        $buffer = new StringBuffer('');
+        $buffer->prevSymbol(0);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     * @expectedException \Remorhaz\UniLex\Exception
+     * @expectedExceptionMessage Non-positive unread repeat counter: -2
+     */
+    public function testPrevSymbol_NegativeRepeat_ThrowsException(): void
+    {
+        $buffer = new StringBuffer('');
+        $buffer->prevSymbol(-2);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     * @expectedException \Remorhaz\UniLex\Exception
+     * @expectedExceptionMessage Invalid unread repeat counter: 2
+     */
+    public function testPrevSymbol_RepeatTooLarge_ThrowsException(): void
+    {
+        $buffer = new StringBuffer('ab');
+        $buffer->nextSymbol();
+        $buffer->prevSymbol(2);
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testPrevSymbol_NextSymbolCalled_GetTokenPositionReturnsZeroFinishOffset(): void
+    {
+        $buffer = new StringBuffer('ab');
+        $buffer->nextSymbol();
+        $buffer->prevSymbol();
+        $actualValue = $buffer->getTokenPosition()->getFinishOffset();
+        self::assertSame(0, $actualValue);
+    }
 }

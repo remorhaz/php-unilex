@@ -204,6 +204,48 @@ SOURCE;
         ];
     }
 
+    /**
+     * @param string $text
+     * @param string $prefixRegExp
+     * @param string $regExp
+     * @param string $expectedValue
+     * @dataProvider providerValidRegExpInputWithPrefix
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testLoad_ValidInputWithPrefix_MatchesValidToken(
+        string $text,
+        string $prefixRegExp,
+        string $regExp,
+        string $expectedValue
+    ): void {
+        $matcherClass = $this->createTokenMatcherClassName();
+        $spec = new TokenMatcherSpec($matcherClass, TokenMatcherTemplate::class);
+        $code = <<<SOURCE
+\$context
+    ->setNewToken(0)
+    ->setTokenAttribute('text', \$context->getSymbolString());
+SOURCE;
+        $tokenSpec = new TokenSpec($regExp, $code);
+        $spec->addTokenSpec(TokenMatcherInterface::DEFAULT_CONTEXT, $tokenSpec);
+        $prefixTokenSpec = new TokenSpec($prefixRegExp, $code);
+        $spec->addTokenSpec(TokenMatcherInterface::DEFAULT_CONTEXT, $prefixTokenSpec);
+        $generator = new TokenMatcherGenerator($spec);
+        $buffer = CharBufferFactory::createFromString($text);
+        $lexer = new TokenReader($buffer, $generator->load(), new \Remorhaz\UniLex\Lexer\TokenFactory(0xFF));
+        $lexer->read();
+        $actualValue = $lexer
+            ->read()
+            ->getAttribute('text');
+        self::assertSame($expectedValue, $actualValue);
+    }
+
+    public function providerValidRegExpInputWithPrefix(): array
+    {
+        return [
+            "Two Kleene star patterns" => ['aabbbcccc', 'a*', 'b*', 'bbb'],
+        ];
+    }
+
     private function createTokenMatcherClassName(): string
     {
         static $nextMatcherClassIndex = 1;

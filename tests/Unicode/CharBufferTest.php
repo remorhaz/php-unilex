@@ -308,6 +308,18 @@ class CharBufferTest extends TestCase
         self::assertSame([], $actualValue);
     }
 
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     * @expectedException \Remorhaz\UniLex\Exception
+     * @expectedExceptionMessage Unread operation is not supported
+     */
+    public function testPrevSymbol_Always_ThrowsException(): void
+    {
+        $source = new StringBuffer('ab');
+        $buffer = new CharBuffer($source);
+        $buffer->prevSymbol();
+    }
+
     private function createTokenMatcherThatNeverMatches(): TokenMatcherInterface
     {
         return new class implements TokenMatcherInterface
