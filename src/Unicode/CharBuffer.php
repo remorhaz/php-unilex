@@ -118,6 +118,7 @@ class CharBuffer implements CharBufferInterface, TokenExtractInterface
      */
     public function finishToken(Token $token): void
     {
+        $this->unPreview();
         $sourcePosition = $this->source->getTokenPosition();
         $token->setAttribute(TokenAttribute::UNICODE_BYTE_OFFSET_START, $sourcePosition->getStartOffset());
         $token->setAttribute(TokenAttribute::UNICODE_BYTE_OFFSET_FINISH, $sourcePosition->getFinishOffset());
@@ -153,15 +154,21 @@ class CharBuffer implements CharBufferInterface, TokenExtractInterface
     public function getTokenAsString(): string
     {
         if ($this->source instanceof TokenExtractInterface) {
-            if ($this->sourcePreviewOffset > 0) {
-                $this->source->prevSymbol($this->sourcePreviewOffset);
-                $this->sourcePreviewOffset = 0;
-                unset($this->char);
-            }
+            $this->unPreview();
             $result = $this->source->getTokenAsString();
             return $result;
         }
         throw new Exception("Source buffer doesn't support extracting strings");
+    }
+
+    private function unPreview(): void
+    {
+        if ($this->sourcePreviewOffset == 0) {
+            return;
+        }
+        $this->source->prevSymbol($this->sourcePreviewOffset);
+        $this->sourcePreviewOffset = 0;
+        unset($this->char);
     }
 
     /**

@@ -8,7 +8,7 @@
 
     <target name="prepare-dir" description="Prepares build directory">
         <chmod file="${application.startdir}/bin/unilex" mode="0755" />
-        <mkdir dir="${application.startdir}/build/logs"/>
+        <mkdir dir="${application.startdir}/build/logs" />
     </target>
 
     <target
