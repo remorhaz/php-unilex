@@ -121,10 +121,10 @@ class CharBuffer implements CharBufferInterface, TokenExtractInterface
         $this->unPreview();
         $sourcePosition = $this->source->getTokenPosition();
         $token->setAttribute(TokenAttribute::UNICODE_BYTE_OFFSET_START, $sourcePosition->getStartOffset());
-        $token->setAttribute(TokenAttribute::UNICODE_BYTE_OFFSET_FINISH, $sourcePosition->getFinishOffset());
+        $token->setAttribute(TokenAttribute::UNICODE_BYTE_OFFSET_FINISH, $sourcePosition->getFinishOffset() - 1);
         $this->source->finishToken($token);
         $token->setAttribute(TokenAttribute::UNICODE_CHAR_OFFSET_START, $this->startOffset);
-        $token->setAttribute(TokenAttribute::UNICODE_CHAR_OFFSET_FINISH, $this->previewOffset);
+        $token->setAttribute(TokenAttribute::UNICODE_CHAR_OFFSET_FINISH, $this->previewOffset - 1);
         $this->startOffset = $this->previewOffset;
         $this->buffer = [];
     }
