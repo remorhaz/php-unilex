@@ -137,35 +137,58 @@ class CharBufferTest extends TestCase
         $buffer = new CharBuffer($source);
         $token = new Token(0, false);
         $buffer->finishToken($token);
-        self::assertSame(0, $token->getAttribute(TokenAttribute::UNICODE_BYTE_OFFSET_START));
-        self::assertSame(0, $token->getAttribute(TokenAttribute::UNICODE_BYTE_OFFSET_FINISH));
+        self::assertSame(0, $token->getAttribute(TokenAttribute::UNICODE_BYTE_OFFSET));
+        self::assertSame(0, $token->getAttribute(TokenAttribute::UNICODE_BYTE_LENGTH));
     }
 
     /**
      * @throws \Remorhaz\UniLex\Exception
      */
-    public function testFinishToken_AtZeroOffset_ZeroCharOffsetsInTokenAttributes(): void
+    public function testFinishToken_AtZeroOffset_ZeroCharOffsetInTokenAttributes(): void
     {
         $source = new StringBuffer('a');
         $buffer = new CharBuffer($source);
         $token = new Token(0, false);
         $buffer->finishToken($token);
-        self::assertSame(0, $token->getAttribute(TokenAttribute::UNICODE_CHAR_OFFSET_START));
-        self::assertSame(0, $token->getAttribute(TokenAttribute::UNICODE_CHAR_OFFSET_FINISH));
+        self::assertSame(0, $token->getAttribute(TokenAttribute::UNICODE_CHAR_OFFSET));
     }
 
     /**
      * @throws \Remorhaz\UniLex\Exception
      */
-    public function testFinishToken_NextSymbolCalled_MatchingByteOffsetsInTokenAttributes(): void
+    public function testFinishToken_AtZeroOffset_ZeroCharLengthInTokenAttributes(): void
+    {
+        $source = new StringBuffer('a');
+        $buffer = new CharBuffer($source);
+        $token = new Token(0, false);
+        $buffer->finishToken($token);
+        self::assertSame(0, $token->getAttribute(TokenAttribute::UNICODE_CHAR_LENGTH));
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testFinishToken_NextSymbolCalled_MatchingByteOffsetInTokenAttributes(): void
     {
         $source = new StringBuffer('ж');
         $buffer = new CharBuffer($source);
         $buffer->nextSymbol();
         $token = new Token(0, false);
         $buffer->finishToken($token);
-        self::assertSame(0, $token->getAttribute(TokenAttribute::UNICODE_BYTE_OFFSET_START));
-        self::assertSame(2, $token->getAttribute(TokenAttribute::UNICODE_BYTE_OFFSET_FINISH));
+        self::assertSame(0, $token->getAttribute(TokenAttribute::UNICODE_BYTE_OFFSET));
+    }
+
+    /**
+     * @throws \Remorhaz\UniLex\Exception
+     */
+    public function testFinishToken_NextSymbolCalled_MatchingByteLengthInTokenAttributes(): void
+    {
+        $source = new StringBuffer('ж');
+        $buffer = new CharBuffer($source);
+        $buffer->nextSymbol();
+        $token = new Token(0, false);
+        $buffer->finishToken($token);
+        self::assertSame(2, $token->getAttribute(TokenAttribute::UNICODE_BYTE_LENGTH));
     }
 
     /**
@@ -178,8 +201,8 @@ class CharBufferTest extends TestCase
         $buffer->nextSymbol();
         $token = new Token(0, false);
         $buffer->finishToken($token);
-        self::assertSame(0, $token->getAttribute(TokenAttribute::UNICODE_CHAR_OFFSET_START));
-        self::assertSame(1, $token->getAttribute(TokenAttribute::UNICODE_CHAR_OFFSET_FINISH));
+        self::assertSame(0, $token->getAttribute(TokenAttribute::UNICODE_CHAR_OFFSET));
+        self::assertSame(1, $token->getAttribute(TokenAttribute::UNICODE_CHAR_LENGTH));
     }
 
     /**
@@ -207,8 +230,8 @@ class CharBufferTest extends TestCase
         $buffer->resetToken();
         $token = new Token(0, false);
         $buffer->finishToken($token);
-        self::assertSame(0, $token->getAttribute(TokenAttribute::UNICODE_BYTE_OFFSET_START));
-        self::assertSame(0, $token->getAttribute(TokenAttribute::UNICODE_BYTE_OFFSET_FINISH));
+        self::assertSame(0, $token->getAttribute(TokenAttribute::UNICODE_BYTE_OFFSET));
+        self::assertSame(0, $token->getAttribute(TokenAttribute::UNICODE_BYTE_LENGTH));
     }
 
     /**

@@ -118,13 +118,14 @@ class CharBuffer implements CharBufferInterface, TokenExtractInterface
      */
     public function finishToken(Token $token): void
     {
-        $this->unPreview();
+        $this->cleanupPreview();
         $sourcePosition = $this->source->getTokenPosition();
-        $token->setAttribute(TokenAttribute::UNICODE_BYTE_OFFSET_START, $sourcePosition->getStartOffset());
-        $token->setAttribute(TokenAttribute::UNICODE_BYTE_OFFSET_FINISH, $sourcePosition->getFinishOffset() - 1);
+        $token->setAttribute(TokenAttribute::UNICODE_BYTE_OFFSET, $sourcePosition->getStartOffset());
+        $token->setAttribute(TokenAttribute::UNICODE_BYTE_LENGTH, $sourcePosition->getLength());
         $this->source->finishToken($token);
-        $token->setAttribute(TokenAttribute::UNICODE_CHAR_OFFSET_START, $this->startOffset);
-        $token->setAttribute(TokenAttribute::UNICODE_CHAR_OFFSET_FINISH, $this->previewOffset - 1);
+        $charLength = $this->previewOffset - $this->startOffset;
+        $token->setAttribute(TokenAttribute::UNICODE_CHAR_OFFSET, $this->startOffset);
+        $token->setAttribute(TokenAttribute::UNICODE_CHAR_LENGTH, $charLength);
         $this->startOffset = $this->previewOffset;
         $this->buffer = [];
     }
@@ -154,14 +155,14 @@ class CharBuffer implements CharBufferInterface, TokenExtractInterface
     public function getTokenAsString(): string
     {
         if ($this->source instanceof TokenExtractInterface) {
-            $this->unPreview();
+            $this->cleanupPreview();
             $result = $this->source->getTokenAsString();
             return $result;
         }
         throw new Exception("Source buffer doesn't support extracting strings");
     }
 
-    private function unPreview(): void
+    private function cleanupPreview(): void
     {
         if ($this->sourcePreviewOffset == 0) {
             return;
