@@ -1,6 +1,6 @@
 <?php
 
-namespace Remorhaz\UniLex\Test\LL1Parser\Lookup;
+namespace Remorhaz\UniLex\Test\Parser\LL1\Lookup;
 
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Grammar\ContextFree\GrammarLoader;

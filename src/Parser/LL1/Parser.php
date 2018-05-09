@@ -65,6 +65,7 @@ class Parser
 
     /**
      * @throws Exception
+     * @throws UnexpectedTokenException
      */
     public function run(): void
     {
@@ -163,6 +164,7 @@ class Parser
 
     /**
      * @param Symbol $symbol
+     * @throws UnexpectedTokenException
      * @throws Exception
      */
     private function pushMatchingProduction(Symbol $symbol): void
@@ -186,13 +188,19 @@ class Parser
      * @param Symbol $symbol
      * @param Token $token
      * @return Production
+     * @throws UnexpectedTokenException
      * @throws Exception
      */
     private function getMatchingProduction(Symbol $symbol, Token $token): Production
     {
-        $productionIndex = $this
-            ->getLookupTable()
-            ->getProductionIndex($symbol->getSymbolId(), $token->getType());
+        $lookupTable = $this->getLookupTable();
+        try {
+            $productionIndex = $lookupTable->getProductionIndex($symbol->getSymbolId(), $token->getType());
+        } catch (\Throwable $e) {
+            $expectedTokenList = $lookupTable->getExpectedTokenList($symbol->getSymbolId());
+            $error = new UnexpectedTokenError($token, $symbol, ...$expectedTokenList);
+            throw new UnexpectedTokenException($error, 0, $e);
+        }
         return $this->createParsedProduction($symbol, $productionIndex);
     }
 

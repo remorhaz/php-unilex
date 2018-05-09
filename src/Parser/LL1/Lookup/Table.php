@@ -37,6 +37,11 @@ class Table implements TableInterface
         return $this->map[$symbolId][$tokenId];
     }
 
+    public function getExpectedTokenList(int $symbolId): array
+    {
+        return isset($this->map[$symbolId]) ? array_keys($this->map[$symbolId]) : [];
+    }
+
     public function hasProduction(int $symbolId, int $tokenId): bool
     {
         return isset($this->map[$symbolId][$tokenId]);
