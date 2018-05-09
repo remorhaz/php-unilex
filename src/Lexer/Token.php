@@ -37,7 +37,7 @@ class Token
     public function setAttribute(string $name, $value): void
     {
         if (isset($this->attributeList[$name])) {
-            throw new Exception("Synthesized attribute {$name} is already set");
+            throw new Exception("Token attribute '{$name}' is already set");
         }
         $this->attributeList[$name] = $value;
     }
@@ -50,7 +50,7 @@ class Token
     public function getAttribute(string $name)
     {
         if (!isset($this->attributeList[$name])) {
-            throw new Exception("Synthesized attribute {$name} is undefined");
+            throw new Exception("Token attribute '{$name}' is not defined");
         }
         return $this->attributeList[$name];
     }
