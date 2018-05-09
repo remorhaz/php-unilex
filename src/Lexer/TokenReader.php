@@ -52,9 +52,20 @@ class TokenReader implements TokenReaderInterface
         return $this->tokenFactory->createEoiToken();
     }
 
+    /**
+     * @return Token
+     * @throws Exception
+     */
     private function matchSymbolToken(): Token
     {
-        $this->matcher->match($this->buffer, $this->tokenFactory);
-        return $this->matcher->getToken();
+        $result = $this->matcher->match($this->buffer, $this->tokenFactory);
+        if ($result) {
+            return $this->matcher->getToken();
+        }
+        $position = $this->buffer->getTokenPosition();
+        if ($this->buffer->isEnd()) {
+            throw new Exception("Unexpected end of input at position {$position->getFinishOffset()}");
+        }
+        throw new Exception("Unexpected character at position {$position->getFinishOffset()}");
     }
 }
