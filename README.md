@@ -165,5 +165,7 @@ This block is executed before the beginning of matching procedure and can be use
 This block is executed on each symbol matched by token's regular expression.
 ### @lexToken /regexp/
 This block is executed on matching given regular expression from the input buffer. Most commonly it just setups new token in context object.
+### @lexMode 'mode_name'
+This tag tells parser that matching `@lexToken` expression matches only if current lexical mode is `mode_name`. Lexical mode can be switched with `$context->setMode('mode_name')` method. Using lexical modes allows to have several "sub-grammars" in one specification (i. e. some tokens can be recognized only in comments or strings).
 ### @lexOnError
 This block is executed if matcher fails to match any of token's regular expressions. By default it just returns `false`.

@@ -17,7 +17,7 @@ class TokenMatcherSpecParser
     private const TAG_LEX_ON_TRANSITION = 'lexOnTransition';
     private const TAG_LEX_ON_ERROR = 'lexOnError';
     private const TAG_LEX_TOKEN = 'lexToken';
-    private const TAG_LEX_CONTEXT = 'lexContext';
+    private const TAG_LEX_MODE = 'lexMode';
     private const LEX_NAMESPACE = 'namespace';
     private const LEX_USE = 'use';
     private const LEX_TOKEN_REGEXP = 'token_regexp';
@@ -101,8 +101,8 @@ class TokenMatcherSpecParser
             ->setBeforeMatch($this->getCodeBlock(self::TAG_LEX_BEFORE_MATCH))
             ->setOnTransition($this->getCodeBlock(self::TAG_LEX_ON_TRANSITION))
             ->setOnError($this->getCodeBlock(self::TAG_LEX_ON_ERROR, "return false;"));
-        foreach ($this->tokenSpecList as $context => $tokenSpecList) {
-            $matcherSpec->addTokenSpec($context, ...array_values($tokenSpecList));
+        foreach ($this->tokenSpecList as $mode => $tokenSpecList) {
+            $matcherSpec->addTokenSpec($mode, ...array_values($tokenSpecList));
         }
         foreach ($this->usedClassList as $usedClassAlias => $usedClassName) {
             $matcherSpec->addUsedClass($usedClassName, is_string($usedClassAlias) ? $usedClassAlias : null);
@@ -288,8 +288,8 @@ class TokenMatcherSpecParser
         $this->replaceCurrentCodeBlock(self::LEX_TOKEN_REGEXP);
         $this->appendCodeBlock($regExp);
         $this->restoreCurrentCodeBlock();
-        $context = $docBlock->hasTag(self::TAG_LEX_CONTEXT)
-            ? $docBlock->getTagsByName(self::TAG_LEX_CONTEXT)[0]
+        $context = $docBlock->hasTag(self::TAG_LEX_MODE)
+            ? $docBlock->getTagsByName(self::TAG_LEX_MODE)[0]
             : TokenMatcherInterface::DEFAULT_CONTEXT;
         $matchResult = preg_match('#^[a-zA-Z][0-9a-zA-Z]*$#i', $context);
         if (1 !== $matchResult) {

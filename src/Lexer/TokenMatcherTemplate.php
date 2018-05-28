@@ -11,7 +11,7 @@ abstract class TokenMatcherTemplate implements TokenMatcherInterface
 
     private $token;
 
-    private $context = self::DEFAULT_CONTEXT;
+    private $mode = self::DEFAULT_CONTEXT;
 
     /**
      * @return Token
@@ -38,19 +38,19 @@ abstract class TokenMatcherTemplate implements TokenMatcherInterface
         $onGetToken = function (): Token {
             return $this->getToken();
         };
-        $onSetContext = function (string $context): void {
-            $this->context = $context;
+        $onSetMode = function (string $mode): void {
+            $this->mode = $mode;
         };
-        $onGetContext = function (): string {
-            return $this->context;
+        $onGetMode = function (): string {
+            return $this->mode;
         };
         return new class(
             $buffer,
             $onConstruct,
             $onSetNewToken,
             $onGetToken,
-            $onSetContext,
-            $onGetContext
+            $onSetMode,
+            $onGetMode
         ) implements TokenMatcherContextInterface {
 
             private $buffer;
@@ -59,23 +59,23 @@ abstract class TokenMatcherTemplate implements TokenMatcherInterface
 
             private $onGetToken;
 
-            private $onSetContext;
+            private $onSetMode;
 
-            private $onGetContext;
+            private $onGetMode;
 
             public function __construct(
                 CharBufferInterface $buffer,
                 callable $onConstruct,
                 callable $onSetNewToken,
                 callable $onGetToken,
-                callable $onSetContext,
-                callable $onGetContext
+                callable $onSetMode,
+                callable $onGetMode
             ) {
                 $this->buffer = $buffer;
                 $this->onSetNewToken = $onSetNewToken;
                 $this->onGetToken = $onGetToken;
-                $this->onSetContext = $onSetContext;
-                $this->onGetContext = $onGetContext;
+                $this->onSetMode = $onSetMode;
+                $this->onGetMode = $onGetMode;
                 call_user_func($onConstruct);
             }
 
@@ -126,14 +126,14 @@ abstract class TokenMatcherTemplate implements TokenMatcherInterface
                 throw new Exception("Extracting arrays is not supported by buffer");
             }
 
-            public function getContext(): string
+            public function getMode(): string
             {
-                return call_user_func($this->onGetContext);
+                return call_user_func($this->onGetMode);
             }
 
-            public function setContext(string $context): TokenMatcherContextInterface
+            public function setMode(string $mode): TokenMatcherContextInterface
             {
-                call_user_func($this->onSetContext, $context);
+                call_user_func($this->onSetMode, $mode);
                 return $this;
             }
         };

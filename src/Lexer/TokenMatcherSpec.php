@@ -208,12 +208,12 @@ class TokenMatcherSpec
     }
 
     /**
-     * @param string $context
+     * @param string $mode
      * @return TokenSpec[]
      */
-    public function getTokenSpecList(string $context): array
+    public function getTokenSpecList(string $mode): array
     {
-        return $this->tokenSpecList[$context] ?? [];
+        return $this->tokenSpecList[$mode] ?? [];
     }
 
     /**

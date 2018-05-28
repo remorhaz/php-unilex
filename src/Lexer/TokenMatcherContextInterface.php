@@ -19,7 +19,7 @@ interface TokenMatcherContextInterface
 
     public function getSymbolList(): array;
 
-    public function getContext(): string;
+    public function getMode(): string;
 
-    public function setContext(string $context): self;
+    public function setMode(string $mode): self;
 }

@@ -489,7 +489,7 @@ SOURCE;
 <?php
 /**
  * @lexTargetClass ClassName
- * @lexContext custom
+ * @lexMode custom
  * @lexToken /a/
  */
 \$x = 0;
@@ -517,7 +517,7 @@ SOURCE;
 <?php
 /**
  * @lexTargetClass ClassName
- * @lexContext #invalid
+ * @lexMode #invalid
  * @lexToken /a/
  */
 \$x = 0;
