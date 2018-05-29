@@ -168,20 +168,20 @@ class TokenMatcherGenerator
     {
         $result = $this->buildBeforeMatch();
 
-        foreach ($this->spec->getContextList() as $context) {
-            if (TokenMatcherInterface::DEFAULT_CONTEXT == $context) {
+        foreach ($this->spec->getModeList() as $mode) {
+            if (TokenMatcherInterface::DEFAULT_MODE == $mode) {
                 continue;
             }
             $result .=
-                $this->buildMethodPart("if (\$context->getContext() == '{$context}') {") .
-                $this->buildFsmEntry($context, 3) .
+                $this->buildMethodPart("if (\$context->getMode() == '{$mode}') {") .
+                $this->buildFsmEntry($mode, 3) .
                 $this->buildMethodPart("}");
         }
-        foreach ($this->spec->getContextList() as $context) {
-            if (TokenMatcherInterface::DEFAULT_CONTEXT == $context) {
-                $result .= $this->buildFsmEntry(TokenMatcherInterface::DEFAULT_CONTEXT) . "\n";
+        foreach ($this->spec->getModeList() as $mode) {
+            if (TokenMatcherInterface::DEFAULT_MODE == $mode) {
+                $result .= $this->buildFsmEntry(TokenMatcherInterface::DEFAULT_MODE) . "\n";
             }
-            $result .= $this->buildFsmMoves($context);
+            $result .= $this->buildFsmMoves($mode);
         }
 
         $result .= $this->buildErrorState();
@@ -211,7 +211,7 @@ class TokenMatcherGenerator
 
     private function buildStateLabel(string $prefix, string $context, int $state): string
     {
-        $contextSuffix = TokenMatcherInterface::DEFAULT_CONTEXT == $context
+        $contextSuffix = TokenMatcherInterface::DEFAULT_MODE == $context
             ? ''
             : ucfirst($context);
         return "{$prefix}{$contextSuffix}{$state}";

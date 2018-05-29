@@ -290,7 +290,7 @@ class TokenMatcherSpecParser
         $this->restoreCurrentCodeBlock();
         $context = $docBlock->hasTag(self::TAG_LEX_MODE)
             ? $docBlock->getTagsByName(self::TAG_LEX_MODE)[0]
-            : TokenMatcherInterface::DEFAULT_CONTEXT;
+            : TokenMatcherInterface::DEFAULT_MODE;
         $matchResult = preg_match('#^[a-zA-Z][0-9a-zA-Z]*$#i', $context);
         if (1 !== $matchResult) {
             throw new Exception("Invalid lexer specification: invalid context name {$context}");

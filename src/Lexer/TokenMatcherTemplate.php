@@ -11,7 +11,7 @@ abstract class TokenMatcherTemplate implements TokenMatcherInterface
 
     private $token;
 
-    private $mode = self::DEFAULT_CONTEXT;
+    private $mode = self::DEFAULT_MODE;
 
     /**
      * @return Token

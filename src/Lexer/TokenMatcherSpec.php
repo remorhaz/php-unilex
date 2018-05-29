@@ -219,7 +219,7 @@ class TokenMatcherSpec
     /**
      * @return string[]
      */
-    public function getContextList(): array
+    public function getModeList(): array
     {
         return array_keys($this->tokenSpecList);
     }

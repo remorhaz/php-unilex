@@ -451,7 +451,7 @@ SOURCE;
 \$y = 1;
 SOURCE;
         $matcherSpec = (new TokenMatcherSpecParser($source))->getMatcherSpec();
-        $actualValue = $matcherSpec->getTokenSpecList(TokenMatcherInterface::DEFAULT_CONTEXT);
+        $actualValue = $matcherSpec->getTokenSpecList(TokenMatcherInterface::DEFAULT_MODE);
         self::assertCount(2, $actualValue);
     }
 
@@ -472,7 +472,7 @@ SOURCE;
 \$y = 1;
 SOURCE;
         $matcherSpec = (new TokenMatcherSpecParser($source))->getMatcherSpec();
-        $tokenSpecList = $matcherSpec->getTokenSpecList(TokenMatcherInterface::DEFAULT_CONTEXT);
+        $tokenSpecList = $matcherSpec->getTokenSpecList(TokenMatcherInterface::DEFAULT_MODE);
         self::assertArrayHasKey('a', $tokenSpecList);
         self::assertSame("\$x = 0;", $tokenSpecList['a']->getCode());
         self::assertArrayHasKey('b', $tokenSpecList);
@@ -497,7 +497,7 @@ SOURCE;
 \$y = 1;
 SOURCE;
         $matcherSpec = (new TokenMatcherSpecParser($source))->getMatcherSpec();
-        $defaultTokenSpecList = $matcherSpec->getTokenSpecList(TokenMatcherInterface::DEFAULT_CONTEXT);
+        $defaultTokenSpecList = $matcherSpec->getTokenSpecList(TokenMatcherInterface::DEFAULT_MODE);
         self::assertArrayHasKey('a', $defaultTokenSpecList);
         self::assertSame("\$y = 1;", $defaultTokenSpecList['a']->getCode());
         $customTokenSpecList = $matcherSpec->getTokenSpecList('custom');
