@@ -8,7 +8,7 @@
     "tokenizer",
     "tokenizer generator"
   ],
-  "homepage": "https://github.com/remorhaz/php-json-pointer",
+  "homepage": "https://github.com/remorhaz/php-unilex",
   "license": "MIT",
   "authors": [
     {
@@ -19,7 +19,7 @@
   ],
   "bin": ["bin/unilex"],
   "require": {
-    "php": "^7.1",
+    "php": ">=7.1",
     "vanilla/garden-cli": "^2.0",
     "phpdocumentor/reflection-docblock": "^4.3.0"
   },
