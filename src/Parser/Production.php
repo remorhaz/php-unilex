@@ -26,6 +26,22 @@ class Production implements StackableSymbolInterface
         return "{$this->header->getSymbolId()}:{$this->index}";
     }
 
+    /**
+     * @return array|AttributeListShortcut
+     */
+    public function getHeaderShortcut(): AttributeListShortcut
+    {
+        return $this->header->getShortcut();
+    }
+
+    /**
+     * @return array[]|SymbolListShortcut
+     */
+    public function getSymbolListShortcut(): SymbolListShortcut
+    {
+        return new SymbolListShortcut($this);
+    }
+
     public function getHeader(): Symbol
     {
         return $this->header;
@@ -51,7 +67,7 @@ class Production implements StackableSymbolInterface
      */
     public function getSymbol(int $index): Symbol
     {
-        if (!isset($this->symbolList[$index])) {
+        if (!$this->symbolExists($index)) {
             throw new Exception("Symbol at index {$index} is undefined in production {$this}");
         }
         return $this->symbolList[$index];
@@ -60,5 +76,10 @@ class Production implements StackableSymbolInterface
     public function isEpsilon(): bool
     {
         return empty($this->getSymbolList());
+    }
+
+    public function symbolExists(int $index): bool
+    {
+        return isset($this->symbolList[$index]);
     }
 }
