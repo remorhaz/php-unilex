@@ -2,9 +2,11 @@
 
 namespace Remorhaz\UniLex\Lexer;
 
+use Remorhaz\UniLex\AttributeListInterface;
 use Remorhaz\UniLex\Exception;
+use Remorhaz\UniLex\Parser\AttributeListShortcut;
 
-class Token
+class Token implements AttributeListInterface
 {
 
     private $type;
@@ -49,9 +51,26 @@ class Token
      */
     public function getAttribute(string $name)
     {
-        if (!isset($this->attributeList[$name])) {
+        if (!$this->attributeExists($name)) {
             throw new Exception("Token attribute '{$name}' is not defined");
         }
         return $this->attributeList[$name];
+    }
+
+    /**
+     * @param string $name
+     * @return bool
+     */
+    public function attributeExists(string $name): bool
+    {
+        return isset($this->attributeList[$name]);
+    }
+
+    /**
+     * @return array|AttributeListShortcut
+     */
+    public function getShortcut(): AttributeListShortcut
+    {
+        return new AttributeListShortcut($this);
     }
 }

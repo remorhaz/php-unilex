@@ -2,10 +2,11 @@
 
 namespace Remorhaz\UniLex\Parser;
 
+use Remorhaz\UniLex\AttributeListInterface;
 use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\Stack\StackableSymbolInterface;
 
-class Symbol implements StackableSymbolInterface
+class Symbol implements StackableSymbolInterface, AttributeListInterface
 {
 
     private $symbolId;
@@ -51,10 +52,27 @@ class Symbol implements StackableSymbolInterface
      */
     public function setAttribute(string $name, $value)
     {
-        if (array_key_exists($name, $this->attributeList)) {
+        if ($this->attributeExists($name)) {
             throw new Exception("Attribute '{$name}' is already defined in node {$this->getIndex()}");
         }
         $this->attributeList[$name] = $value;
         return $this;
+    }
+
+    /**
+     * @param string $name
+     * @return bool
+     */
+    public function attributeExists(string $name): bool
+    {
+        return isset($this->attributeList[$name]);
+    }
+
+    /**
+     * @return array|AttributeListShortcut
+     */
+    public function getShortcut(): AttributeListShortcut
+    {
+        return new AttributeListShortcut($this);
     }
 }
