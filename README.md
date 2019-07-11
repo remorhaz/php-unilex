@@ -13,7 +13,7 @@ It's written in PHP and generates code in PHP.
 [WIP] Work in progress
 ```
 ## Requirements
-* PHP 7.1+
+* PHP 7.3+
 
 ***
 ## License
