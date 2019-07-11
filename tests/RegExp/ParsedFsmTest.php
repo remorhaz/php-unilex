@@ -4,6 +4,7 @@ namespace Remorhaz\UniLex\Test\RegExp;
 
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\AST\Tree;
+use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\RegExp\FSM\NfaBuilder;
 use Remorhaz\UniLex\RegExp\FSM\RangeSet;
 use Remorhaz\UniLex\RegExp\ParserFactory;
@@ -21,7 +22,7 @@ class ParsedFsmTest extends TestCase
      * @param array $expectedSymbolTransitionList
      * @param array $expectedEpsilonTransitionList
      * @param array $expectedSymbolTable
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testStateMapBuilder_ValidAST_BuildsMatchingStateMap(
         string $text,

@@ -3,6 +3,7 @@
 namespace Remorhaz\UniLex\Test\RegExp\FSM;
 
 use PHPUnit\Framework\TestCase;
+use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\RegExp\FSM\RangeSet;
 use Remorhaz\UniLex\RegExp\FSM\RangeSetCalc;
 
@@ -13,7 +14,7 @@ class RangeSetCalcTest extends TestCase
 {
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws Exception
      */
     public function testEquals_EmptyRangeSets_ReturnsTrue(): void
     {
@@ -22,7 +23,7 @@ class RangeSetCalcTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws Exception
      */
     public function testEquals_SameRangeSets_ReturnsTrue(): void
     {
@@ -35,7 +36,7 @@ class RangeSetCalcTest extends TestCase
     /**
      * @param array $rangeSetData
      * @param array $anotherRangeSetData
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws Exception
      * @dataProvider providerDifferentRangeSets
      */
     public function testEquals_DifferentRangeSets_ReturnsFalse(
@@ -61,7 +62,7 @@ class RangeSetCalcTest extends TestCase
      * @param array $rangeSet
      * @param array $anotherRangeSet
      * @param array $expectedRangeSet
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws Exception
      * @dataProvider providerAndRanges
      */
     public function testAnd_ValidRangeList_ExportReturnsMatchingRangeList(
@@ -98,7 +99,7 @@ class RangeSetCalcTest extends TestCase
      * @param array $rangeSet
      * @param array $anotherRangeSet
      * @param array $expectedRangeSet
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws Exception
      * @dataProvider providerDiffRanges
      */
     public function testXor_ValidRangeLists_ExportReturnsDiffRangeList(

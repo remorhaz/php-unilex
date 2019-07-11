@@ -13,6 +13,7 @@ use Remorhaz\UniLex\Lexer\Token;
 use Remorhaz\UniLex\Lexer\TokenReaderInterface;
 use Remorhaz\UniLex\Parser\LL1\Lookup\TableInterface;
 use Remorhaz\UniLex\Parser\LL1\Lookup\TableBuilder;
+use Throwable;
 
 class Parser
 {
@@ -196,7 +197,7 @@ class Parser
         $lookupTable = $this->getLookupTable();
         try {
             $productionIndex = $lookupTable->getProductionIndex($symbol->getSymbolId(), $token->getType());
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $expectedTokenList = $lookupTable->getExpectedTokenList($symbol->getSymbolId());
             $error = new UnexpectedTokenError($token, $symbol, ...$expectedTokenList);
             throw new UnexpectedTokenException($error, 0, $e);

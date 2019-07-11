@@ -3,6 +3,7 @@
 namespace Remorhaz\UniLex\Test\RegExp\FSM;
 
 use PHPUnit\Framework\TestCase;
+use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\RegExp\FSM\NfaCalc;
 use Remorhaz\UniLex\RegExp\FSM\Nfa;
 use Remorhaz\UniLex\RegExp\FSM\RangeSet;
@@ -14,7 +15,7 @@ class NfaCalcTest extends TestCase
 {
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testGetEpsilonClosure_ValidNfa_ReturnsMatchingStateList(): void
     {
@@ -25,7 +26,7 @@ class NfaCalcTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testGetSymbolMoves_ValidNfa_ReturnsMatchingStateList(): void
     {
@@ -36,7 +37,7 @@ class NfaCalcTest extends TestCase
 
     /**
      * @return Nfa
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     private function createNfa(): Nfa
     {

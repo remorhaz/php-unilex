@@ -2,6 +2,8 @@
 
 namespace Remorhaz\UniLex\RegExp\FSM;
 
+use Remorhaz\UniLex\Exception;
+
 class RangeSetCalc
 {
 
@@ -28,7 +30,7 @@ class RangeSetCalc
      * @param RangeSet $rangeSet
      * @param RangeSet $anotherRangeSet
      * @return RangeSet
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws Exception
      */
     public function and(RangeSet $rangeSet, RangeSet $anotherRangeSet): RangeSet
     {
@@ -45,7 +47,7 @@ class RangeSetCalc
      * @param RangeSet $rangeSetPart
      * @param Range $range
      * @return RangeSet
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws Exception
      */
     private function andSingleRange(RangeSet $rangeSetPart, Range $range): RangeSet
     {
@@ -74,7 +76,7 @@ class RangeSetCalc
      * @param RangeSet $rangeSet
      * @param RangeSet $anotherRangeSet
      * @return RangeSet
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws Exception
      */
     public function xor(RangeSet $rangeSet, RangeSet $anotherRangeSet): RangeSet
     {
@@ -89,7 +91,7 @@ class RangeSetCalc
      * @param RangeSet $rangeSetPart
      * @param Range $range
      * @return RangeSet
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws Exception
      */
     private function xorSingleRange(RangeSet $rangeSetPart, Range $range): RangeSet
     {

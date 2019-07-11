@@ -3,6 +3,7 @@
 namespace Remorhaz\UniLex\Test\RegExp\FSM;
 
 use PHPUnit\Framework\TestCase;
+use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\RegExp\FSM\Range;
 use Remorhaz\UniLex\RegExp\FSM\RangeSet;
 
@@ -13,7 +14,7 @@ class RangeSetTest extends TestCase
 {
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws Exception
      */
     public function testIsEmpty_NoRangeAdded_ReturnsTrue(): void
     {
@@ -22,7 +23,7 @@ class RangeSetTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws Exception
      */
     public function testIsEmpty_RangeAdded_ReturnsFalse(): void
     {
@@ -33,7 +34,7 @@ class RangeSetTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws Exception
      */
     public function testGetRanges_ConstructedWithoutArguments_ReturnsEmptyArray(): void
     {
@@ -42,7 +43,7 @@ class RangeSetTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws Exception
      */
     public function testImport_NoArguments_GetRangesReturnsEmptyArray(): void
     {
@@ -53,7 +54,7 @@ class RangeSetTest extends TestCase
     /**
      * @param array $ranges
      * @param array $expectedRanges
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws Exception
      * @dataProvider providerAddableRanges
      */
     public function testExport_ConstructWithRanges_ReturnsMergedRanges(array $ranges, array $expectedRanges): void
@@ -65,7 +66,7 @@ class RangeSetTest extends TestCase
     /**
      * @param array $ranges
      * @param array $expectedRanges
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws Exception
      * @dataProvider providerAddableRanges
      */
     public function testImport_ValidRanges_ExportReturnsMergedRanges(array $ranges, array $expectedRanges): void
@@ -77,7 +78,7 @@ class RangeSetTest extends TestCase
     /**
      * @param array $ranges
      * @param array $expectedRanges
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws Exception
      * @dataProvider providerAddableRanges
      */
     public function testAddRange_ValidRanges_ExportReturnsMergedRanges(array $ranges, array $expectedRanges): void
@@ -105,7 +106,7 @@ class RangeSetTest extends TestCase
      * @param array $firstRanges
      * @param array $secondRanges
      * @param array $expectedRanges
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws Exception
      * @dataProvider providerDoubleAddableRanges
      */
     public function testAddRange_CalledTwice_ExportReturnsMergedRanges(

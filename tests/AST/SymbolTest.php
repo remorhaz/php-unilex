@@ -5,6 +5,7 @@ namespace Remorhaz\UniLex\Test\AST;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\AST\Node;
 use Remorhaz\UniLex\AST\Symbol;
+use Remorhaz\UniLex\Exception;
 
 /**
  * @covers \Remorhaz\UniLex\AST\Symbol
@@ -27,7 +28,7 @@ class SymbolTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws Exception
      */
     public function testGetChild_ConstructedWithNodeAndIndex_ReturnsMatchingChildNode(): void
     {

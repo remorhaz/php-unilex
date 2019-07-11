@@ -18,7 +18,7 @@ class SymbolListShortcut implements ArrayAccess
     /**
      * @param mixed $offset
      * @return mixed|array|AttributeListShortcut
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws Exception
      */
     public function offsetGet($offset)
     {

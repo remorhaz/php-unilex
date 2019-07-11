@@ -2,6 +2,7 @@
 
 namespace Remorhaz\UniLex\AST;
 
+use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\Stack\SymbolStack;
 
 class Translator
@@ -21,7 +22,7 @@ class Translator
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws Exception
      */
     public function run(): void
     {

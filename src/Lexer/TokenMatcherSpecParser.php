@@ -5,6 +5,7 @@ namespace Remorhaz\UniLex\Lexer;
 use phpDocumentor\Reflection\DocBlock;
 use phpDocumentor\Reflection\DocBlockFactory;
 use phpDocumentor\Reflection\DocBlockFactoryInterface;
+use ReflectionException;
 use Remorhaz\UniLex\Exception;
 
 class TokenMatcherSpecParser
@@ -67,7 +68,7 @@ class TokenMatcherSpecParser
     /**
      * @return TokenMatcherSpec
      * @throws Exception
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function getMatcherSpec(): TokenMatcherSpec
     {
@@ -80,7 +81,7 @@ class TokenMatcherSpecParser
     /**
      * @return TokenMatcherSpec
      * @throws Exception
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     private function buildMatcherSpec(): TokenMatcherSpec
     {
@@ -172,6 +173,7 @@ class TokenMatcherSpecParser
      */
     private function parseUsedClass(string $usedClass): array
     {
+        /** @noinspection HtmlUnknownTag */
         $pattern = '#^(?P<className>\S+)(?:\s+(?:as\s+)?(?P<alias>\S+))?$#i';
         $pregResult = preg_match($pattern, $usedClass, $matches);
         if (1 !== $pregResult) {
@@ -280,6 +282,7 @@ class TokenMatcherSpecParser
             return;
         }
         $tagValue = $docBlock->getTagsByName(self::TAG_LEX_TOKEN)[0];
+        /** @noinspection HtmlUnknownTag */
         $matchResult = preg_match('#^/(?P<regexp>.*)/$#', $tagValue, $matches);
         if (1 !== $matchResult) {
             throw new Exception("Invalid lexer specification: regular expression is not framed by \"/\"");

@@ -2,6 +2,7 @@
 
 namespace Remorhaz\UniLex\RegExp;
 
+use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\IO\CharBufferInterface;
 use Remorhaz\UniLex\Grammar\ContextFree\GrammarLoader;
 use Remorhaz\UniLex\Grammar\ContextFree\TokenFactory;
@@ -20,7 +21,7 @@ abstract class ParserFactory
      * @param Tree $tree
      * @param CharBufferInterface $buffer
      * @return Parser
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws Exception
      */
     public static function createFromBuffer(Tree $tree, CharBufferInterface $buffer): Parser
     {

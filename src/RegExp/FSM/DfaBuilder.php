@@ -3,6 +3,7 @@
 namespace Remorhaz\UniLex\RegExp\FSM;
 
 use Remorhaz\UniLex\AST\Tree;
+use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\IO\CharBufferInterface;
 
 class DfaBuilder
@@ -25,7 +26,7 @@ class DfaBuilder
     /**
      * @param Nfa $nfa
      * @return Dfa
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public static function fromNfa(Nfa $nfa): Dfa
     {
@@ -37,7 +38,7 @@ class DfaBuilder
     /**
      * @param CharBufferInterface $buffer
      * @return Dfa
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public static function fromBuffer(CharBufferInterface $buffer): Dfa
     {
@@ -48,7 +49,7 @@ class DfaBuilder
     /**
      * @param Tree $tree
      * @return Dfa
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public static function fromTree(Tree $tree): Dfa
     {
@@ -57,7 +58,7 @@ class DfaBuilder
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function run(): void
     {
@@ -91,7 +92,7 @@ class DfaBuilder
      * @param bool $exists
      * @param int ...$nfaStateList
      * @return int
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     private function createStateIfNotExists(&$exists, int ...$nfaStateList): int
     {
@@ -114,7 +115,7 @@ class DfaBuilder
      * @param int $stateIn
      * @param int $stateOut
      * @param int $symbolId
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     private function mergeTransition(int $stateIn, int $stateOut, int $symbolId): void
     {
@@ -137,7 +138,7 @@ class DfaBuilder
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     private function initStateBuffer(): void
     {

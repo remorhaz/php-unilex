@@ -3,6 +3,7 @@
 namespace Remorhaz\UniLex\Test\RegExp\FSM;
 
 use PHPUnit\Framework\TestCase;
+use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\RegExp\FSM\LanguageBuilder;
 use Remorhaz\UniLex\RegExp\FSM\Nfa;
 use Remorhaz\UniLex\RegExp\FSM\Range;
@@ -18,7 +19,7 @@ class LanguageBuilderTest extends TestCase
 {
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testFromNfa_EmptyNfa_AddTransitionAddsSymbolToNfaSymbolTable(): void
     {
@@ -32,7 +33,7 @@ class LanguageBuilderTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testFromNfa_EmptyNfa_AddTransitionAddsTransitionToNfaSymbolTransitionMap(): void
     {
@@ -46,7 +47,7 @@ class LanguageBuilderTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testAddTransition_NoTransitionsAdded_TransitionMapContainsMatchingList(): void
     {
@@ -65,7 +66,7 @@ class LanguageBuilderTest extends TestCase
      * @param array $firstRangeData
      * @param array $secondRangeData
      * @param array $expectedValue
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      * @dataProvider providerAddTransitionCalledTwiceTransitions
      */
     public function testAddTransition_TransitionWithSameRangeAdded_TransitionMapContainsMatchingList(
@@ -101,7 +102,7 @@ class LanguageBuilderTest extends TestCase
      * @param array $firstRangeData
      * @param array $secondRangeData
      * @param array $expectedValue
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      * @dataProvider providerAddTransitionCalledTwiceSymbols
      */
     public function testAddTransition_TransitionWithSameRangeAdded_GetSymbolMapReturnsMatchingValue(

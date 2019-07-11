@@ -2,6 +2,7 @@
 
 namespace Remorhaz\UniLex\AST;
 
+use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\Stack\StackableSymbolInterface;
 
 class Symbol implements StackableSymbolInterface
@@ -36,7 +37,7 @@ class Symbol implements StackableSymbolInterface
 
     /**
      * @return Node
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws Exception
      */
     public function getSymbol(): Node
     {

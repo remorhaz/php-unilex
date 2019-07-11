@@ -3,6 +3,7 @@
 namespace Remorhaz\UniLex\Test\RegExp;
 
 use PHPUnit\Framework\TestCase;
+use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\IO\CharBuffer;
 use Remorhaz\UniLex\Grammar\ContextFree\GrammarLoader;
 use Remorhaz\UniLex\Grammar\ContextFree\TokenFactory;
@@ -21,7 +22,7 @@ class TokenMatcherTest extends TestCase
      * @param int $expectedType
      * @param int $symbol
      * @dataProvider providerValidTokenType
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testMatch_ValidBuffer_ReturnsTokenWithMatchingType(int $expectedType, int $symbol): void
     {
@@ -86,7 +87,7 @@ class TokenMatcherTest extends TestCase
     /**
      * @param int $symbol
      * @dataProvider providerValidTokenSymbol
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testMatch_ValidBuffer_ReturnsTokenWithMatchingSymbolAttribute(int $symbol): void
     {
@@ -108,7 +109,7 @@ class TokenMatcherTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testMatch_InvalidBuffer_ReturnsInvalidToken(): void
     {

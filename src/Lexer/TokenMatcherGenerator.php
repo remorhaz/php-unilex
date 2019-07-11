@@ -2,6 +2,7 @@
 
 namespace Remorhaz\UniLex\Lexer;
 
+use ReflectionException;
 use Remorhaz\UniLex\AST\Translator;
 use Remorhaz\UniLex\AST\Tree;
 use Remorhaz\UniLex\Exception;
@@ -37,7 +38,7 @@ class TokenMatcherGenerator
     /**
      * @return string
      * @throws Exception
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     private function buildOutput(): string
     {
@@ -77,7 +78,7 @@ class TokenMatcherGenerator
     /**
      * @return string
      * @throws Exception
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function getOutput(): string
     {
@@ -104,7 +105,7 @@ class TokenMatcherGenerator
 
     /**
      * @return string
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function buildHeader(): string
     {
@@ -126,7 +127,7 @@ class TokenMatcherGenerator
 
     /**
      * @return string
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     private function buildUseList(): string
     {
@@ -140,7 +141,7 @@ class TokenMatcherGenerator
 
     /**
      * @return string
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     private function buildMatchParameters(): string
     {

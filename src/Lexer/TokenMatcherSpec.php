@@ -3,6 +3,7 @@
 namespace Remorhaz\UniLex\Lexer;
 
 use ReflectionClass;
+use ReflectionException;
 use ReflectionMethod;
 use Remorhaz\UniLex\Exception;
 
@@ -43,7 +44,7 @@ class TokenMatcherSpec
 
     /**
      * @return ReflectionClass
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function getTemplateClass(): ReflectionClass
     {
@@ -62,7 +63,7 @@ class TokenMatcherSpec
      * @param string $name
      * @param string|null $alias
      * @return TokenMatcherSpec
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function addUsedClass(string $name, string $alias = null): self
     {
@@ -84,7 +85,7 @@ class TokenMatcherSpec
 
     /**
      * @return array
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function getUsedClassList(): array
     {
@@ -127,7 +128,7 @@ class TokenMatcherSpec
 
     /**
      * @return ReflectionMethod
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function getMatchMethod(): ReflectionMethod
     {
@@ -234,7 +235,7 @@ class TokenMatcherSpec
     }
 
     /**
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     private function initUsedClassList(): void
     {

@@ -8,6 +8,7 @@ use Remorhaz\UniLex\AST\Node;
 use Remorhaz\UniLex\AST\Symbol;
 use Remorhaz\UniLex\AST\Translator;
 use Remorhaz\UniLex\AST\Tree;
+use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\Stack\PushInterface;
 
 /**
@@ -17,8 +18,7 @@ class TranslatorTest extends TestCase
 {
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @throws \ReflectionException
+     * @throws UniLexException
      */
     public function testRun_ValidTree_TriggersOnFinishProductionWithRootNodeOnce(): void
     {
@@ -35,8 +35,7 @@ class TranslatorTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @throws \ReflectionException
+     * @throws UniLexException
      */
     public function testRun_ValidTree_TriggersOnBeginProductionWithRootNodeOnce(): void
     {
@@ -53,8 +52,7 @@ class TranslatorTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @throws \ReflectionException
+     * @throws UniLexException
      */
     public function testRun_ListenerPushesRootChild_TriggersOnSymbolWithNodeOnce(): void
     {

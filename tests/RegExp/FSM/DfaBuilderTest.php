@@ -3,6 +3,7 @@
 namespace Remorhaz\UniLex\Test\RegExp\FSM;
 
 use PHPUnit\Framework\TestCase;
+use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\RegExp\FSM\Dfa;
 use Remorhaz\UniLex\RegExp\FSM\DfaBuilder;
 use Remorhaz\UniLex\RegExp\FSM\Nfa;
@@ -15,7 +16,7 @@ class DfaBuilderTest extends TestCase
 {
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testRun_ValidNfa_ReturnsMatchingDfa(): void
     {
@@ -43,7 +44,7 @@ class DfaBuilderTest extends TestCase
 
     /**
      * @return Nfa
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     private function createNfa(): Nfa
     {

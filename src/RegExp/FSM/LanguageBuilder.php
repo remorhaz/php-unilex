@@ -2,6 +2,8 @@
 
 namespace Remorhaz\UniLex\RegExp\FSM;
 
+use Remorhaz\UniLex\Exception as UniLexException;
+
 class LanguageBuilder
 {
 
@@ -24,7 +26,7 @@ class LanguageBuilder
      * @param int $stateIn
      * @param int $stateOut
      * @param Range ...$ranges
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function addTransition(int $stateIn, int $stateOut, Range ...$ranges): void
     {

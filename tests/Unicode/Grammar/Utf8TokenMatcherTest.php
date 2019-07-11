@@ -3,6 +3,7 @@
 namespace Remorhaz\UniLex\Test\Unicode\Grammar;
 
 use PHPUnit\Framework\TestCase;
+use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\IO\StringBuffer;
 use Remorhaz\UniLex\Unicode\Grammar\TokenAttribute;
 use Remorhaz\UniLex\Unicode\Grammar\TokenType;
@@ -18,7 +19,7 @@ class Utf8TokenMatcherTest extends TestCase
     /**
      * @param string $text
      * @dataProvider providerValidSymbolList
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testMatch_ValidText_ReturnsSymbolToken(string $text): void
     {
@@ -33,7 +34,7 @@ class Utf8TokenMatcherTest extends TestCase
      * @param string $text
      * @param int $expectedSymbol
      * @dataProvider providerValidSymbolList
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testMatch_ValidText_ReturnsTokenWithMatchingSymbolAttribute(
         string $text,
@@ -62,7 +63,7 @@ class Utf8TokenMatcherTest extends TestCase
     /**
      * @param string $text
      * @dataProvider providerInvalidText
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testMatch_InvalidText_ReturnsInvalidBytesToken(string $text): void
     {

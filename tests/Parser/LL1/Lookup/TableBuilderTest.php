@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Example\SimpleExpr\Grammar\ConfigFile;
 use Remorhaz\UniLex\Example\SimpleExpr\Grammar\SymbolType;
 use Remorhaz\UniLex\Example\SimpleExpr\Grammar\TokenType;
+use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\Grammar\ContextFree\GrammarLoader;
 use Remorhaz\UniLex\Parser\LL1\Lookup\TableBuilder;
 
@@ -19,7 +20,7 @@ class TableBuilderTest extends TestCase
     /**
      * @param string $configFile
      * @param array $expectedValue
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws Exception
      * @dataProvider providerValidGrammarTables
      */
     public function testGetFirst_ValidGrammar_ResultGetTokensReturnsMatchingValue(
