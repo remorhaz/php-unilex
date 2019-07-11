@@ -2,7 +2,7 @@ language: php
 
 php:
   - '7.3'
-  - '7.4'
+  - '7.4-alpha'
 
 before_script:
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./build/cc-test-reporter
