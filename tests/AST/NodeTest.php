@@ -4,6 +4,7 @@ namespace Remorhaz\UniLex\Test\AST;
 
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\AST\Node;
+use Remorhaz\UniLex\Exception as UniLexException;
 
 /**
  * @covers \Remorhaz\UniLex\AST\Node
@@ -24,7 +25,7 @@ class NodeTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testSetAttribute_AttributeNotExists_GetAttributeReturnsMatchingValue(): void
     {
@@ -35,53 +36,58 @@ class NodeTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Attribute 'b' is already defined in syntax tree node 1
+     * @throws UniLexException
      */
     public function testSetAttribute_AttributeExists_ThrowsException(): void
     {
         $node = new Node(1, 'a');
         $node->setAttribute('b', 'c');
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Attribute \'b\' is already defined in syntax tree node 1');
         $node->setAttribute('b', 'd');
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Attribute 'b' is not defined in syntax tree node 1
+     * @throws UniLexException
      */
     public function testGetAttribute_AttributeNotExists_ThrowsException(): void
     {
         $node = new Node(1, 'a');
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Attribute \'b\' is not defined in syntax tree node 1');
         $node->getAttribute('b');
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Child node at index 0 in node 1 is not defined
+     * @throws UniLexException
      */
     public function testGetChild_NoChildren_ThrowsException(): void
     {
-        (new Node(1, 'a'))->getChild(0);
+        $node = new Node(1, 'a');
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Child node at index 0 in node 1 is not defined');
+        $node->getChild(0);
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Child node at index 1 in node 1 is not defined
+     * @throws UniLexException
      */
     public function testGetChild_ChildNotExists_ThrowsException(): void
     {
         $node = new Node(1, 'a');
         $childNode = new Node(2, 'b');
         $node->addChild($childNode);
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Child node at index 1 in node 1 is not defined');
         $node->getChild(1);
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testAddChild_NoChildren_GetChildReturnsMatchingNode(): void
     {
@@ -93,7 +99,7 @@ class NodeTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testAddChild_ChildExists_GetChildReturnsMatchingNode(): void
     {
@@ -132,7 +138,7 @@ class NodeTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testGetAttributeList_TwoAttributesSet_ReturnsAtributeMap(): void
     {

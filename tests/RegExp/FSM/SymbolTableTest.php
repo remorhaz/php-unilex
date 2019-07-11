@@ -3,6 +3,7 @@
 namespace Remorhaz\UniLex\Test\RegExp\FSM;
 
 use PHPUnit\Framework\TestCase;
+use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\RegExp\FSM\RangeSet;
 use Remorhaz\UniLex\RegExp\FSM\SymbolTable;
 
@@ -10,7 +11,7 @@ class SymbolTableTest extends TestCase
 {
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testAddSymbol_NoSymbolAdded_ReturnsZero(): void
     {
@@ -19,7 +20,7 @@ class SymbolTableTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testAddSymbol_SymbolAdded_ReturnsValueGreaterThanZero(): void
     {
@@ -30,27 +31,31 @@ class SymbolTableTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Symbol 0 is not defined in symbol table
+     * @throws UniLexException
      */
     public function testReplaceSymbol_SymbolNotExists_ThrowsException(): void
     {
-        (new SymbolTable)->replaceSymbol(0, RangeSet::import([1, 2]));
+        $symbolTable = new SymbolTable;
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Symbol 0 is not defined in symbol table');
+        $symbolTable->replaceSymbol(0, RangeSet::import([1, 2]));
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Symbol 0 is not defined in symbol table
+     * @throws UniLexException
      */
     public function testGetRangeSet_SymbolNotExists_ThrowsException(): void
     {
-        (new SymbolTable)->getRangeSet(0);
+        $symbolTable = new SymbolTable;
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Symbol 0 is not defined in symbol table');
+        $symbolTable->getRangeSet(0);
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testReplaceSymbol_SymbolAdded_GetRangeSetReturnsAddedRangeSet(): void
     {
@@ -70,7 +75,7 @@ class SymbolTableTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testGetRangeSetList_SymbolAdded_ReturnsMatchingList(): void
     {

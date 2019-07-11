@@ -3,6 +3,7 @@
 namespace Remorhaz\UniLex\Test\Parser\LL1\Lookup;
 
 use PHPUnit\Framework\TestCase;
+use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\Grammar\ContextFree\GrammarLoader;
 use Remorhaz\UniLex\Parser\LL1\Lookup\FirstBuilder;
 use Remorhaz\UniLex\Parser\LL1\Lookup\FollowBuilder;
@@ -15,8 +16,7 @@ class TableConflictCheckerTest extends TestCase
 {
 
     /**
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage FIRST(1:0)/FIRST(1:1) conflict: 5
+     * @throws UniLexException
      */
     public function testCheck_GrammarHasFirstFirstConflict_ThrowsException(): void
     {
@@ -30,12 +30,15 @@ class TableConflictCheckerTest extends TestCase
         $grammar = GrammarLoader::loadConfig($config);
         $first = (new FirstBuilder($grammar))->getFirst();
         $follow = (new FollowBuilder($grammar, $first))->getFollow();
-        (new TableConflictChecker($grammar, $first, $follow))->check();
+        $checker = new TableConflictChecker($grammar, $first, $follow);
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('FIRST(1:0)/FIRST(1:1) conflict: 5');
+        $checker->check();
     }
 
     /**
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage FIRST(2:0)/FOLLOW(2) conflict (ε ∈ 2:1): 1
+     * @throws UniLexException
      */
     public function testCheck_GrammarHasFirstFollowConflict_ThrowsException(): void
     {
@@ -49,12 +52,15 @@ class TableConflictCheckerTest extends TestCase
         $grammar = GrammarLoader::loadConfig($config);
         $first = (new FirstBuilder($grammar))->getFirst();
         $follow = (new FollowBuilder($grammar, $first))->getFollow();
-        (new TableConflictChecker($grammar, $first, $follow))->check();
+        $checker = new TableConflictChecker($grammar, $first, $follow);
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('FIRST(2:0)/FOLLOW(2) conflict (ε ∈ 2:1): 1');
+        $checker->check();
     }
 
     /**
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Symbol 1 has multiple ε-productions
+     * @throws UniLexException
      */
     public function testCheck_GrammarHasProductionWithMultipleEpsilons_ThrowsException(): void
     {
@@ -68,6 +74,10 @@ class TableConflictCheckerTest extends TestCase
         $grammar = GrammarLoader::loadConfig($config);
         $first = (new FirstBuilder($grammar))->getFirst();
         $follow = (new FollowBuilder($grammar, $first))->getFollow();
-        (new TableConflictChecker($grammar, $first, $follow))->check();
+        $checker = new TableConflictChecker($grammar, $first, $follow);
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Symbol 1 has multiple ε-productions');
+        $checker->check();
     }
 }

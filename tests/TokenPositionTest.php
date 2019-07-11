@@ -3,6 +3,7 @@
 namespace Remorhaz\UniLex\Test;
 
 use PHPUnit\Framework\TestCase;
+use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\Lexer\TokenPosition;
 
 /**
@@ -12,7 +13,7 @@ class TokenPositionTest extends TestCase
 {
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testGetStartOffset_ConstructWithValue_ReturnsSameValue(): void
     {
@@ -22,7 +23,7 @@ class TokenPositionTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testGetFinishOffset_ConstructWithValue_ReturnsSameValue(): void
     {
@@ -36,7 +37,7 @@ class TokenPositionTest extends TestCase
      * @param int $finishOffset
      * @param int $expectedLength
      * @dataProvider providerOffsetsWithLength
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testGetLength_Constructed_ReturnsCorrectSize(
         int $startOffset,
@@ -57,20 +58,22 @@ class TokenPositionTest extends TestCase
     }
 
     /**
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Negative start offset in token position: -1
+     * @throws UniLexException
      */
     public function testConstruct_NegativeStartOffset_ThrowsException()
     {
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Negative start offset in token position: -1');
         new TokenPosition(-1, 1);
     }
 
     /**
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Finish offset lesser than start in token position: -1 < 0
+     * @throws UniLexException
      */
     public function testConstruct_FinishOffsetLessThanStart_ThrowsException()
     {
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Finish offset lesser than start in token position: -1 < 0');
         new TokenPosition(0, -1);
     }
 }

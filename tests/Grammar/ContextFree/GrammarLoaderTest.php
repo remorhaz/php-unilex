@@ -5,6 +5,7 @@ namespace Remorhaz\UniLex\Test\Grammar\ContextFree;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Example\SimpleExpr\Grammar\ConfigFile;
 use Remorhaz\UniLex\Example\SimpleExpr\Grammar\TokenType;
+use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\Grammar\ContextFree\GrammarLoader;
 
 /**
@@ -14,7 +15,7 @@ class GrammarLoaderTest extends TestCase
 {
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testLoadConfig_ValidConfig_GrammarHasMatchingTerminalList(): void
     {
@@ -31,7 +32,7 @@ class GrammarLoaderTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testLoadConfig_ValidConfig_GrammarHasMatchingToken(): void
     {
@@ -47,7 +48,7 @@ class GrammarLoaderTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testLoadConfig_ValidConfig_GrammarHasMatchingNonTerminalList(): void
     {
@@ -64,7 +65,7 @@ class GrammarLoaderTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testLoadConfig_ValidConfig_GrammarHasMatchingProduction(): void
     {
@@ -83,7 +84,7 @@ class GrammarLoaderTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testLoadConfig_ValidConfig_GrammarHasMatchingStartSymbol(): void
     {
@@ -99,7 +100,7 @@ class GrammarLoaderTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testLoadConfig_ValidConfig_GrammarHasMatchingEoiToken(): void
     {
@@ -115,9 +116,7 @@ class GrammarLoaderTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Key 'start_symbol' not found in config
+     * @throws UniLexException
      */
     public function testLoadConfig_NoStartSymbolKey_ThrowsException(): void
     {
@@ -127,23 +126,27 @@ class GrammarLoaderTest extends TestCase
             GrammarLoader::ROOT_SYMBOL_KEY => 0,
             GrammarLoader::EOI_SYMBOL_KEY => 2,
         ];
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Key \'start_symbol\' not found in config');
         GrammarLoader::loadConfig($config);
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Config should be an array
+     * @throws UniLexException
      */
     public function testLoadConfig_NotArray_ThrowsException(): void
     {
         /** @var array $config */
         $config = (object) ["a" => "b"];
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Config should be an array');
         GrammarLoader::loadConfig($config);
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testLoadFile_ValidFile_GrammarHasMatchingEoiToken(): void
     {
@@ -152,12 +155,12 @@ class GrammarLoaderTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessageRegExp #^Config file .+NotExisting\.php not found$#
+     * @throws UniLexException
      */
     public function testLoadFile_FileNotExists_ThrowsException(): void
     {
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessageRegExp('#^Config file .+NotExisting\.php not found$#');
         GrammarLoader::loadFile(__DIR__ . "/NotExisting.php");
     }
 }

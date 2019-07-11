@@ -4,6 +4,7 @@ namespace Remorhaz\UniLex\Example\Test\Brainfuck;
 
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Example\Brainfuck\Command\OutputCommand;
+use Remorhaz\UniLex\Example\Brainfuck\Exception as BrainfuckException;
 use Remorhaz\UniLex\Example\Brainfuck\Runtime;
 
 /**
@@ -16,12 +17,12 @@ class RuntimeTest extends TestCase
     /**
      * @param int $memory
      * @dataProvider providerNonPositiveMemory
-     * @throws \Remorhaz\UniLex\Example\Brainfuck\Exception
-     * @expectedException \Remorhaz\UniLex\Example\Brainfuck\Exception
-     * @expectedExceptionMessage Memory amount must be positive
+     * @throws BrainfuckException
      */
     public function testConstruct_NonPositiveMemory_ThrowsException(int $memory): void
     {
+        $this->expectException(BrainfuckException::class);
+        $this->expectExceptionMessage('Memory amount must be positive');
         new Runtime($memory);
     }
 
@@ -34,7 +35,7 @@ class RuntimeTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Example\Brainfuck\Exception
+     * @throws BrainfuckException
      */
     public function testGetOutput_NoOutputCommandsExecuted_ReturnsEmptyString(): void
     {
@@ -43,7 +44,7 @@ class RuntimeTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Example\Brainfuck\Exception
+     * @throws BrainfuckException
      */
     public function testGetOutput_OutputCommandExecuted_ReturnsMatchingString(): void
     {

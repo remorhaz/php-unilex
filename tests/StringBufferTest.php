@@ -3,6 +3,7 @@
 namespace Remorhaz\UniLex\Test;
 
 use PHPUnit\Framework\TestCase;
+use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\Lexer\Token;
 use Remorhaz\UniLex\IO\StringBuffer;
 
@@ -25,17 +26,19 @@ class StringBufferTest extends TestCase
     }
 
     /**
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage No symbol to preview at index 0
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testGetSymbol_EmptyBuffer_ThrowsException(): void
     {
-        (new StringBuffer(''))->getSymbol();
+        $buffer = new StringBuffer('');
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('No symbol to preview at index 0');
+        $buffer->getSymbol();
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testGetSymbol_NotEmptyBuffer_ReturnsFirstValue(): void
     {
@@ -44,17 +47,19 @@ class StringBufferTest extends TestCase
     }
 
     /**
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Unexpected end of buffer on preview at index 0
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testNextSymbol_EmptyBuffer_ThrowsException(): void
     {
-        (new StringBuffer(''))->nextSymbol();
+        $buffer = new StringBuffer('');
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Unexpected end of buffer on preview at index 0');
+        $buffer->nextSymbol();
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testNextSymbol_NotEmptyBuffer_GetSymbolReturnsSecondValue(): void
     {
@@ -65,7 +70,7 @@ class StringBufferTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testResetToken_NextSymbolCalled_GetSymbolReturnsFirstValue(): void
     {
@@ -77,7 +82,7 @@ class StringBufferTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testFinishToken_NotAtBufferEnd_GetSymbolAfterResetTokenReturnsSecondValue(): void
     {
@@ -90,7 +95,7 @@ class StringBufferTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testGetTokenPosition_NextSymbolNotCalled_ReturnsZeroOffsets(): void
     {
@@ -100,7 +105,7 @@ class StringBufferTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testGetTokenPosition_NextSymbolCalled_ReturnsMatchingOffsets(): void
     {
@@ -112,7 +117,7 @@ class StringBufferTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testGetTokenPosition_NextSymbolAndFinishTokenCalled_ReturnsMatchingOffsets(): void
     {
@@ -131,7 +136,7 @@ class StringBufferTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testGetTokenAsArray_NextSymbolCalledTwice_ReturnsMatchingArray(): void
     {
@@ -143,7 +148,7 @@ class StringBufferTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testGetTokenAsArray_NextSymbolAndResetTokenCalled_ReturnsEmptyArray(): void
     {
@@ -155,7 +160,7 @@ class StringBufferTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testGetTokenAsArray_NextSymbolAndFinishTokenCalled_ReturnsEmptyArray(): void
     {
@@ -174,7 +179,7 @@ class StringBufferTest extends TestCase
 
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testGetTokenAsString_NextSymbolCalledTwice_ReturnsMatchingString(): void
     {
@@ -186,7 +191,7 @@ class StringBufferTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testGetTokenAsString_NextSymbolAndResetTokenCalled_ReturnsEmptyString(): void
     {
@@ -198,7 +203,7 @@ class StringBufferTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testGetTokenAsString_NextSymbolAndFinishTokenCalled_ReturnsEmptyString(): void
     {
@@ -210,41 +215,44 @@ class StringBufferTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Non-positive unread repeat counter: 0
+     * @throws UniLexException
      */
     public function testPrevSymbol_ZeroRepeat_ThrowsException(): void
     {
         $buffer = new StringBuffer('');
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Non-positive unread repeat counter: 0');
         $buffer->prevSymbol(0);
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Non-positive unread repeat counter: -2
+     * @throws UniLexException
      */
     public function testPrevSymbol_NegativeRepeat_ThrowsException(): void
     {
         $buffer = new StringBuffer('');
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Non-positive unread repeat counter: -2');
         $buffer->prevSymbol(-2);
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Invalid unread repeat counter: 2
+     * @throws UniLexException
      */
     public function testPrevSymbol_RepeatTooLarge_ThrowsException(): void
     {
         $buffer = new StringBuffer('ab');
         $buffer->nextSymbol();
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Invalid unread repeat counter: 2');
         $buffer->prevSymbol(2);
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testPrevSymbol_NextSymbolCalled_GetTokenPositionReturnsZeroFinishOffset(): void
     {

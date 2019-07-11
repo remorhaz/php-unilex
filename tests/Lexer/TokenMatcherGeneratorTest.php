@@ -3,6 +3,8 @@
 namespace Remorhaz\UniLex\Test\Lexer;
 
 use PHPUnit\Framework\TestCase;
+use ReflectionException;
+use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\Grammar\ContextFree\Grammar;
 use Remorhaz\UniLex\Grammar\ContextFree\TokenFactory;
 use Remorhaz\UniLex\Lexer\TokenMatcherGenerator;
@@ -20,7 +22,7 @@ class TokenMatcherGeneratorTest extends TestCase
 {
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testLoad_EmptySpec_ResultMatchReturnsFalse(): void
     {
@@ -34,7 +36,7 @@ class TokenMatcherGeneratorTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testLoad_ValidSpecAndBuffer_ResultMatchReturnsTrue(): void
     {
@@ -50,7 +52,7 @@ class TokenMatcherGeneratorTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testLoad_ValidSpecAndBuffer_ResultGetTokenReturnsTokenWithMatchingTypeAfterMatchCalled(): void
     {
@@ -70,7 +72,7 @@ class TokenMatcherGeneratorTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testLoad_ValidSpecNotMatchingBuffer_ResultMatchReturnsFalse(): void
     {
@@ -89,9 +91,7 @@ class TokenMatcherGeneratorTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Token is not defined
+     * @throws UniLexException
      */
     public function testLoad_ValidSpecWrongBuffer_ResultGetTokenThrowsException(): void
     {
@@ -106,12 +106,15 @@ class TokenMatcherGeneratorTest extends TestCase
         $grammar->addToken(2, 2);
         $buffer = CharBufferFactory::createFromString("ba");
         $matcher->match($buffer, new TokenFactory($grammar));
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Token is not defined');
         $matcher->getToken();
     }
 
     /**
-     * @throws \ReflectionException
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws ReflectionException
+     * @throws UniLexException
      */
     public function testGetOutput_SpecWithFileComment_ResultContainsValueInComment(): void
     {
@@ -125,9 +128,7 @@ class TokenMatcherGeneratorTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Invalid PHP code generated
+     * @throws UniLexException
      */
     public function testLoad_InvalidOutput_ThrowsException(): void
     {
@@ -142,14 +143,14 @@ class TokenMatcherGeneratorTest extends TestCase
             ->method('getOutput')
             ->willReturn("<?php invalid:::php");
 
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Invalid PHP code generated');
         /** @var TokenMatcherGenerator $generator */
         $generator->load();
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Failed to generate target class
+     * @throws UniLexException
      */
     public function testLoad_EmptyOutput_ThrowsException(): void
     {
@@ -162,8 +163,10 @@ class TokenMatcherGeneratorTest extends TestCase
             ->getMock();
         $generator
             ->method('getOutput')
-            ->willReturn("");
+            ->willReturn('');
 
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Failed to generate target class');
         /** @var TokenMatcherGenerator $generator */
         $generator->load();
     }
@@ -172,7 +175,7 @@ class TokenMatcherGeneratorTest extends TestCase
      * @param string $text
      * @param string $regExp
      * @param string $expectedValue
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      * @dataProvider providerValidRegExpInput
      */
     public function testLoad_ValidInput_MatchesValidToken(string $text, string $regExp, string $expectedValue): void
@@ -210,7 +213,7 @@ SOURCE;
      * @param string $regExp
      * @param string $expectedValue
      * @dataProvider providerValidRegExpInputWithPrefix
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testLoad_ValidInputWithPrefix_MatchesValidToken(
         string $text,

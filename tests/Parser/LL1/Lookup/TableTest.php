@@ -3,6 +3,7 @@
 namespace Remorhaz\UniLex\Test\Parser\LL1\Lookup;
 
 use PHPUnit\Framework\TestCase;
+use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\Parser\LL1\Lookup\Table;
 
 /**
@@ -12,7 +13,7 @@ class TableTest extends TestCase
 {
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testAddProduction_ProductionNotSet_GetProductionIndexReturnsAddedProductionIndex(): void
     {
@@ -23,25 +24,26 @@ class TableTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Production for [1:2] is already defined
+     * @throws UniLexException
      */
     public function testAddProduction_ProductionSet_ThrowsException(): void
     {
         $table = new Table;
         $table->addProduction(1, 2, 0);
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Production for [1:2] is already defined');
         $table->addProduction(1, 2, 0);
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Production for [1:2] is not defined
+     * @throws UniLexException
      */
     public function testGetProductionIndex_ProductionNotSet_ThrowsException(): void
     {
         $table = new Table;
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Production for [1:2] is not defined');
         $table->getProductionIndex(1, 2);
     }
 
@@ -53,7 +55,7 @@ class TableTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testHasProduction_ProductionSet_ReturnsTrue(): void
     {
@@ -64,7 +66,7 @@ class TableTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testExportMap_ProductionsSet_ReturnsMatchingValue(): void
     {

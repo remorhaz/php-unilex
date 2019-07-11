@@ -3,7 +3,7 @@
 namespace Remorhaz\UniLex\Test\Grammar\ContextFree;
 
 use PHPUnit\Framework\TestCase;
-use Remorhaz\UniLex\Exception;
+use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\Grammar\ContextFree\Grammar;
 
 /**
@@ -34,7 +34,7 @@ class GrammarTest extends TestCase
     }
 
     /**
-     * @throws Exception
+     * @throws UniLexException
      */
     public function testGetToken_ValueAdded_ReturnsSameValue(): void
     {
@@ -45,29 +45,32 @@ class GrammarTest extends TestCase
     }
 
     /**
-     * @throws Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Symbol 1 is not defined
+     * @throws UniLexException
      */
     public function testGetToken_SymbolNotExists_ThrowsException(): void
     {
-        (new Grammar(0, 1, 2))->getToken(1);
+        $grammar = new Grammar(0, 1, 2);
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Symbol 1 is not defined');
+        $grammar->getToken(1);
     }
 
     /**
-     * @throws Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Symbol 1 is not defined as terminal
+     * @throws UniLexException
      */
     public function testGetToken_TokenNotExists_ThrowsException(): void
     {
         $grammar = new Grammar(0, 1, 2);
         $grammar->addProduction(1);
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Symbol 1 is not defined as terminal');
         $grammar->getToken(1);
     }
 
     /**
-     * @throws Exception
+     * @throws UniLexException
      */
     public function testGetEoiToken_TokenExists_ReturnMatchingValue(): void
     {
@@ -78,7 +81,7 @@ class GrammarTest extends TestCase
     }
 
     /**
-     * @throws Exception
+     * @throws UniLexException
      */
     public function testIsTerminal_TokenExists_ReturnsTrue(): void
     {
@@ -89,7 +92,7 @@ class GrammarTest extends TestCase
     }
 
     /**
-     * @throws Exception
+     * @throws UniLexException
      */
     public function testIsTerminal_SymbolExists_ReturnsFalse(): void
     {
@@ -100,17 +103,19 @@ class GrammarTest extends TestCase
     }
 
     /**
-     * @throws Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Symbol 1 is not defined
+     * @throws UniLexException
      */
     public function testIsTerminal_SymbolNotExists_ThrowsException(): void
     {
-        (new Grammar(0, 1, 2))->isTerminal(1);
+        $grammar = new Grammar(0, 1, 2);
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Symbol 1 is not defined');
+        $grammar->isTerminal(1);
     }
 
     /**
-     * @throws Exception
+     * @throws UniLexException
      */
     public function testIsEoiToken_EoiToken_ReturnsTrue(): void
     {
@@ -121,7 +126,7 @@ class GrammarTest extends TestCase
     }
 
     /**
-     * @throws Exception
+     * @throws UniLexException
      */
     public function testIsEoiToken_NotEoiToken_ReturnsFalse(): void
     {
@@ -133,7 +138,7 @@ class GrammarTest extends TestCase
     }
 
     /**
-     * @throws Exception
+     * @throws UniLexException
      */
     public function testIsEoiSymbol_EoiSymbol_ReturnsTrue(): void
     {
@@ -144,7 +149,7 @@ class GrammarTest extends TestCase
     }
 
     /**
-     * @throws Exception
+     * @throws UniLexException
      */
     public function testIsEoiSymbol_NotEoiSymbol_ReturnsFalse(): void
     {
@@ -156,7 +161,7 @@ class GrammarTest extends TestCase
     }
 
     /**
-     * @throws Exception
+     * @throws UniLexException
      */
     public function testIsEoiSymbol_NotTerminal_ReturnsFalse(): void
     {
@@ -167,7 +172,7 @@ class GrammarTest extends TestCase
     }
 
     /**
-     * @throws Exception
+     * @throws UniLexException
      */
     public function testTokenMatchesTerminal_MatchingToken_ReturnsTrue(): void
     {
@@ -178,7 +183,7 @@ class GrammarTest extends TestCase
     }
 
     /**
-     * @throws Exception
+     * @throws UniLexException
      */
     public function testTokenMatchesTerminal_NotMatchingToken_ReturnsFalse(): void
     {
@@ -190,14 +195,15 @@ class GrammarTest extends TestCase
     }
 
     /**
-     * @throws Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Token 4 is not defined
+     * @throws UniLexException
      */
     public function testTokenMatchesTerminal_NotToken_ThrowsException(): void
     {
         $grammar = new Grammar(0, 1, 2);
         $grammar->addToken(2, 3);
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Token 4 is not defined');
         $grammar->tokenMatchesTerminal(2, 4);
     }
 
@@ -234,19 +240,20 @@ class GrammarTest extends TestCase
     }
 
     /**
-     * @throws Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Symbol 2 is terminal and can't have productions
+     * @throws UniLexException
      */
     public function testGetProductionList_Terminal_ThrowsException(): void
     {
         $grammar = new Grammar(0, 1, 2);
         $grammar->addToken(2, 3);
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Symbol 2 is terminal and can\'t have productions');
         $grammar->getProductionList(2);
     }
 
     /**
-     * @throws Exception
+     * @throws UniLexException
      */
     public function testGetProductionList_NonTerminal_ReturnsMatchingValue(): void
     {
@@ -266,7 +273,7 @@ class GrammarTest extends TestCase
     }
 
     /**
-     * @throws Exception
+     * @throws UniLexException
      */
     public function testGetProduction_ProductionExists_ReturnsProduction(): void
     {
@@ -279,19 +286,20 @@ class GrammarTest extends TestCase
     }
 
     /**
-     * @throws Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Symbol 1 has no production at index 1
+     * @throws UniLexException
      */
     public function testGetProduction_ProductionNotExists_ThrowsException(): void
     {
         $grammar = new Grammar(0, 1, 2);
         $grammar->addProduction(1, 3, 4);
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Symbol 1 has no production at index 1');
         $grammar->getProduction(1, 1);
     }
 
     /**
-     * @throws Exception
+     * @throws UniLexException
      */
     public function testGetProduction_RootSymbol_ReturnsRootProduction(): void
     {
@@ -304,16 +312,16 @@ class GrammarTest extends TestCase
     }
 
     /**
-     * @throws Exception
+     * @throws UniLexException
      */
     public function testGetFullProductionList_Created_ReturnsArray(): void
     {
         $actualValue = (new Grammar(0, 1, 2))->getFullProductionList();
-        self::assertInternalType('array', $actualValue);
+        self::assertIsArray($actualValue);
     }
 
     /**
-     * @throws Exception
+     * @throws UniLexException
      */
     public function testGetFullProductionList_ProductionAdded_ReturnsMatchingValue(): void
     {

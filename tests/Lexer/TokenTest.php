@@ -3,6 +3,7 @@
 namespace Remorhaz\UniLex\Test\Lexer;
 
 use PHPUnit\Framework\TestCase;
+use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\Lexer\Token;
 
 /**
@@ -18,17 +19,19 @@ class TokenTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Token attribute 'a' is not defined
+     * @throws UniLexException
      */
     public function testGetAttribute_AttributeNotSet_ThrowsException(): void
     {
-        (new Token(1, false))->getAttribute('a');
+        $token = new Token(1, false);
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Token attribute \'a\' is not defined');
+        $token->getAttribute('a');
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testGetAttribute_AttributeSet_ReturnsSameValue(): void
     {
@@ -39,14 +42,15 @@ class TokenTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Token attribute 'a' is already set
+     * @throws UniLexException
      */
     public function testSetAttribute_AttributeSet_ThrowsException(): void
     {
         $token = new Token(1, false);
         $token->setAttribute('a', 1);
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Token attribute \'a\' is already set');
         $token->setAttribute('a', 2);
     }
 }

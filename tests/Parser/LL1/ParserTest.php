@@ -5,6 +5,7 @@ namespace Remorhaz\UniLex\Test\Parser\LL1;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Example\SimpleExpr\Grammar\ConfigFile;
 use Remorhaz\UniLex\Example\SimpleExpr\Grammar\TokenType;
+use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\Grammar\ContextFree\GrammarLoader;
 use Remorhaz\UniLex\Grammar\ContextFree\TokenFactory;
 use Remorhaz\UniLex\Parser\LL1\AbstractParserListener;
@@ -23,8 +24,7 @@ class ParserTest extends TestCase
     /**
      * @param string $configFile
      * @param int[] $input
-     * @throws \ReflectionException
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      * @dataProvider providerValidGrammarInput
      */
     public function testParse_ValidBuffer_OnTokenTriggeredForEachToken(string $configFile, array $input): void
@@ -44,11 +44,8 @@ class ParserTest extends TestCase
     }
 
     /**
-     * @throws \ReflectionException
-     * @throws \Remorhaz\UniLex\Parser\LL1\UnexpectedTokenException
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Parser\LL1\UnexpectedTokenException
-     * @expectedExceptionMessage Unexpected token: 2
+     * @throws UnexpectedTokenException
+     * @throws UniLexException
      */
     public function testParse_InvalidBuffer_ThrowsException(): void
     {
@@ -59,12 +56,14 @@ class ParserTest extends TestCase
         $listener = $this->createMock(AbstractParserListener::class);
         /** @var AbstractParserListener $listener */
         $parser = new Parser($grammar, $reader, $listener);
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Unexpected token: 2');
         $parser->run();
     }
 
     /**
-     * @throws \ReflectionException
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testParse_InvalidBuffer_ThrowsErrorInfoWithMatchingExpectedTokenTypeList(): void
     {
@@ -85,10 +84,8 @@ class ParserTest extends TestCase
         }
     }
 
-
     /**
-     * @throws \ReflectionException
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testParse_InvalidBuffer_ThrowsErrorInfoWithMatchingUnexpectedToken(): void
     {

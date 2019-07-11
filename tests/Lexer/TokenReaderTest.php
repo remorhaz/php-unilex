@@ -3,6 +3,7 @@
 namespace Remorhaz\UniLex\Test\Lexer;
 
 use PHPUnit\Framework\TestCase;
+use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\IO\CharBufferInterface;
 use Remorhaz\UniLex\IO\StringBuffer;
 use Remorhaz\UniLex\Lexer\Token;
@@ -21,7 +22,7 @@ class TokenReaderTest extends TestCase
 {
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testRead_NotEmptyValidBufferStart_ReturnsMatchingSymbolToken(): void
     {
@@ -34,7 +35,7 @@ class TokenReaderTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testRead_NotEmptyValidBufferMiddle_ReturnsMatchingSymbolToken(): void
     {
@@ -48,7 +49,7 @@ class TokenReaderTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testRead_NotEmptyBufferEnd_ReturnsEoiToken(): void
     {
@@ -60,7 +61,7 @@ class TokenReaderTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testRead_EmptyBuffer_ReturnsEoiToken(): void
     {
@@ -71,20 +72,21 @@ class TokenReaderTest extends TestCase
     }
 
     /**
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Buffer end reached
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testRead_AfterBufferEnd_ThrowsException(): void
     {
         $buffer = new StringBuffer('');
         $scanner = new TokenReader($buffer, new Utf8TokenMatcher, new TokenFactory);
         $scanner->read();
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Buffer end reached');
         $scanner->read();
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testRead_NotEmptyInvalidBufferStart_ReturnsMatchingToken(): void
     {
@@ -96,28 +98,30 @@ class TokenReaderTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Unexpected character at position 0
+     * @throws UniLexException
      */
     public function testRead_MatcherFailsNotAtEnd_ThrowsException(): void
     {
         $buffer = new StringBuffer("abc");
         $tokenFactory = new TokenFactory;
         $scanner = new TokenReader($buffer, $this->createFailingMatcher(), $tokenFactory);
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Unexpected character at position 0');
         $scanner->read();
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Unexpected end of input at position 3
+     * @throws UniLexException
      */
     public function testRead_MatcherFailsAtEnd_ThrowsException(): void
     {
         $buffer = new StringBuffer("abc");
         $tokenFactory = new TokenFactory;
         $scanner = new TokenReader($buffer, $this->createFailingAtEndMatcher(), $tokenFactory);
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Unexpected end of input at position 3');
         $scanner->read();
     }
 

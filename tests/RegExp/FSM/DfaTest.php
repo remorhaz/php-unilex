@@ -3,6 +3,7 @@
 namespace Remorhaz\UniLex\Test\RegExp\FSM;
 
 use PHPUnit\Framework\TestCase;
+use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\RegExp\FSM\Dfa;
 use Remorhaz\UniLex\RegExp\FSM\SymbolTable;
 
@@ -37,19 +38,21 @@ class DfaTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Symbol table already exists in DFA
+     * @throws UniLexException
      */
     public function testSetSymbolTable_CalledAfterGetSymbolTable_ThrowsException(): void
     {
         $dfa = new Dfa;
         $dfa->getSymbolTable();
-        $dfa->setSymbolTable(new SymbolTable);
+        $newSymbolTable = new SymbolTable;
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Symbol table already exists in DFA');
+        $dfa->setSymbolTable($newSymbolTable);
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testGetSymbolTable_SetSymbolTableCalled_ReturnsSameInstance(): void
     {

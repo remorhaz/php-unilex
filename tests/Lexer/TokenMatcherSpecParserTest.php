@@ -3,6 +3,8 @@
 namespace Remorhaz\UniLex\Test\Lexer;
 
 use PHPUnit\Framework\TestCase;
+use ReflectionException;
+use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\Lexer\TokenMatcherInterface;
 use Remorhaz\UniLex\Lexer\TokenMatcherSpecParser;
 use Remorhaz\UniLex\Lexer\TokenMatcherTemplate;
@@ -14,18 +16,20 @@ class TokenMatcherSpecParserTest extends TestCase
 {
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessageRegExp #^Failed to read lexer specification from file .+/NotExists\.php$#
+     * @throws UniLexException
      */
     public function testLoadFromFile_FileNotExists_ThrowsException(): void
     {
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessageRegExp(
+            '#^Failed to read lexer specification from file .+/NotExists\.php$#'
+        );
         TokenMatcherSpecParser::loadFromFile(__DIR__ . "/lex/NotExists.php");
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @throws \ReflectionException
+     * @throws UniLexException
+     * @throws ReflectionException
      */
     public function testLoadFromFile_FileExists_MatcherSpecReturnsDefinedTargetClass(): void
     {
@@ -35,10 +39,8 @@ class TokenMatcherSpecParserTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Invalid lexer specification: target class is not defined
-     * @throws \ReflectionException
+     * @throws UniLexException
+     * @throws ReflectionException
      */
     public function testGetMatcherSpec_TargetClassNameNotDefined_ThrowsException(): void
     {
@@ -46,12 +48,16 @@ class TokenMatcherSpecParserTest extends TestCase
 <?php        
 /** @lexTemplateClass ClassName */
 SOURCE;
-        (new TokenMatcherSpecParser($source))->getMatcherSpec();
+        $matcherSpec = new TokenMatcherSpecParser($source);
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Invalid lexer specification: target class is not defined');
+        $matcherSpec->getMatcherSpec();
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @throws \ReflectionException
+     * @throws UniLexException
+     * @throws ReflectionException
      */
     public function testGetMatcherSpec_TemplateClassNameNotDefined_MatcherSpecUsesDefaultTemplateClass(): void
     {
@@ -65,10 +71,8 @@ SOURCE;
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Invalid lexer specification: duplicated @lexTargetClass tag
-     * @throws \ReflectionException
+     * @throws UniLexException
+     * @throws ReflectionException
      */
     public function testGetMatcherSpec_TargetClassDefinedTwice_ThrowsException(): void
     {
@@ -79,14 +83,16 @@ SOURCE;
  * @lexTargetClass ClassName
  */
 SOURCE;
-        (new TokenMatcherSpecParser($source))->getMatcherSpec();
+        $matcherSpec = new TokenMatcherSpecParser($source);
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Invalid lexer specification: duplicated @lexTargetClass tag');
+        $matcherSpec->getMatcherSpec();
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage nvalid lexer specification: duplicated @lexTemplateClass tag
-     * @throws \ReflectionException
+     * @throws UniLexException
+     * @throws ReflectionException
      */
     public function testGetMatcherSpec_TemplateClassDefinedTwice_ThrowsException(): void
     {
@@ -97,12 +103,16 @@ SOURCE;
  * @lexTemplateClass ClassName
  */
 SOURCE;
-        (new TokenMatcherSpecParser($source))->getMatcherSpec();
+        $matcherSpec = new TokenMatcherSpecParser($source);
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Invalid lexer specification: duplicated @lexTemplateClass tag');
+        $matcherSpec->getMatcherSpec();
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @throws \ReflectionException
+     * @throws UniLexException
+     * @throws ReflectionException
      */
     public function testGetMatcherSpec_SourceHeaderBlock_MatcherSpecGetHeaderReturnsBlockContents(): void
     {
@@ -120,8 +130,8 @@ SOURCE;
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @throws \ReflectionException
+     * @throws UniLexException
+     * @throws ReflectionException
      */
     public function testGetMatcherSpec_SourceHeaderBlock_MatcherSpecGetHeaderReturnsEmptyString(): void
     {
@@ -135,8 +145,8 @@ SOURCE;
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @throws \ReflectionException
+     * @throws UniLexException
+     * @throws ReflectionException
      */
     public function testGetMatcherSpec_SourceNamespaceInHeader_ReturnsBlockWithoutNamespace(): void
     {
@@ -156,8 +166,8 @@ SOURCE;
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @throws \ReflectionException
+     * @throws UniLexException
+     * @throws ReflectionException
      */
     public function testGetMatcherSpec_SourceNamespaceInHeader_MatcherSpecTargetClassHasSameNamespace(): void
     {
@@ -175,8 +185,8 @@ SOURCE;
     }
 
     /**
-     * @throws \ReflectionException
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws ReflectionException
+     * @throws UniLexException
      */
     public function testGetMatcherSpec_SourceUseInHeader_MatcherSpecHasMatchingUseInList(): void
     {
@@ -195,8 +205,8 @@ SOURCE;
     }
 
     /**
-     * @throws \ReflectionException
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws ReflectionException
+     * @throws UniLexException
      */
     public function testGetMatcherSpec_SourceUseAsAliasInHeader_MatcherSpecHasMatchingUseInList(): void
     {
@@ -216,10 +226,8 @@ SOURCE;
     }
 
     /**
-     * @throws \ReflectionException
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Invalid lexer specification: invalid used class expression
+     * @throws ReflectionException
+     * @throws UniLexException
      */
     public function testGetMatcherSpec_SourceInvalidUseInHeader_ThrowsException(): void
     {
@@ -231,12 +239,16 @@ SOURCE;
  */
 use Namespace\Class aas FooBar;
 SOURCE;
-        (new TokenMatcherSpecParser($source))->getMatcherSpec();
+        $matcherSpec = new TokenMatcherSpecParser($source);
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Invalid lexer specification: invalid used class expression');
+        $matcherSpec->getMatcherSpec();
     }
 
     /**
-     * @throws \ReflectionException
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws ReflectionException
+     * @throws UniLexException
      */
     public function testGetMatcherSpec_SourceUseInHeader_ReturnsBlockWithoutUse(): void
     {
@@ -256,8 +268,8 @@ SOURCE;
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @throws \ReflectionException
+     * @throws UniLexException
+     * @throws ReflectionException
      */
     public function testGetMatcherSpec_SourceBeforeMatchBlock_MatcherSpecGetBeforeMatchReturnsBlockContents(): void
     {
@@ -275,8 +287,8 @@ SOURCE;
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @throws \ReflectionException
+     * @throws UniLexException
+     * @throws ReflectionException
      */
     public function testGetMatcherSpec_SourceNoBeforeMatchBlock_MatcherSpecGetBeforeMatchReturnsEmptyString(): void
     {
@@ -290,8 +302,8 @@ SOURCE;
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @throws \ReflectionException
+     * @throws UniLexException
+     * @throws ReflectionException
      */
     public function testGetMatcherSpec_SourceOnTransitionBlock_MatcherSpecGetOnTransitionReturnsBlockContents(): void
     {
@@ -309,8 +321,8 @@ SOURCE;
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @throws \ReflectionException
+     * @throws UniLexException
+     * @throws ReflectionException
      */
     public function testGetMatcherSpec_SourceNoOnTransitionBlock_MatcherSpecGetOnTransitionReturnsEmptyString(): void
     {
@@ -324,10 +336,8 @@ SOURCE;
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Invalid lexer specification: @lexBeforeMatch tag conflicts with @lexHeader
-     * @throws \ReflectionException
+     * @throws UniLexException
+     * @throws ReflectionException
      */
     public function testGetMatcherSpec_SourceWithBlockConflict_ThrowsException(): void
     {
@@ -339,14 +349,16 @@ SOURCE;
  * @lexTargetClass ClassName
  */
 SOURCE;
-        (new TokenMatcherSpecParser($source))->getMatcherSpec();
+        $matcherSpec = new TokenMatcherSpecParser($source);
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Invalid lexer specification: @lexBeforeMatch tag conflicts with @lexHeader');
+        $matcherSpec->getMatcherSpec();
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Invalid lexer specification: duplicated @lexHeader tag
-     * @throws \ReflectionException
+     * @throws UniLexException
+     * @throws ReflectionException
      */
     public function testGetMatcherSpec_SourceDuplicatedBlock_ThrowsException(): void
     {
@@ -358,12 +370,16 @@ SOURCE;
  */
 /** @lexHeader */
 SOURCE;
-        (new TokenMatcherSpecParser($source))->getMatcherSpec();
+        $matcherSpec = new TokenMatcherSpecParser($source);
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Invalid lexer specification: duplicated @lexHeader tag');
+        $matcherSpec->getMatcherSpec();
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @throws \ReflectionException
+     * @throws UniLexException
+     * @throws ReflectionException
      */
     public function testGetMatcherSpec_SourceWithoutOnErrorBlock_MatcherSpecGetOnErrorReturnsReturnFalseCode(): void
     {
@@ -377,8 +393,8 @@ SOURCE;
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @throws \ReflectionException
+     * @throws UniLexException
+     * @throws ReflectionException
      */
     public function testGetMatcherSpec_SourceWithOnErrorBlock_MatcherSpecGetOnErrorReturnsMatchingBlock(): void
     {
@@ -396,10 +412,8 @@ SOURCE;
     }
 
     /**
-     * @throws \ReflectionException
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Invalid lexer specification: regular expression is not framed by "/"
+     * @throws ReflectionException
+     * @throws UniLexException
      */
     public function testGetMatcherSpec_SourceWithInvalidRegExp_ThrowsException(): void
     {
@@ -410,14 +424,16 @@ SOURCE;
  * @lexToken abc
  */
 SOURCE;
-        (new TokenMatcherSpecParser($source))->getMatcherSpec();
+        $matcherSpec = new TokenMatcherSpecParser($source);
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Invalid lexer specification: regular expression is not framed by "/"');
+        $matcherSpec->getMatcherSpec();
     }
 
     /**
-     * @throws \ReflectionException
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Invalid lexer specification: duplicated @lexToken /abc/ tag
+     * @throws ReflectionException
+     * @throws UniLexException
      */
     public function testGetMatcherSpec_DuplicatedRegExp_ThrowsException(): void
     {
@@ -431,12 +447,16 @@ SOURCE;
 /** @lexToken /abc/ */
 \$y = 1;
 SOURCE;
-        (new TokenMatcherSpecParser($source))->getMatcherSpec();
+        $matcherSpec = new TokenMatcherSpecParser($source);
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Invalid lexer specification: duplicated @lexToken /abc/ tag');
+        $matcherSpec->getMatcherSpec();
     }
 
     /**
-     * @throws \ReflectionException
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws ReflectionException
+     * @throws UniLexException
      */
     public function testGetMatcherSpec_TwoValidTokens_MatcherSpecGetTokenSpecListReturnsTwoElements(): void
     {
@@ -456,8 +476,8 @@ SOURCE;
     }
 
     /**
-     * @throws \ReflectionException
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws ReflectionException
+     * @throws UniLexException
      */
     public function testGetMatcherSpec_TwoValidTokens_MatcherSpecGetTokenSpecListContainsBothMatchingTokens(): void
     {
@@ -480,8 +500,8 @@ SOURCE;
     }
 
     /**
-     * @throws \ReflectionException
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws ReflectionException
+     * @throws UniLexException
      */
     public function testGetMatcherSpec_TwoTokensNotSameContext_MatcherSpecGetTokenSpecListsContainMatchingTokens(): void
     {
@@ -506,10 +526,8 @@ SOURCE;
     }
 
     /**
-     * @throws \ReflectionException
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Invalid lexer specification: invalid context name #invalid
+     * @throws ReflectionException
+     * @throws UniLexException
      */
     public function testGetMatcherSpec_InvalidContext_ThrowsException(): void
     {
@@ -522,6 +540,10 @@ SOURCE;
  */
 \$x = 0;
 SOURCE;
-        (new TokenMatcherSpecParser($source))->getMatcherSpec();
+        $matcherSpec = new TokenMatcherSpecParser($source);
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Invalid lexer specification: invalid context name #invalid');
+        $matcherSpec->getMatcherSpec();
     }
 }

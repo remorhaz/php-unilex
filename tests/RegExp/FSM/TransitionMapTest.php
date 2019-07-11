@@ -4,6 +4,7 @@ namespace Remorhaz\UniLex\Test\RegExp\FSM;
 
 use Closure;
 use PHPUnit\Framework\TestCase;
+use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\RegExp\FSM\StateMapInterface;
 use Remorhaz\UniLex\RegExp\FSM\TransitionMap;
 
@@ -14,10 +15,7 @@ class TransitionMapTest extends TestCase
 {
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @throws \ReflectionException
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Invalid transition start state: 0
+     * @throws UniLexException
      */
     public function testAddTransition_FromStateNotExists_ThrowsException(): void
     {
@@ -25,14 +23,15 @@ class TransitionMapTest extends TestCase
             return 1 == $stateId;
         };
         $stateMap = $this->createStateExistenceProvider($stateExists);
-        (new TransitionMap($stateMap))->addTransition(0, 1, true);
+        $transitionMap = new TransitionMap($stateMap);
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Invalid transition start state: 0');
+        $transitionMap->addTransition(0, 1, true);
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Invalid transition finish state: 0
-     * @throws \ReflectionException
+     * @throws UniLexException
      */
     public function testAddTransition_ToStateNotExists_ThrowsException(): void
     {
@@ -40,14 +39,15 @@ class TransitionMapTest extends TestCase
             return 1 == $stateId;
         };
         $stateMap = $this->createStateExistenceProvider($stateExists);
-        (new TransitionMap($stateMap))->addTransition(1, 0, true);
+        $transitionMap = new TransitionMap($stateMap);
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Invalid transition finish state: 0');
+        $transitionMap->addTransition(1, 0, true);
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Invalid transition start state: 0
-     * @throws \ReflectionException
+     * @throws UniLexException
      */
     public function testTransitionExists_FromStateNotExists_ThrowsException(): void
     {
@@ -55,14 +55,15 @@ class TransitionMapTest extends TestCase
             return 1 == $stateId;
         };
         $stateMap = $this->createStateExistenceProvider($stateExists);
-        (new TransitionMap($stateMap))->transitionExists(0, 1);
+        $transitionMap = new TransitionMap($stateMap);
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Invalid transition start state: 0');
+        $transitionMap->transitionExists(0, 1);
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Invalid transition finish state: 0
-     * @throws \ReflectionException
+     * @throws UniLexException
      */
     public function testTransitionExists_ToStateNotExists_ThrowsException(): void
     {
@@ -70,12 +71,15 @@ class TransitionMapTest extends TestCase
             return 1 == $stateId;
         };
         $stateMap = $this->createStateExistenceProvider($stateExists);
-        (new TransitionMap($stateMap))->transitionExists(1, 0);
+        $transitionMap = new TransitionMap($stateMap);
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Invalid transition finish state: 0');
+        $transitionMap->transitionExists(1, 0);
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @throws \ReflectionException
+     * @throws UniLexException
      */
     public function testTransitionExists_TransitionAdded_ReturnsTrue(): void
     {
@@ -90,8 +94,7 @@ class TransitionMapTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @throws \ReflectionException
+     * @throws UniLexException
      */
     public function testTransitionExists_TransitionNotAdded_ReturnsFalse(): void
     {
@@ -106,10 +109,7 @@ class TransitionMapTest extends TestCase
 
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Invalid transition start state: 0
-     * @throws \ReflectionException
+     * @throws UniLexException
      */
     public function testGetTransition_FromStateNotExists_ThrowsException(): void
     {
@@ -117,14 +117,15 @@ class TransitionMapTest extends TestCase
             return 1 == $stateId;
         };
         $stateMap = $this->createStateExistenceProvider($stateExists);
-        (new TransitionMap($stateMap))->addTransition(0, 1, true);
+        $transitionMap = new TransitionMap($stateMap);
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Invalid transition start state: 0');
+        $transitionMap->addTransition(0, 1, true);
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Invalid transition finish state: 0
-     * @throws \ReflectionException
+     * @throws UniLexException
      */
     public function testGetTransition_ToStateNotExists_ThrowsException(): void
     {
@@ -132,12 +133,15 @@ class TransitionMapTest extends TestCase
             return 1 == $stateId;
         };
         $stateMap = $this->createStateExistenceProvider($stateExists);
-        (new TransitionMap($stateMap))->addTransition(1, 0, true);
+        $transitionMap = new TransitionMap($stateMap);
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Invalid transition finish state: 0');
+        $transitionMap->addTransition(1, 0, true);
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @throws \ReflectionException
+     * @throws UniLexException
      */
     public function testGetTransition_TransitionAdded_ReturnsMatchingData(): void
     {
@@ -152,10 +156,7 @@ class TransitionMapTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Transition 1->2 is not defined
-     * @throws \ReflectionException
+     * @throws UniLexException
      */
     public function testGetTransition_TransitionNotAdded_ThrowsException(): void
     {
@@ -163,14 +164,15 @@ class TransitionMapTest extends TestCase
             return true;
         };
         $stateMap = $this->createStateExistenceProvider($stateExists);
-        (new TransitionMap($stateMap))->getTransition(1, 2);
+        $transitionMap = new TransitionMap($stateMap);
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Transition 1->2 is not defined');
+        $transitionMap->getTransition(1, 2);
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Transition 1->2 is already added
-     * @throws \ReflectionException
+     * @throws UniLexException
      */
     public function testAddTransition_TransitionAdded_ThrowsException(): void
     {
@@ -180,12 +182,14 @@ class TransitionMapTest extends TestCase
         $stateMap = $this->createStateExistenceProvider($stateExists);
         $transitionMap = new TransitionMap($stateMap);
         $transitionMap->addTransition(1, 2, 3);
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Transition 1->2 is already added');
         $transitionMap->addTransition(1, 2, 4);
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @throws \ReflectionException
+     * @throws UniLexException
      */
     public function testReplaceTransition_TransitionAdded_GetTransitionReturnsNewData(): void
     {
@@ -201,8 +205,7 @@ class TransitionMapTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @throws \ReflectionException
+     * @throws UniLexException
      */
     public function testReplaceTransition_TransitionNotAdded_GetTransitionReturnsData(): void
     {
@@ -216,9 +219,6 @@ class TransitionMapTest extends TestCase
         self::assertSame(3, $actualValue);
     }
 
-    /**
-     * @throws \ReflectionException
-     */
     public function testGetTransitionList_TransitionNotAdded_ReturnsEmptyArray(): void
     {
         $stateExists = function (): bool {
@@ -230,8 +230,7 @@ class TransitionMapTest extends TestCase
     }
 
     /**
-     * @throws \ReflectionException
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testGetTransitionList_TransitionAdded_ReturnsArrayWithTransition(): void
     {
@@ -249,7 +248,6 @@ class TransitionMapTest extends TestCase
     /**
      * @param Closure $stateExists
      * @return StateMapInterface
-     * @throws \ReflectionException
      */
     private function createStateExistenceProvider(Closure $stateExists): StateMapInterface
     {

@@ -3,6 +3,7 @@
 namespace Remorhaz\UniLex\Test\RegExp\FSM;
 
 use PHPUnit\Framework\TestCase;
+use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\RegExp\FSM\Range;
 
 /**
@@ -12,17 +13,17 @@ class RangeTest extends TestCase
 {
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Invalid range 2..1
+     * @throws UniLexException
      */
     public function testConstruct_FinishGreaterThanStart_ThrowsException(): void
     {
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Invalid range 2..1');
         new Range(2, 1);
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testGetStart_ConstructWithValue_ReturnsSameValue(): void
     {
@@ -31,7 +32,7 @@ class RangeTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testGetFinish_ConstructWithValue_ReturnsSameValue(): void
     {
@@ -40,7 +41,7 @@ class RangeTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testToString_FinishEqualsStart_ShowsOnlyStart(): void
     {
@@ -49,7 +50,7 @@ class RangeTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testToString_FinishNotEqualsStart_ShowsOnlyStart(): void
     {
@@ -61,7 +62,7 @@ class RangeTest extends TestCase
      * @param int $start
      * @param int $finish
      * @param int $char
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      * @dataProvider providerCharsInRange
      */
     public function testContainsChar_CharInRange_ReturnsTrue(int $start, int $finish, int $char): void
@@ -84,7 +85,7 @@ class RangeTest extends TestCase
      * @param int $start
      * @param int $finish
      * @param int $char
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      * @dataProvider providerCharsNotInRange
      */
     public function testContainsChar_CharNotInRange_ReturnsFalse(int $start, int $finish, int $char): void
@@ -102,7 +103,7 @@ class RangeTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testStartsBeforeStartOf_StartsBeforeStartOfValue_ReturnsTrue(): void
     {
@@ -113,7 +114,7 @@ class RangeTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testStartsBeforeStartOf_StartsAtStartOfValue_ReturnsFalse(): void
     {
@@ -124,7 +125,7 @@ class RangeTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testStartsBeforeStartOf_StartsAfterStartOfValue_ReturnsFalse(): void
     {
@@ -135,7 +136,7 @@ class RangeTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testEndsBeforeStartOf_EndsBeforeStartOfValue_ReturnsTrue(): void
     {
@@ -146,7 +147,7 @@ class RangeTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testEndsBeforeStartOf_EndsAtStartOfValue_ReturnsFalse(): void
     {
@@ -157,7 +158,7 @@ class RangeTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testEndsBeforeStartOf_EndsAfterStartOfValue_ReturnsFalse(): void
     {
@@ -168,7 +169,7 @@ class RangeTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testEndsBeforeFinishOf_EndsBeforeFinishOfValue_ReturnsTrue(): void
     {
@@ -179,7 +180,7 @@ class RangeTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testEndsBeforeFinishOf_EndsAtFinishOfValue_ReturnsFalse(): void
     {
@@ -190,7 +191,7 @@ class RangeTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testEndsBeforeFinishOf_EndsAfterFinishOfValue_ReturnsFalse(): void
     {
@@ -203,7 +204,7 @@ class RangeTest extends TestCase
     /**
      * @param array $rangeData
      * @param array $anotherRangeData
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      * @dataProvider providerIntersectingRanges
      */
     public function testIntersects_ValuesIntersect_ReturnsTrue(array $rangeData, array $anotherRangeData): void
@@ -230,7 +231,7 @@ class RangeTest extends TestCase
     /**
      * @param array $rangeData
      * @param array $anotherRangeData
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      * @dataProvider providerNotIntersectingRanges
      */
     public function testIntersects_ValuesNotIntersect_ReturnsFalse(array $rangeData, array $anotherRangeData): void
@@ -252,7 +253,7 @@ class RangeTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testCopyBeforeStartOf_PartiallyOverlappingRanges_ReturnsMatchingPartOfRange(): void
     {
@@ -263,7 +264,7 @@ class RangeTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testCopyBeforeFinishOf_PartiallyOverlappingRanges_ReturnsMatchingPartOfRange(): void
     {
@@ -274,7 +275,7 @@ class RangeTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testCopyAfterFinishOf_PartiallyOverlappingRanges_ReturnsMatchingPartOfRange(): void
     {
@@ -287,7 +288,7 @@ class RangeTest extends TestCase
     /**
      * @param array $rangeData
      * @param array $anotherRangeData
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      * @dataProvider providerStartInRange
      */
     public function testContainsStartOf_ValueWithStartInRange_ReturnsTrue(
@@ -312,7 +313,7 @@ class RangeTest extends TestCase
     /**
      * @param array $rangeData
      * @param array $anotherRangeData
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      * @dataProvider providerStartNotInRange
      */
     public function testContainsStartOf_ValueWithStartNotInRange_ReturnsFalse(
@@ -336,7 +337,7 @@ class RangeTest extends TestCase
     /**
      * @param array $rangeData
      * @param array $anotherRangeData
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      * @dataProvider providerFinishInRange
      */
     public function testContainsFinishOf_ValueWithFinishInRange_ReturnsTrue(
@@ -361,7 +362,7 @@ class RangeTest extends TestCase
     /**
      * @param array $rangeData
      * @param array $anotherRangeData
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      * @dataProvider providerFinishNotInRange
      */
     public function testContainsFinishOf_ValueWithFinishNotInRange_ReturnsFalse(
@@ -383,7 +384,7 @@ class RangeTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testAlignStart_ValidRange_RangeHasMatchingStartAndSameFinish(): void
     {
@@ -394,19 +395,20 @@ class RangeTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Invalid range 4..3
+     * @throws UniLexException
      */
     public function testAlignStart_ArgumentStartGreaterThanRangeFinish_ThrowsException(): void
     {
         $range = new Range(1, 3);
         $anotherRange = new Range(4, 5);
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Invalid range 4..3');
         $range->copyAfterStartOf($anotherRange);
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testFollows_RangeFollows_ReturnsTrue(): void
     {
@@ -419,7 +421,7 @@ class RangeTest extends TestCase
     /**
      * @param array $rangeData
      * @param array $anotherRangeData
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      * @dataProvider providerRangesNotFollow
      */
     public function testFollows_RangeNotFollows_ReturnsFalse(array $rangeData, array $anotherRangeData): void
@@ -440,7 +442,7 @@ class RangeTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testImportList_NoArguments_ReturnsEmptyArray(): void
     {
@@ -449,7 +451,7 @@ class RangeTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testImportList_DataForTwoRanges_ReturnsMatchingRanges(): void
     {
@@ -463,7 +465,7 @@ class RangeTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testExport_Constructed_ReturnsMatchingData(): void
     {

@@ -3,6 +3,7 @@
 namespace Remorhaz\UniLex\Test\RegExp\FSM;
 
 use PHPUnit\Framework\TestCase;
+use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\RegExp\FSM\StateMap;
 
 /**
@@ -12,7 +13,7 @@ class StateMapTest extends TestCase
 {
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testCreateState_Always_ReturnsPositiveInteger(): void
     {
@@ -21,7 +22,7 @@ class StateMapTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testCreateState_CalledTwice_ReturnsDifferentValues(): void
     {
@@ -32,17 +33,19 @@ class StateMapTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Null state value is not allowed
+     * @throws UniLexException
      */
     public function testCreateState_NullValue_ThrowsException(): void
     {
-        (new StateMap)->createState(null);
+        $stateMap = new StateMap;
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Null state value is not allowed');
+        $stateMap->createState(null);
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testGetValueState_CustomStateCreated_ReturnsCreatedStateId(): void
     {
@@ -53,29 +56,32 @@ class StateMapTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Value not found in state map
+     * @throws UniLexException
      */
     public function testGetValueState_NoStatesCreated_ThrowsException(): void
     {
-        (new StateMap)->getValueState(true);
+        $stateMap = new StateMap;
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Value not found in state map');
+        $stateMap->getValueState(true);
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Value not found in state map
+     * @throws UniLexException
      */
     public function testGetValueState_NoStateWithValueExists_ThrowsException(): void
     {
         $stateMap = new StateMap();
         $stateMap->createState(1);
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Value not found in state map');
         $stateMap->getValueState(2);
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testStateValueExists_StateWithValueCreated_ReturnsTrue(): void
     {
@@ -86,7 +92,7 @@ class StateMapTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testStateValueExists_StateWithAnotherValueCreated_ReturnsFalse(): void
     {
@@ -103,7 +109,7 @@ class StateMapTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testStateExists_StateCreated_ReturnsTrue(): void
     {
@@ -114,39 +120,44 @@ class StateMapTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage State 1 is undefined
+     * @throws UniLexException
      */
     public function testSetStartState_StateNotExists_ThrowsException(): void
     {
-        (new StateMap)->setStartState(1);
+        $stateMap = new StateMap;
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('State 1 is undefined');
+        $stateMap->setStartState(1);
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Start state is already set
+     * @throws UniLexException
      */
     public function testSetStartState_StartStateIsSet_ThrowsException(): void
     {
         $stateMap = new StateMap;
         $stateMap->setStartState($stateMap->createState());
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Start state is already set');
         $stateMap->setStartState($stateMap->createState());
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Start state is undefined
+     * @throws UniLexException
      */
     public function testGetStartState_StartStateIsNotSet_ThrowsException(): void
     {
-        (new StateMap)->getStartState();
+        $stateMap = new StateMap;
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Start state is undefined');
+        $stateMap->getStartState();
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testGetStartState_StartStateIsSet_ReturnsStartState(): void
     {
@@ -164,7 +175,7 @@ class StateMapTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testGetStateList_TwoStatesImported_ReturnsImportedStates(): void
     {
@@ -175,7 +186,7 @@ class StateMapTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testImportState_StateNotExists_StateExistsReturnsTrue(): void
     {
@@ -186,32 +197,33 @@ class StateMapTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage State 1 already exists
+     * @throws UniLexException
      */
     public function testImportState_StateCreated_ThrowsException(): void
     {
         $stateMap = new StateMap;
         $stateMap->createState();
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('State 1 already exists');
         $stateMap->importState(true, 1);
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage State 1 already exists
+     * @throws UniLexException
      */
     public function testImportState_StateImported_ThrowsException(): void
     {
         $stateMap = new StateMap;
-        $stateMap->createState();
         $stateMap->importState(true, 1);
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('State 1 already exists');
         $stateMap->importState(true, 1);
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testImportState_ValidState_CreateStateReturnsValuePlusOne(): void
     {
@@ -222,17 +234,19 @@ class StateMapTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage State 1 is undefined
+     * @throws UniLexException
      */
     public function testAddFinishState_StateNotExists_ThrowsException()
     {
-        (new StateMap)->addFinishState(1);
+        $stateMap = new StateMap;
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('State 1 is undefined');
+        $stateMap->addFinishState(1);
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testAddFinishState_StateExists_IsFinishStateReturnsTrue(): void
     {
@@ -244,30 +258,33 @@ class StateMapTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Finish state 1 is already set
+     * @throws UniLexException
      */
     public function testAddFinishState_StateIsFinish_ThrowsException(): void
     {
         $stateMap = new StateMap;
         $stateId = $stateMap->createState();
         $stateMap->addFinishState($stateId);
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Finish state 1 is already set');
         $stateMap->addFinishState($stateId);
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage State 1 is undefined
+     * @throws UniLexException
      */
     public function testIsFinishState_StateNotExists_ThrowsException(): void
     {
-        (new StateMap)->isFinishState(1);
+        $stateMap = new StateMap;
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('State 1 is undefined');
+        $stateMap->isFinishState(1);
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testIsFinishState_StateIsNotFinish_ReturnsFalse(): void
     {
@@ -284,7 +301,7 @@ class StateMapTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testGetFinishStateList_TwoFinishStatesAdded_ReturnsMatchingStates(): void
     {

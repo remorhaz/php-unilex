@@ -4,6 +4,7 @@ namespace Remorhaz\UniLex\Test\RegExp\FSM;
 
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\AST\Node;
+use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\RegExp\AST\NodeType;
 use Remorhaz\UniLex\RegExp\FSM\Nfa;
 use Remorhaz\UniLex\RegExp\FSM\NfaBuilder;
@@ -16,23 +17,22 @@ class NfaBuilderTest extends TestCase
 {
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Unknown AST node name: unknown
+     * @throws UniLexException
      */
     public function testOnBeginProduction_UnknownNodeName_ThrowsException(): void
     {
         $node = new Node(1, 'unknown');
         $builder = new NfaBuilder(new Nfa);
         $stack = new SymbolStack;
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Unknown AST node name: unknown');
         $builder->onBeginProduction($node, $stack);
     }
 
     /**
      * @param string $name
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessageRegExp #^AST node '.+' should not have child nodes$#
+     * @throws UniLexException
      * @dataProvider providerTerminalNodeNames
      */
     public function testOnBeginProduction_TerminalNodeWithChild_ThrowsException(string $name): void
@@ -41,14 +41,15 @@ class NfaBuilderTest extends TestCase
         $node->addChild(new Node(2, $node->getName()));
         $builder = new NfaBuilder(new Nfa);
         $stack = new SymbolStack;
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessageRegExp('#^AST node \'.+\' should not have child nodes$#');
         $builder->onBeginProduction($node, $stack);
     }
 
     /**
      * @param string $name
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessageRegExp #^AST node '.+' should have child nodes$#
+     * @throws UniLexException
      * @dataProvider providerNotTerminalNodeNames
      */
     public function testOnBeginProduction_NotTerminalNodeWithoutChildren_ThrowsException(string $name): void
@@ -56,6 +57,9 @@ class NfaBuilderTest extends TestCase
         $node = new Node(1, $name);
         $builder = new NfaBuilder(new Nfa);
         $stack = new SymbolStack;
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessageRegExp('#^AST node \'.+\' should have child nodes$#');
         $builder->onBeginProduction($node, $stack);
     }
 
@@ -70,7 +74,7 @@ class NfaBuilderTest extends TestCase
 
     /**
      * @param string $name
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      * @dataProvider providerTerminalNodeNames
      */
     public function testOnBeginProduction_TerminalNode_PushesNothingToStack(string $name): void
@@ -93,7 +97,7 @@ class NfaBuilderTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testOnStartProduction_NodeWithoutStateAttributes_NodeHasPositiveStateInAttribute(): void
     {
@@ -104,7 +108,7 @@ class NfaBuilderTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testOnStartProduction_NodeWithoutStateAttributes_NodeHasPositiveStateOutAttribute(): void
     {
@@ -115,7 +119,7 @@ class NfaBuilderTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testOnStartProduction_NodeWithoutStateAttributes_NodeHasNotEqualStateAttributes(): void
     {
@@ -126,7 +130,7 @@ class NfaBuilderTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testOnStartProduction_NodeWithoutStateAttributes_NodeStateInAttributeIsStartState(): void
     {
@@ -138,9 +142,7 @@ class NfaBuilderTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Invalid control character: 0
+     * @throws UniLexException
      */
     public function testOnFinishProduction_ControlSymbolWithInvalidCode_ThrowsException(): void
     {
@@ -152,21 +154,26 @@ class NfaBuilderTest extends TestCase
             ->setAttribute('state_in', $nfa->getStateMap()->createState())
             ->setAttribute('state_out', $nfa->getStateMap()->createState())
             ->setAttribute('in_range', false);
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Invalid control character: 0');
         $builder->onFinishProduction($node);
     }
 
     /**
      * @param string $name
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessageRegExp #^AST nodes of type '.+' are not supported yet$#
+     * @throws UniLexException
      * @dataProvider providerNotImplementedNodeNames
      */
     public function testOnBeginProduction_NotImplementedNode_ThrowsException(string $name): void
     {
         $builder = new NfaBuilder(new Nfa);
         $node = new Node(1, $name);
-        $builder->onBeginProduction($node, new SymbolStack);
+        $symbolStack = new SymbolStack;
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessageRegExp('#^AST nodes of type \'.+\' are not supported yet$#');
+        $builder->onBeginProduction($node, $symbolStack);
     }
 
     public function providerNotImplementedNodeNames(): array
@@ -178,21 +185,21 @@ class NfaBuilderTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage AST node 'repeat' should have exactly one child node
+     * @throws UniLexException
      */
     public function testOnBeginProduction_RepeatNoteWithoutChildren_ThrowsException(): void
     {
         $builder = new NfaBuilder(new Nfa);
         $node = new Node(1, NodeType::REPEAT);
-        $builder->onBeginProduction($node, new SymbolStack);
+        $symbolStack = new SymbolStack;
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('AST node \'repeat\' should have exactly one child node');
+        $builder->onBeginProduction($node, $symbolStack);
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage AST node 'repeat' should have exactly one child node
+     * @throws UniLexException
      */
     public function testOnBeginProduction_RepeatNoteWithTwoChildren_ThrowsException(): void
     {
@@ -201,13 +208,15 @@ class NfaBuilderTest extends TestCase
         $node
             ->addChild(new Node(2, NodeType::EMPTY))
             ->addChild(new Node(3, NodeType::EMPTY));
-        $builder->onBeginProduction($node, new SymbolStack);
+        $symbolStack = new SymbolStack;
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('AST node \'repeat\' should have exactly one child node');
+        $builder->onBeginProduction($node, $symbolStack);
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage AST node 'repeat' has invalid attributes: min(2) > max(1)
+     * @throws UniLexException
      */
     public function testOnBeginProduction_RepeatNoteWithFiniteMaxAttributeLessThanMinAttribute_ThrowsException(): void
     {
@@ -220,13 +229,15 @@ class NfaBuilderTest extends TestCase
             ->setAttribute('state_in', 1)
             ->setAttribute('state_out', 2)
             ->addChild(new Node(2, NodeType::EMPTY));
-        $builder->onBeginProduction($node, new SymbolStack);
+        $symbolStack = new SymbolStack;
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('AST node \'repeat\' has invalid attributes: min(2) > max(1)');
+        $builder->onBeginProduction($node, $symbolStack);
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage AST node 'symbol_range' should have exactly two child nodes
+     * @throws UniLexException
      */
     public function testOnBeginProduction_RangeNoteWithOneChild_ThrowsException(): void
     {
@@ -236,13 +247,15 @@ class NfaBuilderTest extends TestCase
             ->setAttribute('state_in', 1)
             ->setAttribute('state_out', 2)
             ->addChild(new Node(2, NodeType::SYMBOL));
-        $builder->onBeginProduction($node, new SymbolStack);
+        $symbolStack = new SymbolStack;
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('AST node \'symbol_range\' should have exactly two child nodes');
+        $builder->onBeginProduction($node, $symbolStack);
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage AST node 'symbol_range' should have exactly two child nodes
+     * @throws UniLexException
      */
     public function testOnBeginProduction_RangeNoteWithoutChildren_ThrowsException(): void
     {
@@ -251,13 +264,14 @@ class NfaBuilderTest extends TestCase
         $node
             ->setAttribute('state_in', 1)
             ->setAttribute('state_out', 2);
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('AST node \'symbol_range\' should have exactly two child nodes');
         $builder->onBeginProduction($node, new SymbolStack);
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage AST node 'symbol_range' should have exactly two child nodes
+     * @throws UniLexException
      */
     public function testOnBeginProduction_RangeNoteWithThreeChild_ThrowsException(): void
     {
@@ -269,13 +283,13 @@ class NfaBuilderTest extends TestCase
             ->addChild(new Node(2, NodeType::SYMBOL))
             ->addChild(new Node(3, NodeType::SYMBOL))
             ->addChild(new Node(4, NodeType::SYMBOL));
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('AST node \'symbol_range\' should have exactly two child nodes');
         $builder->onBeginProduction($node, new SymbolStack);
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Invalid range: start char is greater than finish char
+     * @throws UniLexException
      */
     public function testOnFinishProduction_RangeNodeWithInvalidChars_ThrowsException(): void
     {
@@ -291,13 +305,14 @@ class NfaBuilderTest extends TestCase
             ->setAttribute('in_range', false)
             ->setAttribute('state_in', 1)
             ->setAttribute('state_out', 2);
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Invalid range: start char is greater than finish char');
         $builder->onFinishProduction($rangeNode);
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Invalid range component: no matching chars
+     * @throws UniLexException
      */
     public function testOnFinishProduction_EmptyNodeInRange_ThrowsException(): void
     {
@@ -307,13 +322,14 @@ class NfaBuilderTest extends TestCase
             ->setAttribute('in_range', true)
             ->setAttribute('state_in', 1)
             ->setAttribute('state_out', 2);
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Invalid range component: no matching chars');
         $builder->onFinishProduction($node);
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Invalid range component: any char is matching
+     * @throws UniLexException
      */
     public function testOnFinishProduction_SymbolAnyNodeInRange_ThrowsException(): void
     {
@@ -323,14 +339,15 @@ class NfaBuilderTest extends TestCase
             ->setAttribute('in_range', true)
             ->setAttribute('state_in', 1)
             ->setAttribute('state_out', 2);
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Invalid range component: any char is matching');
         $builder->onFinishProduction($node);
     }
 
     /**
      * @param int $code
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessageRegExp # is not implemented yet$#
+     * @throws UniLexException
      * @dataProvider providerNotImplementedSimpleEscapeCodes
      */
     public function testOnFinishProduction_SimpleEscapeWithNotImplementedCode_ThrowsException(int $code): void
@@ -342,6 +359,9 @@ class NfaBuilderTest extends TestCase
             ->setAttribute('state_in', 1)
             ->setAttribute('state_out', 2)
             ->setAttribute('in_range', false);
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessageRegExp('# is not implemented yet$#');
         $builder->onFinishProduction($node);
     }
 

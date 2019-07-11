@@ -4,6 +4,7 @@ namespace Remorhaz\UniLex\Test\Unicode;
 
 use Exception;
 use PHPUnit\Framework\TestCase;
+use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\IO\CharBufferInterface;
 use Remorhaz\UniLex\IO\StringBuffer;
 use Remorhaz\UniLex\Lexer\Token;
@@ -34,18 +35,20 @@ class CharBufferTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Unexpected end of source buffer on preview at index 0
+     * @throws UniLexException
      */
     public function testGetSymbol_EmptySourceBuffer_ThrowsException(): void
     {
         $source = new StringBuffer('');
-        (new CharBuffer($source))->getSymbol();
+        $buffer = new CharBuffer($source);
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Unexpected end of source buffer on preview at index 0');
+        $buffer->getSymbol();
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testGetSymbol_NotEmptySourceBuffer_ReturnsSymbolCode(): void
     {
@@ -55,7 +58,7 @@ class CharBufferTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testGetSymbol_CalledTwiceOneCharInBuffer_ReturnsSameSymbolCode(): void
     {
@@ -67,18 +70,20 @@ class CharBufferTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Unexpected end of source buffer on preview at index 0
+     * @throws UniLexException
      */
     public function testNextSymbol_EmptySourceBuffer_ThrowsException(): void
     {
         $source = new StringBuffer('');
-        (new CharBuffer($source))->nextSymbol();
+        $buffer = new CharBuffer($source);
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Unexpected end of source buffer on preview at index 0');
+        $buffer->nextSymbol();
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testNextSymbol_NotEmptySourceBuffer_GetSymbolReturnsSecondCharCode(): void
     {
@@ -90,46 +95,49 @@ class CharBufferTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Unexpected end of source buffer on preview at index 1
+     * @throws UniLexException
      */
     public function testNextSymbol_CalledTwiceOneCharInBuffer_ThrowsException(): void
     {
         $source = new StringBuffer('a');
         $buffer = new CharBuffer($source);
         $buffer->nextSymbol();
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Unexpected end of source buffer on preview at index 1');
         $buffer->nextSymbol();
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Failed to match Unicode char from source buffer
+     * @throws UniLexException
      */
     public function testGetSymbol_MatchFailure_ThrowsException(): void
     {
         $source = new StringBuffer('a');
         $buffer = new CharBuffer($source);
         $buffer->setMatcher($this->createTokenMatcherThatNeverMatches());
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Failed to match Unicode char from source buffer');
         $buffer->getSymbol();
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Invalid Unicode char token
+     * @throws UniLexException
      */
     public function testGetSymbol_TokenFactoryReturnsNonSymbolToken_ThrowsException(): void
     {
         $source = new StringBuffer('a');
         $buffer = new CharBuffer($source);
         $buffer->setTokenFactory($this->createTokenFactoryThatCreatesInvalidBytesTokens());
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Invalid Unicode char token');
         $buffer->getSymbol();
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testFinishToken_AtZeroOffset_ZeroByteOffsetsInTokenAttributes(): void
     {
@@ -142,7 +150,7 @@ class CharBufferTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testFinishToken_AtZeroOffset_ZeroCharOffsetInTokenAttributes(): void
     {
@@ -154,7 +162,7 @@ class CharBufferTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testFinishToken_AtZeroOffset_ZeroCharLengthInTokenAttributes(): void
     {
@@ -166,7 +174,7 @@ class CharBufferTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testFinishToken_NextSymbolCalled_MatchingByteOffsetInTokenAttributes(): void
     {
@@ -179,7 +187,7 @@ class CharBufferTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testFinishToken_NextSymbolCalled_MatchingByteLengthInTokenAttributes(): void
     {
@@ -192,7 +200,7 @@ class CharBufferTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testFinishToken_NextSymbolCalled_MatchingCharOffsetsInTokenAttributes(): void
     {
@@ -206,7 +214,7 @@ class CharBufferTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testResetToken_NextSymbolCalled_GetTokenPositionReturnsZeroOffsets(): void
     {
@@ -220,7 +228,7 @@ class CharBufferTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testResetToken_NextSymbolCalled_FinishTokenSetsZeroByteOffsetsInTokenAttributes(): void
     {
@@ -235,7 +243,7 @@ class CharBufferTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testGetTokenAsString_NextSymbolNotCalled_ReturnsEmptyString(): void
     {
@@ -246,7 +254,7 @@ class CharBufferTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testGetTokenAsString_NextSymbolCalledTwice_ReturnsMatchingString(): void
     {
@@ -259,7 +267,7 @@ class CharBufferTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testGetTokenAsString_NextSymbolAndResetTokenCalled_ReturnsEmptyString(): void
     {
@@ -272,7 +280,7 @@ class CharBufferTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testGetTokenAsString_NextSymbolAndFinishTokenCalled_ReturnsEmptyString(): void
     {
@@ -293,7 +301,7 @@ class CharBufferTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testGetTokenAsArray_NextSymbolCalledTwice_ReturnsMatchingArray(): void
     {
@@ -306,7 +314,7 @@ class CharBufferTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testGetTokenAsArray_NextSymbolAndResetTokenCalled_ReturnsEmptyArray(): void
     {
@@ -319,7 +327,7 @@ class CharBufferTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
+     * @throws UniLexException
      */
     public function testGetTokenAsArray_NextSymbolAndFinishTokenCalled_ReturnsEmptyArray(): void
     {
@@ -332,14 +340,15 @@ class CharBufferTest extends TestCase
     }
 
     /**
-     * @throws \Remorhaz\UniLex\Exception
-     * @expectedException \Remorhaz\UniLex\Exception
-     * @expectedExceptionMessage Unread operation is not supported
+     * @throws UniLexException
      */
     public function testPrevSymbol_Always_ThrowsException(): void
     {
         $source = new StringBuffer('ab');
         $buffer = new CharBuffer($source);
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Unread operation is not supported');
         $buffer->prevSymbol();
     }
 
