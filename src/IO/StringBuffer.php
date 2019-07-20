@@ -37,7 +37,7 @@ class StringBuffer implements CharBufferInterface, TokenExtractInterface
         if ($this->previewOffset == $this->length) {
             throw new Exception("No symbol to preview at index {$this->previewOffset}");
         }
-        return ord($this->data{$this->previewOffset});
+        return ord($this->data[$this->previewOffset]);
     }
 
     /**
@@ -94,7 +94,7 @@ class StringBuffer implements CharBufferInterface, TokenExtractInterface
     {
         $result = [];
         for ($i = $this->startOffset; $i < $this->previewOffset; $i++) {
-            $result[] = ord($this->data{$i});
+            $result[] = ord($this->data[$i]);
         }
         return $result;
     }
