@@ -1,22 +1,24 @@
 language: php
 
-php:
-  - '7.3'
-  - '7.4snapshot'
-
-before_script:
-  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./build/cc-test-reporter
-  - chmod +x ./build/cc-test-reporter
-  - ./build/cc-test-reporter before-build
+matrix:
+  include:
+    - php: '7.3'
+      env: XDEBUG=YES
+    - php: '7.4'
+      env: XDEBUG=YES
 
 install:
+  - mkdir -p ./build/logs
   - composer self-update
   - composer install --prefer-source --no-interaction
-  - vendor/bin/phing
+  - composer build
 
 script:
   - vendor/bin/phpcs -sp --report-junit=build/logs/phpcs.xml
-  - vendor/bin/phpunit --coverage-clover build/logs/clover.xml
+  - if [ "$XDEBUG" == "YES" ]; then vendor/bin/phpunit --coverage-clover=build/logs/clover.xml --coverage-xml=build/logs/coverage-xml --log-junit=build/logs/junit.xml; else vendor/bin/phpunit; fi
+  - if [ "$XDEBUG" == "YES" ]; then vendor/bin/infection --coverage=build/logs --threads=4  --no-progress; fi
 
-after_script:
-  - ./build/cc-test-reporter after-build --id $CODECLIMATE_REPO_TOKEN --exit-code $TRAVIS_TEST_RESULT
+after_success:
+  - if [ "$XDEBUG" == "YES" ]; then bash <(curl -s https://codecov.io/bash -s "build/logs"); fi
+  - if [ "$XDEBUG" == "YES" ]; then wget https://scrutinizer-ci.com/ocular.phar; fi
+  - if [ "$XDEBUG" == "YES" ]; then php ocular.phar code-coverage:upload --access-token=$SCRUTINIZER_TOKEN --format=php-clover build/logs/clover.xml; fi

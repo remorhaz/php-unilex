@@ -160,7 +160,7 @@ class GrammarLoaderTest extends TestCase
     public function testLoadFile_FileNotExists_ThrowsException(): void
     {
         $this->expectException(UniLexException::class);
-        $this->expectExceptionMessageRegExp('#^Config file .+NotExisting\.php not found$#');
+        $this->expectExceptionMessageMatches('#^Config file .+NotExisting\.php not found$#');
         GrammarLoader::loadFile(__DIR__ . "/NotExisting.php");
     }
 }

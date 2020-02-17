@@ -282,7 +282,6 @@ class TokenMatcherSpecParser
             return;
         }
         $tagValue = $docBlock->getTagsByName(self::TAG_LEX_TOKEN)[0];
-        /** @noinspection HtmlUnknownTag */
         $matchResult = preg_match('#^/(?P<regexp>.*)/$#', $tagValue, $matches);
         if (1 !== $matchResult) {
             throw new Exception("Invalid lexer specification: regular expression is not framed by \"/\"");

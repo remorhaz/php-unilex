@@ -21,7 +21,7 @@ class TokenMatcherSpecParserTest extends TestCase
     public function testLoadFromFile_FileNotExists_ThrowsException(): void
     {
         $this->expectException(UniLexException::class);
-        $this->expectExceptionMessageRegExp(
+        $this->expectExceptionMessageMatches(
             '#^Failed to read lexer specification from file .+/NotExists\.php$#'
         );
         TokenMatcherSpecParser::loadFromFile(__DIR__ . "/lex/NotExists.php");

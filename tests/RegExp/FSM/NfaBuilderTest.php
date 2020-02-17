@@ -43,7 +43,7 @@ class NfaBuilderTest extends TestCase
         $stack = new SymbolStack;
 
         $this->expectException(UniLexException::class);
-        $this->expectExceptionMessageRegExp('#^AST node \'.+\' should not have child nodes$#');
+        $this->expectExceptionMessageMatches('#^AST node \'.+\' should not have child nodes$#');
         $builder->onBeginProduction($node, $stack);
     }
 
@@ -59,7 +59,7 @@ class NfaBuilderTest extends TestCase
         $stack = new SymbolStack;
 
         $this->expectException(UniLexException::class);
-        $this->expectExceptionMessageRegExp('#^AST node \'.+\' should have child nodes$#');
+        $this->expectExceptionMessageMatches('#^AST node \'.+\' should have child nodes$#');
         $builder->onBeginProduction($node, $stack);
     }
 
@@ -172,7 +172,7 @@ class NfaBuilderTest extends TestCase
         $symbolStack = new SymbolStack;
 
         $this->expectException(UniLexException::class);
-        $this->expectExceptionMessageRegExp('#^AST nodes of type \'.+\' are not supported yet$#');
+        $this->expectExceptionMessageMatches('#^AST nodes of type \'.+\' are not supported yet$#');
         $builder->onBeginProduction($node, $symbolStack);
     }
 
@@ -361,7 +361,7 @@ class NfaBuilderTest extends TestCase
             ->setAttribute('in_range', false);
 
         $this->expectException(UniLexException::class);
-        $this->expectExceptionMessageRegExp('# is not implemented yet$#');
+        $this->expectExceptionMessageMatches('# is not implemented yet$#');
         $builder->onFinishProduction($node);
     }
 
