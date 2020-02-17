@@ -2,6 +2,10 @@
 
 [![Latest Stable Version](https://poser.pugx.org/remorhaz/php-unilex/version)](https://packagist.org/packages/remorhaz/php-unilex)
 [![Build Status](https://travis-ci.org/remorhaz/php-unilex.svg?branch=master)](https://travis-ci.org/remorhaz/php-unilex)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/remorhaz/php-unilex/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/remorhaz/php-unilex/?branch=master)
+[![codecov](https://codecov.io/gh/remorhaz/php-unilex/branch/master/graph/badge.svg)](https://codecov.io/gh/remorhaz/php-unilex)
+[![Infection MSI](https://badge.stryker-mutator.io/github.com/remorhaz/php-json-pointer/master)](https://infection.github.io)
+[![Total Downloads](https://poser.pugx.org/remorhaz/php-unilex/downloads)](https://packagist.org/packages/remorhaz/php-unilex)
 [![License](https://poser.pugx.org/remorhaz/php-unilex/license)](https://packagist.org/packages/remorhaz/php-unilex)
 
 UniLex is lexical analyzer generator (similar to `lex` and `flex`) with Unicode support.
