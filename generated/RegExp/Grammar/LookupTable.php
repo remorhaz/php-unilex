@@ -6,7 +6,7 @@
  * Run following command to update this file:
  *     vendor/bin/phing regexp-lookup-table
  *
- * Phing version: 2.16.1
+ * Phing version: 2.16.3
  */
 
 use Remorhaz\UniLex\RegExp\Grammar\SymbolType;
