@@ -58,7 +58,7 @@ class Interpreter
         $tokenReader = new TokenReader($buffer, new TokenMatcher, new TokenFactory($grammar));
         $translator = new TranslationSchemeApplier(new TranslationScheme($runtime));
         $parser = new Parser($grammar, $tokenReader, $translator);
-        $parser->loadLookupTable(__DIR__ . "/../../generated/Brainfuck/Grammar/LookupTable.php");
+        $parser->loadLookupTable(__DIR__ . "/Grammar/LookupTable.php");
         return $parser;
     }
 }

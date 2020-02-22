@@ -7,6 +7,6 @@ abstract class ConfigFile
 
     public static function getPath(): string
     {
-        return realpath(__DIR__ . "/Config.php");
+        return __DIR__ . "/Config.php";
     }
 }

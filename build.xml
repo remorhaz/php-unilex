@@ -29,7 +29,7 @@
             symbolClassName="Remorhaz\UniLex\Example\Brainfuck\Grammar\SymbolType"
             tokenClassName="Remorhaz\UniLex\Example\Brainfuck\Grammar\TokenType"
             configFile="${application.startdir}/examples/src/Brainfuck/Grammar/Config.php"
-            destFile="${application.startdir}/examples/generated/Brainfuck/Grammar/LookupTable.php" />
+            destFile="${application.startdir}/examples/src/Brainfuck/Grammar/LookupTable.php" />
     </target>
 
     <target name="token-matchers"
@@ -45,7 +45,7 @@
         <build-lexer
             description="Brainfuck token matcher."
             sourceFile="${application.startdir}/examples/spec/Brainfuck/LexerSpec.php"
-            destFile="${application.startdir}/examples/generated/Brainfuck/Grammar/TokenMatcher.php" />
+            destFile="${application.startdir}/examples/src/Brainfuck/Grammar/TokenMatcher.php" />
     </target>
     <target name="unicode-utf8-matcher">
         <build-lexer
