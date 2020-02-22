@@ -21,7 +21,7 @@
             symbolClassName="Remorhaz\UniLex\RegExp\Grammar\SymbolType"
             tokenClassName="Remorhaz\UniLex\RegExp\Grammar\TokenType"
             configFile="${application.startdir}/src/RegExp/Grammar/Config.php"
-            destFile="${application.startdir}/generated/RegExp/Grammar/LookupTable.php" />
+            destFile="${application.startdir}/src/RegExp/Grammar/LookupTable.php" />
     </target>
     <target name="example-brainfuck-table" description="Build Brainfuck LL(1) parser lookup table">
         <build-ll1-lookup-table
@@ -39,7 +39,7 @@
         <build-lexer
             description="RegExp token matcher."
             sourceFile="${application.startdir}/spec/RegExp/LexerSpec.php"
-            destFile="${application.startdir}/generated/RegExp/Grammar/TokenMatcher.php" />
+            destFile="${application.startdir}/src/RegExp/Grammar/TokenMatcher.php" />
     </target>
     <target name="example-brainfuck-matcher" description="Example Brainfuck token matcher">
         <build-lexer
@@ -51,6 +51,6 @@
         <build-lexer
             description="Unicode UTF-8 token matcher."
             sourceFile="${application.startdir}/spec/Unicode/Utf8LexerSpec.php"
-            destFile="${application.startdir}/generated/Unicode/Grammar/Utf8TokenMatcher.php" />
+            destFile="${application.startdir}/src/Unicode/Grammar/Utf8TokenMatcher.php" />
     </target>
 </project>
