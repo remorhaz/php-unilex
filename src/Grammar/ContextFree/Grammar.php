@@ -83,7 +83,7 @@ class Grammar implements GrammarInterface
     {
         if (isset($this->tokenMap[$symbolId])) {
             return true;
-        };
+        }
         if (isset($this->productionMap[$symbolId])) {
             return false;
         }
