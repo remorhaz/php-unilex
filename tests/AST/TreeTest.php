@@ -17,7 +17,7 @@ class TreeTest extends TestCase
      */
     public function testGetNode_NodeNotExists_ThrowsException(): void
     {
-        $tree = new Tree;
+        $tree = new Tree();
 
         $this->expectException(UniLexException::class);
         $this->expectExceptionMessage('Node 0 is not defined in syntax tree');
@@ -29,7 +29,7 @@ class TreeTest extends TestCase
      */
     public function testGetNode_NodeExists_ReturnsMatchingNode(): void
     {
-        $tree = new Tree;
+        $tree = new Tree();
         $node = $tree->createNode('a');
         $actualValue = $tree->getNode($node->getId());
         self::assertSame($node, $actualValue);
@@ -40,7 +40,7 @@ class TreeTest extends TestCase
      */
     public function testGetRootNode_RootNodeNotSet_ThrowsException(): void
     {
-        $tree = new Tree;
+        $tree = new Tree();
 
         $this->expectException(UniLexException::class);
         $this->expectExceptionMessage('Root node of syntax tree is undefined');
@@ -52,7 +52,7 @@ class TreeTest extends TestCase
      */
     public function testSetRootNode_RootNodeNotSet_GetRootNodeReturnsMatchingNode(): void
     {
-        $tree = new Tree;
+        $tree = new Tree();
         $node = $tree->createNode('a');
         $tree->setRootNode($node);
         $actualValue = $tree->getRootNode();
@@ -64,7 +64,7 @@ class TreeTest extends TestCase
      */
     public function testSetRootNode_RootNodeSet_ThrowsException(): void
     {
-        $tree = new Tree;
+        $tree = new Tree();
         $node = $tree->createNode('a');
         $tree->setRootNode($node);
 

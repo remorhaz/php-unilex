@@ -31,7 +31,7 @@ class ParsedFsmTest extends TestCase
         array $expectedSymbolTable
     ): void {
         $buffer = CharBufferFactory::createFromString($text);
-        $tree = new Tree;
+        $tree = new Tree();
         ParserFactory::createFromBuffer($tree, $buffer)->run();
         $nfa = NfaBuilder::fromTree($tree);
         $actualSymbolTransitionList = $nfa->getSymbolTransitionMap()->getTransitionList();

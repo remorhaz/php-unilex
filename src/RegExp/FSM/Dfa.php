@@ -16,8 +16,9 @@ class Dfa
     public function getStateMap(): StateMap
     {
         if (!isset($this->stateMap)) {
-            $this->stateMap = new StateMap;
+            $this->stateMap = new StateMap();
         }
+
         return $this->stateMap;
     }
 
@@ -26,14 +27,16 @@ class Dfa
         if (!isset($this->transitionMap)) {
             $this->transitionMap = new TransitionMap($this->getStateMap());
         }
+
         return $this->transitionMap;
     }
 
     public function getSymbolTable(): SymbolTable
     {
         if (!isset($this->symbolTable)) {
-            $this->symbolTable = new SymbolTable;
+            $this->symbolTable = new SymbolTable();
         }
+
         return $this->symbolTable;
     }
 

@@ -9,7 +9,7 @@ class Grammar implements GrammarInterface
 
     private $tokenMap = [];
 
-    private $productionMap =[];
+    private $productionMap = [];
 
     private $rootSymbol;
 
@@ -123,6 +123,7 @@ class Grammar implements GrammarInterface
         if (!in_array($tokenId, $this->tokenMap)) {
             throw new Exception("Token {$tokenId} is not defined");
         }
+
         return $this->getToken($symbolId) == $tokenId;
     }
 
@@ -136,6 +137,7 @@ class Grammar implements GrammarInterface
         if (!$this->isTerminal($symbolId)) {
             throw new Exception("Symbol {$symbolId} is not defined as terminal");
         }
+
         return $this->tokenMap[$symbolId];
     }
 
@@ -159,6 +161,7 @@ class Grammar implements GrammarInterface
         if ($this->isTerminal($symbolId)) {
             throw new Exception("Symbol {$symbolId} is terminal and can't have productions");
         }
+
         return $this->productionMap[$symbolId];
     }
 
@@ -177,6 +180,7 @@ class Grammar implements GrammarInterface
         if (!isset($productionList[$productionIndex])) {
             throw new Exception("Symbol {$symbolId} has no production at index {$productionIndex}");
         }
+
         return $productionList[$productionIndex];
     }
 
@@ -192,6 +196,7 @@ class Grammar implements GrammarInterface
                 $productionList[] = $production;
             }
         }
+
         return $productionList;
     }
 }

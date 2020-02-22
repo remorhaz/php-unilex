@@ -18,7 +18,7 @@ class RangeSetCalcTest extends TestCase
      */
     public function testEquals_EmptyRangeSets_ReturnsTrue(): void
     {
-        $actualValue = (new RangeSetCalc)->equals(new RangeSet, new RangeSet);
+        $actualValue = (new RangeSetCalc())->equals(new RangeSet(), new RangeSet());
         self::assertTrue($actualValue);
     }
 
@@ -29,7 +29,7 @@ class RangeSetCalcTest extends TestCase
     {
         $rangeSet = RangeSet::import([1, 2], [4, 4]);
         $anotherRangeSet = RangeSet::import([1, 2], [4, 4]);
-        $actualValue = (new RangeSetCalc)->equals($rangeSet, $anotherRangeSet);
+        $actualValue = (new RangeSetCalc())->equals($rangeSet, $anotherRangeSet);
         self::assertTrue($actualValue);
     }
 
@@ -45,7 +45,7 @@ class RangeSetCalcTest extends TestCase
     ): void {
         $rangeSet = RangeSet::import(...$rangeSetData);
         $anotherRangeSet = RangeSet::import(...$anotherRangeSetData);
-        $actualValue = (new RangeSetCalc)->equals($rangeSet, $anotherRangeSet);
+        $actualValue = (new RangeSetCalc())->equals($rangeSet, $anotherRangeSet);
         self::assertFalse($actualValue);
     }
 
@@ -70,7 +70,7 @@ class RangeSetCalcTest extends TestCase
         array $anotherRangeSet,
         array $expectedRangeSet
     ): void {
-        $actualValue = (new RangeSetCalc)
+        $actualValue = (new RangeSetCalc())
             ->and(RangeSet::import(...$rangeSet), RangeSet::import(...$anotherRangeSet))
             ->export();
         self::assertEquals($expectedRangeSet, $actualValue);
@@ -107,7 +107,7 @@ class RangeSetCalcTest extends TestCase
         array $anotherRangeSet,
         array $expectedRangeSet
     ): void {
-        $actualValue = (new RangeSetCalc)
+        $actualValue = (new RangeSetCalc())
             ->xor(RangeSet::import(...$rangeSet), RangeSet::import(...$anotherRangeSet))
             ->export();
         self::assertEquals($expectedRangeSet, $actualValue);

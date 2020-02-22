@@ -18,7 +18,7 @@ class Translator
     {
         $this->tree = $tree;
         $this->listener = $listener;
-        $this->stack = new SymbolStack;
+        $this->stack = new SymbolStack();
     }
 
     /**

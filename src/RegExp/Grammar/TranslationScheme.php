@@ -25,7 +25,7 @@ class TranslationScheme implements TranslationSchemeInterface
         $this->tree = $tree;
         $this->symbolScheme = new SymbolTranslationScheme($tree);
         $this->productionScheme = new ProductionTranslationScheme($tree);
-        $this->tokenScheme = new TokenTranslationScheme;
+        $this->tokenScheme = new TokenTranslationScheme();
     }
 
     /**

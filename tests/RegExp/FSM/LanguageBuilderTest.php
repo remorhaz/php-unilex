@@ -23,7 +23,7 @@ class LanguageBuilderTest extends TestCase
      */
     public function testFromNfa_EmptyNfa_AddTransitionAddsSymbolToNfaSymbolTable(): void
     {
-        $nfa = new Nfa;
+        $nfa = new Nfa();
         $stateIn = $nfa->getStateMap()->createState();
         $stateOut = $nfa->getStateMap()->createState();
         LanguageBuilder::forNfa($nfa)->addTransition($stateIn, $stateOut, new Range(1, 2));
@@ -37,7 +37,7 @@ class LanguageBuilderTest extends TestCase
      */
     public function testFromNfa_EmptyNfa_AddTransitionAddsTransitionToNfaSymbolTransitionMap(): void
     {
-        $nfa = new Nfa;
+        $nfa = new Nfa();
         $stateIn = $nfa->getStateMap()->createState();
         $stateOut = $nfa->getStateMap()->createState();
         LanguageBuilder::forNfa($nfa)->addTransition($stateIn, $stateOut, new Range(1, 2));
@@ -51,7 +51,7 @@ class LanguageBuilderTest extends TestCase
      */
     public function testAddTransition_NoTransitionsAdded_TransitionMapContainsMatchingList(): void
     {
-        $symbolTable = new SymbolTable;
+        $symbolTable = new SymbolTable();
         $transitionMap = new TransitionMap($this->createStateMap());
         $languageBuilder = new LanguageBuilder($symbolTable, $transitionMap);
         $languageBuilder->addTransition(1, 2, new Range(1, 2));
@@ -76,7 +76,7 @@ class LanguageBuilderTest extends TestCase
         array $secondRangeData,
         array $expectedValue
     ): void {
-        $symbolTable = new SymbolTable;
+        $symbolTable = new SymbolTable();
         $transitionMap = new TransitionMap($this->createStateMap());
         $languageBuilder = new LanguageBuilder($symbolTable, $transitionMap);
         [$stateIn, $stateOut] = $firstTransitionData;
@@ -112,7 +112,7 @@ class LanguageBuilderTest extends TestCase
         array $secondRangeData,
         array $expectedValue
     ): void {
-        $symbolTable = new SymbolTable;
+        $symbolTable = new SymbolTable();
         $transitionMap = new TransitionMap($this->createStateMap());
         $languageBuilder = new LanguageBuilder($symbolTable, $transitionMap);
         [$stateIn, $stateOut] = $firstTransitionData;

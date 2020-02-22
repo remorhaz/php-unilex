@@ -22,8 +22,8 @@ class NfaBuilderTest extends TestCase
     public function testOnBeginProduction_UnknownNodeName_ThrowsException(): void
     {
         $node = new Node(1, 'unknown');
-        $builder = new NfaBuilder(new Nfa);
-        $stack = new SymbolStack;
+        $builder = new NfaBuilder(new Nfa());
+        $stack = new SymbolStack();
 
         $this->expectException(UniLexException::class);
         $this->expectExceptionMessage('Unknown AST node name: unknown');
@@ -39,8 +39,8 @@ class NfaBuilderTest extends TestCase
     {
         $node = new Node(1, $name);
         $node->addChild(new Node(2, $node->getName()));
-        $builder = new NfaBuilder(new Nfa);
-        $stack = new SymbolStack;
+        $builder = new NfaBuilder(new Nfa());
+        $stack = new SymbolStack();
 
         $this->expectException(UniLexException::class);
         $this->expectExceptionMessageMatches('#^AST node \'.+\' should not have child nodes$#');
@@ -55,8 +55,8 @@ class NfaBuilderTest extends TestCase
     public function testOnBeginProduction_NotTerminalNodeWithoutChildren_ThrowsException(string $name): void
     {
         $node = new Node(1, $name);
-        $builder = new NfaBuilder(new Nfa);
-        $stack = new SymbolStack;
+        $builder = new NfaBuilder(new Nfa());
+        $stack = new SymbolStack();
 
         $this->expectException(UniLexException::class);
         $this->expectExceptionMessageMatches('#^AST node \'.+\' should have child nodes$#');
@@ -80,8 +80,8 @@ class NfaBuilderTest extends TestCase
     public function testOnBeginProduction_TerminalNode_PushesNothingToStack(string $name): void
     {
         $node = new Node(1, $name);
-        $builder = new NfaBuilder(new Nfa);
-        $stack = new SymbolStack;
+        $builder = new NfaBuilder(new Nfa());
+        $stack = new SymbolStack();
         $builder->onBeginProduction($node, $stack);
         $actualValue = $stack->isEmpty();
         self::assertTrue($actualValue);
@@ -101,7 +101,7 @@ class NfaBuilderTest extends TestCase
      */
     public function testOnStartProduction_NodeWithoutStateAttributes_NodeHasPositiveStateInAttribute(): void
     {
-        $builder = new NfaBuilder(new Nfa);
+        $builder = new NfaBuilder(new Nfa());
         $node = new Node(1, NodeType::SYMBOL);
         $builder->onStart($node);
         self::assertGreaterThan(0, $node->getAttribute('state_in'));
@@ -112,7 +112,7 @@ class NfaBuilderTest extends TestCase
      */
     public function testOnStartProduction_NodeWithoutStateAttributes_NodeHasPositiveStateOutAttribute(): void
     {
-        $builder = new NfaBuilder(new Nfa);
+        $builder = new NfaBuilder(new Nfa());
         $node = new Node(1, NodeType::SYMBOL);
         $builder->onStart($node);
         self::assertGreaterThan(0, $node->getAttribute('state_out'));
@@ -123,7 +123,7 @@ class NfaBuilderTest extends TestCase
      */
     public function testOnStartProduction_NodeWithoutStateAttributes_NodeHasNotEqualStateAttributes(): void
     {
-        $builder = new NfaBuilder(new Nfa);
+        $builder = new NfaBuilder(new Nfa());
         $node = new Node(1, NodeType::SYMBOL);
         $builder->onStart($node);
         self::assertNotEquals($node->getAttribute('state_in'), $node->getAttribute('state_out'));
@@ -134,7 +134,7 @@ class NfaBuilderTest extends TestCase
      */
     public function testOnStartProduction_NodeWithoutStateAttributes_NodeStateInAttributeIsStartState(): void
     {
-        $nfa = new Nfa;
+        $nfa = new Nfa();
         $builder = new NfaBuilder($nfa);
         $node = new Node(1, NodeType::SYMBOL);
         $builder->onStart($node);
@@ -146,7 +146,7 @@ class NfaBuilderTest extends TestCase
      */
     public function testOnFinishProduction_ControlSymbolWithInvalidCode_ThrowsException(): void
     {
-        $nfa = new Nfa;
+        $nfa = new Nfa();
         $builder = new NfaBuilder($nfa);
         $node = new Node(1, NodeType::SYMBOL_CTL);
         $node
@@ -167,9 +167,9 @@ class NfaBuilderTest extends TestCase
      */
     public function testOnBeginProduction_NotImplementedNode_ThrowsException(string $name): void
     {
-        $builder = new NfaBuilder(new Nfa);
+        $builder = new NfaBuilder(new Nfa());
         $node = new Node(1, $name);
-        $symbolStack = new SymbolStack;
+        $symbolStack = new SymbolStack();
 
         $this->expectException(UniLexException::class);
         $this->expectExceptionMessageMatches('#^AST nodes of type \'.+\' are not supported yet$#');
@@ -189,9 +189,9 @@ class NfaBuilderTest extends TestCase
      */
     public function testOnBeginProduction_RepeatNoteWithoutChildren_ThrowsException(): void
     {
-        $builder = new NfaBuilder(new Nfa);
+        $builder = new NfaBuilder(new Nfa());
         $node = new Node(1, NodeType::REPEAT);
-        $symbolStack = new SymbolStack;
+        $symbolStack = new SymbolStack();
 
         $this->expectException(UniLexException::class);
         $this->expectExceptionMessage('AST node \'repeat\' should have exactly one child node');
@@ -203,12 +203,12 @@ class NfaBuilderTest extends TestCase
      */
     public function testOnBeginProduction_RepeatNoteWithTwoChildren_ThrowsException(): void
     {
-        $builder = new NfaBuilder(new Nfa);
+        $builder = new NfaBuilder(new Nfa());
         $node = new Node(1, NodeType::REPEAT);
         $node
             ->addChild(new Node(2, NodeType::EMPTY))
             ->addChild(new Node(3, NodeType::EMPTY));
-        $symbolStack = new SymbolStack;
+        $symbolStack = new SymbolStack();
 
         $this->expectException(UniLexException::class);
         $this->expectExceptionMessage('AST node \'repeat\' should have exactly one child node');
@@ -220,7 +220,7 @@ class NfaBuilderTest extends TestCase
      */
     public function testOnBeginProduction_RepeatNoteWithFiniteMaxAttributeLessThanMinAttribute_ThrowsException(): void
     {
-        $builder = new NfaBuilder(new Nfa);
+        $builder = new NfaBuilder(new Nfa());
         $node = new Node(1, NodeType::REPEAT);
         $node
             ->setAttribute('min', 2)
@@ -229,7 +229,7 @@ class NfaBuilderTest extends TestCase
             ->setAttribute('state_in', 1)
             ->setAttribute('state_out', 2)
             ->addChild(new Node(2, NodeType::EMPTY));
-        $symbolStack = new SymbolStack;
+        $symbolStack = new SymbolStack();
 
         $this->expectException(UniLexException::class);
         $this->expectExceptionMessage('AST node \'repeat\' has invalid attributes: min(2) > max(1)');
@@ -241,13 +241,13 @@ class NfaBuilderTest extends TestCase
      */
     public function testOnBeginProduction_RangeNoteWithOneChild_ThrowsException(): void
     {
-        $builder = new NfaBuilder(new Nfa);
+        $builder = new NfaBuilder(new Nfa());
         $node = new Node(1, NodeType::SYMBOL_RANGE);
         $node
             ->setAttribute('state_in', 1)
             ->setAttribute('state_out', 2)
             ->addChild(new Node(2, NodeType::SYMBOL));
-        $symbolStack = new SymbolStack;
+        $symbolStack = new SymbolStack();
 
         $this->expectException(UniLexException::class);
         $this->expectExceptionMessage('AST node \'symbol_range\' should have exactly two child nodes');
@@ -259,7 +259,7 @@ class NfaBuilderTest extends TestCase
      */
     public function testOnBeginProduction_RangeNoteWithoutChildren_ThrowsException(): void
     {
-        $builder = new NfaBuilder(new Nfa);
+        $builder = new NfaBuilder(new Nfa());
         $node = new Node(1, NodeType::SYMBOL_RANGE);
         $node
             ->setAttribute('state_in', 1)
@@ -267,7 +267,7 @@ class NfaBuilderTest extends TestCase
 
         $this->expectException(UniLexException::class);
         $this->expectExceptionMessage('AST node \'symbol_range\' should have exactly two child nodes');
-        $builder->onBeginProduction($node, new SymbolStack);
+        $builder->onBeginProduction($node, new SymbolStack());
     }
 
     /**
@@ -275,7 +275,7 @@ class NfaBuilderTest extends TestCase
      */
     public function testOnBeginProduction_RangeNoteWithThreeChild_ThrowsException(): void
     {
-        $builder = new NfaBuilder(new Nfa);
+        $builder = new NfaBuilder(new Nfa());
         $node = new Node(1, NodeType::SYMBOL_RANGE);
         $node
             ->setAttribute('state_in', 1)
@@ -285,7 +285,7 @@ class NfaBuilderTest extends TestCase
             ->addChild(new Node(4, NodeType::SYMBOL));
         $this->expectException(UniLexException::class);
         $this->expectExceptionMessage('AST node \'symbol_range\' should have exactly two child nodes');
-        $builder->onBeginProduction($node, new SymbolStack);
+        $builder->onBeginProduction($node, new SymbolStack());
     }
 
     /**
@@ -293,7 +293,7 @@ class NfaBuilderTest extends TestCase
      */
     public function testOnFinishProduction_RangeNodeWithInvalidChars_ThrowsException(): void
     {
-        $builder = new NfaBuilder(new Nfa);
+        $builder = new NfaBuilder(new Nfa());
         $rangeNode = new Node(1, NodeType::SYMBOL_RANGE);
         $startCharNode = new Node(2, NodeType::SYMBOL);
         $startCharNode->setAttribute('range_code', 2);
@@ -316,7 +316,7 @@ class NfaBuilderTest extends TestCase
      */
     public function testOnFinishProduction_EmptyNodeInRange_ThrowsException(): void
     {
-        $builder = new NfaBuilder(new Nfa);
+        $builder = new NfaBuilder(new Nfa());
         $node = new Node(1, NodeType::EMPTY);
         $node
             ->setAttribute('in_range', true)
@@ -333,7 +333,7 @@ class NfaBuilderTest extends TestCase
      */
     public function testOnFinishProduction_SymbolAnyNodeInRange_ThrowsException(): void
     {
-        $builder = new NfaBuilder(new Nfa);
+        $builder = new NfaBuilder(new Nfa());
         $node = new Node(1, NodeType::SYMBOL_ANY);
         $node
             ->setAttribute('in_range', true)
@@ -352,7 +352,7 @@ class NfaBuilderTest extends TestCase
      */
     public function testOnFinishProduction_SimpleEscapeWithNotImplementedCode_ThrowsException(int $code): void
     {
-        $builder = new NfaBuilder(new Nfa);
+        $builder = new NfaBuilder(new Nfa());
         $node = new Node(1, NodeType::ESC_SIMPLE);
         $node
             ->setAttribute('code', $code)

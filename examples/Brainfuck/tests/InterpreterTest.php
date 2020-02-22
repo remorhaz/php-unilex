@@ -23,7 +23,7 @@ class InterpreterTest extends TestCase
             "++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++" .
             ".>+.+++++++..+++.>++.<<+++++++++++++++.>.+++." .
             "------.--------.>+.>.";
-        $interpreter = new Interpreter;
+        $interpreter = new Interpreter();
         $interpreter->exec($code);
         $actualValue = $interpreter->getOutput();
         self::assertSame("Hello World!\n", $actualValue);
@@ -34,7 +34,7 @@ class InterpreterTest extends TestCase
      */
     public function testGetOutput_NoExecCalled_ThrowsException(): void
     {
-        $interpreter = new Interpreter;
+        $interpreter = new Interpreter();
 
         $this->expectException(BrainfuckException::class);
         $this->expectExceptionMessage('Output is not defined');

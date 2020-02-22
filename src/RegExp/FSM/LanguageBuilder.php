@@ -23,14 +23,14 @@ class LanguageBuilder
     }
 
     /**
-     * @param int $stateIn
-     * @param int $stateOut
+     * @param int   $stateIn
+     * @param int   $stateOut
      * @param Range ...$ranges
      * @throws UniLexException
      */
     public function addTransition(int $stateIn, int $stateOut, Range ...$ranges): void
     {
-        $rangeSetCalc = new RangeSetCalc;
+        $rangeSetCalc = new RangeSetCalc();
         $newRangeSet = new RangeSet(...$ranges);
         $symbolList = [];
         $shouldAddNewSymbol = true;
@@ -71,6 +71,7 @@ class LanguageBuilder
             if (in_array($symbolId, $symbolList)) {
                 $symbolList[] = $symbolToAdd;
             }
+
             return $symbolList;
         };
         $this->transitionMap->replaceEachTransition($addSymbol);

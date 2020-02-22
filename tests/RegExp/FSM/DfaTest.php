@@ -15,7 +15,7 @@ class DfaTest extends TestCase
 
     public function testGetStateMap_CalledTwice_ReturnsSameInstance(): void
     {
-        $dfa = new Dfa;
+        $dfa = new Dfa();
         $stateMap = $dfa->getStateMap();
         $anotherStateMap = $dfa->getStateMap();
         self::assertSame($stateMap, $anotherStateMap);
@@ -23,7 +23,7 @@ class DfaTest extends TestCase
 
     public function testGetTransitionMap_CalledTwice_ReturnsSameInstance(): void
     {
-        $dfa = new Dfa;
+        $dfa = new Dfa();
         $transitionMap = $dfa->getTransitionMap();
         $anotherTransitionMap = $dfa->getTransitionMap();
         self::assertSame($transitionMap, $anotherTransitionMap);
@@ -31,7 +31,7 @@ class DfaTest extends TestCase
 
     public function testGetSymbolTable_CalledTwice_ReturnsSameInstance(): void
     {
-        $dfa = new Dfa;
+        $dfa = new Dfa();
         $symbolTable = $dfa->getSymbolTable();
         $anotherSymbolTable = $dfa->getSymbolTable();
         self::assertSame($symbolTable, $anotherSymbolTable);
@@ -42,9 +42,9 @@ class DfaTest extends TestCase
      */
     public function testSetSymbolTable_CalledAfterGetSymbolTable_ThrowsException(): void
     {
-        $dfa = new Dfa;
+        $dfa = new Dfa();
         $dfa->getSymbolTable();
-        $newSymbolTable = new SymbolTable;
+        $newSymbolTable = new SymbolTable();
 
         $this->expectException(UniLexException::class);
         $this->expectExceptionMessage('Symbol table already exists in DFA');
@@ -56,8 +56,8 @@ class DfaTest extends TestCase
      */
     public function testGetSymbolTable_SetSymbolTableCalled_ReturnsSameInstance(): void
     {
-        $dfa = new Dfa;
-        $symbolTable = new SymbolTable;
+        $dfa = new Dfa();
+        $symbolTable = new SymbolTable();
         $dfa->setSymbolTable($symbolTable);
         $actualValue = $dfa->getSymbolTable();
         self::assertSame($symbolTable, $actualValue);

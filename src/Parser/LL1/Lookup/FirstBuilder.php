@@ -22,7 +22,7 @@ class FirstBuilder
     public function getFirst(): FirstInterface
     {
         if (!isset($this->first)) {
-            $first = new First;
+            $first = new First();
             $this->addTokensFromTerminalMap($first);
             do {
                 $first->resetChangeCount();

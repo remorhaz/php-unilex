@@ -1,4 +1,5 @@
 <?php
+
 /**
  * RegExp token matcher.
  *
@@ -35,7 +36,8 @@ class TokenMatcher extends TokenMatcherTemplate
                 ->setTokenAttribute(TokenAttribute::CODE, $char);
             return true;
         }
-        if (0x20 <= $char && $char <= 0x23 ||
+        if (
+            0x20 <= $char && $char <= 0x23 ||
             0x25 <= $char && $char <= 0x27 ||
             0x2F == $char ||
             0x3A <= $char && $char <= 0x3E ||
@@ -145,7 +147,8 @@ class TokenMatcher extends TokenMatcherTemplate
                 ->setTokenAttribute(TokenAttribute::DIGIT, chr($char));
             return true;
         }
-        if (0x47 <= $char && $char <= 0x4F ||
+        if (
+            0x47 <= $char && $char <= 0x4F ||
             0x51 <= $char && $char <= 0x5A ||
             0x67 <= $char && $char <= 0x6E ||
             0x71 <= $char && $char <= 0x74 ||

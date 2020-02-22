@@ -13,7 +13,7 @@ class FollowTest extends TestCase
 
     public function testGetTokens_Constructed_ReturnsEmptyArray(): void
     {
-        $actualValue = (new Follow)->getTokens(1);
+        $actualValue = (new Follow())->getTokens(1);
         self::assertSame([], $actualValue);
     }
 
@@ -23,7 +23,7 @@ class FollowTest extends TestCase
      */
     public function testAddToken_CalledOnce_GetTokenReturnsAddedTokens(array $tokenIdList): void
     {
-        $lookupFirst = new Follow;
+        $lookupFirst = new Follow();
         $lookupFirst->addToken(1, ...$tokenIdList);
         $actualValue = $lookupFirst->getTokens(1);
         sort($actualValue);
@@ -69,7 +69,7 @@ class FollowTest extends TestCase
         array $secondTokenIdList,
         array $mergedList
     ): void {
-        $lookupFirst = new Follow;
+        $lookupFirst = new Follow();
         $lookupFirst->addToken(1, ...$firstTokenIdList);
         $lookupFirst->addToken(1, ...$secondTokenIdList);
         $expectedValue = count($mergedList);
@@ -90,13 +90,13 @@ class FollowTest extends TestCase
 
     public function testGetChangeCount_Constructed_ReturnsZero(): void
     {
-        $actualValue = (new Follow)->getChangeCount();
+        $actualValue = (new Follow())->getChangeCount();
         self::assertSame(0, $actualValue);
     }
 
     public function testResetChangeCount_CounterTriggered_GetChangeCountReturnsZero(): void
     {
-        $lookupFirst = new Follow;
+        $lookupFirst = new Follow();
         $lookupFirst->addToken(1, 2);
         $lookupFirst->resetChangeCount();
         $actualValue = $lookupFirst->getChangeCount();
@@ -118,7 +118,7 @@ class FollowTest extends TestCase
         array $targetTokenIdList,
         array $expectedValue
     ): void {
-        $lookupFirst = new Follow;
+        $lookupFirst = new Follow();
         $lookupFirst->addToken($sourceProductionId, ...$sourceTokenIdList);
         $lookupFirst->addToken($targetProductionId, ...$targetTokenIdList);
         $lookupFirst->mergeTokens($targetProductionId, $sourceProductionId);

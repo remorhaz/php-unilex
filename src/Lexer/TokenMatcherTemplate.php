@@ -22,6 +22,7 @@ abstract class TokenMatcherTemplate implements TokenMatcherInterface
         if (!isset($this->token)) {
             throw new Exception("Token is not defined");
         }
+
         return $this->token;
     }
 
@@ -44,7 +45,8 @@ abstract class TokenMatcherTemplate implements TokenMatcherInterface
         $onGetMode = function (): string {
             return $this->mode;
         };
-        return new class(
+
+        return new class (
             $buffer,
             $onConstruct,
             $onSetNewToken,
@@ -82,12 +84,13 @@ abstract class TokenMatcherTemplate implements TokenMatcherInterface
             public function setNewToken(int $tokenType): TokenMatcherContextInterface
             {
                 call_user_func($this->onSetNewToken, $tokenType);
+
                 return $this;
             }
 
             /**
              * @param string $name
-             * @param $value
+             * @param        $value
              * @return TokenMatcherContextInterface
              */
             public function setTokenAttribute(string $name, $value): TokenMatcherContextInterface
@@ -95,6 +98,7 @@ abstract class TokenMatcherTemplate implements TokenMatcherInterface
                 $this
                     ->getToken()
                     ->setAttribute($name, $value);
+
                 return $this;
             }
 
@@ -134,6 +138,7 @@ abstract class TokenMatcherTemplate implements TokenMatcherInterface
             public function setMode(string $mode): TokenMatcherContextInterface
             {
                 call_user_func($this->onSetMode, $mode);
+
                 return $this;
             }
         };

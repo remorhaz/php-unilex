@@ -62,6 +62,7 @@ class TokenMatcherSpecParser
         if (false === $source) {
             throw new Exception("Failed to read lexer specification from file {$fileName}");
         }
+
         return new self($source);
     }
 
@@ -75,6 +76,7 @@ class TokenMatcherSpecParser
         if (!isset($this->matcherSpec)) {
             $this->matcherSpec = $this->buildMatcherSpec();
         }
+
         return $this->matcherSpec;
     }
 
@@ -108,20 +110,20 @@ class TokenMatcherSpecParser
         foreach ($this->usedClassList as $usedClassAlias => $usedClassName) {
             $matcherSpec->addUsedClass($usedClassName, is_string($usedClassAlias) ? $usedClassAlias : null);
         }
+
         return $matcherSpec;
     }
 
     /**
      * @param int|null $tokenId
-     * @param string $code
+     * @param string   $code
      * @throws Exception
      */
     private function processPhpToken(?int $tokenId, string $code): void
     {
         $this->skipToken = false;
         if ($this->isCurrentCodeBlock(self::TAG_LEX_HEADER)) {
-            if (T_NAMESPACE === $tokenId && !$this->codeBlockExists(self::LEX_NAMESPACE)
-            ) {
+            if (T_NAMESPACE === $tokenId && !$this->codeBlockExists(self::LEX_NAMESPACE)) {
                 $this->replaceCurrentCodeBlock(self::LEX_NAMESPACE);
                 $this->skipToken = true;
             }
@@ -179,6 +181,7 @@ class TokenMatcherSpecParser
         if (1 !== $pregResult) {
             throw new Exception("Invalid lexer specification: invalid used class expression");
         }
+
         return [$matches['className'], $matches['alias'] ?? null];
     }
 
@@ -307,6 +310,7 @@ class TokenMatcherSpecParser
         if (!isset($this->docBlockFactory)) {
             $this->docBlockFactory = DocBlockFactory::createInstance();
         }
+
         return $this->docBlockFactory;
     }
 
@@ -335,6 +339,7 @@ class TokenMatcherSpecParser
     private function getCodeBlock(string $key = null, string $defaultValue = ''): string
     {
         $effectiveKey = $key ?? $this->codeBlockKey;
+
         return isset($effectiveKey)
             ? trim($this->codeBlockList[$effectiveKey] ?? $defaultValue)
             : trim($defaultValue);

@@ -15,7 +15,7 @@ class CharBufferTest extends TestCase
 
     public function testIsEnd_EmptyBuffer_ReturnsTrue(): void
     {
-        $actualValue = (new CharBuffer)->isEnd();
+        $actualValue = (new CharBuffer())->isEnd();
         self::assertTrue($actualValue);
     }
 
@@ -30,7 +30,7 @@ class CharBufferTest extends TestCase
      */
     public function testGetSymbol_EmptyBuffer_ThrowsException(): void
     {
-        $buffer = new CharBuffer;
+        $buffer = new CharBuffer();
 
         $this->expectException(UniLexException::class);
         $this->expectExceptionMessage('No symbol to preview at index 0');
@@ -51,7 +51,7 @@ class CharBufferTest extends TestCase
      */
     public function testNextSymbol_EmptyBuffer_ThrowsException(): void
     {
-        $buffer = new CharBuffer;
+        $buffer = new CharBuffer();
 
         $this->expectException(UniLexException::class);
         $this->expectExceptionMessage('Unexpected end of buffer on preview at index 0');

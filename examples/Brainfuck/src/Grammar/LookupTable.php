@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Brainfuck LL(1) parser lookup table.
  *

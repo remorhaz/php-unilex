@@ -45,7 +45,7 @@ class Parser
         $this->grammar = $grammar;
         $this->tokenReader = $tokenReader;
         $this->listener = $listener;
-        $this->symbolStack = new SymbolStack;
+        $this->symbolStack = new SymbolStack();
     }
 
     /**
@@ -59,7 +59,7 @@ class Parser
         if (false === $data) {
             throw new Exception("Failed to load lookup table from file {$fileName}");
         }
-        $table = new Table;
+        $table = new Table();
         $table->importMap($data);
         $this->lookupTable = $table;
     }

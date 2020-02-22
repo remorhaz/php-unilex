@@ -15,7 +15,7 @@ class SymbolTableTest extends TestCase
      */
     public function testAddSymbol_NoSymbolAdded_ReturnsZero(): void
     {
-        $actualValue = (new SymbolTable)->addSymbol(RangeSet::import([1, 2]));
+        $actualValue = (new SymbolTable())->addSymbol(RangeSet::import([1, 2]));
         self::assertSame(0, $actualValue);
     }
 
@@ -24,7 +24,7 @@ class SymbolTableTest extends TestCase
      */
     public function testAddSymbol_SymbolAdded_ReturnsValueGreaterThanZero(): void
     {
-        $table = new SymbolTable;
+        $table = new SymbolTable();
         $table->addSymbol(RangeSet::import([1, 2]));
         $actualValue = $table->addSymbol(RangeSet::import([3, 4]));
         self::assertGreaterThan(0, $actualValue);
@@ -35,7 +35,7 @@ class SymbolTableTest extends TestCase
      */
     public function testReplaceSymbol_SymbolNotExists_ThrowsException(): void
     {
-        $symbolTable = new SymbolTable;
+        $symbolTable = new SymbolTable();
 
         $this->expectException(UniLexException::class);
         $this->expectExceptionMessage('Symbol 0 is not defined in symbol table');
@@ -47,7 +47,7 @@ class SymbolTableTest extends TestCase
      */
     public function testGetRangeSet_SymbolNotExists_ThrowsException(): void
     {
-        $symbolTable = new SymbolTable;
+        $symbolTable = new SymbolTable();
 
         $this->expectException(UniLexException::class);
         $this->expectExceptionMessage('Symbol 0 is not defined in symbol table');
@@ -59,7 +59,7 @@ class SymbolTableTest extends TestCase
      */
     public function testReplaceSymbol_SymbolAdded_GetRangeSetReturnsAddedRangeSet(): void
     {
-        $table = new SymbolTable;
+        $table = new SymbolTable();
         $rangeSet = RangeSet::import([1, 2]);
         $symbolId = $table->addSymbol($rangeSet);
         $newRangeSet = RangeSet::import([3, 4]);
@@ -70,7 +70,7 @@ class SymbolTableTest extends TestCase
 
     public function testGetRangeSetList_NoSymbolAdded_ReturnsEmptyArray(): void
     {
-        $actualValue = (new SymbolTable)->getRangeSetList();
+        $actualValue = (new SymbolTable())->getRangeSetList();
         self::assertSame([], $actualValue);
     }
 
@@ -79,7 +79,7 @@ class SymbolTableTest extends TestCase
      */
     public function testGetRangeSetList_SymbolAdded_ReturnsMatchingList(): void
     {
-        $table = new SymbolTable;
+        $table = new SymbolTable();
         $rangeSet = RangeSet::import([1, 2]);
         $table->addSymbol($rangeSet);
         $actualList = $table->getRangeSetList();

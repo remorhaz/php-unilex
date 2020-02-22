@@ -39,7 +39,7 @@ class RuntimeTest extends TestCase
      */
     public function testGetOutput_NoOutputCommandsExecuted_ReturnsEmptyString(): void
     {
-        $actualValue = (new Runtime)->getOutput();
+        $actualValue = (new Runtime())->getOutput();
         self::assertSame('', $actualValue);
     }
 
@@ -48,7 +48,7 @@ class RuntimeTest extends TestCase
      */
     public function testGetOutput_OutputCommandExecuted_ReturnsMatchingString(): void
     {
-        $runtime = new Runtime;
+        $runtime = new Runtime();
         $command = new OutputCommand($runtime);
         $runtime->addCommand($command);
         $command->exec();

@@ -62,6 +62,7 @@ class CharBuffer implements CharBufferInterface, TokenExtractInterface
         if (!isset($this->char)) {
             $this->char = $this->getMatchedChar();
         }
+
         return $this->char;
     }
 
@@ -89,6 +90,7 @@ class CharBuffer implements CharBufferInterface, TokenExtractInterface
         }
         $positionAfterMatch = $this->source->getTokenPosition();
         $this->sourcePreviewOffset = $positionAfterMatch->getFinishOffset() - $positionBeforeMatch->getFinishOffset();
+
         return $token->getAttribute(TokenAttribute::UNICODE_CHAR);
     }
 
@@ -156,8 +158,8 @@ class CharBuffer implements CharBufferInterface, TokenExtractInterface
     {
         if ($this->source instanceof TokenExtractInterface) {
             $this->cleanupPreview();
-            $result = $this->source->getTokenAsString();
-            return $result;
+
+            return $this->source->getTokenAsString();
         }
         throw new Exception("Source buffer doesn't support extracting strings");
     }
@@ -183,16 +185,18 @@ class CharBuffer implements CharBufferInterface, TokenExtractInterface
     private function getMatcher(): TokenMatcherInterface
     {
         if (!isset($this->matcher)) {
-            $this->matcher = new Utf8TokenMatcher;
+            $this->matcher = new Utf8TokenMatcher();
         }
+
         return $this->matcher;
     }
 
     private function getTokenFactory(): TokenFactoryInterface
     {
         if (!isset($this->tokenFactory)) {
-            $this->tokenFactory = new TokenFactory;
+            $this->tokenFactory = new TokenFactory();
         }
+
         return $this->tokenFactory;
     }
 }

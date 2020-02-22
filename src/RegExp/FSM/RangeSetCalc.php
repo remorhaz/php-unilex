@@ -23,6 +23,7 @@ class RangeSetCalc
                 return false;
             }
         }
+
         return true;
     }
 
@@ -34,7 +35,7 @@ class RangeSetCalc
      */
     public function and(RangeSet $rangeSet, RangeSet $anotherRangeSet): RangeSet
     {
-        $result = new RangeSet;
+        $result = new RangeSet();
         foreach ($anotherRangeSet->getRanges() as $range) {
             $andRangeSetPart = $this->andSingleRange($rangeSet, $range);
             $result->addRange(...$andRangeSetPart->getRanges());
@@ -45,13 +46,13 @@ class RangeSetCalc
 
     /**
      * @param RangeSet $rangeSetPart
-     * @param Range $range
+     * @param Range    $range
      * @return RangeSet
      * @throws Exception
      */
     private function andSingleRange(RangeSet $rangeSetPart, Range $range): RangeSet
     {
-        $rangeSet = new RangeSet;
+        $rangeSet = new RangeSet();
         if ($rangeSetPart->isEmpty()) {
             return $rangeSet;
         }
@@ -69,6 +70,7 @@ class RangeSetCalc
             }
             $rangeSet->addRange($range);
         }
+
         return $rangeSet;
     }
 
@@ -84,20 +86,22 @@ class RangeSetCalc
         foreach ($anotherRangeSet->getRanges() as $range) {
             $result = $this->xorSingleRange($result, $range);
         }
+
         return $result;
     }
 
     /**
      * @param RangeSet $rangeSetPart
-     * @param Range $range
+     * @param Range    $range
      * @return RangeSet
      * @throws Exception
      */
     private function xorSingleRange(RangeSet $rangeSetPart, Range $range): RangeSet
     {
-        $rangeSet = new RangeSet;
+        $rangeSet = new RangeSet();
         if ($rangeSetPart->isEmpty()) {
             $rangeSet->addRange($range);
+
             return $rangeSet;
         }
         $shouldAddRange = true;
@@ -123,6 +127,7 @@ class RangeSetCalc
         if ($shouldAddRange) {
             $rangeSet->addRange($range);
         }
+
         return $rangeSet;
     }
 }

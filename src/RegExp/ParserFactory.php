@@ -18,7 +18,7 @@ abstract class ParserFactory
 {
 
     /**
-     * @param Tree $tree
+     * @param Tree                $tree
      * @param CharBufferInterface $buffer
      * @return Parser
      * @throws Exception
@@ -26,11 +26,12 @@ abstract class ParserFactory
     public static function createFromBuffer(Tree $tree, CharBufferInterface $buffer): Parser
     {
         $grammar = GrammarLoader::loadFile(ConfigFile::getPath());
-        $reader = new TokenReader($buffer, new TokenMatcher, new TokenFactory($grammar));
+        $reader = new TokenReader($buffer, new TokenMatcher(), new TokenFactory($grammar));
         $scheme = new TranslationScheme($tree);
         $treeBuilder = new TranslationSchemeApplier($scheme);
         $parser = new Parser($grammar, $reader, $treeBuilder);
         $parser->loadLookupTable(ConfigFile::getLookupTablePath());
+
         return $parser;
     }
 }

@@ -31,7 +31,7 @@ class ParserTest extends TestCase
     {
         $grammar = GrammarLoader::loadFile($configFile);
         $buffer = new CharBuffer(...$input);
-        $reader = new TokenReader($buffer, new TokenMatcherByType, new TokenFactory($grammar));
+        $reader = new TokenReader($buffer, new TokenMatcherByType(), new TokenFactory($grammar));
         $listener = $this
             ->createMock(AbstractParserListener::class);
         $listener
@@ -52,7 +52,7 @@ class ParserTest extends TestCase
         $grammar = GrammarLoader::loadFile(ConfigFile::getPath());
         $input = [TokenType::ID, TokenType::PLUS, TokenType::STAR];
         $buffer = new CharBuffer(...$input);
-        $reader = new TokenReader($buffer, new TokenMatcherByType, new TokenFactory($grammar));
+        $reader = new TokenReader($buffer, new TokenMatcherByType(), new TokenFactory($grammar));
         $listener = $this->createMock(AbstractParserListener::class);
         /** @var AbstractParserListener $listener */
         $parser = new Parser($grammar, $reader, $listener);
@@ -70,7 +70,7 @@ class ParserTest extends TestCase
         $grammar = GrammarLoader::loadFile(ConfigFile::getPath());
         $input = [TokenType::ID, TokenType::PLUS, TokenType::STAR];
         $buffer = new CharBuffer(...$input);
-        $reader = new TokenReader($buffer, new TokenMatcherByType, new TokenFactory($grammar));
+        $reader = new TokenReader($buffer, new TokenMatcherByType(), new TokenFactory($grammar));
         $listener = $this->createMock(AbstractParserListener::class);
         /** @var AbstractParserListener $listener */
         $parser = new Parser($grammar, $reader, $listener);
@@ -92,7 +92,7 @@ class ParserTest extends TestCase
         $grammar = GrammarLoader::loadFile(ConfigFile::getPath());
         $input = [TokenType::ID, TokenType::PLUS, TokenType::STAR];
         $buffer = new CharBuffer(...$input);
-        $reader = new TokenReader($buffer, new TokenMatcherByType, new TokenFactory($grammar));
+        $reader = new TokenReader($buffer, new TokenMatcherByType(), new TokenFactory($grammar));
         $listener = $this->createMock(AbstractParserListener::class);
         /** @var AbstractParserListener $listener */
         $parser = new Parser($grammar, $reader, $listener);

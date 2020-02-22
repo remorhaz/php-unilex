@@ -51,6 +51,7 @@ class TokenMatcherSpec
         if (!isset($this->templateClass)) {
             $this->templateClass = new ReflectionClass($this->templateClassName);
         }
+
         return $this->templateClass;
     }
 
@@ -60,7 +61,7 @@ class TokenMatcherSpec
     }
 
     /**
-     * @param string $name
+     * @param string      $name
      * @param string|null $alias
      * @return TokenMatcherSpec
      * @throws ReflectionException
@@ -77,9 +78,11 @@ class TokenMatcherSpec
         }
         if (isset($alias)) {
             $this->usedClassList[$alias] = $name;
+
             return $this;
         }
         $this->usedClassList[] = $name;
+
         return $this;
     }
 
@@ -92,6 +95,7 @@ class TokenMatcherSpec
         $this->initUsedClassList();
         $usedClassList = $this->usedClassList;
         asort($usedClassList);
+
         return $usedClassList;
     }
 
@@ -100,6 +104,7 @@ class TokenMatcherSpec
         foreach ($textLineList as $textLine) {
             $this->fileCommentList[] = $textLine;
         }
+
         return $this;
     }
 
@@ -112,8 +117,9 @@ class TokenMatcherSpec
     {
         if (!isset($this->targetNamespaceName)) {
             [0 => $namespaceName] = $this->splitTargetClassName();
-            $this->targetNamespaceName =$namespaceName;
+            $this->targetNamespaceName = $namespaceName;
         }
+
         return $this->targetNamespaceName;
     }
 
@@ -123,6 +129,7 @@ class TokenMatcherSpec
             [1 => $shortName] = $this->splitTargetClassName();
             $this->targetShortName = $shortName;
         }
+
         return $this->targetShortName;
     }
 
@@ -138,6 +145,7 @@ class TokenMatcherSpec
     public function setHeader(string $code): self
     {
         $this->header = $code;
+
         return $this;
     }
 
@@ -149,6 +157,7 @@ class TokenMatcherSpec
     public function setBeforeMatch(string $code): self
     {
         $this->beforeMatch = $code;
+
         return $this;
     }
 
@@ -160,6 +169,7 @@ class TokenMatcherSpec
     public function setOnError(string $code): self
     {
         $this->onError = $code;
+
         return $this;
     }
 
@@ -171,6 +181,7 @@ class TokenMatcherSpec
     public function setOnTransition(string $code): self
     {
         $this->onTransition = $code;
+
         return $this;
     }
 
@@ -182,6 +193,7 @@ class TokenMatcherSpec
     public function setOnToken(string $code): self
     {
         $this->onToken = $code;
+
         return $this;
     }
 
@@ -191,7 +203,7 @@ class TokenMatcherSpec
     }
 
     /**
-     * @param string $context
+     * @param string    $context
      * @param TokenSpec ...$tokenSpecList
      * @return TokenMatcherSpec
      * @throws Exception
@@ -205,6 +217,7 @@ class TokenMatcherSpec
             }
             $this->tokenSpecList[$context][$regExp] = $tokenSpec;
         }
+
         return $this;
     }
 
@@ -231,6 +244,7 @@ class TokenMatcherSpec
         $classNameParts = explode($nameSpaceSeparator, $this->getTargetClassName());
         $className = array_pop($classNameParts);
         $namespaceName = implode($nameSpaceSeparator, $classNameParts);
+
         return [$namespaceName, $className];
     }
 

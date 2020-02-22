@@ -22,7 +22,7 @@ class TranslatorTest extends TestCase
      */
     public function testRun_ValidTree_TriggersOnFinishProductionWithRootNodeOnce(): void
     {
-        $tree = new Tree;
+        $tree = new Tree();
         $tree->setRootNode($tree->createNode('a'));
         $listener = $this
             ->createMock(AbstractTranslatorListener::class);
@@ -39,7 +39,7 @@ class TranslatorTest extends TestCase
      */
     public function testRun_ValidTree_TriggersOnBeginProductionWithRootNodeOnce(): void
     {
-        $tree = new Tree;
+        $tree = new Tree();
         $tree->setRootNode($tree->createNode('a'));
         $listener = $this
             ->createMock(AbstractTranslatorListener::class);
@@ -56,7 +56,7 @@ class TranslatorTest extends TestCase
      */
     public function testRun_ListenerPushesRootChild_TriggersOnSymbolWithNodeOnce(): void
     {
-        $tree = new Tree;
+        $tree = new Tree();
         $tree->setRootNode($tree->createNode('a'));
         $childNode = $tree->createNode('b');
         $expectedSymbol = new Symbol($childNode, 0);

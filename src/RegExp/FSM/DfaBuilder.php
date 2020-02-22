@@ -30,8 +30,9 @@ class DfaBuilder
      */
     public static function fromNfa(Nfa $nfa): Dfa
     {
-        $dfa = new Dfa;
+        $dfa = new Dfa();
         (new self($dfa, $nfa))->run();
+
         return $dfa;
     }
 
@@ -43,6 +44,7 @@ class DfaBuilder
     public static function fromBuffer(CharBufferInterface $buffer): Dfa
     {
         $nfa = NfaBuilder::fromBuffer($buffer);
+
         return self::fromNfa($nfa);
     }
 
@@ -54,6 +56,7 @@ class DfaBuilder
     public static function fromTree(Tree $tree): Dfa
     {
         $nfa = NfaBuilder::fromTree($tree);
+
         return self::fromNfa($nfa);
     }
 
@@ -85,12 +88,13 @@ class DfaBuilder
                 $result[$symbolId] = $nextStateList;
             }
         }
+
         return $result;
     }
 
     /**
      * @param bool $exists
-     * @param int ...$nfaStateList
+     * @param int  ...$nfaStateList
      * @return int
      * @throws UniLexException
      */
@@ -108,6 +112,7 @@ class DfaBuilder
                 break;
             }
         }
+
         return $dfaState;
     }
 
@@ -134,6 +139,7 @@ class DfaBuilder
         if (!isset($this->nfaCalc)) {
             $this->nfaCalc = new NfaCalc($this->nfa);
         }
+
         return $this->nfaCalc;
     }
 

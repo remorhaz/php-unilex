@@ -17,7 +17,7 @@ class StateMapTest extends TestCase
      */
     public function testCreateState_Always_ReturnsPositiveInteger(): void
     {
-        $actualValue = (new StateMap)->createState();
+        $actualValue = (new StateMap())->createState();
         self::assertGreaterThan(0, $actualValue);
     }
 
@@ -26,7 +26,7 @@ class StateMapTest extends TestCase
      */
     public function testCreateState_CalledTwice_ReturnsDifferentValues(): void
     {
-        $stateMap = new StateMap;
+        $stateMap = new StateMap();
         $firstStateId = $stateMap->createState();
         $secondStateId = $stateMap->createState();
         self::assertNotEquals($firstStateId, $secondStateId);
@@ -37,7 +37,7 @@ class StateMapTest extends TestCase
      */
     public function testCreateState_NullValue_ThrowsException(): void
     {
-        $stateMap = new StateMap;
+        $stateMap = new StateMap();
 
         $this->expectException(UniLexException::class);
         $this->expectExceptionMessage('Null state value is not allowed');
@@ -49,7 +49,7 @@ class StateMapTest extends TestCase
      */
     public function testGetValueState_CustomStateCreated_ReturnsCreatedStateId(): void
     {
-        $stateMap = new StateMap;
+        $stateMap = new StateMap();
         $stateId = $stateMap->createState(3);
         $actualValue = $stateMap->getValueState(3);
         self::assertSame($stateId, $actualValue);
@@ -60,7 +60,7 @@ class StateMapTest extends TestCase
      */
     public function testGetValueState_NoStatesCreated_ThrowsException(): void
     {
-        $stateMap = new StateMap;
+        $stateMap = new StateMap();
 
         $this->expectException(UniLexException::class);
         $this->expectExceptionMessage('Value not found in state map');
@@ -104,7 +104,7 @@ class StateMapTest extends TestCase
 
     public function testStateExists_StateNotCreated_ReturnsFalse(): void
     {
-        $actualValue = (new StateMap)->stateExists(1);
+        $actualValue = (new StateMap())->stateExists(1);
         self::assertFalse($actualValue);
     }
 
@@ -113,7 +113,7 @@ class StateMapTest extends TestCase
      */
     public function testStateExists_StateCreated_ReturnsTrue(): void
     {
-        $stateMap = new StateMap;
+        $stateMap = new StateMap();
         $stateId = $stateMap->createState();
         $actualValue = $stateMap->stateExists($stateId);
         self::assertTrue($actualValue);
@@ -124,7 +124,7 @@ class StateMapTest extends TestCase
      */
     public function testSetStartState_StateNotExists_ThrowsException(): void
     {
-        $stateMap = new StateMap;
+        $stateMap = new StateMap();
 
         $this->expectException(UniLexException::class);
         $this->expectExceptionMessage('State 1 is undefined');
@@ -136,7 +136,7 @@ class StateMapTest extends TestCase
      */
     public function testSetStartState_StartStateIsSet_ThrowsException(): void
     {
-        $stateMap = new StateMap;
+        $stateMap = new StateMap();
         $stateMap->setStartState($stateMap->createState());
 
         $this->expectException(UniLexException::class);
@@ -149,7 +149,7 @@ class StateMapTest extends TestCase
      */
     public function testGetStartState_StartStateIsNotSet_ThrowsException(): void
     {
-        $stateMap = new StateMap;
+        $stateMap = new StateMap();
 
         $this->expectException(UniLexException::class);
         $this->expectExceptionMessage('Start state is undefined');
@@ -161,7 +161,7 @@ class StateMapTest extends TestCase
      */
     public function testGetStartState_StartStateIsSet_ReturnsStartState(): void
     {
-        $stateMap = new StateMap;
+        $stateMap = new StateMap();
         $stateId = $stateMap->createState();
         $stateMap->setStartState($stateId);
         $actualValue = $stateMap->getStartState();
@@ -170,7 +170,7 @@ class StateMapTest extends TestCase
 
     public function testGetStateList_NoStatesCreated_ReturnsEmptyArray(): void
     {
-        $actualValue = (new StateMap)->getStateList();
+        $actualValue = (new StateMap())->getStateList();
         self::assertSame([], $actualValue);
     }
 
@@ -179,7 +179,7 @@ class StateMapTest extends TestCase
      */
     public function testGetStateList_TwoStatesImported_ReturnsImportedStates(): void
     {
-        $stateMap = new StateMap;
+        $stateMap = new StateMap();
         $stateMap->importState(true, 1, 2);
         $actualValue = $stateMap->getStateList();
         self::assertEquals([1, 2], $actualValue);
@@ -190,7 +190,7 @@ class StateMapTest extends TestCase
      */
     public function testImportState_StateNotExists_StateExistsReturnsTrue(): void
     {
-        $stateMap = new StateMap;
+        $stateMap = new StateMap();
         $stateMap->importState(true, 1);
         $actualValue = $stateMap->stateExists(1);
         self::assertTrue($actualValue);
@@ -201,7 +201,7 @@ class StateMapTest extends TestCase
      */
     public function testImportState_StateCreated_ThrowsException(): void
     {
-        $stateMap = new StateMap;
+        $stateMap = new StateMap();
         $stateMap->createState();
 
         $this->expectException(UniLexException::class);
@@ -214,7 +214,7 @@ class StateMapTest extends TestCase
      */
     public function testImportState_StateImported_ThrowsException(): void
     {
-        $stateMap = new StateMap;
+        $stateMap = new StateMap();
         $stateMap->importState(true, 1);
 
         $this->expectException(UniLexException::class);
@@ -227,7 +227,7 @@ class StateMapTest extends TestCase
      */
     public function testImportState_ValidState_CreateStateReturnsValuePlusOne(): void
     {
-        $stateMap = new StateMap;
+        $stateMap = new StateMap();
         $stateMap->importState(true, 5);
         $actualValue = $stateMap->createState();
         self::assertSame(6, $actualValue);
@@ -238,7 +238,7 @@ class StateMapTest extends TestCase
      */
     public function testAddFinishState_StateNotExists_ThrowsException()
     {
-        $stateMap = new StateMap;
+        $stateMap = new StateMap();
 
         $this->expectException(UniLexException::class);
         $this->expectExceptionMessage('State 1 is undefined');
@@ -250,7 +250,7 @@ class StateMapTest extends TestCase
      */
     public function testAddFinishState_StateExists_IsFinishStateReturnsTrue(): void
     {
-        $stateMap = new StateMap;
+        $stateMap = new StateMap();
         $stateId = $stateMap->createState();
         $stateMap->addFinishState($stateId);
         $actualValue = $stateMap->isFinishState($stateId);
@@ -262,7 +262,7 @@ class StateMapTest extends TestCase
      */
     public function testAddFinishState_StateIsFinish_ThrowsException(): void
     {
-        $stateMap = new StateMap;
+        $stateMap = new StateMap();
         $stateId = $stateMap->createState();
         $stateMap->addFinishState($stateId);
 
@@ -276,7 +276,7 @@ class StateMapTest extends TestCase
      */
     public function testIsFinishState_StateNotExists_ThrowsException(): void
     {
-        $stateMap = new StateMap;
+        $stateMap = new StateMap();
 
         $this->expectException(UniLexException::class);
         $this->expectExceptionMessage('State 1 is undefined');
@@ -288,7 +288,7 @@ class StateMapTest extends TestCase
      */
     public function testIsFinishState_StateIsNotFinish_ReturnsFalse(): void
     {
-        $stateMap = new StateMap;
+        $stateMap = new StateMap();
         $stateId = $stateMap->createState();
         $actualValue = $stateMap->isFinishState($stateId);
         self::assertFalse($actualValue);
@@ -296,7 +296,7 @@ class StateMapTest extends TestCase
 
     public function testGetFinishStateList_NoFinishStates_ReturnsEmptyArray(): void
     {
-        $actualValue = (new StateMap)->getFinishStateList();
+        $actualValue = (new StateMap())->getFinishStateList();
         self::assertSame([], $actualValue);
     }
 
@@ -305,7 +305,7 @@ class StateMapTest extends TestCase
      */
     public function testGetFinishStateList_TwoFinishStatesAdded_ReturnsMatchingStates(): void
     {
-        $stateMap = new StateMap;
+        $stateMap = new StateMap();
         $stateMap->importState(true, 1, 2, 3);
         $stateMap->addFinishState(2, 3);
         $actualValue = $stateMap->getFinishStateList();

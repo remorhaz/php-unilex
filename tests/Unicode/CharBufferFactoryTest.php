@@ -16,7 +16,7 @@ class CharBufferFactoryTest extends TestCase
     public function testCreateFromBuffer_BufferWithCharacter_ResultGetSymbolReturnsCharacterCode(): void
     {
         $source = new StringBuffer('本');
-        $actualValue = CharBufferFactory::createFromBuffer($source, new Utf8TokenMatcher)->getSymbol();
+        $actualValue = CharBufferFactory::createFromBuffer($source, new Utf8TokenMatcher())->getSymbol();
         self::assertSame(0x672C, $actualValue);
     }
 
@@ -29,7 +29,7 @@ class CharBufferFactoryTest extends TestCase
 
     public function testCreateFromString_StringWithCharacter_ResultGetSymbolReturnsCharacterCode(): void
     {
-        $actualValue = CharBufferFactory::createFromString('本', new Utf8TokenMatcher)->getSymbol();
+        $actualValue = CharBufferFactory::createFromString('本', new Utf8TokenMatcher())->getSymbol();
         self::assertSame(0x672C, $actualValue);
     }
 

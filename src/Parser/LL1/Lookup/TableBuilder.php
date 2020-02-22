@@ -30,7 +30,7 @@ class TableBuilder
     {
         if (!isset($this->table)) {
             $this->checkGrammarConflicts();
-            $table = new Table;
+            $table = new Table();
             $this->addProductionsFromNonTerminalMap($table);
             $this->table = $table;
         }

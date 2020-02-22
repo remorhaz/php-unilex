@@ -51,7 +51,7 @@ class BuildLl1LookupTable extends Task
             ->getTable()
             ->exportMap();
         $data =
-            "<?php\n{$this->buildFileComment()}\n";
+            "<?php\n\n{$this->buildFileComment()}\n";
         if (isset($this->symbolClassName)) {
             $data .= "use {$this->symbolClassName};\n";
         }

@@ -36,8 +36,9 @@ class NfaBuilder extends AbstractTranslatorListener
      */
     public static function fromBuffer(CharBufferInterface $buffer): Nfa
     {
-        $tree = new Tree;
+        $tree = new Tree();
         ParserFactory::createFromBuffer($tree, $buffer)->run();
+
         return self::fromTree($tree);
     }
 
@@ -48,8 +49,9 @@ class NfaBuilder extends AbstractTranslatorListener
      */
     public static function fromTree(Tree $tree): Nfa
     {
-        $nfa = new Nfa;
+        $nfa = new Nfa();
         (new Translator($tree, new self($nfa)))->run();
+
         return $nfa;
     }
 
@@ -95,11 +97,12 @@ class NfaBuilder extends AbstractTranslatorListener
                 ->getStateMap()
                 ->setStartState($this->startState);
         }
+
         return $this->startState;
     }
 
     /**
-     * @param Node $node
+     * @param Node          $node
      * @param PushInterface $stack
      * @throws Exception
      */
@@ -228,7 +231,7 @@ class NfaBuilder extends AbstractTranslatorListener
     }
 
     /**
-     * @param Symbol $symbol
+     * @param Symbol        $symbol
      * @param PushInterface $stack
      * @throws Exception
      */
@@ -349,7 +352,7 @@ class NfaBuilder extends AbstractTranslatorListener
                 if (!$node->getAttribute('not')) {
                     break;
                 }
-                $invertedRangeSet = (new RangeSetCalc)
+                $invertedRangeSet = (new RangeSetCalc())
                     ->xor($this->getRangeTransition($stateIn, $stateOut), RangeSet::import([0x00, 0x10FFFF]));
                 $this->setRangeTransition($stateIn, $stateOut, $invertedRangeSet);
                 break;
@@ -373,6 +376,7 @@ class NfaBuilder extends AbstractTranslatorListener
         if (!isset($this->languageBuilder)) {
             $this->languageBuilder = LanguageBuilder::forNfa($this->nfa);
         }
+
         return $this->languageBuilder;
     }
 
@@ -385,6 +389,7 @@ class NfaBuilder extends AbstractTranslatorListener
     {
         $inState = $node->getAttribute('state_in');
         $outState = $node->getAttribute('state_out');
+
         return [$inState, $outState];
     }
 
@@ -398,14 +403,15 @@ class NfaBuilder extends AbstractTranslatorListener
         if ($code < 0x20 || $code > 0x7E) {
             throw new Exception("Invalid control character: {$code}");
         }
+
         // Lowercase ASCII letters are converted to uppercase, then bit 6 is inverted.
         return ($code < 0x61 || $code > 0x7A ? $code : $code - 0x20) ^ 0x40;
     }
 
     /**
      * @param Node $node
-     * @param int $stateIn
-     * @param int $stateOut
+     * @param int  $stateIn
+     * @param int  $stateOut
      * @return Symbol
      * @throws Exception
      */
@@ -418,14 +424,15 @@ class NfaBuilder extends AbstractTranslatorListener
             ->addEpsilonTransition($innerStateOut, $stateOut)
             ->addEpsilonTransition($stateIn, $stateOut)
             ->addEpsilonTransition($innerStateOut, $innerStateIn);
+
         return $this->createSymbolFromClonedNodeChild($node, $innerStateIn, $innerStateOut);
     }
 
     /**
      * @param Node $node
-     * @param int $stateIn
-     * @param int $stateOut
-     * @param int $index
+     * @param int  $stateIn
+     * @param int  $stateOut
+     * @param int  $index
      * @return Symbol
      * @throws Exception
      */
@@ -438,14 +445,15 @@ class NfaBuilder extends AbstractTranslatorListener
             ->setAttribute('state_out', $stateOut);
         $symbol = new Symbol($node, $index);
         $symbol->setSymbol($nodeClone);
+
         return $symbol;
     }
 
     /**
      * @param Node $node
-     * @param int $stateIn
-     * @param int $stateOut
-     * @param int $index
+     * @param int  $stateIn
+     * @param int  $stateOut
+     * @param int  $index
      * @return Symbol
      * @throws Exception
      */
@@ -455,6 +463,7 @@ class NfaBuilder extends AbstractTranslatorListener
             ->getChild($index)
             ->setAttribute('state_in', $stateIn)
             ->setAttribute('state_out', $stateOut);
+
         return new Symbol($node, $index);
     }
 
@@ -475,13 +484,14 @@ class NfaBuilder extends AbstractTranslatorListener
         if (!isset($this->rangeTransitionMap)) {
             $this->rangeTransitionMap = new TransitionMap($this->nfa->getStateMap());
         }
+
         return $this->rangeTransitionMap;
     }
 
     /**
-     * @param int $stateIn
-     * @param int $stateOut
-     * @param int $start
+     * @param int      $stateIn
+     * @param int      $stateOut
+     * @param int      $start
      * @param int|null $finish
      * @return NfaBuilder
      * @throws Exception
@@ -491,12 +501,13 @@ class NfaBuilder extends AbstractTranslatorListener
         $this
             ->getRangeTransition($stateIn, $stateOut)
             ->addRange(new Range($start, $finish ?? $start));
+
         return $this;
     }
 
     /**
-     * @param int $stateIn
-     * @param int $stateOut
+     * @param int      $stateIn
+     * @param int      $stateOut
      * @param RangeSet $rangeSet
      * @return NfaBuilder
      * @throws Exception
@@ -506,6 +517,7 @@ class NfaBuilder extends AbstractTranslatorListener
         $this
             ->getRangeTransitionMap()
             ->replaceTransition($stateIn, $stateOut, $rangeSet);
+
         return $this;
     }
 
@@ -525,10 +537,11 @@ class NfaBuilder extends AbstractTranslatorListener
                 ->getRangeTransitionMap()
                 ->getTransition($stateIn, $stateOut);
         }
-        $rangeSet = new RangeSet;
+        $rangeSet = new RangeSet();
         $this
             ->getRangeTransitionMap()
             ->addTransition($stateIn, $stateOut, $rangeSet);
+
         return $rangeSet;
     }
 
@@ -544,6 +557,7 @@ class NfaBuilder extends AbstractTranslatorListener
             ->nfa
             ->getEpsilonTransitionMap()
             ->addTransition($stateIn, $stateOut, true);
+
         return $this;
     }
 }

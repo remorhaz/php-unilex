@@ -16,8 +16,9 @@ class Nfa
     public function getStateMap(): StateMap
     {
         if (!isset($this->stateMap)) {
-            $this->stateMap = new StateMap;
+            $this->stateMap = new StateMap();
         }
+
         return $this->stateMap;
     }
 
@@ -26,6 +27,7 @@ class Nfa
         if (!isset($this->epsilonTransitionMap)) {
             $this->epsilonTransitionMap = new TransitionMap($this->getStateMap());
         }
+
         return $this->epsilonTransitionMap;
     }
 
@@ -34,14 +36,16 @@ class Nfa
         if (!isset($this->symbolTransitionMap)) {
             $this->symbolTransitionMap = new TransitionMap($this->getStateMap());
         }
+
         return $this->symbolTransitionMap;
     }
 
     public function getSymbolTable(): SymbolTable
     {
         if (!isset($this->symbolTable)) {
-            $this->symbolTable = new SymbolTable;
+            $this->symbolTable = new SymbolTable();
         }
+
         return $this->symbolTable;
     }
 }

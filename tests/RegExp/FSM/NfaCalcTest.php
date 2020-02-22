@@ -41,7 +41,7 @@ class NfaCalcTest extends TestCase
      */
     private function createNfa(): Nfa
     {
-        $nfa = new Nfa;
+        $nfa = new Nfa();
         $stateList = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
         $nfa->getStateMap()->importState(true, ...$stateList);
         $nfa->getStateMap()->setStartState(0);

@@ -28,7 +28,7 @@ class GrammarTest extends TestCase
     public function testRun_ValidBuffer_CreatesMatchingSyntaxTree(string $text, $expectedValue): void
     {
         $buffer = CharBufferFactory::createFromString($text);
-        $tree = new Tree;
+        $tree = new Tree();
         ParserFactory::createFromBuffer($tree, $buffer)->run();
         self::assertEquals($expectedValue, $this->exportSyntaxTree($tree));
     }

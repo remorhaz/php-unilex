@@ -27,8 +27,8 @@ class TokenReaderTest extends TestCase
     public function testRead_NotEmptyValidBufferStart_ReturnsMatchingSymbolToken(): void
     {
         $buffer = new StringBuffer('a');
-        $tokenFactory = new TokenFactory;
-        $scanner = new TokenReader($buffer, new Utf8TokenMatcher, $tokenFactory);
+        $tokenFactory = new TokenFactory();
+        $scanner = new TokenReader($buffer, new Utf8TokenMatcher(), $tokenFactory);
         $token = $scanner->read();
         self::assertSame(TokenType::SYMBOL, $token->getType());
         self::assertSame(0x61, $token->getAttribute(TokenAttribute::UNICODE_CHAR));
@@ -40,8 +40,8 @@ class TokenReaderTest extends TestCase
     public function testRead_NotEmptyValidBufferMiddle_ReturnsMatchingSymbolToken(): void
     {
         $buffer = new StringBuffer('ab');
-        $tokenFactory = new TokenFactory;
-        $scanner = new TokenReader($buffer, new Utf8TokenMatcher, $tokenFactory);
+        $tokenFactory = new TokenFactory();
+        $scanner = new TokenReader($buffer, new Utf8TokenMatcher(), $tokenFactory);
         $scanner->read();
         $token = $scanner->read();
         self::assertSame(TokenType::SYMBOL, $token->getType());
@@ -54,7 +54,7 @@ class TokenReaderTest extends TestCase
     public function testRead_NotEmptyBufferEnd_ReturnsEoiToken(): void
     {
         $buffer = new StringBuffer('a');
-        $scanner = new TokenReader($buffer, new Utf8TokenMatcher, new TokenFactory);
+        $scanner = new TokenReader($buffer, new Utf8TokenMatcher(), new TokenFactory());
         $scanner->read();
         $actualValue = $scanner->read()->isEoi();
         self::assertTrue($actualValue);
@@ -66,7 +66,7 @@ class TokenReaderTest extends TestCase
     public function testRead_EmptyBuffer_ReturnsEoiToken(): void
     {
         $buffer = new StringBuffer('');
-        $scanner = new TokenReader($buffer, new Utf8TokenMatcher, new TokenFactory);
+        $scanner = new TokenReader($buffer, new Utf8TokenMatcher(), new TokenFactory());
         $actualValue = $scanner->read()->isEoi();
         self::assertTrue($actualValue);
     }
@@ -77,7 +77,7 @@ class TokenReaderTest extends TestCase
     public function testRead_AfterBufferEnd_ThrowsException(): void
     {
         $buffer = new StringBuffer('');
-        $scanner = new TokenReader($buffer, new Utf8TokenMatcher, new TokenFactory);
+        $scanner = new TokenReader($buffer, new Utf8TokenMatcher(), new TokenFactory());
         $scanner->read();
 
         $this->expectException(UniLexException::class);
@@ -91,8 +91,8 @@ class TokenReaderTest extends TestCase
     public function testRead_NotEmptyInvalidBufferStart_ReturnsMatchingToken(): void
     {
         $buffer = new StringBuffer("\x80");
-        $tokenFactory = new TokenFactory;
-        $scanner = new TokenReader($buffer, new Utf8TokenMatcher, $tokenFactory);
+        $tokenFactory = new TokenFactory();
+        $scanner = new TokenReader($buffer, new Utf8TokenMatcher(), $tokenFactory);
         $token = $scanner->read();
         self::assertSame(TokenType::INVALID_BYTES, $token->getType());
     }
@@ -103,7 +103,7 @@ class TokenReaderTest extends TestCase
     public function testRead_MatcherFailsNotAtEnd_ThrowsException(): void
     {
         $buffer = new StringBuffer("abc");
-        $tokenFactory = new TokenFactory;
+        $tokenFactory = new TokenFactory();
         $scanner = new TokenReader($buffer, $this->createFailingMatcher(), $tokenFactory);
 
         $this->expectException(UniLexException::class);
@@ -117,7 +117,7 @@ class TokenReaderTest extends TestCase
     public function testRead_MatcherFailsAtEnd_ThrowsException(): void
     {
         $buffer = new StringBuffer("abc");
-        $tokenFactory = new TokenFactory;
+        $tokenFactory = new TokenFactory();
         $scanner = new TokenReader($buffer, $this->createFailingAtEndMatcher(), $tokenFactory);
 
         $this->expectException(UniLexException::class);

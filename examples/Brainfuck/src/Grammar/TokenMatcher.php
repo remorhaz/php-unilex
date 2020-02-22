@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Brainfuck token matcher.
  *

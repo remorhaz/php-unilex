@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Unicode UTF-8 token matcher.
  *

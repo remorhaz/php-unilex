@@ -43,7 +43,7 @@ class TokenMatcherGenerator
     private function buildOutput(): string
     {
         return
-            "<?php\n{$this->buildFileComment()}\n" .
+            "<?php\n\n{$this->buildFileComment()}\n" .
             "{$this->buildHeader()}\n" .
             "class {$this->spec->getTargetShortName()} extends {$this->spec->getTemplateClass()->getShortName()}\n" .
             "{\n" .
@@ -72,7 +72,8 @@ class TokenMatcherGenerator
                 throw new Exception("Failed to generate target class");
             }
         }
-        return new $targetClass;
+
+        return new $targetClass();
     }
 
     /**
@@ -85,6 +86,7 @@ class TokenMatcherGenerator
         if (!isset($this->output)) {
             $this->output = $this->buildOutput();
         }
+
         return $this->output;
     }
 
@@ -97,9 +99,10 @@ class TokenMatcherGenerator
         $comment = "/**\n";
         $commentLineList = explode("\n", $content);
         foreach ($commentLineList as $commentLine) {
-            $comment .= rtrim(" * {$commentLine}") ."\n";
+            $comment .= rtrim(" * {$commentLine}") . "\n";
         }
         $comment .= " */\n";
+
         return $comment;
     }
 
@@ -122,6 +125,7 @@ class TokenMatcherGenerator
         if ('' != $header) {
             $headerParts[] = $header;
         }
+
         return implode("\n", $headerParts);
     }
 
@@ -136,6 +140,7 @@ class TokenMatcherGenerator
             $classWithAlias = is_string($alias) ? "{$className} {$alias}" : $className;
             $result .= $this->buildMethodPart("use {$classWithAlias};", 0);
         }
+
         return $result;
     }
 
@@ -158,6 +163,7 @@ class TokenMatcherGenerator
             $param .= "\${$matchParameter->getName()}";
             $paramList[] = $param;
         }
+
         return implode(", ", $paramList);
     }
 
@@ -186,12 +192,14 @@ class TokenMatcherGenerator
         }
 
         $result .= $this->buildErrorState();
+
         return $result;
     }
 
     private function buildBeforeMatch(): string
     {
         $code = $this->spec->getBeforeMatch();
+
         return
             $this->buildMethodPart("\$context = \$this->createContext(\$buffer, \$tokenFactory);") .
             $this->buildMethodPart($code);
@@ -199,13 +207,14 @@ class TokenMatcherGenerator
 
     /**
      * @param string $context
-     * @param int $indent
+     * @param int    $indent
      * @return string
      * @throws Exception
      */
     private function buildFsmEntry(string $context, int $indent = 2): string
     {
         $state = $this->getDfa($context)->getStateMap()->getStartState();
+
         return $this
             ->buildMethodPart("goto {$this->buildStateLabel('state', $context, $state)};", $indent);
     }
@@ -215,6 +224,7 @@ class TokenMatcherGenerator
         $contextSuffix = TokenMatcherInterface::DEFAULT_MODE == $context
             ? ''
             : ucfirst($context);
+
         return "{$prefix}{$contextSuffix}{$state}";
     }
 
@@ -241,7 +251,7 @@ class TokenMatcherGenerator
 
     /**
      * @param string $context
-     * @param int $stateIn
+     * @param int    $stateIn
      * @return string
      * @throws Exception
      */
@@ -260,12 +270,13 @@ class TokenMatcherGenerator
         $result .=
             $this->buildMethodPart("}") .
             $this->buildMethodPart("\$char = \$context->getBuffer()->getSymbol();");
+
         return $result;
     }
 
     /**
      * @param string $context
-     * @param int $stateIn
+     * @param int    $stateIn
      * @return string
      * @throws Exception
      */
@@ -285,12 +296,13 @@ class TokenMatcherGenerator
                 $result .= $this->buildMethodPart("}");
             }
         }
+
         return $result;
     }
 
     /**
      * @param string $context
-     * @param int $stateOut
+     * @param int    $stateOut
      * @return bool
      * @throws Exception
      */
@@ -305,6 +317,7 @@ class TokenMatcherGenerator
             return false;
         }
         $symbolList = array_pop($enters);
+
         return count($symbolList) == 1;
     }
 
@@ -314,6 +327,7 @@ class TokenMatcherGenerator
         if (strlen($hexChar) % 2 != 0) {
             $hexChar = "0{$hexChar}";
         }
+
         return "0x{$hexChar}";
     }
 
@@ -330,6 +344,7 @@ class TokenMatcherGenerator
                 "{$finishChar} == \$char",
             ];
         }
+
         return ["{$startChar} <= \$char && \$char <= {$finishChar}"];
     }
 
@@ -341,15 +356,16 @@ class TokenMatcherGenerator
         }
         $result = implode(" || ", $conditionList);
         if (strlen($result) + 15 <= 120 || count($conditionList) == 1) {
-            return $result;
+            return ltrim($result);
         }
         $result = $this->buildMethodPart(implode(" ||\n", $conditionList), 1);
-        return ltrim($result);
+
+        return "\n    " . ltrim($result);
     }
 
     /**
      * @param string $context
-     * @param int $stateIn
+     * @param int    $stateIn
      * @return string
      * @throws Exception
      */
@@ -363,19 +379,21 @@ class TokenMatcherGenerator
             $result .= $this->buildMethodPart("{$this->buildStateLabel('finish', $context, $stateIn)}:");
         }
         $result .= "{$this->buildToken($context, $stateIn)}\n";
+
         return $result;
     }
 
     /**
      * @param string $context
-     * @param int $stateIn
-     * @param int $indent
+     * @param int    $stateIn
+     * @param int    $indent
      * @return string
      * @throws Exception
      */
     private function buildToken(string $context, int $stateIn, int $indent = 2): string
     {
         $tokenSpec = $this->getTokenSpec($context, $stateIn);
+
         return
             $this->buildMethodPart($tokenSpec->getCode(), $indent) .
             $this->buildOnToken($indent) .
@@ -384,7 +402,7 @@ class TokenMatcherGenerator
 
     /**
      * @param string $context
-     * @param int $stateIn
+     * @param int    $stateIn
      * @return TokenSpec
      * @throws Exception
      */
@@ -400,12 +418,14 @@ class TokenMatcherGenerator
         if (!isset($tokenSpec)) {
             throw new Exception("Token spec is not defined for state {$stateIn}");
         }
+
         return $tokenSpec;
     }
 
     private function buildErrorState(): string
     {
         $code = $this->spec->getOnError();
+
         return
             $this->buildMethodPart("error:") .
             $this->buildMethodPart('' == $code ? "return false;" : $code);
@@ -425,6 +445,7 @@ class TokenMatcherGenerator
             }
             $result .= rtrim($line . $codeLine) . "\n";
         }
+
         return $result;
     }
 
@@ -448,6 +469,7 @@ class TokenMatcherGenerator
         if (!isset($this->dfa[$context])) {
             $this->dfa[$context] = $this->buildDfa($context);
         }
+
         return $this->dfa[$context];
     }
 
@@ -458,7 +480,7 @@ class TokenMatcherGenerator
      */
     private function buildDfa(string $context): Dfa
     {
-        $nfa = new Nfa;
+        $nfa = new Nfa();
         $startState = $nfa->getStateMap()->createState();
         $nfa->getStateMap()->setStartState($startState);
         $oldFinishStates = [];
@@ -476,19 +498,20 @@ class TokenMatcherGenerator
             }
             $oldFinishStates = $finishStates;
         }
+
         return DfaBuilder::fromNfa($nfa);
     }
 
     /**
-     * @param Nfa $nfa
-     * @param int $entryState
+     * @param Nfa    $nfa
+     * @param int    $entryState
      * @param string $regExp
      * @throws Exception
      */
     private function buildRegExp(Nfa $nfa, int $entryState, string $regExp): void
     {
         $buffer = CharBufferFactory::createFromString($regExp);
-        $tree = new Tree;
+        $tree = new Tree();
         ParserFactory::createFromBuffer($tree, $buffer)->run();
         $nfaBuilder = new NfaBuilder($nfa);
         $nfaBuilder->setStartState($entryState);

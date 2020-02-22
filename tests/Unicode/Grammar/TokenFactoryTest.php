@@ -14,7 +14,7 @@ class TokenFactoryTest extends TestCase
 
     public function testCreateEoiToken_Constructed_ResultIsEoiReturnsTrue(): void
     {
-        $actualValue = (new TokenFactory)
+        $actualValue = (new TokenFactory())
             ->createEoiToken()
             ->isEoi();
         self::assertTrue($actualValue);
@@ -22,7 +22,7 @@ class TokenFactoryTest extends TestCase
 
     public function testCreateToken_EoiId_ResultIsEoiReturnsTrue(): void
     {
-        $actualValue = (new TokenFactory)
+        $actualValue = (new TokenFactory())
             ->createToken(TokenType::EOI)
             ->isEoi();
         self::assertTrue($actualValue);
@@ -30,7 +30,7 @@ class TokenFactoryTest extends TestCase
 
     public function testCreateToken_NotEoiId_ResultIsEoiReturnsTrue(): void
     {
-        $actualValue = (new TokenFactory)
+        $actualValue = (new TokenFactory())
             ->createToken(TokenType::SYMBOL)
             ->isEoi();
         self::assertFalse($actualValue);

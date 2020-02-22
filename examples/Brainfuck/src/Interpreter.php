@@ -25,7 +25,7 @@ class Interpreter
     public function exec(string $text): void
     {
         unset($this->output);
-        $runtime = new Runtime;
+        $runtime = new Runtime();
         $this
             ->createParser($text, $runtime)
             ->run();
@@ -55,7 +55,7 @@ class Interpreter
     {
         $buffer = CharBufferFactory::createFromString($text);
         $grammar = GrammarLoader::loadFile(__DIR__ . "/Grammar/Config.php");
-        $tokenReader = new TokenReader($buffer, new TokenMatcher, new TokenFactory($grammar));
+        $tokenReader = new TokenReader($buffer, new TokenMatcher(), new TokenFactory($grammar));
         $translator = new TranslationSchemeApplier(new TranslationScheme($runtime));
         $parser = new Parser($grammar, $tokenReader, $translator);
         $parser->loadLookupTable(__DIR__ . "/Grammar/LookupTable.php");

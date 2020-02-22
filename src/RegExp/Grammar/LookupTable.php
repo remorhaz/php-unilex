@@ -1,4 +1,5 @@
 <?php
+
 /**
  * RegExp LL(1) parser lookup table.
  *

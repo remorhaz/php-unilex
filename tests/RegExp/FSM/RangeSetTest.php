@@ -18,7 +18,7 @@ class RangeSetTest extends TestCase
      */
     public function testIsEmpty_NoRangeAdded_ReturnsTrue(): void
     {
-        $actualValue = (new RangeSet)->isEmpty();
+        $actualValue = (new RangeSet())->isEmpty();
         self::assertTrue($actualValue);
     }
 
@@ -27,7 +27,7 @@ class RangeSetTest extends TestCase
      */
     public function testIsEmpty_RangeAdded_ReturnsFalse(): void
     {
-        $rangeSet = new RangeSet;
+        $rangeSet = new RangeSet();
         $rangeSet->addRange(new Range(1, 2));
         $actualValue = $rangeSet->isEmpty();
         self::assertFalse($actualValue);
@@ -38,7 +38,7 @@ class RangeSetTest extends TestCase
      */
     public function testGetRanges_ConstructedWithoutArguments_ReturnsEmptyArray(): void
     {
-        $actualValue = (new RangeSet)->getRanges();
+        $actualValue = (new RangeSet())->getRanges();
         self::assertEquals([], $actualValue);
     }
 
@@ -83,7 +83,7 @@ class RangeSetTest extends TestCase
      */
     public function testAddRange_ValidRanges_ExportReturnsMergedRanges(array $ranges, array $expectedRanges): void
     {
-        $rangeSet = new RangeSet;
+        $rangeSet = new RangeSet();
         $rangeSet->addRange(...Range::importList(...$ranges));
         $actualValue = $rangeSet->export();
         self::assertEquals($expectedRanges, $actualValue);
@@ -114,7 +114,7 @@ class RangeSetTest extends TestCase
         array $secondRanges,
         array $expectedRanges
     ) {
-        $rangeSet = new RangeSet;
+        $rangeSet = new RangeSet();
         $rangeSet->addRange(...Range::importList(...$firstRanges));
         $rangeSet->addRange(...Range::importList(...$secondRanges));
         $actualValue = $rangeSet->export();

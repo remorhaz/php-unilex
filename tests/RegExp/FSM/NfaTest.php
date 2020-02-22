@@ -5,12 +5,15 @@ namespace Remorhaz\UniLex\Test\RegExp\FSM;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\RegExp\FSM\Nfa;
 
+/**
+ * @covers \Remorhaz\UniLex\RegExp\FSM\Nfa
+ */
 class NfaTest extends TestCase
 {
 
     public function testGetStateMap_CalledTwice_ReturnsSameInstance(): void
     {
-        $nfa = new Nfa;
+        $nfa = new Nfa();
         $stateMap = $nfa->getStateMap();
         $anotherStateMap = $nfa->getStateMap();
         self::assertSame($stateMap, $anotherStateMap);
@@ -18,7 +21,7 @@ class NfaTest extends TestCase
 
     public function testGetEpsilonTransitionMap_CalledTwice_ReturnsSameInstance(): void
     {
-        $nfa = new Nfa;
+        $nfa = new Nfa();
         $transitionMap = $nfa->getEpsilonTransitionMap();
         $anotherTransitionMap = $nfa->getEpsilonTransitionMap();
         self::assertSame($transitionMap, $anotherTransitionMap);
@@ -26,7 +29,7 @@ class NfaTest extends TestCase
 
     public function testGetSymbolTransitionMap_CalledTwice_ReturnsSameInstance(): void
     {
-        $nfa = new Nfa;
+        $nfa = new Nfa();
         $transitionMap = $nfa->getSymbolTransitionMap();
         $anotherTransitionMap = $nfa->getSymbolTransitionMap();
         self::assertSame($transitionMap, $anotherTransitionMap);
@@ -34,7 +37,7 @@ class NfaTest extends TestCase
 
     public function testGetSymbolTableMap_CalledTwice_ReturnsSameInstance(): void
     {
-        $nfa = new Nfa;
+        $nfa = new Nfa();
         $table = $nfa->getSymbolTable();
         $anotherTable = $nfa->getSymbolTable();
         self::assertSame($table, $anotherTable);
