@@ -28,8 +28,8 @@
             description="Brainfuck LL(1) parser lookup table."
             symbolClassName="Remorhaz\UniLex\Example\Brainfuck\Grammar\SymbolType"
             tokenClassName="Remorhaz\UniLex\Example\Brainfuck\Grammar\TokenType"
-            configFile="${application.startdir}/examples/src/Brainfuck/Grammar/Config.php"
-            destFile="${application.startdir}/examples/src/Brainfuck/Grammar/LookupTable.php" />
+            configFile="${application.startdir}/examples/Brainfuck/src/Grammar/Config.php"
+            destFile="${application.startdir}/examples/Brainfuck/src/Grammar/LookupTable.php" />
     </target>
 
     <target name="token-matchers"
@@ -44,8 +44,8 @@
     <target name="example-brainfuck-matcher" description="Example Brainfuck token matcher">
         <build-lexer
             description="Brainfuck token matcher."
-            sourceFile="${application.startdir}/examples/spec/Brainfuck/LexerSpec.php"
-            destFile="${application.startdir}/examples/src/Brainfuck/Grammar/TokenMatcher.php" />
+            sourceFile="${application.startdir}/examples/Brainfuck/spec/LexerSpec.php"
+            destFile="${application.startdir}/examples/Brainfuck/src/Grammar/TokenMatcher.php" />
     </target>
     <target name="unicode-utf8-matcher">
         <build-lexer

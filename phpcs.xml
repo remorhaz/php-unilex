@@ -4,8 +4,10 @@
 
     <file>src</file>
     <file>tests</file>
-    <file>examples/src</file>
-    <file>examples/tests</file>
+    <file>examples/Brainfuck/src</file>
+    <file>examples/Brainfuck/tests</file>
+    <file>examples/SimpleExpr/src</file>
+    <file>examples/SimpleExpr/tests</file>
     <file>phing</file>
 
     <arg name="colors" />

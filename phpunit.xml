@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <phpunit
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/7.0/phpunit.xsd"
+        xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.0/phpunit.xsd"
         backupGlobals="true"
-        cacheTokens="false"
         defaultTestSuite="all">
     <testsuites>
         <testsuite name="all">
             <directory>tests/</directory>
-            <directory>examples/tests/</directory>
+            <directory>examples/Brainfuck/tests/</directory>
+            <directory>examples/SimpleExpr/tests/</directory>
         </testsuite>
         <testsuite name="examples">
-            <directory>examples/tests/</directory>
+            <directory>examples/Brainfuck/tests/</directory>
+            <directory>examples/SimpleExpr/tests/</directory>
         </testsuite>
         <testsuite name="library">
             <directory>tests/</directory>
@@ -21,7 +22,8 @@
         <whitelist
                 processUncoveredFilesFromWhitelist="true">
             <directory suffix=".php">src/</directory>
-            <directory suffix=".php">examples/src/</directory>
+            <directory suffix=".php">examples/Brainfuck/src/</directory>
+            <directory suffix=".php">examples/SimpleExpr/src/</directory>
         </whitelist>
     </filter>
 </phpunit>

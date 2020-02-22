@@ -40,8 +40,10 @@
   "autoload-dev": {
     "psr-4": {
       "Remorhaz\\UniLex\\Test\\": "tests/",
-      "Remorhaz\\UniLex\\Example\\": "examples/src/",
-      "Remorhaz\\UniLex\\Example\\Test\\": "examples/tests/"
+      "Remorhaz\\UniLex\\Example\\Brainfuck\\": "examples/Brainfuck/src/",
+      "Remorhaz\\UniLex\\Example\\Brainfuck\\Test\\": "examples/Brainfuck/tests/",
+      "Remorhaz\\UniLex\\Example\\SimpleExpr\\": "examples/SimpleExpr/src/",
+      "Remorhaz\\UniLex\\Example\\SimpleExpr\\Test\\": "examples/SimpleExpr/tests/"
     }
   },
   "scripts": {

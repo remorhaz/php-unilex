@@ -2,7 +2,8 @@
   "source": {
     "directories": [
       "src",
-      "examples/src"
+      "examples/Brainfuck/src",
+      "examples/SimpleExpr/src"
     ]
   },
   "timeout": 10,
