@@ -1,6 +1,6 @@
 <?php
 
-namespace Remorhaz\UniLex\Test\RegExp;
+namespace Remorhaz\UniLex\Test\RegExp\FSM;
 
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\AST\Tree;

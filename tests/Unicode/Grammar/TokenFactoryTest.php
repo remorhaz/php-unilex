@@ -6,6 +6,9 @@ use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Unicode\Grammar\TokenFactory;
 use Remorhaz\UniLex\Unicode\Grammar\TokenType;
 
+/**
+ * @covers \Remorhaz\UniLex\Unicode\Grammar\TokenFactory
+ */
 class TokenFactoryTest extends TestCase
 {
 

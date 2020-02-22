@@ -5,6 +5,9 @@ namespace Remorhaz\UniLex\Test\Lexer;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Lexer\TokenSpec;
 
+/**
+ * @covers \Remorhaz\UniLex\Lexer\TokenSpec
+ */
 class TokenSpecTest extends TestCase
 {
 

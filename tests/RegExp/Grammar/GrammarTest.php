@@ -1,6 +1,6 @@
 <?php
 
-namespace Remorhaz\UniLex\Test\RegExp;
+namespace Remorhaz\UniLex\Test\RegExp\Grammar;
 
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\AST\Node;

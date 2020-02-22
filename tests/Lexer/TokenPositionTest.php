@@ -1,6 +1,6 @@
 <?php
 
-namespace Remorhaz\UniLex\Test;
+namespace Remorhaz\UniLex\Test\Lexer;
 
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Exception as UniLexException;
