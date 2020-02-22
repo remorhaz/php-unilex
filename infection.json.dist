@@ -2,9 +2,7 @@
   "source": {
     "directories": [
       "src",
-      "generated",
-      "examples/src",
-      "examples/generated"
+      "examples/src"
     ]
   },
   "timeout": 10,

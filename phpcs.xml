@@ -6,7 +6,6 @@
     <file>tests</file>
     <file>examples/src</file>
     <file>examples/tests</file>
-    <file>generated</file>
     <file>phing</file>
 
     <arg name="colors" />
