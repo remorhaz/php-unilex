@@ -12,6 +12,6 @@ abstract class ConfigFile
 
     public static function getLookupTablePath(): string
     {
-        return __DIR__ . "/../../../src/RegExp/Grammar" . DIRECTORY_SEPARATOR . "LookupTable.php";
+        return __DIR__ . "/LookupTable.php";
     }
 }
