@@ -22,9 +22,9 @@
   ],
   "require": {
     "php": "^7.3",
-    "vanilla/garden-cli": "^2.2",
     "phpdocumentor/reflection-docblock": "^4.3.4 | ^5.0.0",
-    "nikic/php-parser": "^4.2"
+    "nikic/php-parser": "^4.2",
+    "symfony/console": "^5.0.4"
   },
   "require-dev": {
     "phpunit/phpunit": "^9.0.1",
@@ -47,8 +47,26 @@
     }
   },
   "scripts": {
+    "build-example-brainfuck": [
+      "bin/unilex generate-token-matcher examples/Brainfuck/spec/LexerSpec.php examples/Brainfuck/src/Grammar/TokenMatcher.php --desc='Brainfuck token matcher.'"
+    ],
+    "build-examples": [
+      "@build-example-brainfuck"
+    ],
+    "build-regexp": [
+      "bin/unilex generate-token-matcher spec/RegExp/LexerSpec.php src/RegExp/Grammar/TokenMatcher.php --desc='RegExp token matcher.'"
+    ],
+    "build-unicode": [
+      "bin/unilex generate-token-matcher spec/Unicode/Utf8LexerSpec.php src/Unicode/Grammar/Utf8TokenMatcher.php --desc='Unicode UTF-8 token matcher.'"
+    ],
+    "build-core": [
+      "@build-regexp",
+      "@build-unicode"
+    ],
     "build": [
-      "vendor/bin/phing"
+      "vendor/bin/phing",
+      "@build-core",
+      "@build-examples"
     ],
     "test": [
       "vendor/bin/phpcs -sp",

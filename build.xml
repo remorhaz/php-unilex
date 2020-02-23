@@ -4,7 +4,7 @@
     <taskdef classname="phing.BuildTokenMatcher" name="build-lexer" />
     <taskdef classname="phing.BuildLl1LookupTable" name="build-ll1-lookup-table" />
 
-    <target name="all" depends="prepare-dir,lookup-tables,token-matchers"/>
+    <target name="all" depends="prepare-dir,lookup-tables"/>
 
     <target name="prepare-dir" description="Prepares build directory">
         <chmod file="${application.startdir}/bin/unilex" mode="0755" />
@@ -30,27 +30,5 @@
             tokenClassName="Remorhaz\UniLex\Example\Brainfuck\Grammar\TokenType"
             configFile="${application.startdir}/examples/Brainfuck/src/Grammar/Config.php"
             destFile="${application.startdir}/examples/Brainfuck/src/Grammar/LookupTable.php" />
-    </target>
-
-    <target name="token-matchers"
-        description="Generate token matchers"
-        depends="unicode-utf8-matcher, regexp-matcher, example-brainfuck-matcher" />
-    <target name="regexp-matcher" description="RegExp token matcher">
-        <build-lexer
-            description="RegExp token matcher."
-            sourceFile="${application.startdir}/spec/RegExp/LexerSpec.php"
-            destFile="${application.startdir}/src/RegExp/Grammar/TokenMatcher.php" />
-    </target>
-    <target name="example-brainfuck-matcher" description="Example Brainfuck token matcher">
-        <build-lexer
-            description="Brainfuck token matcher."
-            sourceFile="${application.startdir}/examples/Brainfuck/spec/LexerSpec.php"
-            destFile="${application.startdir}/examples/Brainfuck/src/Grammar/TokenMatcher.php" />
-    </target>
-    <target name="unicode-utf8-matcher">
-        <build-lexer
-            description="Unicode UTF-8 token matcher."
-            sourceFile="${application.startdir}/spec/Unicode/Utf8LexerSpec.php"
-            destFile="${application.startdir}/src/Unicode/Grammar/Utf8TokenMatcher.php" />
     </target>
 </project>

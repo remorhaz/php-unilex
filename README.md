@@ -138,23 +138,7 @@ Token ID: 255
 ### CLI
 You can use command-line utility to build token matcher from specification:
 ```
-vendor/bin/unilex --desc="My example matcher." path/to/spec/LexerSpec.php > path/to/target/TokenMatcher.php
-```
-
-### Phing
-Library includes custom Phing tasks to build token matcher from specification:
-```xml
-<?xml version="1.0" encoding="UTF-8" ?>
-
-<project name="unilex" basedir="." default="example-matcher">
-    <taskdef classname="vendor.remorhaz.php-unilex.phing.BuildTokenMatcher" name="build-lexer" />
-    <target name="example-matcher">
-        <build-lexer
-            description="My example matcher."
-            sourceFile="${application.startdir}/path/to/spec/LexerSpec.php"
-            destFile="${application.startdir}/path/to/target/TokenMatcher.php" />
-    </target>
-</project>
+vendor/bin/unilex path/to/spec/LexerSpec.php path/to/target/TokenMatcher.php --desc="My example matcher."
 ```
 
 ## Specification
