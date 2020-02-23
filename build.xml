@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <project name="unilex" basedir="." default="all">
-    <taskdef classname="phing.BuildTokenMatcher" name="build-lexer" />
     <taskdef classname="phing.BuildLl1LookupTable" name="build-ll1-lookup-table" />
 
     <target name="all" depends="prepare-dir,lookup-tables"/>
