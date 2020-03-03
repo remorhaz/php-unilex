@@ -1,7 +1,10 @@
 #!/usr/bin/env php
 <?php
 
-use Remorhaz\UniLex\Console\GenerateTokenMatcherCommand;
+declare(strict_types=1);
+
+namespace Remorhaz\UniLex\Console;
+
 use Symfony\Component\Console\Application;
 
 $isComposerLoaded = false;
@@ -22,6 +25,7 @@ if (!$isComposerLoaded) {
 $app = new Application();
 $app->setCatchExceptions(true);
 $app->setAutoExit(true);
-$app->add(new GenerateTokenMatcherCommand());
+$app->add(new BuildTokenMatcherCommand());
+$app->add(new BuildLookupTableCommand(new PrettyPrinter()));
 /** @noinspection PhpUnhandledExceptionInspection */
 $app->run();

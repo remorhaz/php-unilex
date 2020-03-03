@@ -28,9 +28,9 @@
   },
   "require-dev": {
     "phpunit/phpunit": "^9.0.1",
-    "phing/phing": "^2.16.3",
     "squizlabs/php_codesniffer": "^3.5.4",
-    "infection/infection": "^0.15.3"
+    "infection/infection": "^0.15.3",
+    "friendsofphp/php-cs-fixer": "^2.16.1"
   },
   "autoload": {
     "psr-4": {
@@ -48,23 +48,26 @@
   },
   "scripts": {
     "build-example-brainfuck": [
-      "bin/unilex generate-token-matcher examples/Brainfuck/spec/LexerSpec.php examples/Brainfuck/src/Grammar/TokenMatcher.php --desc='Brainfuck token matcher.'"
+      "php bin/unilex build-token-matcher examples/Brainfuck/spec/LexerSpec.php examples/Brainfuck/src/Grammar/TokenMatcher.php --desc='Brainfuck token matcher.'",
+      "php bin/unilex build-lookup-table examples/Brainfuck/src/Grammar/Config.php examples/Brainfuck/src/Grammar/LookupTable.php --type=ll-1 --desc='Brainfuck LL(1) parser lookup table.' --symbol=Remorhaz\\\\UniLex\\\\Example\\\\Brainfuck\\\\Grammar\\\\SymbolType --token=Remorhaz\\\\UniLex\\\\Example\\\\Brainfuck\\\\Grammar\\\\TokenType",
+      "vendor/bin/phpcbf -p examples/Brainfuck/src/Grammar/LookupTable.php; if [ $? -eq 1 ]; then exit 0; fi"
     ],
     "build-examples": [
       "@build-example-brainfuck"
     ],
     "build-regexp": [
-      "bin/unilex generate-token-matcher spec/RegExp/LexerSpec.php src/RegExp/Grammar/TokenMatcher.php --desc='RegExp token matcher.'"
+      "php bin/unilex build-token-matcher spec/RegExp/LexerSpec.php src/RegExp/Grammar/TokenMatcher.php --desc='RegExp token matcher.'",
+      "php bin/unilex build-lookup-table src/RegExp/Grammar/Config.php src/RegExp/Grammar/LookupTable.php --type=ll-1 --desc='RegExp LL(1) parser lookup table.' --symbol=Remorhaz\\\\UniLex\\\\RegExp\\\\Grammar\\\\SymbolType --token=Remorhaz\\\\UniLex\\\\RegExp\\\\Grammar\\\\TokenType",
+      "vendor/bin/phpcbf -p src/RegExp/Grammar/LookupTable.php; if [ $? -eq 1 ]; then exit 0; fi"
     ],
     "build-unicode": [
-      "bin/unilex generate-token-matcher spec/Unicode/Utf8LexerSpec.php src/Unicode/Grammar/Utf8TokenMatcher.php --desc='Unicode UTF-8 token matcher.'"
+      "php bin/unilex build-token-matcher spec/Unicode/Utf8LexerSpec.php src/Unicode/Grammar/Utf8TokenMatcher.php --desc='Unicode UTF-8 token matcher.'"
     ],
     "build-core": [
       "@build-regexp",
       "@build-unicode"
     ],
     "build": [
-      "vendor/bin/phing",
       "@build-core",
       "@build-examples"
     ],

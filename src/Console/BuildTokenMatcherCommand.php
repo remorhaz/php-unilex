@@ -23,10 +23,10 @@ use function realpath;
 use function strlen;
 use function substr_count;
 
-final class GenerateTokenMatcherCommand extends Command
+final class BuildTokenMatcherCommand extends Command
 {
 
-    protected static $defaultName = 'generate-token-matcher';
+    protected static $defaultName = 'build-token-matcher';
 
     protected function configure()
     {
@@ -47,7 +47,7 @@ final class GenerateTokenMatcherCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $output->writeln("Generating token matcher...");
+        $output->writeln("Building token matcher...");
         $spec = $this->buildSpec($input, $output);
         $content = $this->buildContent($output, $spec);
         $this->buildTarget($input, $output, $content);
@@ -95,7 +95,7 @@ final class GenerateTokenMatcherCommand extends Command
     private function buildTarget(InputInterface $input, OutputInterface $output, string $content): void
     {
         $targetFile = $this->getTargetFile($input);
-        $output->writeln("Dumping generated data to file {$targetFile}...");
+        $output->writeln("Saving generated data to file {$targetFile}...");
 
         if (false === file_put_contents($targetFile, $content)) {
             throw new RuntimeException("Failed to write file {$targetFile}");
@@ -114,7 +114,7 @@ final class GenerateTokenMatcherCommand extends Command
         $specFile = $input->getArgument('spec');
         $specFile = realpath($specFile);
         if (false === $specFile) {
-            throw new InvalidOptionException("Option --spec must contain valid path to specification file");
+            throw new InvalidOptionException("Argument #1 must contain valid path to specification file");
         }
 
         return $specFile;

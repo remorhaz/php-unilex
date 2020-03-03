@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<ruleset name="UniLex">
+<ruleset
+        name="UniLex"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="vendor/squizlabs/php_codesniffer/phpcs.xsd">
     <description>The coding standards for UniLex library.</description>
 
     <file>src</file>
@@ -8,17 +11,14 @@
     <file>examples/Brainfuck/tests</file>
     <file>examples/SimpleExpr/src</file>
     <file>examples/SimpleExpr/tests</file>
-    <file>phing</file>
 
-    <arg name="colors" />
+    <arg name="colors"/>
 
     <rule ref="PSR12">
     </rule>
 
     <rule ref="PSR1.Methods.CamelCapsMethodName.NotCamelCaps">
+        <exclude-pattern>src/Console/PrettyPrinter.php</exclude-pattern>
         <exclude-pattern>*/tests/*Test.php</exclude-pattern>
-    </rule>
-    <rule ref="PSR1.Classes.ClassDeclaration.MissingNamespace">
-        <exclude-pattern>*/phing/*</exclude-pattern>
     </rule>
 </ruleset>
