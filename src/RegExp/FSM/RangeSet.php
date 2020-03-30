@@ -12,8 +12,17 @@ class RangeSet
      */
     private $rangeList = [];
 
+    public static function loadUnsafe(Range ...$rangeList): self
+    {
+        $rangeSet = new self();
+        $rangeSet->rangeList = $rangeList;
+
+        return $rangeSet;
+    }
+
     /**
      * RangeSet constructor.
+     *
      * @param Range ...$rangeList
      * @throws Exception
      */
@@ -40,6 +49,7 @@ class RangeSet
         foreach ($this->getRanges() as $range) {
             $rangeDataList[] = $range->export();
         }
+
         return $rangeDataList;
     }
 
@@ -75,6 +85,7 @@ class RangeSet
     {
         if (empty($this->rangeList)) {
             $this->rangeList = [$range];
+
             return;
         }
         $newRangeList = [];

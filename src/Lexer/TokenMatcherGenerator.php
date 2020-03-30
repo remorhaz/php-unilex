@@ -13,6 +13,7 @@ use Remorhaz\UniLex\RegExp\FSM\NfaBuilder;
 use Remorhaz\UniLex\RegExp\FSM\Range;
 use Remorhaz\UniLex\RegExp\FSM\RangeSet;
 use Remorhaz\UniLex\RegExp\ParserFactory;
+use Remorhaz\UniLex\RegExp\PropertyLoader;
 use Remorhaz\UniLex\Unicode\CharBufferFactory;
 use Throwable;
 
@@ -513,7 +514,7 @@ class TokenMatcherGenerator
         $buffer = CharBufferFactory::createFromString($regExp);
         $tree = new Tree();
         ParserFactory::createFromBuffer($tree, $buffer)->run();
-        $nfaBuilder = new NfaBuilder($nfa);
+        $nfaBuilder = new NfaBuilder($nfa, PropertyLoader::create());
         $nfaBuilder->setStartState($entryState);
         (new Translator($tree, $nfaBuilder))->run();
     }

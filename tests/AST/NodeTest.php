@@ -3,6 +3,7 @@
 namespace Remorhaz\UniLex\Test\AST;
 
 use PHPUnit\Framework\TestCase;
+use Remorhaz\UniLex\AST\Exception\InvalidAttributeException;
 use Remorhaz\UniLex\AST\Node;
 use Remorhaz\UniLex\Exception as UniLexException;
 
@@ -58,6 +59,42 @@ class NodeTest extends TestCase
         $this->expectException(UniLexException::class);
         $this->expectExceptionMessage('Attribute \'b\' is not defined in syntax tree node 1');
         $node->getAttribute('b');
+    }
+
+    /**
+     * @throws UniLexException
+     */
+    public function testGetIntAttribute_AttributeNotExists_ThrowsException(): void
+    {
+        $node = new Node(1, 'a');
+
+        $this->expectException(UniLexException::class);
+        $this->expectExceptionMessage('Attribute \'b\' is not defined in syntax tree node 1');
+        $node->getIntAttribute('b');
+    }
+
+    /**
+     * @throws UniLexException
+     */
+    public function testGetIntAttribute_IntegerAttributeExists_ReturnsAttributeValue(): void
+    {
+        $node = new Node(1, 'a');
+        $node->setAttribute('b', 2);
+
+        self::assertSame(2, $node->getIntAttribute('b'));
+    }
+
+    /**
+     * @throws UniLexException
+     */
+    public function testGetIntAttribute_NonIntegerAttributeExists_ReturnsAttributeValue(): void
+    {
+        $node = new Node(1, 'a');
+        $node->setAttribute('b', 'c');
+
+        $this->expectException(InvalidAttributeException::class);
+        $this->expectExceptionMessage("Node attribute 'b' has invalid type: string instead of expected integer");
+        $node->getIntAttribute('b');
     }
 
     /**

@@ -201,9 +201,11 @@ SOURCE;
     public function providerValidRegExpInput(): array
     {
         return [
-            "Single latin char" => ['ab', 'a', 'a'],
+            "Single latin char with another char following" => ['ab', 'a', 'a'],
+            "Single latin char with same char following" => ['aa', 'a', 'a'],
             "Zero or many latin char" => ['aabc', 'a*', 'aa'],
             "Number without leading zero" => ['103abc', '[1-9][0-9]*', '103'],
+            'One or many symbols with Unicode property' => ['αβγabc', '\\p{Greek}+', 'αβγ'],
         ];
     }
 
@@ -252,6 +254,7 @@ SOURCE;
     private function createTokenMatcherClassName(): string
     {
         static $nextMatcherClassIndex = 1;
+
         return __CLASS__ . '\TokenMatcher' . (string) $nextMatcherClassIndex++;
     }
 }

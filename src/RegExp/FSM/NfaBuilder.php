@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\RegExp\FSM;
 
 use Remorhaz\UniLex\AST\AbstractTranslatorListener;
@@ -11,6 +13,8 @@ use Remorhaz\UniLex\IO\CharBufferInterface;
 use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\RegExp\AST\NodeType;
 use Remorhaz\UniLex\RegExp\ParserFactory;
+use Remorhaz\UniLex\RegExp\PropertyLoader;
+use Remorhaz\UniLex\RegExp\PropertyLoaderInterface;
 use Remorhaz\UniLex\Stack\PushInterface;
 
 class NfaBuilder extends AbstractTranslatorListener
@@ -18,15 +22,18 @@ class NfaBuilder extends AbstractTranslatorListener
 
     private $nfa;
 
+    private $propertyLoader;
+
     private $rangeTransitionMap;
 
     private $languageBuilder;
 
     private $startState;
 
-    public function __construct(Nfa $nfa)
+    public function __construct(Nfa $nfa, PropertyLoaderInterface $propertyLoader)
     {
         $this->nfa = $nfa;
+        $this->propertyLoader = $propertyLoader;
     }
 
     /**
@@ -50,7 +57,7 @@ class NfaBuilder extends AbstractTranslatorListener
     public static function fromTree(Tree $tree): Nfa
     {
         $nfa = new Nfa();
-        (new Translator($tree, new self($nfa)))->run();
+        (new Translator($tree, new self($nfa, PropertyLoader::create())))->run();
 
         return $nfa;
     }
@@ -110,7 +117,6 @@ class NfaBuilder extends AbstractTranslatorListener
     {
         switch ($node->getName()) {
             case NodeType::ASSERT:
-            case NodeType::SYMBOL_PROP:
                 throw new Exception("AST nodes of type '{$node->getName()}' are not supported yet");
                 break;
 
@@ -119,6 +125,7 @@ class NfaBuilder extends AbstractTranslatorListener
             case NodeType::SYMBOL_ANY:
             case NodeType::SYMBOL_CTL:
             case NodeType::ESC_SIMPLE:
+            case NodeType::SYMBOL_PROP:
                 if (!empty($node->getChildList())) {
                     throw new Exception("AST node '{$node->getName()}' should not have child nodes");
                 }
@@ -157,12 +164,12 @@ class NfaBuilder extends AbstractTranslatorListener
                 $stateOut = null;
                 // Prefix concatenation construction
                 for ($index = 0; $index < $min; $index++) {
-                    $stateIn = $stateOut ?? $node->getAttribute('state_in');
+                    $stateIn = $stateOut ?? $node->getIntAttribute('state_in');
                     $isLastNode =
                         !$node->getAttribute('is_max_infinite') &&
                         $index + 1 == $node->getAttribute('max');
                     $stateOut = $isLastNode
-                        ? $node->getAttribute('state_out')
+                        ? $node->getIntAttribute('state_out')
                         : $this->createState();
                     $symbolList[] = $this->createSymbolFromClonedNodeChild($node, $stateIn, $stateOut);
                 }
@@ -200,9 +207,9 @@ class NfaBuilder extends AbstractTranslatorListener
                 $stateOut = null;
                 $maxIndex = count($node->getChildList()) - 1;
                 foreach ($node->getChildIndexList() as $index) {
-                    $stateIn = $stateOut ?? $node->getAttribute('state_in');
+                    $stateIn = $stateOut ?? $node->getIntAttribute('state_in');
                     $stateOut = $index == $maxIndex
-                        ? $node->getAttribute('state_out')
+                        ? $node->getIntAttribute('state_out')
                         : $this->createState();
                     $symbolList[] = $this->createSymbolFromNodeChild($node, $stateIn, $stateOut, $index);
                 }
@@ -355,6 +362,11 @@ class NfaBuilder extends AbstractTranslatorListener
                 $invertedRangeSet = (new RangeSetCalc())
                     ->xor($this->getRangeTransition($stateIn, $stateOut), RangeSet::import([0x00, 0x10FFFF]));
                 $this->setRangeTransition($stateIn, $stateOut, $invertedRangeSet);
+                break;
+
+            case NodeType::SYMBOL_PROP:
+                $propName = $node->getStringAttribute('name');
+                $this->setRangeTransition($stateIn, $stateOut, $this->propertyLoader->getPropertyRangeSet($propName));
                 break;
         }
     }

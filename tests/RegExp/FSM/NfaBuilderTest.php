@@ -8,6 +8,7 @@ use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\RegExp\AST\NodeType;
 use Remorhaz\UniLex\RegExp\FSM\Nfa;
 use Remorhaz\UniLex\RegExp\FSM\NfaBuilder;
+use Remorhaz\UniLex\RegExp\PropertyLoaderInterface;
 use Remorhaz\UniLex\Stack\SymbolStack;
 
 /**
@@ -22,7 +23,8 @@ class NfaBuilderTest extends TestCase
     public function testOnBeginProduction_UnknownNodeName_ThrowsException(): void
     {
         $node = new Node(1, 'unknown');
-        $builder = new NfaBuilder(new Nfa());
+        $propertyLoader = $this->createMock(PropertyLoaderInterface::class);
+        $builder = new NfaBuilder(new Nfa(), $propertyLoader);
         $stack = new SymbolStack();
 
         $this->expectException(UniLexException::class);
@@ -39,7 +41,8 @@ class NfaBuilderTest extends TestCase
     {
         $node = new Node(1, $name);
         $node->addChild(new Node(2, $node->getName()));
-        $builder = new NfaBuilder(new Nfa());
+        $propertyLoader = $this->createMock(PropertyLoaderInterface::class);
+        $builder = new NfaBuilder(new Nfa(), $propertyLoader);
         $stack = new SymbolStack();
 
         $this->expectException(UniLexException::class);
@@ -55,7 +58,8 @@ class NfaBuilderTest extends TestCase
     public function testOnBeginProduction_NotTerminalNodeWithoutChildren_ThrowsException(string $name): void
     {
         $node = new Node(1, $name);
-        $builder = new NfaBuilder(new Nfa());
+        $propertyLoader = $this->createMock(PropertyLoaderInterface::class);
+        $builder = new NfaBuilder(new Nfa(), $propertyLoader);
         $stack = new SymbolStack();
 
         $this->expectException(UniLexException::class);
@@ -80,7 +84,8 @@ class NfaBuilderTest extends TestCase
     public function testOnBeginProduction_TerminalNode_PushesNothingToStack(string $name): void
     {
         $node = new Node(1, $name);
-        $builder = new NfaBuilder(new Nfa());
+        $propertyLoader = $this->createMock(PropertyLoaderInterface::class);
+        $builder = new NfaBuilder(new Nfa(), $propertyLoader);
         $stack = new SymbolStack();
         $builder->onBeginProduction($node, $stack);
         $actualValue = $stack->isEmpty();
@@ -101,7 +106,8 @@ class NfaBuilderTest extends TestCase
      */
     public function testOnStartProduction_NodeWithoutStateAttributes_NodeHasPositiveStateInAttribute(): void
     {
-        $builder = new NfaBuilder(new Nfa());
+        $propertyLoader = $this->createMock(PropertyLoaderInterface::class);
+        $builder = new NfaBuilder(new Nfa(), $propertyLoader);
         $node = new Node(1, NodeType::SYMBOL);
         $builder->onStart($node);
         self::assertGreaterThan(0, $node->getAttribute('state_in'));
@@ -112,7 +118,8 @@ class NfaBuilderTest extends TestCase
      */
     public function testOnStartProduction_NodeWithoutStateAttributes_NodeHasPositiveStateOutAttribute(): void
     {
-        $builder = new NfaBuilder(new Nfa());
+        $propertyLoader = $this->createMock(PropertyLoaderInterface::class);
+        $builder = new NfaBuilder(new Nfa(), $propertyLoader);
         $node = new Node(1, NodeType::SYMBOL);
         $builder->onStart($node);
         self::assertGreaterThan(0, $node->getAttribute('state_out'));
@@ -123,7 +130,8 @@ class NfaBuilderTest extends TestCase
      */
     public function testOnStartProduction_NodeWithoutStateAttributes_NodeHasNotEqualStateAttributes(): void
     {
-        $builder = new NfaBuilder(new Nfa());
+        $propertyLoader = $this->createMock(PropertyLoaderInterface::class);
+        $builder = new NfaBuilder(new Nfa(), $propertyLoader);
         $node = new Node(1, NodeType::SYMBOL);
         $builder->onStart($node);
         self::assertNotEquals($node->getAttribute('state_in'), $node->getAttribute('state_out'));
@@ -135,7 +143,8 @@ class NfaBuilderTest extends TestCase
     public function testOnStartProduction_NodeWithoutStateAttributes_NodeStateInAttributeIsStartState(): void
     {
         $nfa = new Nfa();
-        $builder = new NfaBuilder($nfa);
+        $propertyLoader = $this->createMock(PropertyLoaderInterface::class);
+        $builder = new NfaBuilder($nfa, $propertyLoader);
         $node = new Node(1, NodeType::SYMBOL);
         $builder->onStart($node);
         self::assertEquals($nfa->getStateMap()->getStartState(), $node->getAttribute('state_in'));
@@ -147,7 +156,8 @@ class NfaBuilderTest extends TestCase
     public function testOnFinishProduction_ControlSymbolWithInvalidCode_ThrowsException(): void
     {
         $nfa = new Nfa();
-        $builder = new NfaBuilder($nfa);
+        $propertyLoader = $this->createMock(PropertyLoaderInterface::class);
+        $builder = new NfaBuilder($nfa, $propertyLoader);
         $node = new Node(1, NodeType::SYMBOL_CTL);
         $node
             ->setAttribute('code', 0)
@@ -167,7 +177,8 @@ class NfaBuilderTest extends TestCase
      */
     public function testOnBeginProduction_NotImplementedNode_ThrowsException(string $name): void
     {
-        $builder = new NfaBuilder(new Nfa());
+        $propertyLoader = $this->createMock(PropertyLoaderInterface::class);
+        $builder = new NfaBuilder(new Nfa(), $propertyLoader);
         $node = new Node(1, $name);
         $symbolStack = new SymbolStack();
 
@@ -180,7 +191,6 @@ class NfaBuilderTest extends TestCase
     {
         return [
             [NodeType::ASSERT],
-            [NodeType::SYMBOL_PROP],
         ];
     }
 
@@ -189,7 +199,8 @@ class NfaBuilderTest extends TestCase
      */
     public function testOnBeginProduction_RepeatNoteWithoutChildren_ThrowsException(): void
     {
-        $builder = new NfaBuilder(new Nfa());
+        $propertyLoader = $this->createMock(PropertyLoaderInterface::class);
+        $builder = new NfaBuilder(new Nfa(), $propertyLoader);
         $node = new Node(1, NodeType::REPEAT);
         $symbolStack = new SymbolStack();
 
@@ -203,7 +214,8 @@ class NfaBuilderTest extends TestCase
      */
     public function testOnBeginProduction_RepeatNoteWithTwoChildren_ThrowsException(): void
     {
-        $builder = new NfaBuilder(new Nfa());
+        $propertyLoader = $this->createMock(PropertyLoaderInterface::class);
+        $builder = new NfaBuilder(new Nfa(), $propertyLoader);
         $node = new Node(1, NodeType::REPEAT);
         $node
             ->addChild(new Node(2, NodeType::EMPTY))
@@ -220,7 +232,8 @@ class NfaBuilderTest extends TestCase
      */
     public function testOnBeginProduction_RepeatNoteWithFiniteMaxAttributeLessThanMinAttribute_ThrowsException(): void
     {
-        $builder = new NfaBuilder(new Nfa());
+        $propertyLoader = $this->createMock(PropertyLoaderInterface::class);
+        $builder = new NfaBuilder(new Nfa(), $propertyLoader);
         $node = new Node(1, NodeType::REPEAT);
         $node
             ->setAttribute('min', 2)
@@ -241,7 +254,8 @@ class NfaBuilderTest extends TestCase
      */
     public function testOnBeginProduction_RangeNoteWithOneChild_ThrowsException(): void
     {
-        $builder = new NfaBuilder(new Nfa());
+        $propertyLoader = $this->createMock(PropertyLoaderInterface::class);
+        $builder = new NfaBuilder(new Nfa(), $propertyLoader);
         $node = new Node(1, NodeType::SYMBOL_RANGE);
         $node
             ->setAttribute('state_in', 1)
@@ -259,7 +273,8 @@ class NfaBuilderTest extends TestCase
      */
     public function testOnBeginProduction_RangeNoteWithoutChildren_ThrowsException(): void
     {
-        $builder = new NfaBuilder(new Nfa());
+        $propertyLoader = $this->createMock(PropertyLoaderInterface::class);
+        $builder = new NfaBuilder(new Nfa(), $propertyLoader);
         $node = new Node(1, NodeType::SYMBOL_RANGE);
         $node
             ->setAttribute('state_in', 1)
@@ -275,7 +290,8 @@ class NfaBuilderTest extends TestCase
      */
     public function testOnBeginProduction_RangeNoteWithThreeChild_ThrowsException(): void
     {
-        $builder = new NfaBuilder(new Nfa());
+        $propertyLoader = $this->createMock(PropertyLoaderInterface::class);
+        $builder = new NfaBuilder(new Nfa(), $propertyLoader);
         $node = new Node(1, NodeType::SYMBOL_RANGE);
         $node
             ->setAttribute('state_in', 1)
@@ -293,7 +309,8 @@ class NfaBuilderTest extends TestCase
      */
     public function testOnFinishProduction_RangeNodeWithInvalidChars_ThrowsException(): void
     {
-        $builder = new NfaBuilder(new Nfa());
+        $propertyLoader = $this->createMock(PropertyLoaderInterface::class);
+        $builder = new NfaBuilder(new Nfa(), $propertyLoader);
         $rangeNode = new Node(1, NodeType::SYMBOL_RANGE);
         $startCharNode = new Node(2, NodeType::SYMBOL);
         $startCharNode->setAttribute('range_code', 2);
@@ -316,7 +333,8 @@ class NfaBuilderTest extends TestCase
      */
     public function testOnFinishProduction_EmptyNodeInRange_ThrowsException(): void
     {
-        $builder = new NfaBuilder(new Nfa());
+        $propertyLoader = $this->createMock(PropertyLoaderInterface::class);
+        $builder = new NfaBuilder(new Nfa(), $propertyLoader);
         $node = new Node(1, NodeType::EMPTY);
         $node
             ->setAttribute('in_range', true)
@@ -333,7 +351,8 @@ class NfaBuilderTest extends TestCase
      */
     public function testOnFinishProduction_SymbolAnyNodeInRange_ThrowsException(): void
     {
-        $builder = new NfaBuilder(new Nfa());
+        $propertyLoader = $this->createMock(PropertyLoaderInterface::class);
+        $builder = new NfaBuilder(new Nfa(), $propertyLoader);
         $node = new Node(1, NodeType::SYMBOL_ANY);
         $node
             ->setAttribute('in_range', true)
@@ -352,7 +371,8 @@ class NfaBuilderTest extends TestCase
      */
     public function testOnFinishProduction_SimpleEscapeWithNotImplementedCode_ThrowsException(int $code): void
     {
-        $builder = new NfaBuilder(new Nfa());
+        $propertyLoader = $this->createMock(PropertyLoaderInterface::class);
+        $builder = new NfaBuilder(new Nfa(), $propertyLoader);
         $node = new Node(1, NodeType::ESC_SIMPLE);
         $node
             ->setAttribute('code', $code)
