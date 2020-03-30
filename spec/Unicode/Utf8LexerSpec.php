@@ -22,7 +22,7 @@ $context
  *
  * @lexToken /[\xC0-\xDF][\x80-\xBF]/
  */
-$charList = $context->getSymbolList();
+$charList = array_slice($context->getSymbolList(), -2);
 $symbol = ($charList[0] & 0x1F) << 6;
 $symbol |= ($charList[1] & 0x3F);
 $context
@@ -34,7 +34,7 @@ $context
  *
  * @lexToken /[\xE0-\xEF][\x80-\xBF]{2}/
  */
-$charList = $context->getSymbolList();
+$charList = array_slice($context->getSymbolList(), -3);
 $symbol = ($charList[0] & 0x0F) << 12;
 $symbol |= ($charList[1] & 0x3F) << 6;
 $symbol |= ($charList[2] & 0x3F);
@@ -47,7 +47,7 @@ $context
  *
  * @lexToken /[\xF0-\xF7][\x80-\xBF]{3}/
  */
-$charList = $context->getSymbolList();
+$charList = array_slice($context->getSymbolList(), -4);
 $symbol = ($charList[0] & 0x07) << 18;
 $symbol |= ($charList[1] & 0x3F) << 12;
 $symbol |= ($charList[2] & 0x3F) << 6;
@@ -61,7 +61,7 @@ $context
  *
  * @lexToken /[\xF8-\xFB][\x80-\xBF]{4}/
  */
-$charList = $context->getSymbolList();
+$charList = array_slice($context->getSymbolList(), -5);
 $symbol = ($charList[0] & 0x03) << 24;
 $symbol |= ($charList[1] & 0x3F) << 18;
 $symbol |= ($charList[2] & 0x3F) << 12;
@@ -76,7 +76,7 @@ $context
  *
  * @lexToken /[\xFC-\xFD][\x80-\xBF]{5}/
  */
-$charList = $context->getSymbolList();
+$charList = array_slice($context->getSymbolList(), -6);
 $symbol = ($charList[0] & 0x01) << 30;
 $symbol |= ($charList[1] & 0x03) << 24;
 $symbol |= ($charList[2] & 0x3F) << 18;

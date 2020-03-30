@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CLI utility switched to `symfony/console` and changed API.
 ### Removed
 - Ability to build token matchers using Phing.
+### Fixed
+- UTF-8 matcher correctly calculates code of multi-byte symbols.
 
 ## [0.1.0] - 2020-02-17
 ### Added

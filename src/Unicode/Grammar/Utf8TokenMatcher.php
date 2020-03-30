@@ -62,7 +62,7 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
         $char = $context->getBuffer()->getSymbol();
         if (0x80 <= $char && $char <= 0xBF) {
             $context->getBuffer()->nextSymbol();
-            $charList = $context->getSymbolList();
+            $charList = array_slice($context->getSymbolList(), -2);
             $symbol = ($charList[0] & 0x1F) << 6;
             $symbol |= ($charList[1] & 0x3F);
             $context
@@ -156,7 +156,7 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
         $char = $context->getBuffer()->getSymbol();
         if (0x80 <= $char && $char <= 0xBF) {
             $context->getBuffer()->nextSymbol();
-            $charList = $context->getSymbolList();
+            $charList = array_slice($context->getSymbolList(), -6);
             $symbol = ($charList[0] & 0x01) << 30;
             $symbol |= ($charList[1] & 0x03) << 24;
             $symbol |= ($charList[2] & 0x3F) << 18;
@@ -199,7 +199,7 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
         $char = $context->getBuffer()->getSymbol();
         if (0x80 <= $char && $char <= 0xBF) {
             $context->getBuffer()->nextSymbol();
-            $charList = $context->getSymbolList();
+            $charList = array_slice($context->getSymbolList(), -5);
             $symbol = ($charList[0] & 0x03) << 24;
             $symbol |= ($charList[1] & 0x3F) << 18;
             $symbol |= ($charList[2] & 0x3F) << 12;
@@ -230,7 +230,7 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
         $char = $context->getBuffer()->getSymbol();
         if (0x80 <= $char && $char <= 0xBF) {
             $context->getBuffer()->nextSymbol();
-            $charList = $context->getSymbolList();
+            $charList = array_slice($context->getSymbolList(), -4);
             $symbol = ($charList[0] & 0x07) << 18;
             $symbol |= ($charList[1] & 0x3F) << 12;
             $symbol |= ($charList[2] & 0x3F) << 6;
@@ -249,7 +249,7 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
         $char = $context->getBuffer()->getSymbol();
         if (0x80 <= $char && $char <= 0xBF) {
             $context->getBuffer()->nextSymbol();
-            $charList = $context->getSymbolList();
+            $charList = array_slice($context->getSymbolList(), -3);
             $symbol = ($charList[0] & 0x0F) << 12;
             $symbol |= ($charList[1] & 0x3F) << 6;
             $symbol |= ($charList[2] & 0x3F);

@@ -30,10 +30,13 @@ class NfaBuilder extends AbstractTranslatorListener
 
     private $startState;
 
+    private $rangeSetCalc;
+
     public function __construct(Nfa $nfa, PropertyLoaderInterface $propertyLoader)
     {
         $this->nfa = $nfa;
         $this->propertyLoader = $propertyLoader;
+        $this->rangeSetCalc = new RangeSetCalc();
     }
 
     /**
@@ -125,10 +128,21 @@ class NfaBuilder extends AbstractTranslatorListener
             case NodeType::SYMBOL_ANY:
             case NodeType::SYMBOL_CTL:
             case NodeType::ESC_SIMPLE:
-            case NodeType::SYMBOL_PROP:
                 if (!empty($node->getChildList())) {
                     throw new Exception("AST node '{$node->getName()}' should not have child nodes");
                 }
+                break;
+
+            case NodeType::SYMBOL_PROP:
+                $propName = $node->getStringAttribute('name');
+                $propRangeSet = $this->propertyLoader->getPropertyRangeSet($propName);
+                $rangeSet = $node->getAttribute('not')
+                    ? $this
+                        ->rangeSetCalc
+                        ->xor($propRangeSet, RangeSet::import([0x00, 0x10FFFF]))
+                    : $propRangeSet;
+                [$stateIn, $stateOut] = $this->getNodeStates($node);
+                $this->setRangeTransition($stateIn, $stateOut, $rangeSet);
                 break;
 
             case NodeType::SYMBOL_CLASS:
@@ -359,14 +373,10 @@ class NfaBuilder extends AbstractTranslatorListener
                 if (!$node->getAttribute('not')) {
                     break;
                 }
-                $invertedRangeSet = (new RangeSetCalc())
+                $invertedRangeSet = $this
+                    ->rangeSetCalc
                     ->xor($this->getRangeTransition($stateIn, $stateOut), RangeSet::import([0x00, 0x10FFFF]));
                 $this->setRangeTransition($stateIn, $stateOut, $invertedRangeSet);
-                break;
-
-            case NodeType::SYMBOL_PROP:
-                $propName = $node->getStringAttribute('name');
-                $this->setRangeTransition($stateIn, $stateOut, $this->propertyLoader->getPropertyRangeSet($propName));
                 break;
         }
     }

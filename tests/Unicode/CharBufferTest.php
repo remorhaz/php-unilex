@@ -202,6 +202,22 @@ class CharBufferTest extends TestCase
     /**
      * @throws UniLexException
      */
+    public function testFinishToken_CalledTwice_MatchingByteLengthInTokenAttributes(): void
+    {
+        $source = new StringBuffer('жф');
+        $buffer = new CharBuffer($source);
+        $buffer->nextSymbol();
+        $token = new Token(0, false);
+        $buffer->finishToken($token);
+        $buffer->nextSymbol();
+        $token = new Token(0, false);
+        $buffer->finishToken($token);
+        self::assertSame(2, $token->getAttribute(TokenAttribute::UNICODE_BYTE_LENGTH));
+    }
+
+    /**
+     * @throws UniLexException
+     */
     public function testFinishToken_NextSymbolCalled_MatchingCharOffsetsInTokenAttributes(): void
     {
         $source = new StringBuffer('ж');

@@ -206,6 +206,7 @@ SOURCE;
             "Zero or many latin char" => ['aabc', 'a*', 'aa'],
             "Number without leading zero" => ['103abc', '[1-9][0-9]*', '103'],
             'One or many symbols with Unicode property' => ['αβγabc', '\\p{Greek}+', 'αβγ'],
+            'One or many symbols without Unicode property' => ['abcαβγ', '\\P{Greek}+', 'abc'],
         ];
     }
 
