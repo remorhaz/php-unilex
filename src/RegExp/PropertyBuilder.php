@@ -22,6 +22,7 @@ use SplFileObject;
 use function explode;
 use function file_put_contents;
 use function hexdec;
+use function preg_match;
 use function trim;
 
 final class PropertyBuilder
@@ -37,6 +38,82 @@ final class PropertyBuilder
     {
         $this->phpBuilder = new BuilderFactory();
         $this->printer = new PrettyPrinter();
+    }
+
+    /**
+     * @param array $index
+     * @return array
+     * @throws UniLexException
+     * @throws ReflectionException
+     */
+    public function buildUnicodeData(array $index): array
+    {
+        $source = new SplFileObject(__DIR__ . '/../../data/UnicodeData.txt');
+        $charCounter = 0;
+        echo "Parsing: ";
+        $ranges = [];
+        $lastCode = null;
+        $lastProp = null;
+        $rangeStart = null;
+        $namedStarts = [];
+        while (!$source->eof()) {
+            $line = $source->fgets();
+            if (false === $line) {
+                throw new RuntimeException("Error reading line from unicode data file");
+            }
+            if ('' == $line) {
+                continue;
+            }
+            $splitLine = explode(';', $line);
+            $codeHex = $splitLine[0] ?? null;
+            $name = $splitLine[1] ?? null;
+            $prop = $splitLine[2] ?? null;
+            if (!isset($codeHex, $name, $prop)) {
+                throw new RuntimeException("Invalid line format");
+            }
+            $code = hexdec($codeHex);
+            $isFirst = 1 === preg_match('#^<(.+), First>$#', $name, $matches);
+            $firstName = $matches[1] ?? null;
+            $isLast = 1 === preg_match('#^<(.+), Last>$#', $name, $matches);
+            $lastName = $matches[1] ?? null;
+            $range = null;
+            if ($isFirst) {
+                $namedStarts[$firstName] = $code;
+                unset($rangeStart);
+            } elseif ($isLast) {
+                if (!isset($namedStarts[$lastName]) || isset($rangeStart) || $lastCode !== $namedStarts[$lastName]) {
+                    throw new RuntimeException("Invalid file format");
+                }
+                /** @var int $lastCode */
+                $range = new Range($lastCode, $code);
+            } elseif ($prop !== $lastProp) {
+                /** @var int $rangeStart */
+                if (isset($rangeStart, $lastCode)) {
+                    $range = new Range($rangeStart, $lastCode);
+                }
+
+                $rangeStart = $code;
+            }
+
+            if (isset($range)) {
+                if (!isset($ranges[$lastProp])) {
+                    $ranges[$lastProp] = [];
+                }
+                $ranges[$lastProp][] = $range;
+            }
+
+            $lastCode = $code;
+            $lastProp = $prop;
+
+            if ($charCounter % 100 == 0) {
+                echo ".";
+            }
+            $charCounter++;
+        }
+        $source = null;
+        echo " {$charCounter} characters\n";
+
+        return $this->dumpProps($index, $this->buildRangeSets($ranges));
     }
 
     /**
@@ -94,10 +171,20 @@ final class PropertyBuilder
             echo ".";
             $rangeCount++;
         }
+        $source = null;
         $ranges['Unknown'] = $unknownRanges;
         echo ". {$rangeCount} ranges\n";
-        $source = null;
 
+        return $this->dumpProps($index, $this->buildRangeSets($ranges));
+    }
+
+    /**
+     * @param array $ranges
+     * @return array
+     * @throws UniLexException
+     */
+    private function buildRangeSets(array $ranges): array
+    {
         echo "Building range sets: ";
         $rangeSetCount = 0;
         $rangeSets = [];
@@ -108,13 +195,7 @@ final class PropertyBuilder
         }
         echo " {$rangeSetCount} range sets\n";
 
-        /*echo "Build Unknown property...";
-        $fullRangeSet = new RangeSet(new Range(0x0, 0x10FFFF));
-        $knownRangeSet = new RangeSet(...$knownRanges);
-        $unknownRangeSet = $rangeSetCalc->xor($fullRangeSet, $knownRangeSet);
-        $ranges['Unknown'] = $unknownRangeSet;*/
-
-        return $this->dumpProps($index, $rangeSets);
+        return $rangeSets;
     }
 
     /**
