@@ -7,6 +7,7 @@ namespace Remorhaz\UniLex\RegExp\Exception;
 use Remorhaz\UniLex\RegExp\FSM\RangeSet;
 use Throwable;
 use UnexpectedValueException;
+
 use function get_class;
 use function gettype;
 use function is_object;

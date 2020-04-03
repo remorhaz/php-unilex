@@ -149,8 +149,7 @@ final class BuildPropertiesCommand extends Command
     private function fetchRangeSets(
         OutputInterface $output,
         PropertyBuilder $propertyBuilder,
-        ProgressBar $progressBar,
-        bool $unsafe = true
+        ProgressBar $progressBar
     ): void {
         $output->writeln(' Creating range sets from buffer...');
         $bufferSize = $propertyBuilder->getRangeBufferSize();
@@ -159,9 +158,7 @@ final class BuildPropertiesCommand extends Command
             $progressBar->setProgress($rangeSetIndex);
         };
         $progressBar->start();
-        $unsafe
-            ? $propertyBuilder->fetchBufferedRangeSetsUnsafe($onFetchProgress)
-            : $propertyBuilder->fetchBufferedRangeSets($onFetchProgress);
+        $propertyBuilder->fetchBufferedRangeSets($onFetchProgress);
         $progressBar->finish();
         $progressBar->clear();
         $output->writeln(" {$bufferSize} range sets created");
@@ -239,7 +236,7 @@ final class BuildPropertiesCommand extends Command
         $progressBar->finish();
         $progressBar->clear();
         $output->writeln(" {$scripts->getSize()} bytes of Scripts.txt parsed");
-        $this->fetchRangeSets($output, $propertyBuilder, $progressBar, false);
+        $this->fetchRangeSets($output, $propertyBuilder, $progressBar);
 
         $progressIndicator->start('Building Scripts derivatives...');
         $onBuildProgress = function () use ($progressIndicator) {
@@ -268,7 +265,7 @@ final class BuildPropertiesCommand extends Command
         $progressBar->finish();
         $progressBar->clear();
         $output->writeln(" {$propList->getSize()} bytes of PropList.txt parsed");
-        $this->fetchRangeSets($output, $propertyBuilder, $progressBar, false);
+        $this->fetchRangeSets($output, $propertyBuilder, $progressBar);
     }
 
     private function parseDerivedCoreProperties(
@@ -289,7 +286,7 @@ final class BuildPropertiesCommand extends Command
         $progressBar->finish();
         $progressBar->clear();
         $output->writeln(" {$derivedCoreProperties->getSize()} bytes of DerivedCoreProperties.txt parsed");
-        $this->fetchRangeSets($output, $propertyBuilder, $progressBar, false);
+        $this->fetchRangeSets($output, $propertyBuilder, $progressBar);
     }
 
     private function buildFiles(

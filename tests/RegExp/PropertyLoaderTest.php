@@ -11,6 +11,7 @@ use Remorhaz\UniLex\RegExp\Exception\PropertyFileNotLoadedException;
 use Remorhaz\UniLex\RegExp\Exception\PropertyRangeSetNotFoundException;
 use Remorhaz\UniLex\RegExp\FSM\RangeSet;
 use Remorhaz\UniLex\RegExp\PropertyLoader;
+
 use function preg_quote;
 
 /**
@@ -179,7 +180,7 @@ class PropertyLoaderTest extends TestCase
             'Khmer' => ['Khmer', 0, 0x1780],
             'Khojki' => ['Khojki', 0, 0x011200],
             'Khudawadi' => ['Khudawadi', 0, 0x0112B0],
-            'L' => ['L', 0, 0x61],
+            'L' => ['L', 0, 0x41],
             'L&' => ['L&', 0, 0x41],
             'Lao' => ['Lao', 0, 0x0E81],
             'Latin' => ['Latin', 0, 0x41],
@@ -197,7 +198,7 @@ class PropertyLoaderTest extends TestCase
             'Lu' => ['Lu', 0, 0x41],
             'Lycian' => ['Lycian', 0, 0x010280],
             'Lydian' => ['Lydian', 0, 0x010920],
-            'M' => ['M', 0, 0x0903],
+            'M' => ['M', 0, 0x0300],
             'Mahajani' => ['Mahajani', 0, 0x011150],
             'Makasar' => ['Makasar', 0, 0x011EE0],
             'Malayalam' => ['Malayalam', 0, 0x0D00],
@@ -252,7 +253,7 @@ class PropertyLoaderTest extends TestCase
             'Other_Lowercase' => ['Other_Lowercase', 0, 0xAA],
             'Other_Math' => ['Other_Math', 0, 0x5E],
             'Other_Uppercase' => ['Other_Uppercase', 0, 0x2160],
-            'P' => ['P', 0, 0x5F],
+            'P' => ['P', 0, 0x21],
             'Pahawh_Hmong' => ['Pahawh_Hmong', 0, 0x016B00],
             'Palmyrene' => ['Palmyrene', 0, 0x010860],
             'Pattern_Syntax' => ['Pattern_Syntax', 0, 0x21],
@@ -322,7 +323,7 @@ class PropertyLoaderTest extends TestCase
             'XID_Start' => ['XID_Start', 0, 0x41],
             'Yezidi' => ['Yezidi', 0, 0x010E80],
             'Yi' => ['Yi', 0, 0xA000],
-            'Z' => ['Z', 0, 0x2028],
+            'Z' => ['Z', 0, 0x20],
             'Zanabazar_Square' => ['Zanabazar_Square', 0, 0x011A00],
             'Zl' => ['Zl', 0, 0x2028],
             'Zp' => ['Zp', 0, 0x2029],

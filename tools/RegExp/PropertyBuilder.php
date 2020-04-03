@@ -95,16 +95,6 @@ final class PropertyBuilder
         $this->rangeBuffer = [];
     }
 
-    public function fetchBufferedRangeSetsUnsafe(callable $onProgress): void
-    {
-        $count = 0;
-        foreach ($this->rangeBuffer as $prop => $ranges) {
-            $this->addRangeSetUnsafe($prop, ...$ranges);
-            $onProgress(++$count);
-        }
-        $this->rangeBuffer = [];
-    }
-
     public function buildUnicodeDataDerivatives(callable $onProgress): void
     {
         $map = [
@@ -122,11 +112,8 @@ final class PropertyBuilder
         foreach ($map as $targetProp => $sourceProps) {
             foreach ($sourceProps as $prop) {
                 $rangeSet = $this->getRangeSet($prop);
-                foreach ($rangeSet->getRanges() as $range) {
-                    $notCnRanges[] = $range;
-                    $this->addRangeToBuffer($targetProp, $range);
-                    $onProgress();
-                }
+                $notCnRanges = array_merge($notCnRanges, $rangeSet->getRanges());
+                $this->addRangeToBuffer($targetProp, ...$rangeSet->getRanges());
             }
         }
 
@@ -186,14 +173,6 @@ final class PropertyBuilder
         } catch (Throwable $e) {
             throw new Exception\RangeSetNotBuiltException($prop, $e);
         }
-    }
-
-    private function addRangeSetUnsafe(string $prop, Range ...$ranges): void
-    {
-        if (isset($this->rangeSets[$prop])) {
-            throw new Exception\RangeSetAlreadyExistsException($prop);
-        }
-        $this->rangeSets[$prop] = RangeSet::loadUnsafe(...$ranges);
     }
 
     private function getRangeSet(string $prop): RangeSet

@@ -124,7 +124,7 @@ class TokenMatcherGeneratorTest extends TestCase
         $spec->addFileComment($comment);
         $output = (new TokenMatcherGenerator($spec))->getOutput();
         $escapedComment = preg_quote($comment, '/');
-        self::assertRegExp("/^\\s\\*\\s{$escapedComment}$/m", $output);
+        self::assertMatchesRegularExpression("/^\\s\\*\\s{$escapedComment}$/m", $output);
     }
 
     /**

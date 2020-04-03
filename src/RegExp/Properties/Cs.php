@@ -10,4 +10,4 @@ use Remorhaz\UniLex\RegExp\FSM\Range;
 use Remorhaz\UniLex\RegExp\FSM\RangeSet;
 
 /** phpcs:disable Generic.Files.LineLength.TooLong */
-return RangeSet::loadUnsafe(new Range(0xd800, 0xdb7f), new Range(0xdb80, 0xdbff), new Range(0xdc00, 0xdfff));
+return RangeSet::loadUnsafe(new Range(0xd800, 0xdfff));
