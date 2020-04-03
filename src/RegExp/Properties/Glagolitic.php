@@ -4,7 +4,7 @@
 
 declare(strict_types=1);
 
-namespace Remorhaz\UniLex\RegExp\Properties;
+namespace Remorhaz\UniLex\Tool\RegExp\Properties;
 
 use Remorhaz\UniLex\RegExp\FSM\Range;
 use Remorhaz\UniLex\RegExp\FSM\RangeSet;

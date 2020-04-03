@@ -59,9 +59,48 @@ class RangeSet
      */
     public function addRange(Range ...$rangeList): void
     {
-        foreach ($rangeList as $range) {
-            $this->mergeSingleRange($range);
+        $rangeList = $this->getSortedRangeList(...$rangeList);
+        $existingIndex = 0;
+        $addedIndex = 0;
+        $newRangeList = [];
+        /** @var Range $rangeBuffer */
+        $rangeBuffer = null;
+        while (true) {
+            $existingRange = $this->rangeList[$existingIndex] ?? null;
+            $addedRange = $rangeList[$addedIndex] ?? null;
+
+            if (isset($existingRange)) {
+                if (isset($addedRange) && $existingRange->getStart() > $addedRange->getStart()) {
+                    $pickedRange = $addedRange;
+                    $addedIndex++;
+                } else {
+                    $pickedRange = $existingRange;
+                    $existingIndex++;
+                }
+            } elseif (isset($addedRange)) {
+                $pickedRange = $addedRange;
+                $addedIndex++;
+            } else {
+                if (isset($rangeBuffer)) {
+                    $newRangeList[] = $rangeBuffer;
+                }
+                break;
+            }
+
+            if (isset($rangeBuffer)) {
+                if ($rangeBuffer->containsFinishOf($pickedRange)) {
+                    continue;
+                }
+                if ($rangeBuffer->containsStartOf($pickedRange) || $pickedRange->follows($rangeBuffer)) {
+                    $rangeBuffer = $pickedRange->copyAfterStartOf($rangeBuffer);
+                    continue;
+                }
+                $newRangeList[] = $rangeBuffer;
+            }
+            $rangeBuffer = $pickedRange;
         }
+
+        $this->rangeList = $newRangeList;
     }
 
     /**
@@ -77,39 +116,15 @@ class RangeSet
         return empty($this->rangeList);
     }
 
-    /**
-     * @param Range $range
-     * @throws Exception
-     */
-    private function mergeSingleRange(Range $range): void
+    private function getSortedRangeList(Range ...$rangeList): array
     {
-        if (empty($this->rangeList)) {
-            $this->rangeList = [$range];
-
-            return;
+        if (isset($rangeList[1])) {
+            $sortByFrom = function (Range $rangeOne, Range $rangeTwo): int {
+                return $rangeOne->getStart() <=> $rangeTwo->getStart();
+            };
+            usort($rangeList, $sortByFrom);
         }
-        $newRangeList = [];
-        foreach ($this->rangeList as $existingRange) {
-            if ($existingRange->containsStartOf($range) || $range->follows($existingRange)) {
-                $range = $range->copyAfterStartOf($existingRange);
-                continue;
-            }
-            if ($existingRange->containsFinishOf($range) || $existingRange->follows($range)) {
-                $range = $range->copyBeforeFinishOf($existingRange);
-                continue;
-            }
-            $newRangeList[] = $existingRange;
-        }
-        $newRangeList[] = $range;
-        $this->setSortedRangeList(...$newRangeList);
-    }
 
-    private function setSortedRangeList(Range ...$rangeList): void
-    {
-        $sortByFrom = function (Range $rangeOne, Range $rangeTwo): int {
-            return $rangeOne->getStart() <=> $rangeTwo->getStart();
-        };
-        usort($rangeList, $sortByFrom);
-        $this->rangeList = $rangeList;
+        return $rangeList;
     }
 }

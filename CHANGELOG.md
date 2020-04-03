@@ -7,12 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - Unicode properties are partially supported (only scripts).
+- Internal CLI tool to build Unicode properties.
+- Ranges can be added to set without checks (external code must guarantee consistence in this case).
 ### Changed
 - CLI utility switched to `symfony/console` and changed API.
 ### Removed
 - Ability to build token matchers using Phing.
 ### Fixed
 - UTF-8 matcher correctly calculates code of multi-byte symbols.
+- Performance improved on adding ranges to set.
 
 ## [0.1.0] - 2020-02-17
 ### Added

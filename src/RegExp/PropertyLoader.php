@@ -6,8 +6,14 @@ namespace Remorhaz\UniLex\RegExp;
 
 use Remorhaz\UniLex\RegExp\FSM\RangeSet;
 
+use function error_clear_last;
+use function error_get_last;
+use function is_string;
+
 final class PropertyLoader implements PropertyLoaderInterface
 {
+
+    private $path;
 
     private $index;
 
@@ -17,36 +23,52 @@ final class PropertyLoader implements PropertyLoaderInterface
     {
         $index = require __DIR__ . '/PropertyIndex.php';
 
-        return new self($index);
+        return new self(__DIR__, $index);
     }
 
-    public function __construct(array $index)
+    public function __construct(string $path, array $index)
     {
+        $this->path = $path;
         $this->index = $index;
     }
 
-    public function getPropertyRangeSet(string $name): RangeSet
+    public function getRangeSet(string $propertyName): RangeSet
     {
-        if (!isset($this->cache[$name])) {
-            $this->cache[$name] = $this->loadPropertyRangeSet($name);
+        if (!isset($this->cache[$propertyName])) {
+            $this->cache[$propertyName] = $this->loadRangeSet($propertyName);
         }
 
-        return $this->cache[$name];
+        return $this->cache[$propertyName];
     }
 
-    private function loadPropertyRangeSet(string $name): RangeSet
+    private function loadRangeSet(string $propertyName): RangeSet
     {
-        if (!isset($this->index[$name])) {
-            throw new Exception\PropertyRangeSetNotFoundException($name);
+        if (!isset($this->index[$propertyName])) {
+            throw new Exception\PropertyRangeSetNotFoundException($propertyName);
         }
 
-        $file = $this->index[$name];
+        $file = $this->index[$propertyName];
+        if (!is_string($file)) {
+            throw new Exception\InvalidPropertyConfigException($propertyName, $file);
+        }
+        $fileName = $this->path . $file;
+        error_clear_last();
         /** @noinspection PhpIncludeInspection */
-        $rangeSet = require __DIR__ . $file;
+        $rangeSet = @include $fileName;
+        if (false === $rangeSet) {
+            $lastError = error_get_last();
+            if (isset($lastError)) {
+                throw new Exception\PropertyFileNotLoadedException(
+                    $propertyName,
+                    $fileName,
+                    $lastError['message'] ?? null
+                );
+            }
+        }
         if ($rangeSet instanceof RangeSet) {
             return $rangeSet;
         }
 
-        throw new Exception\UnicodePropertyRangeSetException($name);
+        throw new Exception\InvalidPropertyRangeSetException($propertyName, $fileName, $rangeSet);
     }
 }

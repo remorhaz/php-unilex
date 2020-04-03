@@ -8,5 +8,5 @@ use Remorhaz\UniLex\RegExp\FSM\RangeSet;
 
 interface PropertyLoaderInterface
 {
-    public function getPropertyRangeSet(string $name): RangeSet;
+    public function getRangeSet(string $propertyName): RangeSet;
 }

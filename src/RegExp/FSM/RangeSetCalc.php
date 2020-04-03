@@ -82,52 +82,62 @@ class RangeSetCalc
      */
     public function xor(RangeSet $rangeSet, RangeSet $anotherRangeSet): RangeSet
     {
-        $result = clone $rangeSet;
-        foreach ($anotherRangeSet->getRanges() as $range) {
-            $result = $this->xorSingleRange($result, $range);
-        }
+        $ranges = $rangeSet->getRanges();
+        $otherRanges = $anotherRangeSet->getRanges();
+        $index = 0;
+        $anotherIndex = 0;
+        $newRangeList = [];
+        /** @var Range $rangeBuffer */
+        $rangeBuffer = null;
+        while (true) {
+            $range = $ranges[$index] ?? null;
+            $anotherRange = $otherRanges[$anotherIndex] ?? null;
 
-        return $result;
-    }
-
-    /**
-     * @param RangeSet $rangeSetPart
-     * @param Range    $range
-     * @return RangeSet
-     * @throws Exception
-     */
-    private function xorSingleRange(RangeSet $rangeSetPart, Range $range): RangeSet
-    {
-        $rangeSet = new RangeSet();
-        if ($rangeSetPart->isEmpty()) {
-            $rangeSet->addRange($range);
-
-            return $rangeSet;
-        }
-        $shouldAddRange = true;
-        foreach ($rangeSetPart->getRanges() as $existingRange) {
-            if (!$existingRange->intersects($range)) {
-                $rangeSet->addRange($existingRange);
-                continue;
+            if (isset($range)) {
+                if (isset($anotherRange) && $range->getStart() > $anotherRange->getStart()) {
+                    $pickedRange = $anotherRange;
+                    $anotherIndex++;
+                } else {
+                    $pickedRange = $range;
+                    $index++;
+                }
+            } elseif (isset($anotherRange)) {
+                $pickedRange = $anotherRange;
+                $anotherIndex++;
+            } else {
+                if (isset($rangeBuffer)) {
+                    $newRangeList[] = $rangeBuffer;
+                }
+                break;
             }
-            if ($range->startsBeforeStartOf($existingRange)) {
-                $rangeSet->addRange($range->copyBeforeStartOf($existingRange));
-                $range = $range->copyAfterStartOf($existingRange);
-            } elseif ($existingRange->startsBeforeStartOf($range)) {
-                $rangeSet->addRange($existingRange->copyBeforeStartOf($range));
+
+            if (isset($rangeBuffer)) {
+                if ($rangeBuffer->intersects($pickedRange)) {
+                    if ($rangeBuffer->startsBeforeStartOf($pickedRange)) {
+                        $newRangeList[] = $rangeBuffer->copyBeforeStartOf($pickedRange);
+                        $rangeBuffer = $rangeBuffer->copyAfterStartOf($pickedRange);
+                    } elseif ($pickedRange->startsBeforeStartOf($rangeBuffer)) {
+                        $newRangeList[] = $pickedRange->copyBeforeStartOf($rangeBuffer);
+                        $rangeBuffer = $pickedRange->copyAfterStartOf($rangeBuffer);
+                    }
+                    if ($rangeBuffer->endsBeforeFinishOf($pickedRange)) {
+                        $rangeBuffer = $pickedRange->copyAfterFinishOf($rangeBuffer);
+                    } elseif ($pickedRange->endsBeforeFinishOf($rangeBuffer)) {
+                        $rangeBuffer = $rangeBuffer->copyAfterFinishOf($pickedRange);
+                    } else {
+                        $rangeBuffer = null;
+                    }
+                    continue;
+                }
+                if ($pickedRange->follows($rangeBuffer)) {
+                    $rangeBuffer = $rangeBuffer->copyBeforeFinishOf($pickedRange);
+                    continue;
+                }
+                $newRangeList[] = $rangeBuffer;
             }
-            if ($existingRange->endsBeforeFinishOf($range)) {
-                $range = $range->copyAfterFinishOf($existingRange);
-                continue;
-            } elseif ($range->endsBeforeFinishOf($existingRange)) {
-                $rangeSet->addRange($existingRange->copyAfterFinishOf($range));
-            }
-            $shouldAddRange = false;
-        }
-        if ($shouldAddRange) {
-            $rangeSet->addRange($range);
+            $rangeBuffer = $pickedRange;
         }
 
-        return $rangeSet;
+        return RangeSet::loadUnsafe(...$newRangeList);
     }
 }

@@ -135,7 +135,7 @@ class NfaBuilder extends AbstractTranslatorListener
 
             case NodeType::SYMBOL_PROP:
                 $propName = $node->getStringAttribute('name');
-                $propRangeSet = $this->propertyLoader->getPropertyRangeSet($propName);
+                $propRangeSet = $this->propertyLoader->getRangeSet($propName);
                 $rangeSet = $node->getAttribute('not')
                     ? $this
                         ->rangeSetCalc
