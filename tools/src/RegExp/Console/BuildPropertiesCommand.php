@@ -81,7 +81,7 @@ final class BuildPropertiesCommand extends Command
     private function getDefaultTargetRootPath(): string
     {
         return $this->getRealPath(
-            __DIR__ . '/../../../src/RegExp',
+            __DIR__ . '/../../../../src/RegExp',
             'Default target root path not detected'
         );
     }
@@ -98,7 +98,7 @@ final class BuildPropertiesCommand extends Command
     private function getDefaultSourceRootPath(): string
     {
         return $this->getRealPath(
-            __DIR__ . '/../../data/Unicode',
+            __DIR__ . '/../../../data/Unicode',
             'Default source root path not detected'
         );
     }

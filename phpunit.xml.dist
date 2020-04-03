@@ -20,11 +20,15 @@
         </testsuite>
     </testsuites>
     <filter>
-        <whitelist
-                processUncoveredFilesFromWhitelist="true">
+        <whitelist processUncoveredFilesFromWhitelist="true">
             <directory suffix=".php">src/</directory>
+            <directory suffix=".php">tools/src/</directory>
             <directory suffix=".php">examples/Brainfuck/src/</directory>
             <directory suffix=".php">examples/SimpleExpr/src/</directory>
+            <exclude>
+                <file>src/RegExp/PropertyIndex.php</file>
+                <directory>src/RegExp/Properties/</directory>
+            </exclude>
         </whitelist>
     </filter>
 </phpunit>
