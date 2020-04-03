@@ -35,43 +35,47 @@ class RangeSetCalc
      */
     public function and(RangeSet $rangeSet, RangeSet $anotherRangeSet): RangeSet
     {
-        $result = new RangeSet();
-        foreach ($anotherRangeSet->getRanges() as $range) {
-            $andRangeSetPart = $this->andSingleRange($rangeSet, $range);
-            $result->addRange(...$andRangeSetPart->getRanges());
-        }
+        $ranges = $rangeSet->getRanges();
+        $otherRanges = $anotherRangeSet->getRanges();
+        $index = 0;
+        $anotherIndex = 0;
+        $newRangeList = [];
+        while (true) {
+            $range = $ranges[$index] ?? null;
+            $anotherRange = $otherRanges[$anotherIndex] ?? null;
 
-        return $result;
-    }
-
-    /**
-     * @param RangeSet $rangeSetPart
-     * @param Range    $range
-     * @return RangeSet
-     * @throws Exception
-     */
-    private function andSingleRange(RangeSet $rangeSetPart, Range $range): RangeSet
-    {
-        $rangeSet = new RangeSet();
-        if ($rangeSetPart->isEmpty()) {
-            return $rangeSet;
-        }
-        foreach ($rangeSetPart->getRanges() as $existingRange) {
-            if (!$existingRange->intersects($range)) {
+            if (!isset($range, $anotherRange)) {
+                break;
+            }
+            if (!$range->intersects($anotherRange)) {
+                if ($range->getStart() < $anotherRange->getStart()) {
+                    $index++;
+                } else {
+                    $anotherIndex++;
+                }
                 continue;
             }
-            if ($range->startsBeforeStartOf($existingRange)) {
-                $range = $range->copyAfterStartOf($existingRange);
+            if ($range->startsBeforeStartOf($anotherRange)) {
+                $range = $range->copyAfterStartOf($anotherRange);
+            } elseif ($anotherRange->startsBeforeStartOf($range)) {
+                $anotherRange = $anotherRange->copyAfterStartOf($range);
             }
-            if ($existingRange->endsBeforeFinishOf($range)) {
-                $rangeSet->addRange($range->copyBeforeFinishOf($existingRange));
-                $range = $range->copyAfterFinishOf($existingRange);
+            if ($range->endsBeforeFinishOf($anotherRange)) {
+                $newRangeList[] = $range;
+                $index++;
                 continue;
             }
-            $rangeSet->addRange($range);
+            if ($anotherRange->endsBeforeFinishOf($range)) {
+                $newRangeList[] = $anotherRange;
+                $anotherIndex++;
+                continue;
+            }
+            $newRangeList[] = $range;
+            $index++;
+            $anotherIndex++;
         }
 
-        return $rangeSet;
+        return RangeSet::loadUnsafe(...$newRangeList);
     }
 
     /**

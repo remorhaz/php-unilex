@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+### Fixed
+- Performance of AND operation on range sets improved.
+
 ## [0.2.0] - 2020-04-03
 ### Added
 - Unicode properties are partially supported (only scripts).
@@ -15,7 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Ability to build token matchers using Phing.
 ### Fixed
 - UTF-8 matcher correctly calculates code of multi-byte symbols.
-- Performance improved on adding ranges to set.
+- Performance on adding ranges to set improved.
+- Performance of XOR operation on range sets improved.
 
 ## [0.1.0] - 2020-02-17
 ### Added

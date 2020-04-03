@@ -81,11 +81,16 @@ class RangeSetCalcTest extends TestCase
         return [
             "Empty range" => [[[1, 2]], [], []],
             "Empty existing range" => [[], [[1, 2]], []],
+            "Same range" => [[[1, 2]], [[1, 2]], [[1, 2]]],
+            "Range ends after existing range with matching starts" => [[[1, 2]], [[1, 3]], [[1, 2]]],
+            "Range ends before existing range with matching starts" => [[[1, 3]], [[1, 2]], [[1, 2]]],
             "Range after existing range" => [[[1, 2]], [[4, 5]], []],
+            "Range right after existing range" => [[[1, 2]], [[3, 4]], []],
             "Range before existing range" => [[[4, 5]], [[1, 2]], []],
             "Range right before existing range" => [[[2, 5]], [[1, 1]], []],
             "Range partially before existing range" => [[[2, 5]], [[1, 3]], [[2, 3]]],
             "Range entirely inside existing range" => [[[2, 5]], [[3, 3]], [[3, 3]]],
+            "Range starts after existing range with matching ends" => [[[1, 5]], [[2, 5]], [[2, 5]]],
             "Range starts before existing range with matching ends" => [[[2, 5]], [[1, 5]], [[2, 5]]],
             "Range starts before and ends after existing range" => [[[2, 5]], [[3, 3]], [[3, 3]]],
             "Range starts before and ends after all existing ranges" =>
