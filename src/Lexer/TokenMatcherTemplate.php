@@ -6,6 +6,10 @@ use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\IO\CharBufferInterface;
 use Remorhaz\UniLex\IO\TokenExtractInterface;
 
+use function array_diff;
+use function array_intersect;
+use function array_keys;
+
 abstract class TokenMatcherTemplate implements TokenMatcherInterface
 {
 
@@ -64,6 +68,8 @@ abstract class TokenMatcherTemplate implements TokenMatcherInterface
             private $onSetMode;
 
             private $onGetMode;
+
+            private $visitedStates = [];
 
             public function __construct(
                 CharBufferInterface $buffer,
@@ -140,6 +146,20 @@ abstract class TokenMatcherTemplate implements TokenMatcherInterface
                 call_user_func($this->onSetMode, $mode);
 
                 return $this;
+            }
+
+            public function visitState(int $state): void
+            {
+                $this->visitedStates[$state] = true;
+            }
+
+            public function checkVisitedStates(array $allowedStates, array $forbiddenStates): bool
+            {
+                $visitedStates = array_keys($this->visitedStates);
+                $allowedVisited = array_intersect($visitedStates, $allowedStates);
+                $forbiddenVisited = array_intersect($visitedStates, $forbiddenStates);
+
+                return empty($forbiddenVisited) && !empty($allowedVisited);
             }
         };
     }

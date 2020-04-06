@@ -17,6 +17,13 @@ use Remorhaz\UniLex\RegExp\PropertyLoader;
 use Remorhaz\UniLex\Unicode\CharBufferFactory;
 use Throwable;
 
+use function array_diff;
+use function array_fill_keys;
+use function array_intersect;
+use function array_keys;
+use function implode;
+use function in_array;
+
 class TokenMatcherGenerator
 {
 
@@ -30,6 +37,8 @@ class TokenMatcherGenerator
      * @var TokenSpec[]
      */
     private $tokenNfaStateMap = [];
+
+    private $regExpMap = [];
 
     public function __construct(TokenMatcherSpec $spec)
     {
@@ -207,66 +216,67 @@ class TokenMatcherGenerator
     }
 
     /**
-     * @param string $context
+     * @param string $mode
      * @param int    $indent
      * @return string
      * @throws Exception
      */
-    private function buildFsmEntry(string $context, int $indent = 2): string
+    private function buildFsmEntry(string $mode, int $indent = 2): string
     {
-        $state = $this->getDfa($context)->getStateMap()->getStartState();
+        $state = $this->getDfa($mode)->getStateMap()->getStartState();
 
         return $this
-            ->buildMethodPart("goto {$this->buildStateLabel('state', $context, $state)};", $indent);
+            ->buildMethodPart("goto {$this->buildStateLabel('state', $mode, $state)};", $indent);
     }
 
-    private function buildStateLabel(string $prefix, string $context, int $state): string
+    private function buildStateLabel(string $prefix, string $mode, int $state): string
     {
-        $contextSuffix = TokenMatcherInterface::DEFAULT_MODE == $context
+        $contextSuffix = TokenMatcherInterface::DEFAULT_MODE == $mode
             ? ''
-            : ucfirst($context);
+            : ucfirst($mode);
 
         return "{$prefix}{$contextSuffix}{$state}";
     }
 
     /**
-     * @param string $context
+     * @param string $mode
      * @return string
      * @throws Exception
      */
-    private function buildFsmMoves(string $context): string
+    private function buildFsmMoves(string $mode): string
     {
         $result = '';
-        foreach ($this->getDfa($context)->getStateMap()->getStateList() as $stateIn) {
-            if ($this->isFinishStateWithSingleEnteringTransition($context, $stateIn)) {
+        foreach ($this->getDfa($mode)->getStateMap()->getStateList() as $stateIn) {
+            if ($this->isFinishStateWithSingleEnteringTransition($mode, $stateIn)) {
                 continue;
             }
             $result .=
-                $this->buildStateEntry($context, $stateIn) .
-                $this->buildStateTransitionList($context, $stateIn) .
-                $this->buildStateFinish($context, $stateIn);
+                $this->buildStateEntry($mode, $stateIn) .
+                $this->buildStateTransitionList($mode, $stateIn) .
+                $this->buildStateFinish($mode, $stateIn);
         }
 
         return $result;
     }
 
     /**
-     * @param string $context
+     * @param string $mode
      * @param int    $stateIn
      * @return string
      * @throws Exception
      */
-    private function buildStateEntry(string $context, int $stateIn): string
+    private function buildStateEntry(string $mode, int $stateIn): string
     {
         $result = '';
-        $result .= $this->buildMethodPart("{$this->buildStateLabel('state', $context, $stateIn)}:");
-        $moves = $this->getDfa($context)->getTransitionMap()->getExitList($stateIn);
+        $result .= $this->buildMethodPart("{$this->buildStateLabel('state', $mode, $stateIn)}:");
+        $result .= $this->buildMethodPart("\$context->visitState({$stateIn});");
+        $moves = $this->getDfa($mode)->getTransitionMap()->getExitList($stateIn);
         if (empty($moves)) {
             return $result;
         }
         $result .= $this->buildMethodPart("if (\$context->getBuffer()->isEnd()) {");
-        $result .= $this->getDfa($context)->getStateMap()->isFinishState($stateIn)
-            ? $this->buildMethodPart("goto {$this->buildStateLabel('finish', $context, $stateIn)};", 3)
+        $result .= $this->getDfa($mode)->getStateMap()->isFinishState($stateIn)
+            ? $this->buildMethodPart("goto {$this->buildStateLabel('finish', $mode, $stateIn)};", 3)
             : $this->buildMethodPart("goto error;", 3);
         $result .=
             $this->buildMethodPart("}") .
@@ -276,24 +286,24 @@ class TokenMatcherGenerator
     }
 
     /**
-     * @param string $context
+     * @param string $mode
      * @param int    $stateIn
      * @return string
      * @throws Exception
      */
-    private function buildStateTransitionList(string $context, int $stateIn): string
+    private function buildStateTransitionList(string $mode, int $stateIn): string
     {
         $result = '';
-        foreach ($this->getDfa($context)->getTransitionMap()->getExitList($stateIn) as $stateOut => $symbolList) {
+        foreach ($this->getDfa($mode)->getTransitionMap()->getExitList($stateIn) as $stateOut => $symbolList) {
             foreach ($symbolList as $symbol) {
-                $rangeSet = $this->getDfa($context)->getSymbolTable()->getRangeSet($symbol);
+                $rangeSet = $this->getDfa($mode)->getSymbolTable()->getRangeSet($symbol);
                 $result .=
                     $this->buildMethodPart("if ({$this->buildRangeSetCondition($rangeSet)}) {") .
                     $this->buildOnTransition() .
                     $this->buildMethodPart("\$context->getBuffer()->nextSymbol();", 3);
-                $result .= $this->isFinishStateWithSingleEnteringTransition($context, $stateOut)
-                    ? $this->buildToken($context, $stateOut, 3)
-                    : $this->buildMethodPart("goto {$this->buildStateLabel('state', $context, $stateOut)};", 3);
+                $result .= $this->isFinishStateWithSingleEnteringTransition($mode, $stateOut)
+                    ? $this->buildToken($mode, $stateOut, 3)
+                    : $this->buildMethodPart("goto {$this->buildStateLabel('state', $mode, $stateOut)};", 3);
                 $result .= $this->buildMethodPart("}");
             }
         }
@@ -302,18 +312,18 @@ class TokenMatcherGenerator
     }
 
     /**
-     * @param string $context
+     * @param string $mode
      * @param int    $stateOut
      * @return bool
      * @throws Exception
      */
-    private function isFinishStateWithSingleEnteringTransition(string $context, int $stateOut): bool
+    private function isFinishStateWithSingleEnteringTransition(string $mode, int $stateOut): bool
     {
-        if (!$this->getDfa($context)->getStateMap()->isFinishState($stateOut)) {
+        if (!$this->getDfa($mode)->getStateMap()->isFinishState($stateOut)) {
             return false;
         }
-        $enters = $this->getDfa($context)->getTransitionMap()->getEnterList($stateOut);
-        $exits = $this->getDfa($context)->getTransitionMap()->getExitList($stateOut);
+        $enters = $this->getDfa($mode)->getTransitionMap()->getEnterList($stateOut);
+        $exits = $this->getDfa($mode)->getTransitionMap()->getExitList($stateOut);
         if (!(count($enters) == 1 && count($exits) == 0)) {
             return false;
         }
@@ -365,39 +375,62 @@ class TokenMatcherGenerator
     }
 
     /**
-     * @param string $context
+     * @param string $mode
      * @param int    $stateIn
      * @return string
      * @throws Exception
      */
-    private function buildStateFinish(string $context, int $stateIn): string
+    private function buildStateFinish(string $mode, int $stateIn): string
     {
-        if (!$this->getDfa($context)->getStateMap()->isFinishState($stateIn)) {
+        if (!$this->getDfa($mode)->getStateMap()->isFinishState($stateIn)) {
             return $this->buildMethodPart("goto error;\n");
         }
         $result = '';
-        if (!empty($this->getDfa($context)->getTransitionMap()->getExitList($stateIn))) {
-            $result .= $this->buildMethodPart("{$this->buildStateLabel('finish', $context, $stateIn)}:");
+        if (!empty($this->getDfa($mode)->getTransitionMap()->getExitList($stateIn))) {
+            $result .= $this->buildMethodPart("{$this->buildStateLabel('finish', $mode, $stateIn)}:");
         }
-        $result .= "{$this->buildToken($context, $stateIn)}\n";
+        $result .= "{$this->buildToken($mode, $stateIn)}\n";
 
         return $result;
     }
 
     /**
-     * @param string $context
+     * @param string $mode
      * @param int    $stateIn
      * @param int    $indent
      * @return string
      * @throws Exception
      */
-    private function buildToken(string $context, int $stateIn, int $indent = 2): string
+    private function buildToken(string $mode, int $stateIn, int $indent = 2): string
     {
-        $tokenSpec = $this->getTokenSpec($context, $stateIn);
+        $result = '';
+        foreach ($this->regExpMap as $regExp => [$allowedStateIds, $forbiddenStateIds]) {
+            if (!in_array($stateIn, $allowedStateIds)) {
+                continue;
+            }
+            $allowedStates = implode(', ', $allowedStateIds);
+            $forbiddenStates = implode(', ', $forbiddenStateIds);
+            $condition = "\$context->checkVisitedStates([{$allowedStates}], [{$forbiddenStates}])";
+            $tokenSpec = $this->spec->getTokenSpec($mode, $regExp);
+            $result .=
+                $this->buildMethodPart("if ({$condition}) {", $indent) .
+                $this->buildSingleToken($tokenSpec, $indent + 1) .
+                $this->buildMethodPart("}", $indent);
+        }
 
+        if ('' === $result) {
+            throw new Exception("No tokens found for state {$stateIn}");
+        }
+
+        return $result;
+    }
+
+    private function buildSingleToken(TokenSpec $tokenSpec, int $indent): string
+    {
         return
+            $this->buildMethodPart("// {$tokenSpec->getRegExp()}", $indent) .
             $this->buildMethodPart($tokenSpec->getCode(), $indent) .
-            $this->buildOnToken($indent) .
+            $this->buildOnToken($indent) . "\n" .
             $this->buildMethodPart("return true;", $indent);
     }
 
@@ -485,14 +518,20 @@ class TokenMatcherGenerator
         $startState = $nfa->getStateMap()->createState();
         $nfa->getStateMap()->addStartState($startState);
         $oldFinishStates = [];
+        $nfaRegExpMap = [];
         $this->tokenNfaStateMap[$context] = [];
         foreach ($this->spec->getTokenSpecList($context) as $tokenSpec) {
+            $existingStates = $nfa->getStateMap()->getStateList();
             $regExpEntryState = $nfa->getStateMap()->createState();
             $nfa
                 ->getEpsilonTransitionMap()
                 ->addTransition($startState, $regExpEntryState, true);
             $this->buildRegExp($nfa, $regExpEntryState, $tokenSpec->getRegExp());
             $finishStates = $nfa->getStateMap()->getFinishStateList();
+            $nfaRegExpMap[$tokenSpec->getRegExp()] = array_diff(
+                $nfa->getStateMap()->getStateList(),
+                $existingStates
+            );
             $newFinishStates = array_diff($finishStates, $oldFinishStates);
             foreach ($newFinishStates as $finishState) {
                 $this->tokenNfaStateMap[$context][$finishState] = $tokenSpec;
@@ -500,7 +539,22 @@ class TokenMatcherGenerator
             $oldFinishStates = $finishStates;
         }
 
-        return DfaBuilder::fromNfa($nfa);
+        $dfa = DfaBuilder::fromNfa($nfa);
+        $dfaRegExpMap = array_fill_keys(array_keys($nfaRegExpMap), []);
+        $allDfaStateIds = $dfa->getStateMap()->getStateList();
+        foreach ($allDfaStateIds as $dfaStateId) {
+            $nfaStateIds = $dfa->getStateMap()->getStateValue($dfaStateId);
+            foreach ($nfaRegExpMap as $regExp => $nfaRegExpStateIds) {
+                if (!empty(array_intersect($nfaStateIds, $nfaRegExpStateIds))) {
+                    $dfaRegExpMap[$regExp][] = $dfaStateId;
+                }
+            }
+        }
+        foreach ($dfaRegExpMap as $regExp => $regExpStateIds) {
+            $this->regExpMap[$regExp] = [$regExpStateIds, array_diff($allDfaStateIds, $regExpStateIds)];
+        }
+
+        return $dfa;
     }
 
     /**

@@ -230,6 +230,17 @@ class TokenMatcherSpec
         return $this->tokenSpecList[$mode] ?? [];
     }
 
+    public function getTokenSpec(string $mode, string $regExp): TokenSpec
+    {
+        foreach ($this->getTokenSpecList($mode) ?? [] as $tokenSpec) {
+            if ($tokenSpec->getRegExp() == $regExp) {
+                return $tokenSpec;
+            }
+        }
+
+        throw new Exception("Token spec not found: {$regExp}");
+    }
+
     /**
      * @return string[]
      */
