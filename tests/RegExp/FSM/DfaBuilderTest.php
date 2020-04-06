@@ -51,7 +51,7 @@ class DfaBuilderTest extends TestCase
         $nfa = new Nfa();
         $stateList = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
         $nfa->getStateMap()->importState(true, ...$stateList);
-        $nfa->getStateMap()->setStartState(0);
+        $nfa->getStateMap()->addStartState(0);
         $nfa->getStateMap()->addFinishState(10);
         $epsilonTransitionList = [[0, 1], [0, 7], [1, 2], [1, 4], [3, 6], [5, 6], [6, 1], [6, 7]];
         foreach ($epsilonTransitionList as $epsilonTransition) {

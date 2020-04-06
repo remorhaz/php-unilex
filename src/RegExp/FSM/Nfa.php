@@ -2,6 +2,10 @@
 
 namespace Remorhaz\UniLex\RegExp\FSM;
 
+use Remorhaz\UniLex\Exception;
+
+use function count;
+
 class Nfa
 {
 
@@ -20,6 +24,19 @@ class Nfa
         }
 
         return $this->stateMap;
+    }
+
+    public function joinStartStates(): void
+    {
+        $startStateList = $this->getStateMap()->getStartStateList();
+        if (count($startStateList) < 2) {
+            return;
+        }
+        $newStartStateId = $this->getStateMap()->createState([]);
+        foreach ($startStateList as $oldStartStateId) {
+            $this->getEpsilonTransitionMap()->addTransition($newStartStateId, $oldStartStateId, true);
+        }
+        $this->getStateMap()->replaceStartStateList($newStartStateId);
     }
 
     public function getEpsilonTransitionMap(): TransitionMap
@@ -47,5 +64,13 @@ class Nfa
         }
 
         return $this->symbolTable;
+    }
+
+    public function setSymbolTable(SymbolTable $symbolTable): void
+    {
+        if (isset($this->symbolTable)) {
+            throw new Exception("Symbol table already exists in DFA");
+        }
+        $this->symbolTable = $symbolTable;
     }
 }

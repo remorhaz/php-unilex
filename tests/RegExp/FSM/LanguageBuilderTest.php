@@ -72,16 +72,14 @@ class LanguageBuilderTest extends TestCase
     public function testAddTransition_TransitionWithSameRangeAdded_TransitionMapContainsMatchingList(
         array $firstTransitionData,
         array $secondTransitionData,
-        array $firstRangeData,
-        array $secondRangeData,
         array $expectedValue
     ): void {
         $symbolTable = new SymbolTable();
         $transitionMap = new TransitionMap($this->createStateMap());
         $languageBuilder = new LanguageBuilder($symbolTable, $transitionMap);
-        [$stateIn, $stateOut] = $firstTransitionData;
+        [$stateIn, $stateOut, $firstRangeData] = $firstTransitionData;
         $languageBuilder->addTransition($stateIn, $stateOut, ...Range::importList(...$firstRangeData));
-        [$stateIn, $stateOut] = $secondTransitionData;
+        [$stateIn, $stateOut, $secondRangeData] = $secondTransitionData;
         $languageBuilder->addTransition($stateIn, $stateOut, ...Range::importList(...$secondRangeData));
         $actualValue = $transitionMap->getTransitionList();
         self::assertEquals($expectedValue, $actualValue);
@@ -90,9 +88,21 @@ class LanguageBuilderTest extends TestCase
     public function providerAddTransitionCalledTwiceTransitions(): array
     {
         return [
-            "Same ranges" => [[1, 2], [1, 3], [[1, 2]], [[1, 2]], [1 => [2 => [0], 3 => [0]]]],
-            "Not intersecting ranges" => [[1, 2], [1, 3], [[1, 2]], [[3, 4]], [1 => [2 => [0], 3 => [1]]]],
-            "Partially intersecting ranges" => [[1, 2], [1, 3], [[1, 2]], [[2, 4]], [1 => [2 => [0, 1], 3 => [1, 2]]]],
+            "Same ranges" => [
+                [1, 2, [[1, 2]]],
+                [1, 3, [[1, 2]]],
+                [1 => [2 => [0], 3 => [0]]],
+            ],
+            "Not intersecting ranges" => [
+                [1, 2, [[1, 2]]],
+                [1, 3, [[3, 4]]],
+                [1 => [2 => [0], 3 => [1]]],
+            ],
+            "Partially intersecting ranges" => [
+                [1, 2, [[1, 2]]],
+                [1, 3, [[2, 4]]],
+                [1 => [2 => [0, 1], 3 => [1, 2]]],
+            ],
         ];
     }
 

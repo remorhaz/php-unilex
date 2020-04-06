@@ -207,6 +207,9 @@ SOURCE;
             "Number without leading zero" => ['103abc', '[1-9][0-9]*', '103'],
             'One or many symbols with Unicode property' => ['αβγabc', '\\p{Greek}+', 'αβγ'],
             'One or many symbols without Unicode property' => ['abcαβγ', '\\P{Greek}+', 'abc'],
+            'Alternative before char' => ['abcc', '(a|b)+c', 'abc'],
+            'Alternative of intersecting normal and negated classes' => ['bca', '([^ab]|[b])+', 'bc'],
+            'xxx' => ['aab', 'a+', 'aa'],
         ];
     }
 

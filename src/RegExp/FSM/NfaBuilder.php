@@ -105,7 +105,7 @@ class NfaBuilder extends AbstractTranslatorListener
             $this
                 ->nfa
                 ->getStateMap()
-                ->setStartState($this->startState);
+                ->addStartState($this->startState);
         }
 
         return $this->startState;

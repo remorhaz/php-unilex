@@ -122,26 +122,27 @@ class StateMapTest extends TestCase
     /**
      * @throws UniLexException
      */
-    public function testSetStartState_StateNotExists_ThrowsException(): void
+    public function testAddStartState_StateNotExists_ThrowsException(): void
     {
         $stateMap = new StateMap();
 
         $this->expectException(UniLexException::class);
         $this->expectExceptionMessage('State 1 is undefined');
-        $stateMap->setStartState(1);
+        $stateMap->addStartState(1);
     }
 
     /**
      * @throws UniLexException
      */
-    public function testSetStartState_StartStateIsSet_ThrowsException(): void
+    public function testAddStartState_SameStateIsSet_ThrowsException(): void
     {
         $stateMap = new StateMap();
-        $stateMap->setStartState($stateMap->createState());
+        $stateId = $stateMap->createState();
+        $stateMap->addStartState($stateId);
 
         $this->expectException(UniLexException::class);
-        $this->expectExceptionMessage('Start state is already set');
-        $stateMap->setStartState($stateMap->createState());
+        $this->expectExceptionMessage("Start state {$stateId} is already set");
+        $stateMap->addStartState($stateId);
     }
 
     /**
@@ -163,7 +164,7 @@ class StateMapTest extends TestCase
     {
         $stateMap = new StateMap();
         $stateId = $stateMap->createState();
-        $stateMap->setStartState($stateId);
+        $stateMap->addStartState($stateId);
         $actualValue = $stateMap->getStartState();
         self::assertSame($stateId, $actualValue);
     }

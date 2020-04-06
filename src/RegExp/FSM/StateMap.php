@@ -4,6 +4,10 @@ namespace Remorhaz\UniLex\RegExp\FSM;
 
 use Remorhaz\UniLex\Exception;
 
+use function array_key_first;
+use function array_keys;
+use function count;
+
 class StateMap implements StateMapInterface
 {
 
@@ -11,7 +15,7 @@ class StateMap implements StateMapInterface
 
     private $stateList = [];
 
-    private $startState;
+    private $startStateList = [];
 
     private $finishStateList = [];
 
@@ -27,6 +31,7 @@ class StateMap implements StateMapInterface
         }
         $stateId = ++$this->lastStateId;
         $this->stateList[$stateId] = $value;
+
         return $stateId;
     }
 
@@ -49,7 +54,7 @@ class StateMap implements StateMapInterface
     }
 
     /**
-     * @param $value
+     * @param     $value
      * @param int ...$stateList
      * @throws Exception
      */
@@ -65,15 +70,18 @@ class StateMap implements StateMapInterface
     }
 
     /**
-     * @param int $stateId
+     * @param int ...$stateList
      * @throws Exception
      */
-    public function setStartState(int $stateId): void
+    public function addStartState(int ...$stateList): void
     {
-        if (isset($this->startState)) {
-            throw new Exception("Start state is already set");
+        foreach ($stateList as $stateId) {
+            $validStateId = $this->getValidState($stateId);
+            if (isset($this->startStateList[$validStateId])) {
+                throw new Exception("Start state {$validStateId} is already set");
+            }
+            $this->startStateList[$validStateId] = $this->stateList[$validStateId];
         }
-        $this->startState = $this->getValidState($stateId);
     }
 
     /**
@@ -82,10 +90,22 @@ class StateMap implements StateMapInterface
      */
     public function getStartState(): int
     {
-        if (!isset($this->startState)) {
-            throw new Exception("Start state is undefined");
+        if (count($this->startStateList) == 1) {
+            return array_key_first($this->startStateList);
         }
-        return $this->startState;
+
+        throw new Exception("Start state is undefined");
+    }
+
+    public function getStartStateList(): array
+    {
+        return array_keys($this->startStateList);
+    }
+
+    public function replaceStartStateList(int ...$stateIdList): void
+    {
+        $this->startStateList = [];
+        $this->addStartState(...$stateIdList);
     }
 
     /**
@@ -111,6 +131,7 @@ class StateMap implements StateMapInterface
     public function isFinishState(int $stateId): bool
     {
         $validStateId = $this->getValidState($stateId);
+
         return isset($this->finishStateList[$validStateId]);
     }
 
@@ -143,6 +164,7 @@ class StateMap implements StateMapInterface
         if (false === $stateId) {
             throw new Exception("Value not found in state map");
         }
+
         return $stateId;
     }
 
@@ -156,6 +178,7 @@ class StateMap implements StateMapInterface
         if (!$this->stateExists($stateId)) {
             throw new Exception("State {$stateId} is undefined");
         }
+
         return $stateId;
     }
 }

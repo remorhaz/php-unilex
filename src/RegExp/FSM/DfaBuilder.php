@@ -6,6 +6,10 @@ use Remorhaz\UniLex\AST\Tree;
 use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\IO\CharBufferInterface;
 
+use function array_merge;
+use function array_unique;
+use function sort;
+
 class DfaBuilder
 {
 
@@ -30,8 +34,43 @@ class DfaBuilder
      */
     public static function fromNfa(Nfa $nfa): Dfa
     {
+        // Minimization is made using Brzozowski's algorithm
+        $reverser = new NfaReverser();
+
+        $r1 = $reverser->reverseNfa($nfa);
+        $r1->joinStartStates();
+
+        $d1 = new Dfa();
+        (new self($d1, $r1))->run();
+
+        $r2 = $reverser->reverseDfa($d1);
+        $r2->joinStartStates();
+
+        $d2 = new Dfa();
+        (new self($d2, $r2))->run();
+
+        // restoring correct NFA state map that was lost on building $d2
         $dfa = new Dfa();
-        (new self($dfa, $nfa))->run();
+        $dfa->setSymbolTable($d2->getSymbolTable());
+        $stateMap = [];
+        foreach ($d2->getStateMap()->getStateList() as $d2StateId) {
+            $d2StateValue = $d2->getStateMap()->getStateValue($d2StateId);
+            foreach ($d2StateValue as $r2StateId) {
+                $r2StateValue = $r2->getStateMap()->getStateValue($r2StateId);
+                $stateMap[$d2StateId] = array_merge($stateMap[$d2StateId] ?? [], $r2StateValue);
+            }
+        }
+        foreach ($stateMap as $stateId => $stateValue) {
+            sort($stateValue);
+            $dfa->getStateMap()->importState(array_unique($stateValue), $stateId);
+        }
+        $dfa->getStateMap()->addStartState(...$d2->getStateMap()->getStartStateList());
+        $dfa->getStateMap()->addFinishState(...$d2->getStateMap()->getFinishStateList());
+        foreach ($d2->getTransitionMap()->getTransitionList() as $sourceStateId => $targetStates) {
+            foreach ($targetStates as $targetStateId => $value) {
+                $dfa->getTransitionMap()->addTransition($sourceStateId, $targetStateId, $value);
+            }
+        }
 
         return $dfa;
     }
@@ -152,7 +191,7 @@ class DfaBuilder
         $startStateId = $this->nfa->getStateMap()->getStartState();
         $nfaStateList = $this->getNfaCalc()->getEpsilonClosure($startStateId);
         $startState = $this->dfa->getStateMap()->createState($nfaStateList);
-        $this->dfa->getStateMap()->setStartState($startState);
+        $this->dfa->getStateMap()->addStartState($startState);
         $this->stateBuffer = [[$startState, $nfaStateList]];
     }
 

@@ -483,7 +483,7 @@ class TokenMatcherGenerator
     {
         $nfa = new Nfa();
         $startState = $nfa->getStateMap()->createState();
-        $nfa->getStateMap()->setStartState($startState);
+        $nfa->getStateMap()->addStartState($startState);
         $oldFinishStates = [];
         $this->tokenNfaStateMap[$context] = [];
         foreach ($this->spec->getTokenSpecList($context) as $tokenSpec) {
