@@ -8,7 +8,9 @@ use Remorhaz\UniLex\IO\TokenExtractInterface;
 
 use function array_diff;
 use function array_intersect;
+use function array_key_first;
 use function array_keys;
+use function count;
 
 abstract class TokenMatcherTemplate implements TokenMatcherInterface
 {
@@ -69,7 +71,7 @@ abstract class TokenMatcherTemplate implements TokenMatcherInterface
 
             private $onGetMode;
 
-            private $visitedStates = [];
+            private $regExps = [];
 
             public function __construct(
                 CharBufferInterface $buffer,
@@ -148,18 +150,23 @@ abstract class TokenMatcherTemplate implements TokenMatcherInterface
                 return $this;
             }
 
-            public function visitState(int $state): void
+            public function setRegExps(string ...$regExps): void
             {
-                $this->visitedStates[$state] = true;
+                $this->regExps = $regExps;
             }
 
-            public function checkVisitedStates(array $allowedStates, array $forbiddenStates): bool
+            public function allowRegExps(string ...$regExps): void
             {
-                $visitedStates = array_keys($this->visitedStates);
-                $allowedVisited = array_intersect($visitedStates, $allowedStates);
-                $forbiddenVisited = array_intersect($visitedStates, $forbiddenStates);
+                $this->regExps = array_intersect($this->regExps, $regExps);
+            }
 
-                return empty($forbiddenVisited) && !empty($allowedVisited);
+            public function getRegExp(): string
+            {
+                if (count($this->regExps) == 1) {
+                    return $this->regExps[array_key_first($this->regExps)];
+                }
+
+                throw new Exception("Target regular expression is undefined");
             }
         };
     }

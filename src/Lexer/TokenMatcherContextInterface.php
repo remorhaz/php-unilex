@@ -23,7 +23,9 @@ interface TokenMatcherContextInterface
 
     public function setMode(string $mode): self;
 
-    public function visitState(int $state): void;
+    public function setRegExps(string ...$regExps): void;
 
-    public function checkVisitedStates(array $allowedStates, array $forbiddenStates): bool;
+    public function allowRegExps(string ...$regExps): void;
+
+    public function getRegExp(): string;
 }

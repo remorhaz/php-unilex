@@ -209,7 +209,7 @@ SOURCE;
             'One or many symbols without Unicode property' => ['abcαβγ', '\\P{Greek}+', 'abc'],
             'Alternative before char' => ['abcc', '(a|b)+c', 'abc'],
             'Alternative of intersecting normal and negated classes' => ['bca', '([^ab]|[b])+', 'bc'],
-            'xxx' => ['aab', 'a+', 'aa'],
+            'One or more latin char' => ['aab', 'a+', 'aa'],
         ];
     }
 
