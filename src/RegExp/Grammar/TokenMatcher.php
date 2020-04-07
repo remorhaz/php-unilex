@@ -22,6 +22,7 @@ class TokenMatcher extends TokenMatcherTemplate
     {
         $context = $this->createContext($buffer, $tokenFactory);
         $context->setRegExps(
+            'default',
             '[\\u0000-\\u001F]',
             '[ -#%-\'/:->@_~`]',
             '\\$',

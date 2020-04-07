@@ -150,20 +150,22 @@ abstract class TokenMatcherTemplate implements TokenMatcherInterface
                 return $this;
             }
 
-            public function setRegExps(string ...$regExps): void
+            public function setRegExps(string $mode, string ...$regExps): void
             {
-                $this->regExps = $regExps;
+                $this->regExps[$mode] = $regExps;
             }
 
             public function allowRegExps(string ...$regExps): void
             {
-                $this->regExps = array_intersect($this->regExps, $regExps);
+                $mode = $this->getMode();
+                $this->regExps[$mode] = array_intersect($this->regExps[$mode] ?? [], $regExps);
             }
 
             public function getRegExp(): string
             {
-                if (count($this->regExps) == 1) {
-                    return $this->regExps[array_key_first($this->regExps)];
+                $mode = $this->getMode();
+                if (count($this->regExps[$mode] ?? []) == 1) {
+                    return $this->regExps[$mode][array_key_first($this->regExps[$mode])];
                 }
 
                 throw new Exception("Target regular expression is undefined");

@@ -214,11 +214,25 @@ class TokenMatcherGenerator
 
     private function buildBeforeMatch(): string
     {
-        $code = $this->spec->getBeforeMatch();
+        $result = $this->buildMethodPart("\$context = \$this->createContext(\$buffer, \$tokenFactory);");
+        foreach ($this->spec->getModeList() as $mode) {
+            $modeArg = var_export($mode, true);
+            $result .=
+                $this->buildMethodPart("\$context->setRegExps(") .
+                $this->buildMethodPart("{$modeArg},", 3);
+            $tokenSpecList = $this->spec->getTokenSpecList($mode);
+            $lastTokenKey = array_key_last($tokenSpecList);
+            foreach ($tokenSpecList as $tokenKey => $tokenSpec) {
+                $regExpValue = var_export($tokenSpec->getRegExp(), true);
+                $regExpArg = $tokenKey === $lastTokenKey ? $regExpValue : "{$regExpValue},";
+                $result .= $this->buildMethodPart($regExpArg, 3);
+            }
+            $result .= $this->buildMethodPart(");");
+        }
 
         return
-            $this->buildMethodPart("\$context = \$this->createContext(\$buffer, \$tokenFactory);") .
-            $this->buildMethodPart($code);
+            $result .
+            $this->buildMethodPart($this->spec->getBeforeMatch());
     }
 
     /**
@@ -230,19 +244,8 @@ class TokenMatcherGenerator
     private function buildFsmEntry(string $mode, int $indent = 2): string
     {
         $state = $this->getDfa($mode)->getStateMap()->getStartState();
-        $result = $this->buildMethodPart("\$context->setRegExps(", $indent);
-        $tokenSpecList = $this->spec->getTokenSpecList($mode);
-        $lastTokenKey = array_key_last($tokenSpecList);
-        foreach ($tokenSpecList as $tokenKey => $tokenSpec) {
-            $regExpValue = var_export($tokenSpec->getRegExp(), true);
-            $regExpArg = $tokenKey === $lastTokenKey ? $regExpValue : "{$regExpValue},";
-            $result .= $this->buildMethodPart($regExpArg, $indent + 1);
-        }
-        $result .= $this->buildMethodPart(");");
 
-        return
-            $result .
-            $this->buildMethodPart("goto {$this->buildStateLabel('state', $mode, $state)};", $indent);
+        return $this->buildMethodPart("goto {$this->buildStateLabel('state', $mode, $state)};", $indent);
     }
 
     private function buildStateLabel(string $prefix, string $mode, int $state): string

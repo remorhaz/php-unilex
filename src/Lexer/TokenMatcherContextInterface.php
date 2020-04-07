@@ -23,7 +23,7 @@ interface TokenMatcherContextInterface
 
     public function setMode(string $mode): self;
 
-    public function setRegExps(string ...$regExps): void;
+    public function setRegExps(string $mode, string ...$regExps): void;
 
     public function allowRegExps(string ...$regExps): void;
 
