@@ -41,14 +41,9 @@ class TokenMatcherGenerator
 
     private $dfa;
 
-    /**
-     * @var TokenSpec[]
-     */
-    private $tokenNfaStateMap = [];
-
     private $regExpMap = [];
 
-    private $dfaRegExpTransitionMap;
+    private $dfaRegExpTransitionMap = [];
 
     public function __construct(TokenMatcherSpec $spec)
     {
@@ -347,7 +342,7 @@ class TokenMatcherGenerator
         int $symbol,
         int $indent = 3
     ): string {
-        $transitionMap = $this->getRegExpTransitionMap();
+        $transitionMap = $this->getRegExpTransitionMap($mode);
         $result = '';
         if ($transitionMap->transitionExists($stateIn, $stateOut)) {
             $transitionValue = $transitionMap->getTransition($stateIn, $stateOut);
@@ -476,7 +471,8 @@ class TokenMatcherGenerator
     private function buildToken(string $mode, int $stateIn, int $indent = 2): string
     {
         $result = $this->buildMethodPart("switch (\$context->getRegExp()) {");
-        foreach ($this->regExpMap as $regExp => [$allowedStateIds, $forbiddenStateIds]) {
+        $regExpCount = 0;
+        foreach ($this->regExpMap[$mode] ?? [] as $regExp => [$allowedStateIds, $forbiddenStateIds]) {
             if (!in_array($stateIn, $allowedStateIds)) {
                 continue;
             }
@@ -485,9 +481,10 @@ class TokenMatcherGenerator
             $result .=
                 $this->buildMethodPart("case {$regExpArg}:", $indent + 1) .
                 $this->buildSingleToken($tokenSpec, $indent + 2);
+            $regExpCount++;
         }
 
-        if ('' === $result) {
+        if (0 == $regExpCount) {
             throw new Exception("No tokens found for state {$stateIn}");
         }
 
@@ -558,18 +555,17 @@ class TokenMatcherGenerator
     }
 
     /**
-     * @param string $context
+     * @param string $mode
      * @return Dfa
      * @throws Exception
      */
-    private function buildDfa(string $context): Dfa
+    private function buildDfa(string $mode): Dfa
     {
         $nfa = new Nfa();
         $startState = $nfa->getStateMap()->createState();
         $nfa->getStateMap()->addStartState($startState);
         $nfaRegExpMap = [];
-        $this->tokenNfaStateMap[$context] = [];
-        foreach ($this->spec->getTokenSpecList($context) as $tokenSpec) {
+        foreach ($this->spec->getTokenSpecList($mode) as $tokenSpec) {
             $existingStates = $nfa->getStateMap()->getStateList();
             $regExpEntryState = $nfa->getStateMap()->createState();
             $nfa
@@ -596,8 +592,9 @@ class TokenMatcherGenerator
                 }
             }
         }
+        $this->regExpMap[$mode] = [];
         foreach ($dfaRegExpMap as $regExp => $regExpStateIds) {
-            $this->regExpMap[(string) $regExp] = [$regExpStateIds, array_diff($allDfaStateIds, $regExpStateIds)];
+            $this->regExpMap[$mode][(string) $regExp] = [$regExpStateIds, array_diff($allDfaStateIds, $regExpStateIds)];
         }
         $nfaRegExpTransitionMap = new TransitionMap($nfa->getStateMap());
         foreach ($nfa->getSymbolTransitionMap()->getTransitionList() as $nfaSourceStateId => $nfaTransitionTargets) {
@@ -616,7 +613,7 @@ class TokenMatcherGenerator
             }
         }
 
-        $this->dfaRegExpTransitionMap = new TransitionMap($dfa->getStateMap());
+        $this->dfaRegExpTransitionMap[$mode] = new TransitionMap($dfa->getStateMap());
         foreach ($dfa->getTransitionMap()->getTransitionList() as $dfaSourceStateId => $dfaTransitionTargets) {
             foreach ($dfaTransitionTargets as $dfaTargetStateId => $dfaSymbolIds) {
                 $matchingNfaSourceStateIds = $dfa->getStateMap()->getStateValue($dfaSourceStateId);
@@ -646,7 +643,9 @@ class TokenMatcherGenerator
                         }
                     }
                 }
-                $this->dfaRegExpTransitionMap->addTransition($dfaSourceStateId, $dfaTargetStateId, $dfaTransitionValue);
+                $this
+                    ->dfaRegExpTransitionMap[$mode]
+                    ->addTransition($dfaSourceStateId, $dfaTargetStateId, $dfaTransitionValue);
             }
         }
 
@@ -654,16 +653,17 @@ class TokenMatcherGenerator
     }
 
     /**
+     * @param string $mode
      * @return TransitionMap
      * @throws Exception
      */
-    private function getRegExpTransitionMap(): TransitionMap
+    private function getRegExpTransitionMap(string $mode): TransitionMap
     {
-        if (isset($this->dfaRegExpTransitionMap)) {
-            return $this->dfaRegExpTransitionMap;
+        if (isset($this->dfaRegExpTransitionMap[$mode])) {
+            return $this->dfaRegExpTransitionMap[$mode];
         }
 
-        throw new Exception("Regular expression transition map not defined");
+        throw new Exception("Regular expression transition map not defined for mode {$mode}");
     }
 
     /**
