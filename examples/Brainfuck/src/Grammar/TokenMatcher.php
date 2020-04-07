@@ -22,6 +22,7 @@ class TokenMatcher extends TokenMatcherTemplate
     {
         $context = $this->createContext($buffer, $tokenFactory);
         $context->setRegExps(
+            'default',
             '>',
             '<',
             '\\+',
