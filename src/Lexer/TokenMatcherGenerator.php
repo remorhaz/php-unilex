@@ -440,9 +440,12 @@ class TokenMatcherGenerator
     {
         $result = '';
         $regExpCount = 0;
+        $defaultRegExp = null;
         foreach ($this->visitedHashMap[$mode][$stateIn] ?? [] as $regExp => $visitedHashes) {
             if (empty($visitedHashes)) {
-                throw new Exception("Empty tokens are not allowed");
+                $defaultRegExp = (string) $regExp;
+                $regExpCount++;
+                continue;
             }
             $visitedHashValues = [];
             foreach ($visitedHashes as $visitedHash) {
@@ -460,6 +463,15 @@ class TokenMatcherGenerator
 
         if (0 == $regExpCount) {
             throw new Exception("No tokens found for state {$stateIn}");
+        }
+
+        if (isset($defaultRegExp)) {
+            $tokenSpec = $this->spec->getTokenSpec($mode, $defaultRegExp);
+
+            return
+                $result .
+                $this->buildMethodPart("// {$defaultRegExp}", $indent) .
+                $this->buildSingleToken($tokenSpec, $indent);
         }
 
         return
@@ -661,6 +673,29 @@ class TokenMatcherGenerator
                 array_push($inHashBuffer, ...($incomingTransitionsForHash[$inHash] ?? []));
             }
             $this->visitedHashMap[$mode][$stateId] = $visitedHashes;
+        }
+        foreach ($this->visitedHashMap[$mode] as $stateId => $visitedHashes) {
+            if (!empty($visitedHashes)) {
+                continue;
+            }
+            $regExps = [];
+            foreach ($incomingTransitionsForState[$stateId] ?? [] as $hash) {
+                $regExps = array_unique(array_merge($map[$hash], $regExps));
+            }
+            $otherRegExps = [];
+            foreach ($this->visitedHashMap[$mode] as $anotherStateId => $otherVisitedHashes) {
+                if ($stateId == $anotherStateId) {
+                    continue;
+                }
+                foreach ($otherVisitedHashes as $otherRegExp => $otherHashes) {
+                    $otherRegExps = array_unique(array_merge($otherRegExps, [$otherRegExp]));
+                }
+            }
+            $regExps = array_diff($regExps, $otherRegExps);
+            if (count($regExps) == 1) {
+                $regExp = $regExps[array_key_first($regExps)];
+                $this->visitedHashMap[$mode][$stateId][$regExp] = [];
+            }
         }
 
         return $dfa;

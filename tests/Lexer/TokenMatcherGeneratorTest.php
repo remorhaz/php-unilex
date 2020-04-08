@@ -215,6 +215,48 @@ SOURCE;
 
     /**
      * @param string $text
+     * @param string $firstRegExp
+     * @param string $secondRegExp
+     * @param string $expectedValue
+     * @dataProvider providerTwoRegExpSpecsInSameMode
+     * @throws UniLexException
+     */
+    public function testLoad_TwoRegExpSpecsInSameMode_MatchesValidToken(
+        string $text,
+        string $firstRegExp,
+        string $secondRegExp,
+        string $expectedValue
+    ): void {
+        $matcherClass = $this->createTokenMatcherClassName();
+        $spec = new TokenMatcherSpec($matcherClass, TokenMatcherTemplate::class);
+        $code = <<<SOURCE
+\$context
+    ->setNewToken(0)
+    ->setTokenAttribute('text', \$context->getSymbolString());
+SOURCE;
+        $firstTokenSpec = new TokenSpec($firstRegExp, $code);
+        $spec->addTokenSpec(TokenMatcherInterface::DEFAULT_MODE, $firstTokenSpec);
+        $secondTokenSpec = new TokenSpec($secondRegExp, $code);
+        $spec->addTokenSpec(TokenMatcherInterface::DEFAULT_MODE, $secondTokenSpec);
+        $generator = new TokenMatcherGenerator($spec);
+        $buffer = CharBufferFactory::createFromString($text);
+        $lexer = new TokenReader($buffer, $generator->load(), new \Remorhaz\UniLex\Lexer\TokenFactory(0xFF));
+        $actualValue = $lexer
+            ->read()
+            ->getAttribute('text');
+        self::assertSame($expectedValue, $actualValue);
+    }
+
+    public function providerTwoRegExpSpecsInSameMode(): array
+    {
+        return [
+            'Different latin chars' => ['ab', 'a', 'b', 'a'],
+            'Alternatives with same prefix' => ['aab', 'a', 'ab', 'a'],
+        ];
+    }
+
+    /**
+     * @param string $text
      * @param string $prefixRegExp
      * @param string $regExp
      * @param string $expectedValue
