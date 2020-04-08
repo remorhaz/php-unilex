@@ -6,12 +6,6 @@ use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\IO\CharBufferInterface;
 use Remorhaz\UniLex\IO\TokenExtractInterface;
 
-use function array_diff;
-use function array_intersect;
-use function array_key_first;
-use function array_keys;
-use function count;
-
 abstract class TokenMatcherTemplate implements TokenMatcherInterface
 {
 
@@ -70,8 +64,6 @@ abstract class TokenMatcherTemplate implements TokenMatcherInterface
             private $onSetMode;
 
             private $onGetMode;
-
-            private $regExps = [];
 
             private $visitedTransitions = [];
 
@@ -150,27 +142,6 @@ abstract class TokenMatcherTemplate implements TokenMatcherInterface
                 call_user_func($this->onSetMode, $mode);
 
                 return $this;
-            }
-
-            public function setRegExps(string $mode, string ...$regExps): void
-            {
-                $this->regExps[$mode] = $regExps;
-            }
-
-            public function allowRegExps(string ...$regExps): void
-            {
-                $mode = $this->getMode();
-                $this->regExps[$mode] = array_intersect($this->regExps[$mode] ?? [], $regExps);
-            }
-
-            public function getRegExp(): string
-            {
-                $mode = $this->getMode();
-                if (count($this->regExps[$mode] ?? []) == 1) {
-                    return $this->regExps[$mode][array_key_first($this->regExps[$mode])];
-                }
-
-                throw new Exception("Target regular expression is undefined");
             }
 
             public function visitTransition(string $hash): void

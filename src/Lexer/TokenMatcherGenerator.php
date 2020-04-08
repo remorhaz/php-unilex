@@ -22,7 +22,6 @@ use Throwable;
 
 use function array_diff;
 use function array_intersect;
-use function array_key_last;
 use function array_keys;
 use function array_merge;
 use function array_pop;
@@ -42,8 +41,6 @@ class TokenMatcherGenerator
     private $dfa;
 
     private $regExpMap = [];
-
-    private $dfaRegExpTransitionMap = [];
 
     private $visitedHashMap = [];
 
@@ -104,8 +101,6 @@ class TokenMatcherGenerator
         if (!isset($this->output)) {
             $this->output = $this->buildOutput();
         }
-
-        //throw new \RuntimeException('Prevent file overwrite');
 
         return $asFile ? "<?php\n\n{$this->output}" : $this->output;
     }
@@ -218,26 +213,8 @@ class TokenMatcherGenerator
 
     private function buildBeforeMatch(): string
     {
-        $result = $this->buildMethodPart("\$context = \$this->createContext(\$buffer, \$tokenFactory);");
-
-        /*foreach ($this->spec->getModeList() as $mode) {
-            $modeArg = var_export($mode, true);
-            $result .=
-                $this->buildMethodPart("\$context->setRegExps(") .
-                $this->buildMethodPart("{$modeArg},", 3);
-            $tokenSpecList = $this->spec->getTokenSpecList($mode);
-            $lastTokenKey = array_key_last($tokenSpecList);
-            $this->getDfa($mode);
-            foreach ($tokenSpecList as $tokenKey => $tokenSpec) {
-                $regExpValue = var_export($tokenSpec->getRegExp(), true);
-                $regExpArg = $tokenKey === $lastTokenKey ? $regExpValue : "{$regExpValue},";
-                $result .= $this->buildMethodPart($regExpArg, 3);
-            }
-            $result .= $this->buildMethodPart(");");
-        }*/
-
         return
-            $result .
+            $this->buildMethodPart("\$context = \$this->createContext(\$buffer, \$tokenFactory);") .
             $this->buildMethodPart($this->spec->getBeforeMatch());
     }
 
@@ -487,7 +464,7 @@ class TokenMatcherGenerator
 
         return
             $result .
-            $this->buildMethodPart("goto error;", $indent + 2);
+            $this->buildMethodPart("goto error;", $indent);
     }
 
     private function buildSingleToken(TokenSpec $tokenSpec, int $indent): string
@@ -495,7 +472,7 @@ class TokenMatcherGenerator
         return
             $this->buildMethodPart($tokenSpec->getCode(), $indent) .
             $this->buildOnToken($indent) . "\n" .
-            $this->buildMethodPart("return true;\n", $indent);
+            $this->buildMethodPart("return true;", $indent);
     }
 
     private function buildErrorState(): string
@@ -608,7 +585,6 @@ class TokenMatcherGenerator
             }
         }
 
-        $this->dfaRegExpTransitionMap[$mode] = new TransitionMap($dfa->getStateMap());
         $map = [];
         $mapIn = [];
         $mapOut = [];
@@ -641,9 +617,6 @@ class TokenMatcherGenerator
                         }
                     }
                 }
-                $this
-                    ->dfaRegExpTransitionMap[$mode]
-                    ->addTransition($dfaSourceStateId, $dfaTargetStateId, $dfaTransitionValue);
                 foreach ($dfaTransitionValue as $dfaSymbolId => $regExps) {
                     $hash = $this->buildHash($dfaSourceStateId, $dfaTargetStateId, $dfaSymbolId);
                     $map[$hash] = $regExps;
@@ -696,20 +669,6 @@ class TokenMatcherGenerator
     private function buildHash(int $stateIn, int $stateOut, int $symbol): string
     {
         return "{$stateIn}-{$stateOut}:{$symbol}";
-    }
-
-    /**
-     * @param string $mode
-     * @return TransitionMap
-     * @throws Exception
-     */
-    private function getRegExpTransitionMap(string $mode): TransitionMap
-    {
-        if (isset($this->dfaRegExpTransitionMap[$mode])) {
-            return $this->dfaRegExpTransitionMap[$mode];
-        }
-
-        throw new Exception("Regular expression transition map not defined for mode {$mode}");
     }
 
     /**
