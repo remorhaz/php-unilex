@@ -28,4 +28,8 @@ interface TokenMatcherContextInterface
     public function allowRegExps(string ...$regExps): void;
 
     public function getRegExp(): string;
+
+    public function visitTransition(string $hash): void;
+
+    public function isVisitedTransition(string ...$hashes): bool;
 }
