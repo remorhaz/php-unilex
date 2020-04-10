@@ -462,7 +462,7 @@ class TokenMatcherGenerator
         }
 
         if (0 == $regExpCount) {
-            throw new Exception("No tokens found for state {$stateIn}");
+            // TODO: detect token spec for empty tokens.
         }
 
         if (isset($defaultRegExp)) {

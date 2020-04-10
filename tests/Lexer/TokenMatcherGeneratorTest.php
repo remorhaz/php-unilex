@@ -252,6 +252,7 @@ SOURCE;
         return [
             'Different latin chars' => ['ab', 'a', 'b', 'a'],
             'Alternatives with same prefix' => ['aab', 'a', 'ab', 'a'],
+            'xxx' => ['..a', '\.', '\.{2}', '..'],
         ];
     }
 

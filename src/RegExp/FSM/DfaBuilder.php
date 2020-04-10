@@ -34,45 +34,132 @@ class DfaBuilder
      */
     public static function fromNfa(Nfa $nfa): Dfa
     {
-        // Minimization is made using Brzozowski's algorithm
-        $reverser = new NfaReverser();
-
-        $r1 = $reverser->reverseNfa($nfa);
-        $r1->joinStartStates();
-
-        $d1 = new Dfa();
-        (new self($d1, $r1))->run();
-
-        $r2 = $reverser->reverseDfa($d1);
-        $r2->joinStartStates();
-
-        $d2 = new Dfa();
-        (new self($d2, $r2))->run();
-
-        // restoring correct NFA state map that was lost on building $d2
         $dfa = new Dfa();
-        $dfa->setSymbolTable($d2->getSymbolTable());
-        $stateMap = [];
-        foreach ($d2->getStateMap()->getStateList() as $d2StateId) {
-            $d2StateValue = $d2->getStateMap()->getStateValue($d2StateId);
-            foreach ($d2StateValue as $r2StateId) {
-                $r2StateValue = $r2->getStateMap()->getStateValue($r2StateId);
-                $stateMap[$d2StateId] = array_merge($stateMap[$d2StateId] ?? [], $r2StateValue);
+        (new self($dfa, $nfa))->run();
+
+        $stateQuery = [];
+        $nonEquivalentStates = [];
+        $dfaStates = $dfa->getStateMap()->getStateList();
+        $devilState = max($dfaStates) + 1;
+        $dfaStates[] = $devilState;
+
+        $transitionMap = [];
+
+        foreach ($dfaStates as $stateA) {
+            foreach ($dfaStates as $stateB) {
+                $marked = $nonEquivalentStates[$stateA][$stateB] ?? false;
+                if ($marked) {
+                    continue;
+                }
+                $isFinishStateA = $stateA == $devilState
+                    ? false
+                    : $dfa->getStateMap()->isFinishState($stateA);
+                $isFinishStateB = $stateB == $devilState
+                    ? false
+                    : $dfa->getStateMap()->isFinishState($stateB);
+                if ($isFinishStateA == $isFinishStateB) {
+                    continue;
+                }
+                $nonEquivalentStates[$stateA][$stateB] = true;
+                $nonEquivalentStates[$stateB][$stateA] = true;
+                $stateQuery[] = [$stateA, $stateB];
             }
+            $transitionMap[$stateA][$devilState] = $dfa->getSymbolTable()->getSymbolList();
         }
-        foreach ($stateMap as $stateId => $stateValue) {
-            sort($stateValue);
-            $dfa->getStateMap()->importState(array_unique($stateValue), $stateId);
+
+        foreach ($dfa->getTransitionMap()->getTransitionList() as $sourceState => $transitions) {
+            $devilStateSymbols = $dfa->getSymbolTable()->getSymbolList();
+            foreach ($transitions as $targetState => $symbols) {
+                $devilStateSymbols = array_diff($devilStateSymbols, $symbols);
+                $transitionMap[$sourceState][$targetState] = $symbols;
+            }
+            $transitionMap[$sourceState][$devilState] = $devilStateSymbols;
         }
-        $dfa->getStateMap()->addStartState(...$d2->getStateMap()->getStartStateList());
-        $dfa->getStateMap()->addFinishState(...$d2->getStateMap()->getFinishStateList());
-        foreach ($d2->getTransitionMap()->getTransitionList() as $sourceStateId => $targetStates) {
-            foreach ($targetStates as $targetStateId => $value) {
-                $dfa->getTransitionMap()->addTransition($sourceStateId, $targetStateId, $value);
+
+        while (!empty($stateQuery)) {
+            [$firstTargetState, $secondTargetState] = array_pop($stateQuery);
+
+            foreach ($dfaStates as $stateA) {
+                foreach ($dfaStates as $stateB) {
+                    $isMarked = $nonEquivalentStates[$stateA][$stateB] ?? false;
+                    if ($isMarked) {
+                        continue;
+                    }
+                    $symbolsA = $transitionMap[$stateA][$firstTargetState] ?? [];
+                    $symbolsB = $transitionMap[$stateB][$secondTargetState] ?? [];
+                    $symbols = array_intersect($symbolsA, $symbolsB);
+                    if (!empty($symbols)) {
+                        $nonEquivalentStates[$stateA][$stateB] = true;
+                        $nonEquivalentStates[$stateB][$stateA] = true;
+                        $stateQuery[] = [$stateA, $stateB];
+                    }
+                }
             }
         }
 
-        return $dfa;
+        $equivalentStates = [];
+        $nextClass = 1;
+        $classes = [];
+        foreach ($dfaStates as $stateA) {
+            if (!isset($classes[$stateA])) {
+                $class = $nextClass++;
+                foreach ($dfaStates as $stateB) {
+                    $isMarked = $nonEquivalentStates[$stateA][$stateB] ?? false;
+                    if (!$isMarked) {
+                        $classes[$stateB] = $class;
+                        if ($stateB != $devilState) {
+                            $equivalentStates[$class][$stateB] = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        $minimizedDfa = new Dfa();
+        $minimizedDfa->setSymbolTable($dfa->getSymbolTable());
+        $nfaStartStates = $nfa->getStateMap()->getStartStateList();
+        $nfaFinishStates = $nfa->getStateMap()->getFinishStateList();
+        $newDfaStates = [];
+        foreach ($equivalentStates as $newState => $dfaStates) {
+            $newValue = [];
+            foreach (array_keys($dfaStates) as $dfaState) {
+                $nfaStates = $dfa->getStateMap()->getStateValue($dfaState);
+                $newValue = array_merge($newValue, $nfaStates);
+                $newDfaStates[$dfaState] = $newState;
+            }
+            $newValue = array_unique($newValue);
+            sort($newValue);
+            $minimizedDfa->getStateMap()->createState($newValue);
+            $isStartState = !empty(array_intersect($nfaStartStates, $newValue));
+            if ($isStartState) {
+                $minimizedDfa->getStateMap()->addStartState($newState);
+            }
+            $isFinishState = !empty(array_intersect($nfaFinishStates, $newValue));
+            if ($isFinishState) {
+                $minimizedDfa->getStateMap()->addFinishState($newState);
+            }
+        }
+        $transitionMap = [];
+        foreach ($dfa->getTransitionMap()->getTransitionList() as $sourceState => $transitions) {
+            foreach ($transitions as $targetState => $symbols) {
+                $newSourceState = $newDfaStates[$sourceState];
+                $newTargetState = $newDfaStates[$targetState];
+                $transitionMap[$newSourceState][$newTargetState] = array_unique(
+                    array_merge(
+                        $transitionMap[$newSourceState][$newTargetState] ?? [],
+                        $symbols
+                    )
+                );
+            }
+        }
+        foreach ($transitionMap as $sourceState => $transitions) {
+            foreach ($transitions as $targetState => $symbols) {
+                sort($symbols);
+                $minimizedDfa->getTransitionMap()->addTransition($sourceState, $targetState, $symbols);
+            }
+        }
+
+        return $minimizedDfa;
     }
 
     /**
@@ -188,11 +275,15 @@ class DfaBuilder
     private function initStateBuffer(): void
     {
         $this->dfa->setSymbolTable($this->nfa->getSymbolTable());
-        $startStateId = $this->nfa->getStateMap()->getStartState();
-        $nfaStateList = $this->getNfaCalc()->getEpsilonClosure($startStateId);
-        $startState = $this->dfa->getStateMap()->createState($nfaStateList);
-        $this->dfa->getStateMap()->addStartState($startState);
-        $this->stateBuffer = [[$startState, $nfaStateList]];
+        $nfaStateList = [];
+        foreach ($this->nfa->getStateMap()->getStartStateList() as $nfaStartStateId) {
+            $nfaStateList = array_unique(
+                array_merge($nfaStateList, $this->getNfaCalc()->getEpsilonClosure($nfaStartStateId))
+            );
+        }
+        $dfaStartStateId = $this->dfa->getStateMap()->createState($nfaStateList);
+        $this->dfa->getStateMap()->addStartState($dfaStartStateId);
+        $this->stateBuffer = [[$dfaStartStateId, $nfaStateList]];
     }
 
     private function getNextState(): ?array
