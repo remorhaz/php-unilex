@@ -67,6 +67,19 @@ class DfaBuilder
             $transitionMap[$stateA][$devilState] = $dfa->getSymbolTable()->getSymbolList();
         }
 
+        // Making all finish states non-equivalent to distinguish regular expressions
+        /*foreach ($dfa->getStateMap()->getFinishStateList() as $stateA) {
+            foreach ($dfa->getStateMap()->getFinishStateList() as $stateB) {
+                $marked = $nonEquivalentStates[$stateA][$stateB] ?? false;
+                if ($marked) {
+                    continue;
+                }
+                $nonEquivalentStates[$stateA][$stateB] = true;
+                $nonEquivalentStates[$stateB][$stateA] = true;
+                $stateQuery[] = [$stateA, $stateB];
+            }
+        }*/
+
         foreach ($dfa->getTransitionMap()->getTransitionList() as $sourceState => $transitions) {
             $devilStateSymbols = $dfa->getSymbolTable()->getSymbolList();
             foreach ($transitions as $targetState => $symbols) {

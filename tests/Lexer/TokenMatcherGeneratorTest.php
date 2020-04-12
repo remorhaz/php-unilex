@@ -203,7 +203,7 @@ SOURCE;
         return [
             "Single latin char with another char following" => ['ab', 'a', 'a'],
             "Single latin char with same char following" => ['aa', 'a', 'a'],
-            "Zero or many latin char" => ['aabc', 'a*', 'aa'],
+            "Zero or many latin char after single char" => ['baabc', 'ba*', 'baa'],
             "Number without leading zero" => ['103abc', '[1-9][0-9]*', '103'],
             'One or many symbols with Unicode property' => ['αβγabc', '\\p{Greek}+', 'αβγ'],
             'One or many symbols without Unicode property' => ['abcαβγ', '\\P{Greek}+', 'abc'],
@@ -217,42 +217,51 @@ SOURCE;
      * @param string $text
      * @param string $firstRegExp
      * @param string $secondRegExp
+     * @param int    $token
      * @param string $expectedValue
-     * @dataProvider providerTwoRegExpSpecsInSameMode
      * @throws UniLexException
+     * @dataProvider providerTwoRegExpSpecsInSameMode
      */
     public function testLoad_TwoRegExpSpecsInSameMode_MatchesValidToken(
         string $text,
         string $firstRegExp,
         string $secondRegExp,
+        int $token,
         string $expectedValue
     ): void {
         $matcherClass = $this->createTokenMatcherClassName();
         $spec = new TokenMatcherSpec($matcherClass, TokenMatcherTemplate::class);
-        $code = <<<SOURCE
+        $firstCode = <<<SOURCE
 \$context
     ->setNewToken(0)
-    ->setTokenAttribute('text', \$context->getSymbolString());
+    ->setTokenAttribute('text1', \$context->getSymbolString());
 SOURCE;
-        $firstTokenSpec = new TokenSpec($firstRegExp, $code);
+        $secondCode = <<<SOURCE
+\$context
+    ->setNewToken(0)
+    ->setTokenAttribute('text2', \$context->getSymbolString());
+SOURCE;
+        $firstTokenSpec = new TokenSpec($firstRegExp, $firstCode);
         $spec->addTokenSpec(TokenMatcherInterface::DEFAULT_MODE, $firstTokenSpec);
-        $secondTokenSpec = new TokenSpec($secondRegExp, $code);
+        $secondTokenSpec = new TokenSpec($secondRegExp, $secondCode);
         $spec->addTokenSpec(TokenMatcherInterface::DEFAULT_MODE, $secondTokenSpec);
         $generator = new TokenMatcherGenerator($spec);
         $buffer = CharBufferFactory::createFromString($text);
         $lexer = new TokenReader($buffer, $generator->load(), new \Remorhaz\UniLex\Lexer\TokenFactory(0xFF));
         $actualValue = $lexer
             ->read()
-            ->getAttribute('text');
+            ->getAttribute("text{$token}");
         self::assertSame($expectedValue, $actualValue);
     }
 
     public function providerTwoRegExpSpecsInSameMode(): array
     {
         return [
-            'Different latin chars' => ['ab', 'a', 'b', 'a'],
-            'Alternatives with same prefix' => ['aab', 'a', 'ab', 'a'],
-            'xxx' => ['..a', '\.', '\.{2}', '..'],
+            'Different latin chars' => ['ab', 'a', 'b', 1, 'a'],
+            'Alternatives with same prefix' => ['aab', 'a', 'ab', 1, 'a'],
+            'Alternatives with different length' => ['..a', '\.', '\.{2}', 2, '..'],
+            'Result matches both alternatives' => ['abc', 'ab', '[abd]+', 1, 'ab'],
+            'Result matches second alternative' => ['abbc', 'ab', '[abd]+', 2, 'abb'],
         ];
     }
 

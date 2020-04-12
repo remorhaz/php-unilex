@@ -136,6 +136,18 @@ class StateMap implements StateMapInterface
     }
 
     /**
+     * @param int $stateId
+     * @return bool
+     * @throws Exception
+     */
+    public function isStartState(int $stateId): bool
+    {
+        $validStateId = $this->getValidState($stateId);
+
+        return isset($this->startStateList[$validStateId]);
+    }
+
+    /**
      * @return int[]
      */
     public function getFinishStateList(): array

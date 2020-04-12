@@ -10,11 +10,11 @@ use Remorhaz\UniLex\AST\Tree;
 use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\RegExp\FSM\Dfa;
 use Remorhaz\UniLex\RegExp\FSM\DfaBuilder;
+use Remorhaz\UniLex\RegExp\FSM\LanguageBuilder;
 use Remorhaz\UniLex\RegExp\FSM\Nfa;
 use Remorhaz\UniLex\RegExp\FSM\NfaBuilder;
 use Remorhaz\UniLex\RegExp\FSM\Range;
 use Remorhaz\UniLex\RegExp\FSM\RangeSet;
-use Remorhaz\UniLex\RegExp\FSM\TransitionMap;
 use Remorhaz\UniLex\RegExp\ParserFactory;
 use Remorhaz\UniLex\RegExp\PropertyLoader;
 use Remorhaz\UniLex\Unicode\CharBufferFactory;
@@ -22,14 +22,12 @@ use Throwable;
 
 use function array_diff;
 use function array_intersect;
-use function array_keys;
 use function array_merge;
 use function array_pop;
 use function array_unique;
 use function count;
 use function implode;
 use function in_array;
-use function var_export;
 
 class TokenMatcherGenerator
 {
@@ -40,9 +38,7 @@ class TokenMatcherGenerator
 
     private $dfa;
 
-    private $regExpMap = [];
-
-    private $visitedHashMap = [];
+    private $regExpFinishMap = [];
 
     public function __construct(TokenMatcherSpec $spec)
     {
@@ -301,34 +297,11 @@ class TokenMatcherGenerator
                 $result .=
                     $this->buildMethodPart("if ({$this->buildRangeSetCondition($rangeSet)}) {") .
                     $this->buildOnTransition() .
-                    $this->buildMethodPart("\$context->getBuffer()->nextSymbol();", 3) .
-                    $this->buildMarkTransitionVisited($mode, $stateIn, $stateOut, $symbol, 3);
+                    $this->buildMethodPart("\$context->getBuffer()->nextSymbol();", 3);
                 $result .= $this->isFinishStateWithSingleEnteringTransition($mode, $stateOut)
                     ? $this->buildToken($mode, $stateOut, 3)
                     : $this->buildStateTransition($mode, $stateOut, 3);
                 $result .= $this->buildMethodPart("}");
-            }
-        }
-
-        return $result;
-    }
-
-    private function buildMarkTransitionVisited(
-        string $mode,
-        int $stateIn,
-        int $stateOut,
-        int $symbol,
-        int $indent = 3
-    ): string {
-        $result = '';
-        $hash = $this->buildHash($stateIn, $stateOut, $symbol);
-        foreach ($this->visitedHashMap[$mode] ?? [] as $regExps) {
-            foreach ($regExps as $hashes) {
-                if (in_array($hash, $hashes)) {
-                    $hashArg = var_export($hash, true);
-                    $result .= $this->buildMethodPart("\$context->visitTransition({$hashArg});", $indent);
-                    break 2;
-                }
             }
         }
 
@@ -438,45 +411,14 @@ class TokenMatcherGenerator
      */
     private function buildToken(string $mode, int $stateIn, int $indent = 2): string
     {
-        $result = '';
-        $regExpCount = 0;
-        $defaultRegExp = null;
-        foreach ($this->visitedHashMap[$mode][$stateIn] ?? [] as $regExp => $visitedHashes) {
-            if (empty($visitedHashes)) {
-                $defaultRegExp = (string) $regExp;
-                $regExpCount++;
-                continue;
-            }
-            $visitedHashValues = [];
-            foreach ($visitedHashes as $visitedHash) {
-                $visitedHashValues[] = var_export($visitedHash, true);
-            }
-            $visitedHashArgs = implode(', ', $visitedHashValues);
-            $tokenSpec = $this->spec->getTokenSpec($mode, (string) $regExp);
-            $result .=
-                $this->buildMethodPart("if (\$context->isVisitedTransition({$visitedHashArgs})) {", $indent) .
-                $this->buildMethodPart("// {$regExp}", $indent + 1) .
-                $this->buildSingleToken($tokenSpec, $indent + 1) .
-                $this->buildMethodPart("}", $indent);
-            $regExpCount++;
+        if (!isset($this->regExpFinishMap[$stateIn])) {
+            throw new Exception("No regular expressions found for state {$mode}:{$stateIn}");
         }
-
-        if (0 == $regExpCount) {
-            // TODO: detect token spec for empty tokens.
-        }
-
-        if (isset($defaultRegExp)) {
-            $tokenSpec = $this->spec->getTokenSpec($mode, $defaultRegExp);
-
-            return
-                $result .
-                $this->buildMethodPart("// {$defaultRegExp}", $indent) .
-                $this->buildSingleToken($tokenSpec, $indent);
-        }
+        $tokenSpec = $this->spec->getTokenSpec($mode, $this->regExpFinishMap[$stateIn]);
 
         return
-            $result .
-            $this->buildMethodPart("goto error;", $indent);
+            $this->buildMethodPart("// {$tokenSpec->getRegExp()}", $indent) .
+            $this->buildSingleToken($tokenSpec, $indent);
     }
 
     private function buildSingleToken(TokenSpec $tokenSpec, int $indent): string
@@ -549,6 +491,8 @@ class TokenMatcherGenerator
         $startState = $nfa->getStateMap()->createState();
         $nfa->getStateMap()->addStartState($startState);
         $nfaRegExpMap = [];
+        /** @var Dfa[] $dfaList */
+        $dfaList = [];
         foreach ($this->spec->getTokenSpecList($mode) as $tokenSpec) {
             $existingStates = $nfa->getStateMap()->getStateList();
             $regExpEntryState = $nfa->getStateMap()->createState();
@@ -556,154 +500,80 @@ class TokenMatcherGenerator
                 ->getEpsilonTransitionMap()
                 ->addTransition($startState, $regExpEntryState, true);
             $this->buildRegExp($nfa, $regExpEntryState, $tokenSpec->getRegExp());
-            $nfaRegExpMap[$tokenSpec->getRegExp()] = array_diff(
-                $nfa->getStateMap()->getStateList(),
-                $existingStates
+            $regExpStates = array_diff($nfa->getStateMap()->getStateList(), $existingStates);
+            $nfaRegExpMap[$tokenSpec->getRegExp()] = $regExpStates;
+            $dfaList[$tokenSpec->getRegExp()] = $this->buildIndependentRegExp($tokenSpec->getRegExp());
+        }
+
+        $joinedNfa = new Nfa();
+        $startState = $joinedNfa->getStateMap()->createState();
+        $joinedNfa->getStateMap()->addStartState($startState);
+        $languageBuilder = LanguageBuilder::forNfa($joinedNfa);
+        $joinedNfaStates = [];
+        $nfaRegExpMap = [];
+        $regExpFinishMap = [];
+        foreach ($dfaList as $regExp => $dfa) {
+            $nfaRegExpMap[$regExp] = [];
+            foreach ($dfa->getStateMap()->getStateList() as $dfaState) {
+                $nfaState = $joinedNfa->getStateMap()->createState([$dfaState]);
+                $nfaRegExpMap[$regExp][] = $nfaState;
+                $joinedNfaStates[$dfaState] = $nfaState;
+                if ($dfa->getStateMap()->isStartState($dfaState)) {
+                    $joinedNfa->getEpsilonTransitionMap()->addTransition($startState, $nfaState, true);
+                }
+                if ($dfa->getStateMap()->isFinishState($dfaState)) {
+                    $regExpFinishMap[$regExp] = $nfaState;
+                    $joinedNfa->getStateMap()->addFinishState($nfaState);
+                }
+            }
+            foreach ($dfa->getTransitionMap()->getTransitionList() as $dfaStateIn => $transitions) {
+                foreach ($transitions as $dfaStateOut => $symbols) {
+                    foreach ($symbols as $symbol) {
+                        $rangeSet = $dfa->getSymbolTable()->getRangeSet($symbol);
+                        $newSymbols = $languageBuilder->getSymbolList(...$rangeSet->getRanges());
+                        $oldSymbols = $joinedNfa
+                            ->getSymbolTransitionMap()
+                            ->transitionExists($joinedNfaStates[$dfaStateIn], $joinedNfaStates[$dfaStateOut])
+                            ? $joinedNfa
+                                ->getSymbolTransitionMap()
+                                ->getTransition($joinedNfaStates[$dfaStateIn], $joinedNfaStates[$dfaStateOut])
+                            : [];
+                        $joinedNfa->getSymbolTransitionMap()->replaceTransition(
+                            $joinedNfaStates[$dfaStateIn],
+                            $joinedNfaStates[$dfaStateOut],
+                            array_unique(array_merge($oldSymbols, $newSymbols))
+                        );
+                    }
+                }
+            }
+        }
+
+        $dfa = new Dfa();
+        (new DfaBuilder($dfa, $joinedNfa))->run();
+
+        $dfaRegExpFinishMap = [];
+        foreach ($dfa->getStateMap()->getFinishStateList() as $dfaFinishState) {
+            $nfaFinishStates = array_intersect(
+                $dfa->getStateMap()->getStateValue($dfaFinishState),
+                $joinedNfa->getStateMap()->getFinishStateList()
             );
-        }
-
-        $dfa = DfaBuilder::fromNfa($nfa);
-        $dfaRegExpMap = [];
-        foreach (array_keys($nfaRegExpMap, null, true) as $regExp) {
-            $dfaRegExpMap[$regExp] = [];
-        }
-        $allDfaStateIds = $dfa->getStateMap()->getStateList();
-        foreach ($allDfaStateIds as $dfaStateId) {
-            $nfaStateIds = $dfa->getStateMap()->getStateValue($dfaStateId);
-            foreach ($nfaRegExpMap as $regExp => $nfaRegExpStateIds) {
-                if (!empty(array_intersect($nfaStateIds, $nfaRegExpStateIds))) {
-                    $dfaRegExpMap[(string) $regExp][] = $dfaStateId; // TODO: why the hell integer?..
-                }
-            }
-        }
-        $this->regExpMap[$mode] = [];
-        foreach ($dfaRegExpMap as $regExp => $regExpStateIds) {
-            $this->regExpMap[$mode][(string) $regExp] = [$regExpStateIds, array_diff($allDfaStateIds, $regExpStateIds)];
-        }
-        $nfaRegExpTransitionMap = new TransitionMap($nfa->getStateMap());
-        foreach ($nfa->getSymbolTransitionMap()->getTransitionList() as $nfaSourceStateId => $nfaTransitionTargets) {
-            foreach ($nfaTransitionTargets as $nfaTargetStateId => $nfaSymbolIds) {
-                $regExps = [];
-                foreach ($nfaRegExpMap as $regExp => $nfaRegExpIds) {
-                    if (in_array($nfaSourceStateId, $nfaRegExpIds) || in_array($nfaTargetStateId, $nfaRegExpIds)) {
-                        $regExps[] = (string) $regExp;
+            foreach ($regExpFinishMap as $regExp => $regExpFinishState) {
+                foreach ($nfaFinishStates as $nfaFinishState) {
+                    if ($regExpFinishState == $nfaFinishState) {
+                        $dfaRegExpFinishMap[$dfaFinishState] = (string) $regExp;
+                        break 2;
                     }
                 }
-                $nfaTransitionValue = [];
-                foreach ($nfaSymbolIds as $nfaSymbolId) {
-                    $nfaTransitionValue[$nfaSymbolId] = $regExps;
-                }
-                $nfaRegExpTransitionMap->addTransition($nfaSourceStateId, $nfaTargetStateId, $nfaTransitionValue);
             }
         }
-
-        $map = [];
-        $mapIn = [];
-        $mapOut = [];
-        foreach ($dfa->getTransitionMap()->getTransitionList() as $dfaSourceStateId => $dfaTransitionTargets) {
-            foreach ($dfaTransitionTargets as $dfaTargetStateId => $dfaSymbolIds) {
-                $matchingNfaSourceStateIds = $dfa->getStateMap()->getStateValue($dfaSourceStateId);
-                $matchingNfaTargetStateIds = $dfa->getStateMap()->getStateValue($dfaTargetStateId);
-                $dfaTransitionValue = [];
-                foreach ($matchingNfaSourceStateIds as $nfaSourceStateId) {
-                    foreach ($matchingNfaTargetStateIds as $nfaTargetStateId) {
-                        if (
-                            $nfa->getStateMap()->stateExists($nfaSourceStateId) && // TODO: find out invalid id
-                            $nfa->getStateMap()->stateExists($nfaTargetStateId) &&
-                            $nfaRegExpTransitionMap->transitionExists($nfaSourceStateId, $nfaTargetStateId)
-                        ) {
-                            $nfaTransitionValue = $nfaRegExpTransitionMap->getTransition(
-                                $nfaSourceStateId,
-                                $nfaTargetStateId
-                            );
-                            foreach ($dfaSymbolIds as $dfaSymbolId) {
-                                if (isset($nfaTransitionValue[$dfaSymbolId])) {
-                                    $dfaTransitionValue[$dfaSymbolId] = array_unique(
-                                        array_merge(
-                                            $dfaTransitionValue[$dfaSymbolId] ?? [],
-                                            $nfaTransitionValue[$dfaSymbolId]
-                                        )
-                                    );
-                                }
-                            }
-                        }
-                    }
-                }
-                foreach ($dfaTransitionValue as $dfaSymbolId => $regExps) {
-                    $hash = $this->buildHash($dfaSourceStateId, $dfaTargetStateId, $dfaSymbolId);
-                    $map[$hash] = $regExps;
-                    $mapIn[$dfaSourceStateId] = array_merge($mapIn[$dfaSourceStateId] ?? [], [$hash]);
-                    $mapOut[$dfaTargetStateId] = array_merge($mapOut[$dfaTargetStateId] ?? [], [$hash]);
-                }
+        foreach ($this->spec->getTokenSpecList($mode) as $tokenSpec) {
+            if (!in_array($tokenSpec->getRegExp(), $dfaRegExpFinishMap)) {
+                throw new Exception("Token not reachable for regular expression: {$tokenSpec->getRegExp()} ");
             }
         }
-        $incomingTransitionsForHash = [];
-        $incomingTransitionsForState = [];
-        foreach ($mapIn as $stateId => $hashes) {
-            foreach ($hashes as $hash) {
-                $incomingTransitionsForHash[$hash] = $mapOut[$stateId] ?? [];
-            }
-        }
-        foreach (array_keys($mapOut) as $stateId) {
-            if ($dfa->getStateMap()->isFinishState($stateId)) {
-                $incomingTransitionsForState[$stateId] = $mapOut[$stateId] ?? [];
-            }
-        }
-        $this->visitedHashMap[$mode] = [];
-        foreach ($incomingTransitionsForState as $stateId => $hashes) {
-            $inHashBuffer = $hashes;
-            $processedHashes = [];
-            $visitedHashes = [];
-            $regExps = [];
-            foreach ($hashes as $hash) {
-                $regExps = array_unique(array_merge($regExps, $map[$hash]));
-            }
-            while (!empty($inHashBuffer)) {
-                $inHash = array_pop($inHashBuffer);
-                if (isset($processedHashes[$inHash])) {
-                    continue;
-                }
-                $processedHashes[$inHash] = true;
-                $inRegExps = array_intersect($map[$inHash], $regExps);
-                if (count($inRegExps) == 1) {
-                    $inRegExp = $inRegExps[array_key_first($inRegExps)];
-                    $visitedHashes[$inRegExp][] = $inHash;
-                    continue;
-                }
-                array_push($inHashBuffer, ...($incomingTransitionsForHash[$inHash] ?? []));
-            }
-            $this->visitedHashMap[$mode][$stateId] = $visitedHashes;
-        }
-        foreach ($this->visitedHashMap[$mode] as $stateId => $visitedHashes) {
-            if (!empty($visitedHashes)) {
-                continue;
-            }
-            $regExps = [];
-            foreach ($incomingTransitionsForState[$stateId] ?? [] as $hash) {
-                $regExps = array_unique(array_merge($map[$hash], $regExps));
-            }
-            $otherRegExps = [];
-            foreach ($this->visitedHashMap[$mode] as $anotherStateId => $otherVisitedHashes) {
-                if ($stateId == $anotherStateId) {
-                    continue;
-                }
-                foreach ($otherVisitedHashes as $otherRegExp => $otherHashes) {
-                    $otherRegExps = array_unique(array_merge($otherRegExps, [$otherRegExp]));
-                }
-            }
-            $regExps = array_diff($regExps, $otherRegExps);
-            if (count($regExps) == 1) {
-                $regExp = $regExps[array_key_first($regExps)];
-                $this->visitedHashMap[$mode][$stateId][$regExp] = [];
-            }
-        }
+        $this->regExpFinishMap = $dfaRegExpFinishMap;
 
         return $dfa;
-    }
-
-    private function buildHash(int $stateIn, int $stateOut, int $symbol): string
-    {
-        return "{$stateIn}-{$stateOut}:{$symbol}";
     }
 
     /**
@@ -720,5 +590,22 @@ class TokenMatcherGenerator
         $nfaBuilder = new NfaBuilder($nfa, PropertyLoader::create());
         $nfaBuilder->setStartState($entryState);
         (new Translator($tree, $nfaBuilder))->run();
+    }
+
+    /**
+     * @param string $regExp
+     * @return Dfa
+     * @throws Exception
+     */
+    private function buildIndependentRegExp(string $regExp): Dfa
+    {
+        $buffer = CharBufferFactory::createFromString($regExp);
+        $tree = new Tree();
+        ParserFactory::createFromBuffer($tree, $buffer)->run();
+        $nfa = new Nfa();
+        $nfaBuilder = new NfaBuilder($nfa, PropertyLoader::create());
+        (new Translator($tree, $nfaBuilder))->run();
+
+        return DfaBuilder::fromNfa($nfa);
     }
 }

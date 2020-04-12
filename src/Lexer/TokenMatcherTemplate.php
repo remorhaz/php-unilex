@@ -65,8 +65,6 @@ abstract class TokenMatcherTemplate implements TokenMatcherInterface
 
             private $onGetMode;
 
-            private $visitedTransitions = [];
-
             public function __construct(
                 CharBufferInterface $buffer,
                 callable $onConstruct,
@@ -142,22 +140,6 @@ abstract class TokenMatcherTemplate implements TokenMatcherInterface
                 call_user_func($this->onSetMode, $mode);
 
                 return $this;
-            }
-
-            public function visitTransition(string $hash): void
-            {
-                $this->visitedTransitions[$hash] = true;
-            }
-
-            public function isVisitedTransition(string ...$hashes): bool
-            {
-                foreach ($hashes as $hash) {
-                    if (isset($this->visitedTransitions[$hash])) {
-                        return true;
-                    }
-                }
-
-                return false;
             }
         };
     }

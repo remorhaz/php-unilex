@@ -30,6 +30,16 @@ class LanguageBuilder
      */
     public function addTransition(int $stateIn, int $stateOut, Range ...$ranges): void
     {
+        $this->transitionMap->addTransition($stateIn, $stateOut, $this->getSymbolList(...$ranges));
+    }
+
+    /**
+     * @param Range ...$ranges
+     * @return array
+     * @throws UniLexException
+     */
+    public function getSymbolList(Range ...$ranges): array
+    {
         $rangeSetCalc = new RangeSetCalc();
         $newRangeSet = new RangeSet(...$ranges);
         $symbolList = [];
@@ -62,7 +72,8 @@ class LanguageBuilder
             $newSymbolId = $this->symbolTable->addSymbol($newRangeSet);
             $symbolList[] = $newSymbolId;
         }
-        $this->transitionMap->addTransition($stateIn, $stateOut, $symbolList);
+
+        return $symbolList;
     }
 
     private function splitSymbolInTransitions(int $symbolId, int $symbolToAdd): void

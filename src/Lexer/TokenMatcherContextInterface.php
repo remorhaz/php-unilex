@@ -22,8 +22,4 @@ interface TokenMatcherContextInterface
     public function getMode(): string;
 
     public function setMode(string $mode): self;
-
-    public function visitTransition(string $hash): void;
-
-    public function isVisitedTransition(string ...$hashes): bool;
 }

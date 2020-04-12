@@ -30,27 +30,27 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
         $char = $context->getBuffer()->getSymbol();
         if (0x00 <= $char && $char <= 0x7F) {
             $context->getBuffer()->nextSymbol();
-            $context->visitTransition('1-2:0');
-            goto state2;
+            // [\x00-\x7F]
+            $context
+                ->setNewToken(TokenType::SYMBOL)
+                ->setTokenAttribute(TokenAttribute::UNICODE_CHAR, $char);
+
+            return true;
         }
         if (0xC0 <= $char && $char <= 0xDF) {
             $context->getBuffer()->nextSymbol();
-            $context->visitTransition('1-3:1');
             goto state3;
         }
         if (0xE0 <= $char && $char <= 0xEF) {
             $context->getBuffer()->nextSymbol();
-            $context->visitTransition('1-4:3');
             goto state4;
         }
         if (0xF0 <= $char && $char <= 0xF7) {
             $context->getBuffer()->nextSymbol();
-            $context->visitTransition('1-5:4');
             goto state5;
         }
         if (0xF8 <= $char && $char <= 0xFB) {
             $context->getBuffer()->nextSymbol();
-            $context->visitTransition('1-6:5');
             goto state6;
         }
         if (0xFC == $char || 0xFD == $char) {
@@ -59,8 +59,109 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
         }
         goto error;
 
-        state2:
-        if ($context->isVisitedTransition('7-6:2')) {
+        state3:
+        if ($context->getBuffer()->isEnd()) {
+            goto error;
+        }
+        $char = $context->getBuffer()->getSymbol();
+        if (0x80 <= $char && $char <= 0xBF) {
+            $context->getBuffer()->nextSymbol();
+            // [\xC0-\xDF][\x80-\xBF]
+            $charList = array_slice($context->getSymbolList(), -2);
+            $symbol = ($charList[0] & 0x1F) << 6;
+            $symbol |= ($charList[1] & 0x3F);
+            $context
+                ->setNewToken(TokenType::SYMBOL)
+                ->setTokenAttribute(TokenAttribute::UNICODE_CHAR, $symbol);
+
+            return true;
+        }
+        goto error;
+
+        state4:
+        if ($context->getBuffer()->isEnd()) {
+            goto error;
+        }
+        $char = $context->getBuffer()->getSymbol();
+        if (0x80 <= $char && $char <= 0xBF) {
+            $context->getBuffer()->nextSymbol();
+            goto state20;
+        }
+        goto error;
+
+        state5:
+        if ($context->getBuffer()->isEnd()) {
+            goto error;
+        }
+        $char = $context->getBuffer()->getSymbol();
+        if (0x80 <= $char && $char <= 0xBF) {
+            $context->getBuffer()->nextSymbol();
+            goto state17;
+        }
+        goto error;
+
+        state6:
+        if ($context->getBuffer()->isEnd()) {
+            goto error;
+        }
+        $char = $context->getBuffer()->getSymbol();
+        if (0x80 <= $char && $char <= 0xBF) {
+            $context->getBuffer()->nextSymbol();
+            goto state13;
+        }
+        goto error;
+
+        state7:
+        if ($context->getBuffer()->isEnd()) {
+            goto error;
+        }
+        $char = $context->getBuffer()->getSymbol();
+        if (0x80 <= $char && $char <= 0xBF) {
+            $context->getBuffer()->nextSymbol();
+            goto state8;
+        }
+        goto error;
+
+        state8:
+        if ($context->getBuffer()->isEnd()) {
+            goto error;
+        }
+        $char = $context->getBuffer()->getSymbol();
+        if (0x80 <= $char && $char <= 0xBF) {
+            $context->getBuffer()->nextSymbol();
+            goto state9;
+        }
+        goto error;
+
+        state9:
+        if ($context->getBuffer()->isEnd()) {
+            goto error;
+        }
+        $char = $context->getBuffer()->getSymbol();
+        if (0x80 <= $char && $char <= 0xBF) {
+            $context->getBuffer()->nextSymbol();
+            goto state10;
+        }
+        goto error;
+
+        state10:
+        if ($context->getBuffer()->isEnd()) {
+            goto error;
+        }
+        $char = $context->getBuffer()->getSymbol();
+        if (0x80 <= $char && $char <= 0xBF) {
+            $context->getBuffer()->nextSymbol();
+            goto state11;
+        }
+        goto error;
+
+        state11:
+        if ($context->getBuffer()->isEnd()) {
+            goto error;
+        }
+        $char = $context->getBuffer()->getSymbol();
+        if (0x80 <= $char && $char <= 0xBF) {
+            $context->getBuffer()->nextSymbol();
             // [\xFC-\xFD][\x80-\xBF]{5}
             $charList = array_slice($context->getSymbolList(), -6);
             $symbol = ($charList[0] & 0x01) << 30;
@@ -75,7 +176,37 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
 
             return true;
         }
-        if ($context->isVisitedTransition('1-6:5')) {
+        goto error;
+
+        state13:
+        if ($context->getBuffer()->isEnd()) {
+            goto error;
+        }
+        $char = $context->getBuffer()->getSymbol();
+        if (0x80 <= $char && $char <= 0xBF) {
+            $context->getBuffer()->nextSymbol();
+            goto state14;
+        }
+        goto error;
+
+        state14:
+        if ($context->getBuffer()->isEnd()) {
+            goto error;
+        }
+        $char = $context->getBuffer()->getSymbol();
+        if (0x80 <= $char && $char <= 0xBF) {
+            $context->getBuffer()->nextSymbol();
+            goto state15;
+        }
+        goto error;
+
+        state15:
+        if ($context->getBuffer()->isEnd()) {
+            goto error;
+        }
+        $char = $context->getBuffer()->getSymbol();
+        if (0x80 <= $char && $char <= 0xBF) {
+            $context->getBuffer()->nextSymbol();
             // [\xF8-\xFB][\x80-\xBF]{4}
             $charList = array_slice($context->getSymbolList(), -5);
             $symbol = ($charList[0] & 0x03) << 24;
@@ -89,7 +220,26 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
 
             return true;
         }
-        if ($context->isVisitedTransition('1-5:4')) {
+        goto error;
+
+        state17:
+        if ($context->getBuffer()->isEnd()) {
+            goto error;
+        }
+        $char = $context->getBuffer()->getSymbol();
+        if (0x80 <= $char && $char <= 0xBF) {
+            $context->getBuffer()->nextSymbol();
+            goto state18;
+        }
+        goto error;
+
+        state18:
+        if ($context->getBuffer()->isEnd()) {
+            goto error;
+        }
+        $char = $context->getBuffer()->getSymbol();
+        if (0x80 <= $char && $char <= 0xBF) {
+            $context->getBuffer()->nextSymbol();
             // [\xF0-\xF7][\x80-\xBF]{3}
             $charList = array_slice($context->getSymbolList(), -4);
             $symbol = ($charList[0] & 0x07) << 18;
@@ -102,7 +252,15 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
 
             return true;
         }
-        if ($context->isVisitedTransition('1-4:3')) {
+        goto error;
+
+        state20:
+        if ($context->getBuffer()->isEnd()) {
+            goto error;
+        }
+        $char = $context->getBuffer()->getSymbol();
+        if (0x80 <= $char && $char <= 0xBF) {
+            $context->getBuffer()->nextSymbol();
             // [\xE0-\xEF][\x80-\xBF]{2}
             $charList = array_slice($context->getSymbolList(), -3);
             $symbol = ($charList[0] & 0x0F) << 12;
@@ -113,81 +271,6 @@ class Utf8TokenMatcher extends TokenMatcherTemplate
                 ->setTokenAttribute(TokenAttribute::UNICODE_CHAR, $symbol);
 
             return true;
-        }
-        if ($context->isVisitedTransition('1-3:1')) {
-            // [\xC0-\xDF][\x80-\xBF]
-            $charList = array_slice($context->getSymbolList(), -2);
-            $symbol = ($charList[0] & 0x1F) << 6;
-            $symbol |= ($charList[1] & 0x3F);
-            $context
-                ->setNewToken(TokenType::SYMBOL)
-                ->setTokenAttribute(TokenAttribute::UNICODE_CHAR, $symbol);
-
-            return true;
-        }
-        if ($context->isVisitedTransition('1-2:0')) {
-            // [\x00-\x7F]
-            $context
-                ->setNewToken(TokenType::SYMBOL)
-                ->setTokenAttribute(TokenAttribute::UNICODE_CHAR, $char);
-
-            return true;
-        }
-        goto error;
-
-        state3:
-        if ($context->getBuffer()->isEnd()) {
-            goto error;
-        }
-        $char = $context->getBuffer()->getSymbol();
-        if (0x80 <= $char && $char <= 0xBF) {
-            $context->getBuffer()->nextSymbol();
-            goto state2;
-        }
-        goto error;
-
-        state4:
-        if ($context->getBuffer()->isEnd()) {
-            goto error;
-        }
-        $char = $context->getBuffer()->getSymbol();
-        if (0x80 <= $char && $char <= 0xBF) {
-            $context->getBuffer()->nextSymbol();
-            goto state3;
-        }
-        goto error;
-
-        state5:
-        if ($context->getBuffer()->isEnd()) {
-            goto error;
-        }
-        $char = $context->getBuffer()->getSymbol();
-        if (0x80 <= $char && $char <= 0xBF) {
-            $context->getBuffer()->nextSymbol();
-            goto state4;
-        }
-        goto error;
-
-        state6:
-        if ($context->getBuffer()->isEnd()) {
-            goto error;
-        }
-        $char = $context->getBuffer()->getSymbol();
-        if (0x80 <= $char && $char <= 0xBF) {
-            $context->getBuffer()->nextSymbol();
-            goto state5;
-        }
-        goto error;
-
-        state7:
-        if ($context->getBuffer()->isEnd()) {
-            goto error;
-        }
-        $char = $context->getBuffer()->getSymbol();
-        if (0x80 <= $char && $char <= 0xBF) {
-            $context->getBuffer()->nextSymbol();
-            $context->visitTransition('7-6:2');
-            goto state6;
         }
         goto error;
 

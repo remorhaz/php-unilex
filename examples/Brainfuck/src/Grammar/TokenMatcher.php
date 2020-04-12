@@ -30,92 +30,57 @@ class TokenMatcher extends TokenMatcherTemplate
         $char = $context->getBuffer()->getSymbol();
         if (0x3E == $char) {
             $context->getBuffer()->nextSymbol();
-            $context->visitTransition('1-2:0');
-            goto state2;
+            // >
+            $context->setNewToken(TokenType::NEXT);
+
+            return true;
         }
         if (0x3C == $char) {
             $context->getBuffer()->nextSymbol();
-            $context->visitTransition('1-2:1');
-            goto state2;
-        }
-        if (0x2B == $char) {
-            $context->getBuffer()->nextSymbol();
-            $context->visitTransition('1-2:2');
-            goto state2;
-        }
-        if (0x2D == $char) {
-            $context->getBuffer()->nextSymbol();
-            $context->visitTransition('1-2:3');
-            goto state2;
-        }
-        if (0x2E == $char) {
-            $context->getBuffer()->nextSymbol();
-            $context->visitTransition('1-2:4');
-            goto state2;
-        }
-        if (0x2C == $char) {
-            $context->getBuffer()->nextSymbol();
-            $context->visitTransition('1-2:5');
-            goto state2;
-        }
-        if (0x5B == $char) {
-            $context->getBuffer()->nextSymbol();
-            $context->visitTransition('1-2:6');
-            goto state2;
-        }
-        if (0x5D == $char) {
-            $context->getBuffer()->nextSymbol();
-            $context->visitTransition('1-2:7');
-            goto state2;
-        }
-        goto error;
-
-        state2:
-        if ($context->isVisitedTransition('1-2:7')) {
-            // ]
-            $context->setNewToken(TokenType::END_LOOP);
-
-            return true;
-        }
-        if ($context->isVisitedTransition('1-2:6')) {
-            // \[
-            $context->setNewToken(TokenType::LOOP);
-
-            return true;
-        }
-        if ($context->isVisitedTransition('1-2:5')) {
-            // ,
-            $context->setNewToken(TokenType::INPUT);
-
-            return true;
-        }
-        if ($context->isVisitedTransition('1-2:4')) {
-            // \.
-            $context->setNewToken(TokenType::OUTPUT);
-
-            return true;
-        }
-        if ($context->isVisitedTransition('1-2:3')) {
-            // -
-            $context->setNewToken(TokenType::DEC);
-
-            return true;
-        }
-        if ($context->isVisitedTransition('1-2:2')) {
-            // \+
-            $context->setNewToken(TokenType::INC);
-
-            return true;
-        }
-        if ($context->isVisitedTransition('1-2:1')) {
             // <
             $context->setNewToken(TokenType::PREV);
 
             return true;
         }
-        if ($context->isVisitedTransition('1-2:0')) {
-            // >
-            $context->setNewToken(TokenType::NEXT);
+        if (0x2B == $char) {
+            $context->getBuffer()->nextSymbol();
+            // \+
+            $context->setNewToken(TokenType::INC);
+
+            return true;
+        }
+        if (0x2D == $char) {
+            $context->getBuffer()->nextSymbol();
+            // -
+            $context->setNewToken(TokenType::DEC);
+
+            return true;
+        }
+        if (0x2E == $char) {
+            $context->getBuffer()->nextSymbol();
+            // \.
+            $context->setNewToken(TokenType::OUTPUT);
+
+            return true;
+        }
+        if (0x2C == $char) {
+            $context->getBuffer()->nextSymbol();
+            // ,
+            $context->setNewToken(TokenType::INPUT);
+
+            return true;
+        }
+        if (0x5B == $char) {
+            $context->getBuffer()->nextSymbol();
+            // \[
+            $context->setNewToken(TokenType::LOOP);
+
+            return true;
+        }
+        if (0x5D == $char) {
+            $context->getBuffer()->nextSymbol();
+            // ]
+            $context->setNewToken(TokenType::END_LOOP);
 
             return true;
         }
