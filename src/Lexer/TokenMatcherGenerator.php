@@ -522,7 +522,7 @@ class TokenMatcherGenerator
                     $joinedNfa->getEpsilonTransitionMap()->addTransition($startState, $nfaState, true);
                 }
                 if ($dfa->getStateMap()->isFinishState($dfaState)) {
-                    $regExpFinishMap[$regExp] = $nfaState;
+                    $regExpFinishMap[$regExp][] = $nfaState;
                     $joinedNfa->getStateMap()->addFinishState($nfaState);
                 }
             }
@@ -557,9 +557,9 @@ class TokenMatcherGenerator
                 $dfa->getStateMap()->getStateValue($dfaFinishState),
                 $joinedNfa->getStateMap()->getFinishStateList()
             );
-            foreach ($regExpFinishMap as $regExp => $regExpFinishState) {
+            foreach ($regExpFinishMap as $regExp => $regExpFinishStates) {
                 foreach ($nfaFinishStates as $nfaFinishState) {
-                    if ($regExpFinishState == $nfaFinishState) {
+                    if (in_array($nfaFinishState, $regExpFinishStates)) {
                         $dfaRegExpFinishMap[$dfaFinishState] = (string) $regExp;
                         break 2;
                     }
