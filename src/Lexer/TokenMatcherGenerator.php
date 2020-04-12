@@ -14,7 +14,6 @@ use Remorhaz\UniLex\RegExp\FSM\LanguageBuilder;
 use Remorhaz\UniLex\RegExp\FSM\Nfa;
 use Remorhaz\UniLex\RegExp\FSM\NfaBuilder;
 use Remorhaz\UniLex\RegExp\FSM\Range;
-use Remorhaz\UniLex\RegExp\FSM\RangeSet;
 use Remorhaz\UniLex\RegExp\ParserFactory;
 use Remorhaz\UniLex\RegExp\PropertyLoader;
 use Remorhaz\UniLex\Unicode\CharBufferFactory;
@@ -40,6 +39,8 @@ class TokenMatcherGenerator
 
     private $regExpFinishMap = [];
 
+    private $conditionFunctions = [];
+
     public function __construct(TokenMatcherSpec $spec)
     {
         $this->spec = $spec;
@@ -52,6 +53,8 @@ class TokenMatcherGenerator
      */
     private function buildOutput(): string
     {
+        $this->conditionFunctions = [];
+
         return
             "{$this->buildFileComment()}\ndeclare(strict_types=1);\n\n" .
             "{$this->buildHeader()}\n" .
@@ -61,6 +64,7 @@ class TokenMatcherGenerator
             "    public function match({$this->buildMatchParameters()}): bool\n" .
             "    {\n{$this->buildMatchBody()}" .
             "    }\n" .
+            $this->buildConditionFunctions() .
             "}\n";
     }
 
@@ -293,9 +297,8 @@ class TokenMatcherGenerator
         $result = '';
         foreach ($this->getDfa($mode)->getTransitionMap()->getExitList($stateIn) as $stateOut => $symbolList) {
             foreach ($symbolList as $symbol) {
-                $rangeSet = $this->getDfa($mode)->getSymbolTable()->getRangeSet($symbol);
                 $result .=
-                    $this->buildMethodPart("if ({$this->buildRangeSetCondition($rangeSet)}) {") .
+                    $this->buildMethodPart("if ({$this->buildRangeSetCondition($mode, $symbol)}) {") .
                     $this->buildOnTransition() .
                     $this->buildMethodPart("\$context->getBuffer()->nextSymbol();", 3);
                 $result .= $this->isFinishStateWithSingleEnteringTransition($mode, $stateOut)
@@ -367,8 +370,16 @@ class TokenMatcherGenerator
         return ["{$startChar} <= \$char && \$char <= {$finishChar}"];
     }
 
-    private function buildRangeSetCondition(RangeSet $rangeSet): string
+    /**
+     * @param string $mode
+     * @param int    $symbol
+     * @return string
+     * @throws Exception
+     */
+    private function buildRangeSetCondition(string $mode, int $symbol): string
     {
+        $rangeSet = $this->getDfa($mode)->getSymbolTable()->getRangeSet($symbol);
+
         $conditionList = [];
         foreach ($rangeSet->getRanges() as $range) {
             $conditionList = array_merge($conditionList, $this->buildRangeCondition($range));
@@ -378,8 +389,29 @@ class TokenMatcherGenerator
             return ltrim($result);
         }
         $result = $this->buildMethodPart(implode(" ||\n", $conditionList), 1);
+        if (count($conditionList) > 10) {
+            $method = "isMode" . ucfirst($mode) . "Symbol{$symbol}";
+            $this->conditionFunctions[$method] = $result;
+
+            return "\$this->{$method}(\$char)";
+        }
 
         return "\n    " . ltrim($result);
+    }
+
+    private function buildConditionFunctions(): string
+    {
+        $result = '';
+
+        foreach ($this->conditionFunctions as $method => $conditionList) {
+            $result .=
+                "\n    private function {$method}(int \$char): bool\n    {\n" .
+                $this->buildMethodPart("return") .
+                $this->buildMethodPart(rtrim($conditionList) . ';') .
+                "    }\n";
+        }
+
+        return $result;
     }
 
     /**
