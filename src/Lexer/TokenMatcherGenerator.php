@@ -411,10 +411,10 @@ class TokenMatcherGenerator
      */
     private function buildToken(string $mode, int $stateIn, int $indent = 2): string
     {
-        if (!isset($this->regExpFinishMap[$stateIn])) {
+        if (!isset($this->regExpFinishMap[$mode][$stateIn])) {
             throw new Exception("No regular expressions found for state {$mode}:{$stateIn}");
         }
-        $tokenSpec = $this->spec->getTokenSpec($mode, $this->regExpFinishMap[$stateIn]);
+        $tokenSpec = $this->spec->getTokenSpec($mode, $this->regExpFinishMap[$mode][$stateIn]);
 
         return
             $this->buildMethodPart("// {$tokenSpec->getRegExp()}", $indent) .
@@ -571,7 +571,7 @@ class TokenMatcherGenerator
                 throw new Exception("Token not reachable for regular expression: {$tokenSpec->getRegExp()} ");
             }
         }
-        $this->regExpFinishMap = $dfaRegExpFinishMap;
+        $this->regExpFinishMap[$mode] = $dfaRegExpFinishMap;
 
         return $dfa;
     }
