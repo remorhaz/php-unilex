@@ -515,7 +515,7 @@ class TokenMatcherGenerator
         foreach ($dfaList as $regExp => $dfa) {
             $nfaRegExpMap[$regExp] = [];
             foreach ($dfa->getStateMap()->getStateList() as $dfaState) {
-                $nfaState = $joinedNfa->getStateMap()->createState([$dfaState]);
+                $nfaState = $joinedNfa->getStateMap()->createState();
                 $nfaRegExpMap[$regExp][] = $nfaState;
                 $joinedNfaStates[$dfaState] = $nfaState;
                 if ($dfa->getStateMap()->isStartState($dfaState)) {
