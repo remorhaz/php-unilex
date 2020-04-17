@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Remorhaz\UniLex\RegExp\FSM;
 
+use Remorhaz\IntRangeSets\Range;
+use Remorhaz\IntRangeSets\RangeSet;
+use Remorhaz\IntRangeSets\RangeSetInterface;
 use Remorhaz\UniLex\AST\AbstractTranslatorListener;
 use Remorhaz\UniLex\AST\Node;
 use Remorhaz\UniLex\AST\Symbol;
@@ -30,13 +33,10 @@ class NfaBuilder extends AbstractTranslatorListener
 
     private $startState;
 
-    private $rangeSetCalc;
-
     public function __construct(Nfa $nfa, PropertyLoaderInterface $propertyLoader)
     {
         $this->nfa = $nfa;
         $this->propertyLoader = $propertyLoader;
-        $this->rangeSetCalc = new RangeSetCalc();
     }
 
     /**
@@ -137,9 +137,9 @@ class NfaBuilder extends AbstractTranslatorListener
                 $propName = $node->getStringAttribute('name');
                 $propRangeSet = $this->propertyLoader->getRangeSet($propName);
                 $rangeSet = $node->getAttribute('not')
-                    ? $this
-                        ->rangeSetCalc
-                        ->xor($propRangeSet, RangeSet::import([0x00, 0x10FFFF]))
+                    ? $propRangeSet->createSymmetricDifference(
+                        RangeSet::createUnsafe(new Range(0x00, 0x10FFFF))
+                    )
                     : $propRangeSet;
                 [$stateIn, $stateOut] = $this->getNodeStates($node);
                 $this->setRangeTransition($stateIn, $stateOut, $rangeSet);
@@ -374,8 +374,12 @@ class NfaBuilder extends AbstractTranslatorListener
                     break;
                 }
                 $invertedRangeSet = $this
-                    ->rangeSetCalc
-                    ->xor($this->getRangeTransition($stateIn, $stateOut), RangeSet::import([0x00, 0x10FFFF]));
+                    ->getRangeTransition($stateIn, $stateOut)
+                    ->createSymmetricDifference(
+                        RangeSet::createUnsafe(
+                            new Range(0x00, 0x10FFFF)
+                        )
+                    );
                 $this->setRangeTransition($stateIn, $stateOut, $invertedRangeSet);
                 break;
         }
@@ -383,7 +387,7 @@ class NfaBuilder extends AbstractTranslatorListener
 
     public function onFinish(): void
     {
-        $addTransitionToLanguage = function (RangeSet $rangeSet, int $stateIn, int $stateOut) {
+        $addTransitionToLanguage = function (RangeSetInterface $rangeSet, int $stateIn, int $stateOut) {
             $this
                 ->getLanguageBuilder()
                 ->addTransition($stateIn, $stateOut, ...$rangeSet->getRanges());
@@ -520,21 +524,25 @@ class NfaBuilder extends AbstractTranslatorListener
      */
     private function addRangeTransition(int $stateIn, int $stateOut, int $start, int $finish = null): self
     {
-        $this
-            ->getRangeTransition($stateIn, $stateOut)
-            ->addRange(new Range($start, $finish ?? $start));
+        $this->setRangeTransition(
+            $stateIn,
+            $stateOut,
+            $this
+                ->getRangeTransition($stateIn, $stateOut)
+                ->withRanges(new Range($start, $finish))
+        );
 
         return $this;
     }
 
     /**
-     * @param int      $stateIn
-     * @param int      $stateOut
-     * @param RangeSet $rangeSet
+     * @param int               $stateIn
+     * @param int               $stateOut
+     * @param RangeSetInterface $rangeSet
      * @return NfaBuilder
      * @throws Exception
      */
-    private function setRangeTransition(int $stateIn, int $stateOut, RangeSet $rangeSet): self
+    private function setRangeTransition(int $stateIn, int $stateOut, RangeSetInterface $rangeSet): self
     {
         $this
             ->getRangeTransitionMap()
@@ -546,10 +554,10 @@ class NfaBuilder extends AbstractTranslatorListener
     /**
      * @param int $stateIn
      * @param int $stateOut
-     * @return RangeSet
+     * @return RangeSetInterface
      * @throws Exception
      */
-    private function getRangeTransition(int $stateIn, int $stateOut): RangeSet
+    private function getRangeTransition(int $stateIn, int $stateOut): RangeSetInterface
     {
         $transitionExists = $this
             ->getRangeTransitionMap()
@@ -559,7 +567,7 @@ class NfaBuilder extends AbstractTranslatorListener
                 ->getRangeTransitionMap()
                 ->getTransition($stateIn, $stateOut);
         }
-        $rangeSet = new RangeSet();
+        $rangeSet = RangeSet::create();
         $this
             ->getRangeTransitionMap()
             ->addTransition($stateIn, $stateOut, $rangeSet);

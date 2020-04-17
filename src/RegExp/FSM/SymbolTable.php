@@ -2,23 +2,24 @@
 
 namespace Remorhaz\UniLex\RegExp\FSM;
 
+use Remorhaz\IntRangeSets\RangeSetInterface;
 use Remorhaz\UniLex\Exception;
 
 class SymbolTable
 {
 
     /**
-     * @var RangeSet[]
+     * @var RangeSetInterface[]
      */
     private $rangeSetList = [];
 
     private $nextSymbol = 0;
 
     /**
-     * @param RangeSet $rangeSet
+     * @param RangeSetInterface $rangeSet
      * @return int
      */
-    public function addSymbol(RangeSet $rangeSet): int
+    public function addSymbol(RangeSetInterface $rangeSet): int
     {
         $symbolId = $this->nextSymbol++;
         $this->rangeSetList[$symbolId] = $rangeSet;
@@ -27,10 +28,10 @@ class SymbolTable
 
     /**
      * @param int $symbolId
-     * @param RangeSet $rangeSet
+     * @param RangeSetInterface $rangeSet
      * @throws Exception
      */
-    public function importSymbol(int $symbolId, RangeSet $rangeSet): void
+    public function importSymbol(int $symbolId, RangeSetInterface $rangeSet): void
     {
         if (isset($this->rangeSetList[$symbolId])) {
             throw new Exception("Symbol {$symbolId} already defined in symbol table");
@@ -41,11 +42,11 @@ class SymbolTable
 
     /**
      * @param int $symbolId
-     * @param RangeSet $rangeSet
+     * @param RangeSetInterface $rangeSet
      * @return SymbolTable
      * @throws Exception
      */
-    public function replaceSymbol(int $symbolId, RangeSet $rangeSet): self
+    public function replaceSymbol(int $symbolId, RangeSetInterface $rangeSet): self
     {
         if (!isset($this->rangeSetList[$symbolId])) {
             throw new Exception("Symbol {$symbolId} is not defined in symbol table");
@@ -56,10 +57,10 @@ class SymbolTable
 
     /**
      * @param int $symbolId
-     * @return RangeSet
+     * @return RangeSetInterface
      * @throws Exception
      */
-    public function getRangeSet(int $symbolId): RangeSet
+    public function getRangeSet(int $symbolId): RangeSetInterface
     {
         if (!isset($this->rangeSetList[$symbolId])) {
             throw new Exception("Symbol {$symbolId} is not defined in symbol table");
@@ -68,7 +69,7 @@ class SymbolTable
     }
 
     /**
-     * @return RangeSet[]
+     * @return RangeSetInterface[]
      */
     public function getRangeSetList(): array
     {

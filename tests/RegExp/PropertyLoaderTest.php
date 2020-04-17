@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Remorhaz\UniLex\Test\RegExp;
 
 use PHPUnit\Framework\TestCase;
+use Remorhaz\IntRangeSets\RangeSetInterface;
 use Remorhaz\UniLex\RegExp\Exception\InvalidPropertyConfigException;
 use Remorhaz\UniLex\RegExp\Exception\InvalidPropertyRangeSetException;
 use Remorhaz\UniLex\RegExp\Exception\PropertyFileNotLoadedException;
 use Remorhaz\UniLex\RegExp\Exception\PropertyRangeSetNotFoundException;
-use Remorhaz\UniLex\RegExp\FSM\RangeSet;
 use Remorhaz\UniLex\RegExp\PropertyLoader;
 
 use function preg_quote;
@@ -50,7 +50,7 @@ class PropertyLoaderTest extends TestCase
     {
         $propertyLoader = new PropertyLoader(__DIR__, ['a' => '/InvalidPropertyIndex.php']);
         $this->expectException(InvalidPropertyRangeSetException::class);
-        $expectedClass = preg_quote(RangeSet::class, '#');
+        $expectedClass = preg_quote(RangeSetInterface::class, '#');
         $this->expectExceptionMessageMatches(
             "#^Invalid range set loaded from .+ for Unicode property 'a':\n" .
             "\\S+ instead of {$expectedClass}\$#"
@@ -74,7 +74,7 @@ class PropertyLoaderTest extends TestCase
             ->getRangeSet($propertyName)
             ->getRanges();
         self::assertArrayHasKey($rangeIndex, $ranges);
-        self::assertTrue($ranges[$rangeIndex]->containsChar($codePoint));
+        self::assertTrue($ranges[$rangeIndex]->containsValue($codePoint));
     }
 
     public function providerGetRangeSet(): array

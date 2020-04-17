@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Remorhaz\UniLex\RegExp\Exception;
 
-use Remorhaz\UniLex\RegExp\FSM\RangeSet;
+use Remorhaz\IntRangeSets\RangeSetInterface;
 use Throwable;
 use UnexpectedValueException;
 
@@ -34,7 +34,7 @@ final class InvalidPropertyRangeSetException extends UnexpectedValueException im
         $actualType = is_object($this->rangeSet)
             ? get_class($this->rangeSet)
             : gettype($this->rangeSet);
-        $expectedType = RangeSet::class;
+        $expectedType = RangeSetInterface::class;
 
         return
             "Invalid range set loaded from {$this->propertyFile} for Unicode property '{$this->propertyName}':\n" .

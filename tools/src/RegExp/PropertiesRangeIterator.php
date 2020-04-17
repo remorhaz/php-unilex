@@ -6,7 +6,7 @@ namespace Remorhaz\UniLex\Tool\RegExp;
 
 use Iterator;
 use IteratorAggregate;
-use Remorhaz\UniLex\RegExp\FSM\Range;
+use Remorhaz\IntRangeSets\Range;
 use SplFileObject;
 use Throwable;
 
@@ -51,7 +51,7 @@ final class PropertiesRangeIterator implements IteratorAggregate
         $dataWithComment = explode('#', $line, 2);
         $data = trim($dataWithComment[0] ?? '');
         if ('' == $data) {
-            return null;
+            return;
         }
         $rangeWithProp = explode(';', $data);
         $unSplitRange = trim($rangeWithProp[0] ?? null);

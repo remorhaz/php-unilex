@@ -3,12 +3,15 @@
 namespace Remorhaz\UniLex\Test\RegExp\FSM;
 
 use PHPUnit\Framework\TestCase;
+use Remorhaz\IntRangeSets\RangeInterface;
+use Remorhaz\IntRangeSets\RangeSetInterface;
 use Remorhaz\UniLex\AST\Tree;
 use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\RegExp\FSM\NfaBuilder;
-use Remorhaz\UniLex\RegExp\FSM\RangeSet;
 use Remorhaz\UniLex\RegExp\ParserFactory;
 use Remorhaz\UniLex\Unicode\CharBufferFactory;
+
+use function array_map;
 
 /**
  * @covers \Remorhaz\UniLex\RegExp\FSM\NfaBuilder
@@ -322,14 +325,19 @@ class ParsedFsmTest extends TestCase
     }
 
     /**
-     * @param RangeSet[] $rangeSetList
+     * @param RangeSetInterface[] $rangeSetList
      * @return array
      */
     private function exportRangeSetList(array $rangeSetList): array
     {
         $result = [];
         foreach ($rangeSetList as $symbolId => $rangeSet) {
-            $result[$symbolId] = $rangeSet->export();
+            $result[$symbolId] = array_map(
+                function (RangeInterface $range): array {
+                    return [$range->getStart(), $range->getFinish()];
+                },
+                $rangeSet->getRanges()
+            );
         }
         return $result;
     }

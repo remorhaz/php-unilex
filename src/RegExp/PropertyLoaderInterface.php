@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Remorhaz\UniLex\RegExp;
 
-use Remorhaz\UniLex\RegExp\FSM\RangeSet;
+use Remorhaz\IntRangeSets\RangeSetInterface;
 
 interface PropertyLoaderInterface
 {
-    public function getRangeSet(string $propertyName): RangeSet;
+    public function getRangeSet(string $propertyName): RangeSetInterface;
 }

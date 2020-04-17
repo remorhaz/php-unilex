@@ -6,7 +6,6 @@ namespace Remorhaz\UniLex\Tool\RegExp\Console;
 
 use LogicException;
 use PhpParser\PrettyPrinter\Standard;
-use Remorhaz\UniLex\RegExp\FSM\RangeSetCalc;
 use Remorhaz\UniLex\Tool\RegExp\PropertyBuilder;
 use RuntimeException;
 use SplFileObject;
@@ -106,7 +105,7 @@ final class BuildPropertiesCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $output->writeln($this->getApplication()->getName());
-        $propertyBuilder = new PropertyBuilder(new RangeSetCalc(), new Standard());
+        $propertyBuilder = new PropertyBuilder(new Standard());
         $this->parseUnicodeData($propertyBuilder, $input, $output);
         $this->parseScripts($propertyBuilder, $input, $output);
         $this->parsePropList($propertyBuilder, $input, $output);

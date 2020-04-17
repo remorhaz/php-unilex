@@ -12,9 +12,10 @@ use PhpParser\Node\Stmt\DeclareDeclare;
 use PhpParser\Node\Stmt\Return_;
 use PhpParser\PrettyPrinterAbstract;
 use ReflectionClass;
-use Remorhaz\UniLex\RegExp\FSM\Range;
-use Remorhaz\UniLex\RegExp\FSM\RangeSet;
-use Remorhaz\UniLex\RegExp\FSM\RangeSetCalc;
+use Remorhaz\IntRangeSets\Range;
+use Remorhaz\IntRangeSets\RangeInterface;
+use Remorhaz\IntRangeSets\RangeSet;
+use Remorhaz\IntRangeSets\RangeSetInterface;
 use SplFileObject;
 use Throwable;
 
@@ -27,8 +28,6 @@ use function var_export;
 final class PropertyBuilder
 {
 
-    private $rangeSetCalc;
-
     private $rangeSets = [];
 
     private $scripts = [];
@@ -38,13 +37,12 @@ final class PropertyBuilder
     private $printer;
 
     /**
-     * @var Range[][]
+     * @var RangeInterface[][]
      */
     private $rangeBuffer = [];
 
-    public function __construct(RangeSetCalc $rangeSetCalc, PrettyPrinterAbstract $printer)
+    public function __construct(PrettyPrinterAbstract $printer)
     {
-        $this->rangeSetCalc = $rangeSetCalc;
         $this->phpBuilder = new BuilderFactory();
         $this->printer = $printer;
     }
@@ -70,7 +68,7 @@ final class PropertyBuilder
         }
     }
 
-    private function addRangeToBuffer(string $prop, Range ...$ranges): void
+    private function addRangeToBuffer(string $prop, RangeInterface ...$ranges): void
     {
         $this->rangeBuffer[$prop] = array_merge($this->rangeBuffer[$prop] ?? [], $ranges);
     }
@@ -119,7 +117,7 @@ final class PropertyBuilder
 
         try {
             $targetProp = 'Any';
-            $anyRangeSet = RangeSet::import([0x00, 0x10FFFF]);
+            $anyRangeSet = RangeSet::createUnsafe(new Range(0x00, 0x10FFFF));
         } catch (Throwable $e) {
             throw new Exception\RangeSetNotBuiltException($targetProp, $e);
         }
@@ -128,11 +126,10 @@ final class PropertyBuilder
 
         try {
             $targetProp = 'Cn';
-            $notCnRangeSet = new RangeSet(...$notCnRanges);
+            $notCnRangeSet = RangeSet::create(...$notCnRanges);
             $onProgress();
-            $cnRanges = $this
-                ->rangeSetCalc
-                ->xor($notCnRangeSet, $anyRangeSet)
+            $cnRanges = $notCnRangeSet
+                ->createSymmetricDifference($anyRangeSet)
                 ->getRanges();
         } catch (Throwable $e) {
             throw new Exception\RangeSetNotBuiltException($targetProp, $e);
@@ -150,11 +147,10 @@ final class PropertyBuilder
         }
         try {
             $targetProp = 'Unknown';
-            $knownRangeSet = new RangeSet(...$knownRanges);
+            $knownRangeSet = RangeSet::create(...$knownRanges);
             $onProgress();
-            $unknownRanges = $this
-                ->rangeSetCalc
-                ->xor($knownRangeSet, $this->getRangeSet('Any'))
+            $unknownRanges = $knownRangeSet
+                ->createSymmetricDifference($this->getRangeSet('Any'))
                 ->getRanges();
         } catch (Throwable $e) {
             throw new Exception\RangeSetNotBuiltException($targetProp, $e);
@@ -163,19 +159,19 @@ final class PropertyBuilder
         $this->addRangeToBuffer($targetProp, ...$unknownRanges);
     }
 
-    private function addRangeSet(string $prop, Range ...$ranges): void
+    private function addRangeSet(string $prop, RangeInterface ...$ranges): void
     {
         if (isset($this->rangeSets[$prop])) {
             throw new Exception\RangeSetAlreadyExistsException($prop);
         }
         try {
-            $this->rangeSets[$prop] = new RangeSet(...$ranges);
+            $this->rangeSets[$prop] = RangeSet::create(...$ranges);
         } catch (Throwable $e) {
             throw new Exception\RangeSetNotBuiltException($prop, $e);
         }
     }
 
-    private function getRangeSet(string $prop): RangeSet
+    private function getRangeSet(string $prop): RangeSetInterface
     {
         if (isset($this->rangeSets[$prop])) {
             return $this->rangeSets[$prop];
@@ -216,7 +212,7 @@ final class PropertyBuilder
         return "<?php\n\nreturn {$array};\n";
     }
 
-    private function buildPropertyFile(RangeSet $rangeSet): string
+    private function buildPropertyFile(RangeSetInterface $rangeSet): string
     {
         $rangeClass = new ReflectionClass(Range::class);
         $rangeSetClass = new ReflectionClass(RangeSet::class);
@@ -244,7 +240,7 @@ final class PropertyBuilder
             $phpRanges[] = $this->phpBuilder->new($rangeClass->getShortName(), $phpRangeArgs);
         }
         $phpReturn = new Return_(
-            $this->phpBuilder->staticCall($rangeSetClass->getShortName(), 'loadUnsafe', $phpRanges)
+            $this->phpBuilder->staticCall($rangeSetClass->getShortName(), 'createUnsafe', $phpRanges)
         );
         $phpReturn->setDocComment(new Doc('/** phpcs:disable Generic.Files.LineLength.TooLong */'));
         $phpNodes[] = $phpReturn;

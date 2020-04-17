@@ -3,10 +3,14 @@
 namespace Remorhaz\UniLex\Test\RegExp\FSM;
 
 use PHPUnit\Framework\TestCase;
+use Remorhaz\IntRangeSets\Range;
+use Remorhaz\IntRangeSets\RangeInterface;
 use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\RegExp\FSM\NfaCalc;
 use Remorhaz\UniLex\RegExp\FSM\Nfa;
-use Remorhaz\UniLex\RegExp\FSM\RangeSet;
+use Remorhaz\IntRangeSets\RangeSet;
+
+use function array_map;
 
 /**
  * @covers \Remorhaz\UniLex\RegExp\FSM\NfaCalc
@@ -57,7 +61,17 @@ class NfaCalcTest extends TestCase
         foreach ($rangeList as $symbolId => $rangeSetData) {
             $nfa
                 ->getSymbolTable()
-                ->importSymbol($symbolId, RangeSet::import(...$rangeSetData));
+                ->importSymbol(
+                    $symbolId,
+                    RangeSet::createUnsafe(
+                        ...array_map(
+                            function (array $rangeData): RangeInterface {
+                                return new Range(...$rangeData);
+                            },
+                            $rangeSetData
+                        )
+                    )
+                );
         }
         $symbolTransitionList = [[2, 3, [0]], [4, 5, [1]], [7, 8, [0]], [8, 9, [1]], [9, 10, [1]]];
         foreach ($symbolTransitionList as $symbolTransition) {
@@ -66,6 +80,7 @@ class NfaCalcTest extends TestCase
                 ->getSymbolTransitionMap()
                 ->addTransition($stateIn, $stateOut, $symbolList);
         }
+
         return $nfa;
     }
 }

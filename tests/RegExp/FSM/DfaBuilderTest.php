@@ -3,11 +3,16 @@
 namespace Remorhaz\UniLex\Test\RegExp\FSM;
 
 use PHPUnit\Framework\TestCase;
+use Remorhaz\IntRangeSets\Range;
+use Remorhaz\IntRangeSets\RangeInterface;
+use Remorhaz\IntRangeSets\RangeSet;
+use Remorhaz\IntRangeSets\RangeSetInterface;
 use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\RegExp\FSM\Dfa;
 use Remorhaz\UniLex\RegExp\FSM\DfaBuilder;
 use Remorhaz\UniLex\RegExp\FSM\Nfa;
-use Remorhaz\UniLex\RegExp\FSM\RangeSet;
+
+use function array_map;
 
 /**
  * @covers \Remorhaz\UniLex\RegExp\FSM\DfaBuilder
@@ -25,7 +30,7 @@ class DfaBuilderTest extends TestCase
         $nfaBuilder->run();
         $rangeSetList = [];
         foreach ($dfa->getSymbolTable()->getRangeSetList() as $symbolId => $rangeSet) {
-            $rangeSetList[$symbolId] = $rangeSet->export();
+            $rangeSetList[$symbolId] = $this->exportRangeSet($rangeSet);
         }
         self::assertEquals([0 => [[0x61, 0x61]], 1 => [[0x62, 0x62]]], $rangeSetList);
         self::assertEquals([1, 2, 3, 4, 5], $dfa->getStateMap()->getStateList());
@@ -64,7 +69,7 @@ class DfaBuilderTest extends TestCase
         foreach ($rangeList as $symbolId => $rangeSetData) {
             $nfa
                 ->getSymbolTable()
-                ->importSymbol($symbolId, RangeSet::import(...$rangeSetData));
+                ->importSymbol($symbolId, $this->importRangeSet(...$rangeSetData));
         }
         $symbolTransitionList = [[2, 3, [0]], [4, 5, [1]], [7, 8, [0]], [8, 9, [1]], [9, 10, [1]]];
         foreach ($symbolTransitionList as $symbolTransition) {
@@ -73,6 +78,29 @@ class DfaBuilderTest extends TestCase
                 ->getSymbolTransitionMap()
                 ->addTransition($stateIn, $stateOut, $symbolList);
         }
+
         return $nfa;
+    }
+
+    private function importRangeSet(...$rangeSetData): RangeSetInterface
+    {
+        return RangeSet::createUnsafe(
+            ...array_map([$this, 'importRange'], $rangeSetData)
+        );
+    }
+
+    private function importRange(array $rangeData): RangeInterface
+    {
+        return new Range(...$rangeData);
+    }
+
+    private function exportRangeSet(RangeSetInterface $rangeSet): array
+    {
+        return array_map([$this, 'exportRange'], $rangeSet->getRanges());
+    }
+
+    private function exportRange(RangeInterface $range): array
+    {
+        return [$range->getStart(), $range->getFinish()];
     }
 }

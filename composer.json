@@ -24,6 +24,7 @@
     "php": "^7.3",
     "phpdocumentor/reflection-docblock": "^4.3 | ^5",
     "nikic/php-parser": "^4.2",
+    "remorhaz/int-rangesets": "^0.1.0",
     "symfony/console": "^5",
     "thecodingmachine/safe": "^1.1"
   },

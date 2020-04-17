@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Remorhaz\UniLex\Lexer;
 
 use ReflectionException;
+use Remorhaz\IntRangeSets\RangeInterface;
 use Remorhaz\UniLex\AST\Translator;
 use Remorhaz\UniLex\AST\Tree;
 use Remorhaz\UniLex\Exception;
@@ -13,7 +14,6 @@ use Remorhaz\UniLex\RegExp\FSM\DfaBuilder;
 use Remorhaz\UniLex\RegExp\FSM\LanguageBuilder;
 use Remorhaz\UniLex\RegExp\FSM\Nfa;
 use Remorhaz\UniLex\RegExp\FSM\NfaBuilder;
-use Remorhaz\UniLex\RegExp\FSM\Range;
 use Remorhaz\UniLex\RegExp\ParserFactory;
 use Remorhaz\UniLex\RegExp\PropertyLoader;
 use Remorhaz\UniLex\Unicode\CharBufferFactory;
@@ -353,7 +353,7 @@ class TokenMatcherGenerator
         return "0x{$hexChar}";
     }
 
-    private function buildRangeCondition(Range $range): array
+    private function buildRangeCondition(RangeInterface $range): array
     {
         $startChar = $this->buildHex($range->getStart());
         if ($range->getStart() == $range->getFinish()) {

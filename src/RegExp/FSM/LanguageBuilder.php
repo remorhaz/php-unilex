@@ -2,6 +2,8 @@
 
 namespace Remorhaz\UniLex\RegExp\FSM;
 
+use Remorhaz\IntRangeSets\RangeInterface;
+use Remorhaz\IntRangeSets\RangeSet;
 use Remorhaz\UniLex\Exception as UniLexException;
 
 class LanguageBuilder
@@ -23,50 +25,49 @@ class LanguageBuilder
     }
 
     /**
-     * @param int   $stateIn
-     * @param int   $stateOut
-     * @param Range ...$ranges
+     * @param int            $stateIn
+     * @param int            $stateOut
+     * @param RangeInterface ...$ranges
      * @throws UniLexException
      */
-    public function addTransition(int $stateIn, int $stateOut, Range ...$ranges): void
+    public function addTransition(int $stateIn, int $stateOut, RangeInterface ...$ranges): void
     {
         $this->transitionMap->addTransition($stateIn, $stateOut, $this->getSymbolList(...$ranges));
     }
 
     /**
-     * @param Range ...$ranges
+     * @param RangeInterface ...$ranges
      * @return array
      * @throws UniLexException
      */
-    public function getSymbolList(Range ...$ranges): array
+    public function getSymbolList(RangeInterface ...$ranges): array
     {
-        $rangeSetCalc = new RangeSetCalc();
-        $newRangeSet = new RangeSet(...$ranges);
+        $newRangeSet = RangeSet::create(...$ranges);
         $symbolList = [];
         $shouldAddNewSymbol = true;
         foreach ($this->symbolTable->getRangeSetList() as $symbolId => $oldRangeSet) {
-            if ($rangeSetCalc->equals($oldRangeSet, $newRangeSet)) {
+            if ($oldRangeSet->equals($newRangeSet)) {
                 $symbolList[] = $symbolId;
                 $shouldAddNewSymbol = false;
                 break;
             }
-            $rangeSetDiff = $rangeSetCalc->xor($oldRangeSet, $newRangeSet);
-            $onlyInOldRangeSet = $rangeSetCalc->and($oldRangeSet, $rangeSetDiff);
+            $rangeSetDiff = $oldRangeSet->createSymmetricDifference($newRangeSet);
+            $onlyInOldRangeSet = $oldRangeSet->createIntersection($rangeSetDiff);
             if ($onlyInOldRangeSet->isEmpty()) {
                 $symbolList[] = $symbolId;
                 $newRangeSet = $rangeSetDiff;
                 continue;
             }
-            if ($rangeSetCalc->equals($onlyInOldRangeSet, $oldRangeSet)) {
+            if ($onlyInOldRangeSet->equals($oldRangeSet)) {
                 continue;
             }
             $splitSymbolId = $this
                 ->symbolTable
                 ->replaceSymbol($symbolId, $onlyInOldRangeSet)
-                ->addSymbol($and = $rangeSetCalc->and($oldRangeSet, $newRangeSet));
+                ->addSymbol($and = $oldRangeSet->createIntersection($newRangeSet));
             $this->splitSymbolInTransitions($symbolId, $splitSymbolId);
             $symbolList[] = $splitSymbolId;
-            $newRangeSet = $rangeSetCalc->and($newRangeSet, $rangeSetDiff);
+            $newRangeSet = $newRangeSet->createIntersection($rangeSetDiff);
         }
         if ($shouldAddNewSymbol && !$newRangeSet->isEmpty()) {
             $newSymbolId = $this->symbolTable->addSymbol($newRangeSet);

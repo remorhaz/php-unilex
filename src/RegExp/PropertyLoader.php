@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Remorhaz\UniLex\RegExp;
 
-use Remorhaz\UniLex\RegExp\FSM\RangeSet;
+use Remorhaz\IntRangeSets\RangeSetInterface;
 
 use function error_clear_last;
 use function error_get_last;
@@ -32,7 +32,7 @@ final class PropertyLoader implements PropertyLoaderInterface
         $this->index = $index;
     }
 
-    public function getRangeSet(string $propertyName): RangeSet
+    public function getRangeSet(string $propertyName): RangeSetInterface
     {
         if (!isset($this->cache[$propertyName])) {
             $this->cache[$propertyName] = $this->loadRangeSet($propertyName);
@@ -41,7 +41,7 @@ final class PropertyLoader implements PropertyLoaderInterface
         return $this->cache[$propertyName];
     }
 
-    private function loadRangeSet(string $propertyName): RangeSet
+    private function loadRangeSet(string $propertyName): RangeSetInterface
     {
         if (!isset($this->index[$propertyName])) {
             throw new Exception\PropertyRangeSetNotFoundException($propertyName);
@@ -65,7 +65,7 @@ final class PropertyLoader implements PropertyLoaderInterface
                 );
             }
         }
-        if ($rangeSet instanceof RangeSet) {
+        if ($rangeSet instanceof RangeSetInterface) {
             return $rangeSet;
         }
 

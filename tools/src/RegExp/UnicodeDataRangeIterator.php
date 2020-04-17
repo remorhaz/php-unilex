@@ -6,7 +6,7 @@ namespace Remorhaz\UniLex\Tool\RegExp;
 
 use Iterator;
 use IteratorAggregate;
-use Remorhaz\UniLex\RegExp\FSM\Range;
+use Remorhaz\IntRangeSets\Range;
 use SplFileObject;
 use Throwable;
 

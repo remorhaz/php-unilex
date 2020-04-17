@@ -3,14 +3,17 @@
 namespace Remorhaz\UniLex\Test\RegExp\FSM;
 
 use PHPUnit\Framework\TestCase;
+use Remorhaz\IntRangeSets\RangeInterface;
+use Remorhaz\IntRangeSets\RangeSetInterface;
 use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\RegExp\FSM\LanguageBuilder;
 use Remorhaz\UniLex\RegExp\FSM\Nfa;
-use Remorhaz\UniLex\RegExp\FSM\Range;
-use Remorhaz\UniLex\RegExp\FSM\RangeSet;
+use Remorhaz\IntRangeSets\Range;
 use Remorhaz\UniLex\RegExp\FSM\StateMapInterface;
 use Remorhaz\UniLex\RegExp\FSM\SymbolTable;
 use Remorhaz\UniLex\RegExp\FSM\TransitionMap;
+
+use function array_map;
 
 /**
  * @covers \Remorhaz\UniLex\RegExp\FSM\LanguageBuilder
@@ -27,9 +30,9 @@ class LanguageBuilderTest extends TestCase
         $stateIn = $nfa->getStateMap()->createState();
         $stateOut = $nfa->getStateMap()->createState();
         LanguageBuilder::forNfa($nfa)->addTransition($stateIn, $stateOut, new Range(1, 2));
-        $actualRangeList = $nfa->getSymbolTable()->getRangeSetList();
-        self::assertArrayHasKey(0, $actualRangeList);
-        self::assertEquals([[1, 2]], $actualRangeList[0]->export());
+        $actualRangeSetList = $nfa->getSymbolTable()->getRangeSetList();
+        self::assertArrayHasKey(0, $actualRangeSetList);
+        self::assertEquals([[1, 2]], $this->exportRangeSet($actualRangeSetList[0]));
     }
 
     /**
@@ -63,8 +66,6 @@ class LanguageBuilderTest extends TestCase
     /**
      * @param array $firstTransitionData
      * @param array $secondTransitionData
-     * @param array $firstRangeData
-     * @param array $secondRangeData
      * @param array $expectedValue
      * @throws UniLexException
      * @dataProvider providerAddTransitionCalledTwiceTransitions
@@ -78,9 +79,9 @@ class LanguageBuilderTest extends TestCase
         $transitionMap = new TransitionMap($this->createStateMap());
         $languageBuilder = new LanguageBuilder($symbolTable, $transitionMap);
         [$stateIn, $stateOut, $firstRangeData] = $firstTransitionData;
-        $languageBuilder->addTransition($stateIn, $stateOut, ...Range::importList(...$firstRangeData));
+        $languageBuilder->addTransition($stateIn, $stateOut, ...$this->importRanges(...$firstRangeData));
         [$stateIn, $stateOut, $secondRangeData] = $secondTransitionData;
-        $languageBuilder->addTransition($stateIn, $stateOut, ...Range::importList(...$secondRangeData));
+        $languageBuilder->addTransition($stateIn, $stateOut, ...$this->importRanges(...$secondRangeData));
         $actualValue = $transitionMap->getTransitionList();
         self::assertEquals($expectedValue, $actualValue);
     }
@@ -126,9 +127,17 @@ class LanguageBuilderTest extends TestCase
         $transitionMap = new TransitionMap($this->createStateMap());
         $languageBuilder = new LanguageBuilder($symbolTable, $transitionMap);
         [$stateIn, $stateOut] = $firstTransitionData;
-        $languageBuilder->addTransition($stateIn, $stateOut, ...Range::importList(...$firstRangeData));
+        $languageBuilder->addTransition(
+            $stateIn,
+            $stateOut,
+            ...array_map([$this, 'importRange'], $firstRangeData)
+        );
         [$stateIn, $stateOut] = $secondTransitionData;
-        $languageBuilder->addTransition($stateIn, $stateOut, ...Range::importList(...$secondRangeData));
+        $languageBuilder->addTransition(
+            $stateIn,
+            $stateOut,
+            ...array_map([$this, 'importRange'], $secondRangeData)
+        );
         $actualValue = $this->exportSymbolMap($symbolTable->getRangeSetList());
         self::assertEquals($expectedValue, $actualValue);
     }
@@ -141,7 +150,8 @@ class LanguageBuilderTest extends TestCase
             "Partially intersecting ranges" => [
                 [1, 2],
                 [1, 3],
-                [[1, 2]], [[2, 4]],
+                [[1, 2]],
+                [[2, 4]],
                 [0 => [[1, 1]], 1 => [[2, 2]], 2 => [[3, 4]]],
             ],
             "Second range in the middle of first" => [
@@ -173,15 +183,41 @@ class LanguageBuilderTest extends TestCase
     }
 
     /**
-     * @param RangeSet[] $symbolMap
+     * @param RangeSetInterface[] $symbolMap
      * @return array
      */
     private function exportSymbolMap(array $symbolMap): array
     {
         $result = [];
         foreach ($symbolMap as $symbolId => $rangeSet) {
-            $result[$symbolId] = $rangeSet->export();
+            $result[$symbolId] = array_map(
+                function (RangeInterface $range): array {
+                    return [$range->getStart(), $range->getFinish()];
+                },
+                $rangeSet->getRanges()
+            );
         }
+
         return $result;
+    }
+
+    private function importRange(array $rangeData): RangeInterface
+    {
+        return new Range(...$rangeData);
+    }
+
+    private function importRanges(array ...$rangeDataList): array
+    {
+        return array_map([$this, 'importRange'], $rangeDataList);
+    }
+
+    private function exportRange(RangeInterface $range): array
+    {
+        return [$range->getStart(), $range->getFinish()];
+    }
+
+    private function exportRangeSet(RangeSetInterface $rangeSet): array
+    {
+        return array_map([$this, 'exportRange'], $rangeSet->getRanges());
     }
 }
