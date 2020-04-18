@@ -23,8 +23,9 @@
   "require": {
     "php": "^7.3",
     "phpdocumentor/reflection-docblock": "^4.3 | ^5",
-    "nikic/php-parser": "^4.2",
-    "remorhaz/int-rangesets": "^0.1.0",
+    "nikic/php-parser": "^4.4",
+    "remorhaz/int-rangesets": "^0.1",
+    "remorhaz/ucd": "^0.1",
     "symfony/console": "^5",
     "thecodingmachine/safe": "^1.1"
   },
@@ -42,8 +43,6 @@
   "autoload-dev": {
     "psr-4": {
       "Remorhaz\\UniLex\\Test\\": "tests/",
-      "Remorhaz\\UniLex\\Tool\\": "tools/src/",
-      "Remorhaz\\UniLex\\Tool\\Test\\": "tools/tests/",
       "Remorhaz\\UniLex\\Example\\Brainfuck\\": "examples/Brainfuck/src/",
       "Remorhaz\\UniLex\\Example\\Brainfuck\\Test\\": "examples/Brainfuck/tests/",
       "Remorhaz\\UniLex\\Example\\SimpleExpr\\": "examples/SimpleExpr/src/",
@@ -60,8 +59,6 @@
       "@build-example-brainfuck"
     ],
     "build-regexp": [
-      "php tools/bin/PropertyBuilderApp.php",
-      "vendor/bin/phpcbf -p src/RegExp/Properties/ src/RegExp/PropertyIndex.php; if [ $? -eq 1 ]; then exit 0; fi",
       "php bin/unilex build-token-matcher spec/RegExp/LexerSpec.php src/RegExp/Grammar/TokenMatcher.php --desc='RegExp token matcher.'",
       "php bin/unilex build-lookup-table src/RegExp/Grammar/Config.php src/RegExp/Grammar/LookupTable.php --type=ll-1 --desc='RegExp LL(1) parser lookup table.' --symbol=Remorhaz\\\\UniLex\\\\RegExp\\\\Grammar\\\\SymbolType --token=Remorhaz\\\\UniLex\\\\RegExp\\\\Grammar\\\\TokenType",
       "vendor/bin/phpcbf -p src/RegExp/Grammar/LookupTable.php src/RegExp/Grammar/TokenMatcher.php; if [ $? -eq 1 ]; then exit 0; fi"

@@ -22,7 +22,6 @@
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
             <directory suffix=".php">src/</directory>
-            <directory suffix=".php">tools/src/</directory>
             <directory suffix=".php">examples/Brainfuck/src/</directory>
             <directory suffix=".php">examples/SimpleExpr/src/</directory>
             <exclude>

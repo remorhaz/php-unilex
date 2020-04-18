@@ -6,6 +6,7 @@ namespace Remorhaz\UniLex\Lexer;
 
 use ReflectionException;
 use Remorhaz\IntRangeSets\RangeInterface;
+use Remorhaz\UCD\PropertyRangeLoader;
 use Remorhaz\UniLex\AST\Translator;
 use Remorhaz\UniLex\AST\Tree;
 use Remorhaz\UniLex\Exception;
@@ -15,7 +16,6 @@ use Remorhaz\UniLex\RegExp\FSM\LanguageBuilder;
 use Remorhaz\UniLex\RegExp\FSM\Nfa;
 use Remorhaz\UniLex\RegExp\FSM\NfaBuilder;
 use Remorhaz\UniLex\RegExp\ParserFactory;
-use Remorhaz\UniLex\RegExp\PropertyLoader;
 use Remorhaz\UniLex\Unicode\CharBufferFactory;
 use Throwable;
 
@@ -619,7 +619,7 @@ class TokenMatcherGenerator
         $buffer = CharBufferFactory::createFromString($regExp);
         $tree = new Tree();
         ParserFactory::createFromBuffer($tree, $buffer)->run();
-        $nfaBuilder = new NfaBuilder($nfa, PropertyLoader::create());
+        $nfaBuilder = new NfaBuilder($nfa, PropertyRangeLoader::create());
         $nfaBuilder->setStartState($entryState);
         (new Translator($tree, $nfaBuilder))->run();
     }
@@ -635,7 +635,7 @@ class TokenMatcherGenerator
         $tree = new Tree();
         ParserFactory::createFromBuffer($tree, $buffer)->run();
         $nfa = new Nfa();
-        $nfaBuilder = new NfaBuilder($nfa, PropertyLoader::create());
+        $nfaBuilder = new NfaBuilder($nfa, PropertyRangeLoader::create());
         (new Translator($tree, $nfaBuilder))->run();
 
         return DfaBuilder::fromNfa($nfa);

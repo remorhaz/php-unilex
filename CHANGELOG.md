@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Changed
 - Rangesets moved to `remorhaz/int-rangesets`.
+- Unicode property ranges generation moved to `remorhaz/ucd`.
 
 ## [0.3.1] - 2020-04-12
 ### Fixed

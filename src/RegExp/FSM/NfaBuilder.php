@@ -7,6 +7,8 @@ namespace Remorhaz\UniLex\RegExp\FSM;
 use Remorhaz\IntRangeSets\Range;
 use Remorhaz\IntRangeSets\RangeSet;
 use Remorhaz\IntRangeSets\RangeSetInterface;
+use Remorhaz\UCD\PropertyRangeLoader;
+use Remorhaz\UCD\PropertyRangeLoaderInterface;
 use Remorhaz\UniLex\AST\AbstractTranslatorListener;
 use Remorhaz\UniLex\AST\Node;
 use Remorhaz\UniLex\AST\Symbol;
@@ -16,8 +18,6 @@ use Remorhaz\UniLex\IO\CharBufferInterface;
 use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\RegExp\AST\NodeType;
 use Remorhaz\UniLex\RegExp\ParserFactory;
-use Remorhaz\UniLex\RegExp\PropertyLoader;
-use Remorhaz\UniLex\RegExp\PropertyLoaderInterface;
 use Remorhaz\UniLex\Stack\PushInterface;
 
 class NfaBuilder extends AbstractTranslatorListener
@@ -33,7 +33,7 @@ class NfaBuilder extends AbstractTranslatorListener
 
     private $startState;
 
-    public function __construct(Nfa $nfa, PropertyLoaderInterface $propertyLoader)
+    public function __construct(Nfa $nfa, PropertyRangeLoaderInterface $propertyLoader)
     {
         $this->nfa = $nfa;
         $this->propertyLoader = $propertyLoader;
@@ -60,7 +60,7 @@ class NfaBuilder extends AbstractTranslatorListener
     public static function fromTree(Tree $tree): Nfa
     {
         $nfa = new Nfa();
-        (new Translator($tree, new self($nfa, PropertyLoader::create())))->run();
+        (new Translator($tree, new self($nfa, PropertyRangeLoader::create())))->run();
 
         return $nfa;
     }
