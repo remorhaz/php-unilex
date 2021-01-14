@@ -13,7 +13,6 @@ matrix:
 
 install:
   - mkdir -p ./build/logs
-  - composer self-update
   - composer install --prefer-source --no-interaction
   - composer build
 
