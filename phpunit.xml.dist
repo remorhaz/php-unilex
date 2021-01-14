@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <phpunit
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.1/phpunit.xsd"
+        xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.5/phpunit.xsd"
         backupGlobals="true"
         forceCoversAnnotation="true"
         defaultTestSuite="all">
@@ -19,15 +19,15 @@
             <directory>tests/</directory>
         </testsuite>
     </testsuites>
-    <filter>
-        <whitelist processUncoveredFilesFromWhitelist="true">
+    <coverage processUncoveredFiles="true">
+        <include>
             <directory suffix=".php">src/</directory>
             <directory suffix=".php">examples/Brainfuck/src/</directory>
             <directory suffix=".php">examples/SimpleExpr/src/</directory>
-            <exclude>
-                <file>src/RegExp/PropertyIndex.php</file>
-                <directory>src/RegExp/Properties/</directory>
-            </exclude>
-        </whitelist>
-    </filter>
+        </include>
+        <exclude>
+            <file>src/RegExp/PropertyIndex.php</file>
+            <directory>src/RegExp/Properties/</directory>
+        </exclude>
+    </coverage>
 </phpunit>

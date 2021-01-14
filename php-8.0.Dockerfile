@@ -1,4 +1,4 @@
-FROM php:7.3-cli
+FROM php:8.0-cli
 
 RUN apt-get update &&  apt-get install -y \
     zip \
@@ -14,4 +14,3 @@ ENV COMPOSER_ALLOW_SUPERUSER=1
 
 RUN curl --silent --show-error https://getcomposer.org/installer | php -- \
     --install-dir=/usr/bin --filename=composer
-

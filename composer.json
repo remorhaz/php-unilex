@@ -21,19 +21,19 @@
     "bin/unilex"
   ],
   "require": {
-    "php": "^7.3",
+    "php": "^7.3 | ^8",
     "phpdocumentor/reflection-docblock": "^4.3 | ^5",
-    "nikic/php-parser": "^4.4",
-    "remorhaz/int-rangesets": "^0.1",
-    "remorhaz/ucd": "^0.1",
+    "nikic/php-parser": "^4.10",
+    "remorhaz/int-rangesets": "^0.1.1",
+    "remorhaz/ucd": "^0.1.1",
     "symfony/console": "^5",
     "thecodingmachine/safe": "^1.1"
   },
   "require-dev": {
-    "infection/infection": "^0.16",
-    "phpunit/phpunit": "^9.1",
-    "squizlabs/php_codesniffer": "^3.5.4",
-    "symplify/coding-standard": "^7.2"
+    "infection/infection": "^0.17 | ^0.18",
+    "phpunit/phpunit": "^9.5",
+    "squizlabs/php_codesniffer": "^3.5",
+    "symplify/coding-standard": "^9"
   },
   "autoload": {
     "psr-4": {

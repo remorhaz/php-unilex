@@ -8,6 +8,9 @@ use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\IntRangeSets\RangeSet;
 use Remorhaz\UniLex\RegExp\FSM\SymbolTable;
 
+/**
+ * @covers \Remorhaz\UniLex\RegExp\FSM\SymbolTable
+ */
 class SymbolTableTest extends TestCase
 {
 

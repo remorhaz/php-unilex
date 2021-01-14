@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Remorhaz\UniLex\Lexer;
 
+use ReflectionClass;
 use ReflectionException;
 use Remorhaz\IntRangeSets\RangeInterface;
 use Remorhaz\UCD\PropertyRangeLoader;
@@ -170,7 +171,7 @@ class TokenMatcherGenerator
             if ($matchParameter->hasType()) {
                 $param = $matchParameter->getType()->isBuiltin()
                     ? $matchParameter->getType()->getName()
-                    : $matchParameter->getClass()->getShortName();
+                    : (new ReflectionClass($matchParameter->getType()->getName()))->getShortName();
                 $param .= " ";
             } else {
                 $param = "";

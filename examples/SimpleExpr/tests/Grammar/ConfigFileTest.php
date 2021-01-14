@@ -1,10 +1,13 @@
 <?php
 
-namespace Remorhaz\UniLex\Example\Test\SimpleExpr\Grammar;
+namespace Remorhaz\UniLex\Example\SimpleExpr\Test\Grammar;
 
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Example\SimpleExpr\Grammar\ConfigFile;
 
+/**
+ * @covers \Remorhaz\UniLex\Example\SimpleExpr\Grammar\ConfigFile
+ */
 class ConfigFileTest extends TestCase
 {
 
