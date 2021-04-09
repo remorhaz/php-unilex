@@ -41,7 +41,7 @@ class MemoryLeakTest extends TestCase
         $grammar = GrammarLoader::loadFile(ConfigFile::getPath());
         $listener = $this->createStub(AbstractParserListener::class);
         $tableBuilder = new TableBuilder($grammar);
-        $lookupTable = __DIR__ . '/../build/SimpleExampleLookup.php';
+        $lookupTable = __DIR__ . '/../build/SimpleExprLookup.php';
         $lookupTableDump = var_export($tableBuilder->getTable()->exportMap(), true);
         /** @noinspection PhpUnreachableStatementInspection */
         $content = "<?php return {$lookupTableDump};\n";
