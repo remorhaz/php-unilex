@@ -61,6 +61,7 @@ class Parser
         }
         $table = new Table();
         $table->importMap($data);
+        unset($data); // Freeing memory
         $this->lookupTable = $table;
     }
 
