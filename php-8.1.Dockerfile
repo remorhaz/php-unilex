@@ -1,10 +1,10 @@
-FROM php:8.0-rc-cli
+FROM php:8.1-rc-cli
 
 RUN apt-get update &&  apt-get install -y \
     zip \
     git \
     libicu-dev && \
-    pecl install xdebug && \
+    pecl install -o -f xdebug && \
     docker-php-ext-enable xdebug && \
     docker-php-ext-configure intl --enable-intl && \
     docker-php-ext-install intl && \

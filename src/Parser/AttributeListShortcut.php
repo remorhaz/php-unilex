@@ -5,6 +5,7 @@ namespace Remorhaz\UniLex\Parser;
 use ArrayAccess;
 use Remorhaz\UniLex\AttributeListInterface;
 use Remorhaz\UniLex\Exception;
+use ReturnTypeWillChange;
 
 class AttributeListShortcut implements ArrayAccess
 {
@@ -20,6 +21,7 @@ class AttributeListShortcut implements ArrayAccess
      * @param mixed $offset
      * @return mixed
      */
+    #[ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this
@@ -31,6 +33,7 @@ class AttributeListShortcut implements ArrayAccess
      * @param mixed $offset
      * @param mixed $value
      */
+    #[ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         $this
@@ -42,6 +45,7 @@ class AttributeListShortcut implements ArrayAccess
      * @param mixed $offset
      * @return bool
      */
+    #[ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         return $this
@@ -53,6 +57,7 @@ class AttributeListShortcut implements ArrayAccess
      * @param mixed $offset
      * @throws Exception
      */
+    #[ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         throw new Exception("Cannot remove symbol attribute");
