@@ -1,7 +1,7 @@
 # UniLex
 
 [![Latest Stable Version](https://poser.pugx.org/remorhaz/php-unilex/version)](https://packagist.org/packages/remorhaz/php-unilex)
-[![Build Status](https://travis-ci.org/remorhaz/php-unilex.svg?branch=master)](https://travis-ci.org/remorhaz/php-unilex)
+[![Build](https://github.com/remorhaz/php-unilex/actions/workflows/build.yml/badge.svg)](https://github.com/remorhaz/php-unilex/actions/workflows/build.yml)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/remorhaz/php-unilex/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/remorhaz/php-unilex/?branch=master)
 [![codecov](https://codecov.io/gh/remorhaz/php-unilex/branch/master/graph/badge.svg)](https://codecov.io/gh/remorhaz/php-unilex)
 [![Infection MSI](https://badge.stryker-mutator.io/github.com/remorhaz/php-json-pointer/master)](https://infection.github.io)
