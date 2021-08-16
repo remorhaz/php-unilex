@@ -4,16 +4,19 @@ env:
   global:
     - XDEBUG=YES
     - XDEBUG_MODE=coverage
+    - IGNORE_PLATFORM_REQS=NO
 
 matrix:
   include:
     - php: '7.3'
     - php: '7.4'
     - php: '8.0'
+    - php: '8.1'
+      env: IGNORE_PLATFORM_REQS=YES
 
 install:
   - mkdir -p ./build/logs
-  - composer install --prefer-source --no-interaction
+  - if [ "$IGNORE_PLATFORM_REQS=NO" ]; then composer install --prefer-source --no-interaction; else composer install --ignore-platform-reqs --prefer-source --no-interaction; fi
   - composer build
 
 script:

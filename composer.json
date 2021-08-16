@@ -21,8 +21,8 @@
     "bin/unilex"
   ],
   "require": {
-    "php": "^7.3 | ^8",
-    "phpdocumentor/reflection-docblock": "^4.3 | ^5",
+    "php": "^7.3 || ^8",
+    "phpdocumentor/reflection-docblock": "^4.3 || ^5",
     "nikic/php-parser": "^4.10",
     "remorhaz/int-rangesets": "^0.1.1",
     "remorhaz/ucd": "^0.1.1",
@@ -30,9 +30,9 @@
     "thecodingmachine/safe": "^1.1"
   },
   "require-dev": {
-    "infection/infection": "^0.17 | ^0.18",
+    "infection/infection": "^0.17 || ^0.18 || ^0.19 || ^0.20 || ^0.21 || ^0.22 || ^0.23 || ^0.24",
     "phpunit/phpunit": "^9.5",
-    "squizlabs/php_codesniffer": "^3.5",
+    "squizlabs/php_codesniffer": "^3.6",
     "symplify/coding-standard": "^9"
   },
   "autoload": {
