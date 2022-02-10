@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Example\SimpleExpr\Test\Grammar;
 
 use PHPUnit\Framework\TestCase;
@@ -10,7 +12,6 @@ use Remorhaz\UniLex\Example\SimpleExpr\Grammar\ConfigFile;
  */
 class ConfigFileTest extends TestCase
 {
-
     public function testGetPath_Called_ReturnsStringgEndsWithConfigFileName(): void
     {
         $actualValue = ConfigFile::getPath();

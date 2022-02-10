@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Parser\LL1;
 
 use Remorhaz\UniLex\Exception;
@@ -17,7 +19,6 @@ use Throwable;
 
 class Parser
 {
-
     private $grammar;
 
     private $lookupTable;

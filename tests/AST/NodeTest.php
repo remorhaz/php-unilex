@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Test\AST;
 
 use PHPUnit\Framework\TestCase;
@@ -12,7 +14,6 @@ use Remorhaz\UniLex\Exception as UniLexException;
  */
 class NodeTest extends TestCase
 {
-
     public function testGetId_ConstructedWithValue_ReturnsSameValue(): void
     {
         $actualValue = (new Node(1, 'a'))->getId();

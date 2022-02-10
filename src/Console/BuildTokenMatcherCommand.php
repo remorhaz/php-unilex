@@ -25,7 +25,6 @@ use function substr_count;
 
 final class BuildTokenMatcherCommand extends Command
 {
-
     protected static $defaultName = 'build-token-matcher';
 
     protected function configure()

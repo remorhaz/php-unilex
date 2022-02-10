@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Grammar\ContextFree;
 
 class Production
 {
-
     private $headerId;
 
     private $index;

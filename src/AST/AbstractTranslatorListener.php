@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\AST;
 
 use Remorhaz\UniLex\Stack\PushInterface;
@@ -9,7 +11,6 @@ use Remorhaz\UniLex\Stack\PushInterface;
  */
 abstract class AbstractTranslatorListener implements TranslatorListenerInterface
 {
-
     public function onStart(Node $node): void
     {
     }

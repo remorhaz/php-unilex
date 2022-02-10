@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Test\Lexer;
 
 use PHPUnit\Framework\TestCase;
@@ -20,7 +22,6 @@ use Remorhaz\UniLex\Unicode\Grammar\Utf8TokenMatcher;
  */
 class TokenReaderTest extends TestCase
 {
-
     /**
      * @throws UniLexException
      */

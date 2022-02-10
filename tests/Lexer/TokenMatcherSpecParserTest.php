@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Test\Lexer;
 
 use PHPUnit\Framework\TestCase;
@@ -14,7 +16,6 @@ use Remorhaz\UniLex\Lexer\TokenMatcherTemplate;
  */
 class TokenMatcherSpecParserTest extends TestCase
 {
-
     /**
      * @throws UniLexException
      */

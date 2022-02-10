@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\IO;
 
 use Remorhaz\UniLex\Lexer\Token;
@@ -7,7 +9,6 @@ use Remorhaz\UniLex\Lexer\TokenPosition;
 
 interface CharBufferInterface
 {
-
     public function isEnd(): bool;
 
     public function nextSymbol(): void;

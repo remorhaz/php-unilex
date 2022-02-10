@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Lexer;
 
 use Remorhaz\UniLex\AttributeListInterface;
@@ -8,7 +10,6 @@ use Remorhaz\UniLex\Parser\AttributeListShortcut;
 
 class Token implements AttributeListInterface
 {
-
     private $type;
 
     private $isEoi;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Example\Brainfuck;
 
 use Remorhaz\UniLex\Example\Brainfuck\Grammar\TokenMatcher;
@@ -13,7 +15,6 @@ use Remorhaz\UniLex\Unicode\CharBufferFactory;
 
 class Interpreter
 {
-
     private $output;
 
 

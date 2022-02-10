@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Lexer;
 
 use Remorhaz\UniLex\Exception;
@@ -9,7 +11,6 @@ use Remorhaz\UniLex\Exception;
  */
 class TokenPosition
 {
-
     /**
      * Offset of the first symbol of token.
      *

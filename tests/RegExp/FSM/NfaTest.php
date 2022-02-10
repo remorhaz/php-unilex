@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Test\RegExp\FSM;
 
 use PHPUnit\Framework\TestCase;
@@ -10,7 +12,6 @@ use Remorhaz\UniLex\RegExp\FSM\Nfa;
  */
 class NfaTest extends TestCase
 {
-
     public function testGetStateMap_CalledTwice_ReturnsSameInstance(): void
     {
         $nfa = new Nfa();

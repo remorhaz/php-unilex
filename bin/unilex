@@ -11,7 +11,6 @@ $isComposerLoaded = false;
 foreach (['../../..', '..', '../vendor'] as $composerAutoloadPath) {
     $composerAutoloadFile = __DIR__ . "/{$composerAutoloadPath}/autoload.php";
     if (is_file($composerAutoloadFile) === true) {
-        /** @noinspection PhpIncludeInspection */
         require_once $composerAutoloadFile;
         $isComposerLoaded = true;
         break;

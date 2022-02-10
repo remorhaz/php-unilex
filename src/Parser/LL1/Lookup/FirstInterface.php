@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Parser\LL1\Lookup;
 
 interface FirstInterface extends SetInterface
 {
-
     /**
      * Returns FIRST(X1..XN) set.
      *

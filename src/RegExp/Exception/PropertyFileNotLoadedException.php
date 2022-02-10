@@ -9,7 +9,6 @@ use Throwable;
 
 final class PropertyFileNotLoadedException extends RuntimeException implements ExceptionInterface
 {
-
     private $propertyName;
 
     private $propertyFile;

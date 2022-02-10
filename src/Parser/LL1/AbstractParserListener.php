@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Parser\LL1;
 
 use Remorhaz\UniLex\Parser\Production;
@@ -8,7 +10,6 @@ use Remorhaz\UniLex\Lexer\Token;
 
 abstract class AbstractParserListener implements ParserListenerInterface
 {
-
     public function onStart(): void
     {
     }

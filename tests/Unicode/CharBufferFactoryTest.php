@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Test\Unicode;
 
 use PHPUnit\Framework\TestCase;
@@ -12,7 +14,6 @@ use Remorhaz\UniLex\Unicode\Grammar\Utf8TokenMatcher;
  */
 class CharBufferFactoryTest extends TestCase
 {
-
     public function testCreateFromBuffer_BufferWithCharacter_ResultGetSymbolReturnsCharacterCode(): void
     {
         $source = new StringBuffer('本');

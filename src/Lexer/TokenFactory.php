@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Lexer;
 
 class TokenFactory implements TokenFactoryInterface
 {
-
     private $eoiTokenId;
 
     public function __construct(int $eoiTokenId)

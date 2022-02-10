@@ -1,6 +1,8 @@
 <?php
 
-namespace Remorhaz\UniLex\Example\Test\Brainfuck;
+declare(strict_types=1);
+
+namespace Remorhaz\UniLex\Example\Brainfuck\Test;
 
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Example\Brainfuck\Exception as BrainfuckException;
@@ -12,7 +14,6 @@ use Remorhaz\UniLex\Exception as UniLexException;
  */
 class InterpreterTest extends TestCase
 {
-
     /**
      * @throws BrainfuckException
      * @throws UniLexException

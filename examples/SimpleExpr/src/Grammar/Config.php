@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Remorhaz\UniLex\Example\SimpleExpr\Grammar\SymbolType;
 use Remorhaz\UniLex\Example\SimpleExpr\Grammar\TokenType;
 use Remorhaz\UniLex\Grammar\ContextFree\GrammarLoader;

@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Example\Brainfuck\Grammar;
 
 class TokenType
 {
-
     public const NEXT       = 0x01;
     public const PREV       = 0x02;
     public const INC        = 0x03;

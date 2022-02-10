@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\RegExp\FSM;
 
 use Remorhaz\IntRangeSets\RangeSetInterface;
@@ -7,7 +9,6 @@ use Remorhaz\UniLex\Exception;
 
 class SymbolTable
 {
-
     /**
      * @var RangeSetInterface[]
      */

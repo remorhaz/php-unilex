@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Example\Brainfuck\Grammar;
 
 use Remorhaz\UniLex\Example\Brainfuck\Exception;
@@ -17,7 +19,6 @@ use Throwable;
 
 class TranslationScheme implements TranslationSchemeInterface
 {
-
     private $runtime;
 
     public function __construct(Runtime $runtime)

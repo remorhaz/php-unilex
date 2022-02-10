@@ -9,7 +9,6 @@ use PhpParser\PrettyPrinter\Standard;
 
 final class PrettyPrinter extends Standard
 {
-
     protected function pExpr_Array(Expr\Array_ $node)
     {
         $syntax = $node->getAttribute(

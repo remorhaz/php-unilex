@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Lexer;
 
 use Remorhaz\UniLex\IO\CharBufferInterface;
@@ -7,7 +9,6 @@ use Remorhaz\UniLex\Exception;
 
 class TokenReader implements TokenReaderInterface
 {
-
     private $buffer;
 
     private $matcher;

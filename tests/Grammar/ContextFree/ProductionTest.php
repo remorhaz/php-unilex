@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Test\Grammar\ContextFree;
 
 use PHPUnit\Framework\TestCase;
@@ -10,7 +12,6 @@ use Remorhaz\UniLex\Grammar\ContextFree\Production;
  */
 class ProductionTest extends TestCase
 {
-
     public function testCastToString_Constructed_ReturnsMatchingString(): void
     {
         $production = new Production(1, 2, 3);

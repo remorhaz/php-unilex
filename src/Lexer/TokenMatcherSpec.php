@@ -11,7 +11,6 @@ use Remorhaz\UniLex\Exception;
 
 class TokenMatcherSpec
 {
-
     private $targetClassName;
 
     private $templateClassName;

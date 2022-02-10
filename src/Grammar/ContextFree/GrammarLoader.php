@@ -1,12 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Grammar\ContextFree;
 
 use Remorhaz\UniLex\Exception;
 
 abstract class GrammarLoader
 {
-
     public const TOKEN_MAP_KEY = 'tokens';
 
     public const PRODUCTION_MAP_KEY = 'productions';

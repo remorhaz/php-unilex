@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Unicode\Grammar;
 
 use Remorhaz\UniLex\Lexer\Token;
@@ -7,7 +9,6 @@ use Remorhaz\UniLex\Lexer\TokenFactoryInterface;
 
 class TokenFactory implements TokenFactoryInterface
 {
-
     public function createEoiToken(): Token
     {
         return $this->createToken(TokenType::EOI);

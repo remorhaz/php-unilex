@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Test\Lexer;
 
 use PHPUnit\Framework\TestCase;
@@ -11,7 +13,6 @@ use Remorhaz\UniLex\Lexer\Token;
  */
 class TokenTest extends TestCase
 {
-
     public function testGetType_ConstructedWithValue_ReturnsSameValue(): void
     {
         $actualValue = (new Token(1, false))->getType();

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Lexer;
 
 use Remorhaz\UniLex\Exception;
@@ -8,7 +10,6 @@ use Remorhaz\UniLex\IO\TokenExtractInterface;
 
 abstract class TokenMatcherTemplate implements TokenMatcherInterface
 {
-
     private $token;
 
     private $mode = self::DEFAULT_MODE;
@@ -53,8 +54,8 @@ abstract class TokenMatcherTemplate implements TokenMatcherInterface
             $onGetToken,
             $onSetMode,
             $onGetMode
-        ) implements TokenMatcherContextInterface {
-
+        ) implements TokenMatcherContextInterface
+        {
             private $buffer;
 
             private $onSetNewToken;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Test\AST;
 
 use PHPUnit\Framework\TestCase;
@@ -16,7 +18,6 @@ use Remorhaz\UniLex\Stack\PushInterface;
  */
 class TranslatorTest extends TestCase
 {
-
     /**
      * @throws UniLexException
      */

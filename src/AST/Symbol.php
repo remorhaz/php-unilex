@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\AST;
 
 use Remorhaz\UniLex\Exception;
@@ -7,7 +9,6 @@ use Remorhaz\UniLex\Stack\StackableSymbolInterface;
 
 class Symbol implements StackableSymbolInterface
 {
-
     private $header;
 
     private $index;

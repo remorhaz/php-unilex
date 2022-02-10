@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\RegExp\FSM;
 
 use Remorhaz\UniLex\Exception;
@@ -10,7 +12,6 @@ use function count;
 
 class StateMap implements StateMapInterface
 {
-
     private $lastStateId = 0;
 
     private $stateList = [];

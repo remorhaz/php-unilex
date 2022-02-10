@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Test\AST;
 
 use PHPUnit\Framework\TestCase;
@@ -11,7 +13,6 @@ use Remorhaz\UniLex\Exception as UniLexException;
  */
 class TreeTest extends TestCase
 {
-
     /**
      * @throws UniLexException
      */

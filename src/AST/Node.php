@@ -13,7 +13,6 @@ use function is_int;
 
 class Node implements StackableSymbolInterface
 {
-
     private $id;
 
     private $name;

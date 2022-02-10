@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Test\Unicode\Grammar;
 
 use PHPUnit\Framework\TestCase;
@@ -11,7 +13,6 @@ use Remorhaz\UniLex\Unicode\Grammar\TokenType;
  */
 class TokenFactoryTest extends TestCase
 {
-
     public function testCreateEoiToken_Constructed_ResultIsEoiReturnsTrue(): void
     {
         $actualValue = (new TokenFactory())

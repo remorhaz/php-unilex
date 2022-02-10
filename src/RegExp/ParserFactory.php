@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\RegExp;
 
 use Remorhaz\UniLex\Exception;
@@ -16,7 +18,6 @@ use Remorhaz\UniLex\Lexer\TokenReader;
 
 abstract class ParserFactory
 {
-
     /**
      * @param Tree                $tree
      * @param CharBufferInterface $buffer

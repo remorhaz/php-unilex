@@ -1,12 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\RegExp\FSM;
 
 use Remorhaz\UniLex\Exception;
 
 class Nfa
 {
-
     private $stateMap;
 
     private $epsilonTransitionMap;

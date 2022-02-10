@@ -1,12 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Parser\LL1\Lookup;
 
 use Remorhaz\UniLex\Exception;
 
 class Table implements TableInterface
 {
-
     private $map = [];
 
     /**

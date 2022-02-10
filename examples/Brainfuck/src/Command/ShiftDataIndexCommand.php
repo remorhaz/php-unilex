@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Example\Brainfuck\Command;
 
 use Remorhaz\UniLex\Example\Brainfuck\Exception;
@@ -7,7 +9,6 @@ use Remorhaz\UniLex\Example\Brainfuck\Runtime;
 
 class ShiftDataIndexCommand extends AbstractCommand
 {
-
     private $dataIndex;
 
     public function __construct(Runtime $runtime, int $index)

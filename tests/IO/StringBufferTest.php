@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Test\IO;
 
 use PHPUnit\Framework\TestCase;
@@ -12,7 +14,6 @@ use Remorhaz\UniLex\IO\StringBuffer;
  */
 class StringBufferTest extends TestCase
 {
-
     public function testIsEnd_EmptyBuffer_ReturnsTrue(): void
     {
         $actualValue = (new StringBuffer(''))->isEnd();

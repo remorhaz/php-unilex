@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\IO;
 
 use Remorhaz\UniLex\Exception;
@@ -8,7 +10,6 @@ use Remorhaz\UniLex\Lexer\TokenPosition;
 
 class CharBuffer implements CharBufferInterface, TokenExtractInterface
 {
-
     private $data;
 
     private $length;

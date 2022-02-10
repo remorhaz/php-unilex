@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Test\Grammar\ContextFree;
 
 use PHPUnit\Framework\TestCase;
@@ -11,7 +13,6 @@ use Remorhaz\UniLex\Grammar\ContextFree\TokenFactory;
  */
 class TokenFactoryTest extends TestCase
 {
-
     public function testCreateEoiToken_EoiTokenAddedToGrammar_TokenIsEoiReturnsTrue(): void
     {
         $grammar = new Grammar(0, 1, 2);

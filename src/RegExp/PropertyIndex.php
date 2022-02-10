@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return array (
   'Cc' => '/Properties/Cc.php',
   'Zs' => '/Properties/Zs.php',

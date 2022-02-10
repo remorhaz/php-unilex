@@ -19,16 +19,10 @@ jobs:
           - "7.3"
           - "7.4"
           - "8.0"
+          - "8.1"
         dependencies:
           - lowest
           - highest
-        include:
-          - php-version: "8.1"
-            platform-reqs: ignore-platform-reqs
-            dependencies: highest
-          - php-version: "8.1"
-            platform-reqs: ignore-platform-reqs
-            dependencies: lowest
 
     steps:
       - name: Checkout

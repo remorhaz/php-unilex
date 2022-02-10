@@ -1,12 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\AST;
 
 use Remorhaz\UniLex\Exception;
 
 class Tree
 {
-
     private $nextNodeId = 1;
 
     /**

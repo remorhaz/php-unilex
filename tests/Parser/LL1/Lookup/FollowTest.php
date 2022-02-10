@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Test\Parser\LL1\Lookup;
 
 use PHPUnit\Framework\TestCase;
@@ -10,7 +12,6 @@ use Remorhaz\UniLex\Parser\LL1\Lookup\Follow;
  */
 class FollowTest extends TestCase
 {
-
     public function testGetTokens_Constructed_ReturnsEmptyArray(): void
     {
         $actualValue = (new Follow())->getTokens(1);

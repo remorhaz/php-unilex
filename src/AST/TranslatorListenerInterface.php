@@ -1,12 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\AST;
 
 use Remorhaz\UniLex\Stack\PushInterface;
 
 interface TranslatorListenerInterface
 {
-
     public function onStart(Node $node): void;
 
     public function onFinish(): void;

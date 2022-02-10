@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\RegExp\FSM;
 
 use Remorhaz\IntRangeSets\RangeInterface;
@@ -8,7 +10,6 @@ use Remorhaz\UniLex\Exception as UniLexException;
 
 class LanguageBuilder
 {
-
     private $symbolTable;
 
     private $transitionMap;

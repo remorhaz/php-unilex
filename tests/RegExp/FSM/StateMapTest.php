@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Test\RegExp\FSM;
 
 use PHPUnit\Framework\TestCase;
@@ -11,7 +13,6 @@ use Remorhaz\UniLex\RegExp\FSM\StateMap;
  */
 class StateMapTest extends TestCase
 {
-
     /**
      * @throws UniLexException
      */

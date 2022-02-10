@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Grammar\SDD;
 
 use Remorhaz\UniLex\Parser\Production;
@@ -8,7 +10,6 @@ use Remorhaz\UniLex\Lexer\Token;
 
 interface TranslationSchemeInterface
 {
-
     /**
      * @param Production $production
      * @param int $symbolIndex

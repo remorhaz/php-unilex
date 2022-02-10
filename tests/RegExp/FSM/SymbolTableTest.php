@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Test\RegExp\FSM;
 
 use PHPUnit\Framework\TestCase;
@@ -13,7 +15,6 @@ use Remorhaz\UniLex\RegExp\FSM\SymbolTable;
  */
 class SymbolTableTest extends TestCase
 {
-
     public function testAddSymbol_NoSymbolAdded_ReturnsZero(): void
     {
         $actualValue = (new SymbolTable())

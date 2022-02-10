@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Parser\LL1\Lookup;
 
 use Remorhaz\UniLex\Exception;
@@ -8,7 +10,6 @@ use Remorhaz\UniLex\Grammar\ContextFree\Production;
 
 class TableConflictChecker
 {
-
     private $grammar;
 
     private $first;

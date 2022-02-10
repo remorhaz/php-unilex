@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Test\Unicode;
 
 use Exception;
@@ -19,7 +21,6 @@ use Remorhaz\UniLex\Unicode\Grammar\TokenType;
  */
 class CharBufferTest extends TestCase
 {
-
     public function testIsEnd_EmptySourceBuffer_ReturnsTrue(): void
     {
         $source = new StringBuffer('');
@@ -372,7 +373,6 @@ class CharBufferTest extends TestCase
     {
         return new class implements TokenMatcherInterface
         {
-
             public function match(CharBufferInterface $buffer, TokenFactoryInterface $tokenFactory): bool
             {
                 return false;
@@ -393,7 +393,6 @@ class CharBufferTest extends TestCase
     {
         return new class implements TokenFactoryInterface
         {
-
             public function createToken(int $tokenId): Token
             {
                 return new Token(TokenType::INVALID_BYTES, false);

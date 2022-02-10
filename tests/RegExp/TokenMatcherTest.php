@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Test\RegExp;
 
 use PHPUnit\Framework\TestCase;
@@ -17,7 +19,6 @@ use Remorhaz\UniLex\RegExp\Grammar\TokenType;
  */
 class TokenMatcherTest extends TestCase
 {
-
     /**
      * @param int $expectedType
      * @param int $symbol

@@ -22,7 +22,6 @@ use Remorhaz\UniLex\Stack\PushInterface;
 
 class NfaBuilder extends AbstractTranslatorListener
 {
-
     private $nfa;
 
     private $propertyLoader;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Test\AST;
 
 use PHPUnit\Framework\TestCase;
@@ -11,7 +13,6 @@ use Remorhaz\UniLex\AST\Node;
  */
 class EopSymbolTest extends TestCase
 {
-
     public function testGetNode_CreatedWithValue_ReturnsSameValue(): void
     {
         $node = new Node(1, 'a');

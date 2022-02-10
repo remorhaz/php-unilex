@@ -1,12 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Stack;
 
 use Remorhaz\UniLex\Exception;
 
 class SymbolStack implements PushInterface
 {
-
     /**
      * @var StackableSymbolInterface[]
      */

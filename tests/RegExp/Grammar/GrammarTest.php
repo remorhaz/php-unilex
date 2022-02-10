@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Test\RegExp\Grammar;
 
 use PHPUnit\Framework\TestCase;
@@ -18,7 +20,6 @@ use Remorhaz\UniLex\Unicode\CharBufferFactory;
  */
 class GrammarTest extends TestCase
 {
-
     /**
      * @param string $text
      * @param $expectedValue

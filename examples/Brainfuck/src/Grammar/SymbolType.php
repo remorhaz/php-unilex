@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Example\Brainfuck\Grammar;
 
 abstract class SymbolType
 {
-
     public const NT_ROOT    = 0x00;
 
     public const T_NEXT     = 0x01;

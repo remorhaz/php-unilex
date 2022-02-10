@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Parser;
 
 use ArrayAccess;
@@ -8,7 +10,6 @@ use ReturnTypeWillChange;
 
 class SymbolListShortcut implements ArrayAccess
 {
-
     private $production;
 
     public function __construct(Production $production)

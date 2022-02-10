@@ -1,12 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Lexer;
 
 use Remorhaz\UniLex\IO\CharBufferInterface;
 
 interface TokenMatcherContextInterface
 {
-
     public function setNewToken(int $tokenType): self;
 
     public function setTokenAttribute(string $name, $value): self;

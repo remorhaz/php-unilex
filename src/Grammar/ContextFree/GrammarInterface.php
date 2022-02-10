@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Grammar\ContextFree;
 
 interface GrammarInterface
 {
-
     public function getRootSymbol(): int;
 
     public function getStartSymbol(): int;

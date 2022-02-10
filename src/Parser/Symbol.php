@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Parser;
 
 use Remorhaz\UniLex\AttributeListInterface;
@@ -8,7 +10,6 @@ use Remorhaz\UniLex\Stack\StackableSymbolInterface;
 
 class Symbol implements StackableSymbolInterface, AttributeListInterface
 {
-
     private $symbolId;
 
     private $attributeList = [];

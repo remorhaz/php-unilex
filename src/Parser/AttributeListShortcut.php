@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Parser;
 
 use ArrayAccess;
@@ -9,7 +11,6 @@ use ReturnTypeWillChange;
 
 class AttributeListShortcut implements ArrayAccess
 {
-
     private $attributeList;
 
     public function __construct(AttributeListInterface $attributeList)

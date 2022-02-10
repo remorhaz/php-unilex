@@ -6,7 +6,6 @@ namespace Remorhaz\UniLex\Lexer;
 
 class TokenSpec
 {
-
     private $regExp;
 
     private $code;

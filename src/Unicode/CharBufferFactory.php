@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Unicode;
 
 use Remorhaz\UniLex\IO\StringBuffer;
@@ -8,7 +10,6 @@ use Remorhaz\UniLex\IO\CharBufferInterface;
 
 abstract class CharBufferFactory
 {
-
     public static function createFromBuffer(
         CharBufferInterface $source,
         TokenMatcherInterface $matcher = null

@@ -11,7 +11,6 @@ use function gettype;
 
 final class InvalidPropertyConfigException extends DomainException implements ExceptionInterface
 {
-
     private $propertyName;
 
     private $propertyFile;

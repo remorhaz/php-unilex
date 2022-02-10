@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\RegExp\Grammar;
 
 use Remorhaz\UniLex\Exception;
@@ -11,7 +13,6 @@ use Remorhaz\UniLex\Lexer\Token;
 
 class TranslationScheme implements TranslationSchemeInterface
 {
-
     private $tree;
 
     private $symbolScheme;

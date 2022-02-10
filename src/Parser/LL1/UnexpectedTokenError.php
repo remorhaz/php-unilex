@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Parser\LL1;
 
 use Remorhaz\UniLex\Lexer\Token;
@@ -7,7 +9,6 @@ use Remorhaz\UniLex\Parser\Symbol;
 
 class UnexpectedTokenError implements UnexpectedTokenErrorInterface
 {
-
     private $unexpectedToken;
 
     private $productionHeader;

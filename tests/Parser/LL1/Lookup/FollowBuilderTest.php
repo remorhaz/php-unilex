@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Test\Parser\LL1\Lookup;
 
 use PHPUnit\Framework\TestCase;
@@ -16,7 +18,6 @@ use Remorhaz\UniLex\Parser\LL1\Lookup\FollowBuilder;
  */
 class FollowBuilderTest extends TestCase
 {
-
     /**
      * @param string $configFile
      * @param int $symbolId

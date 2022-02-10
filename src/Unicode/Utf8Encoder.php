@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Unicode;
 
 class Utf8Encoder
 {
-
     public function encode(int ...$symbolList): string
     {
         $buffer = '';

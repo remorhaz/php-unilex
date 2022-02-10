@@ -1,6 +1,8 @@
 <?php
 
-namespace Remorhaz\UniLex\Example\Test\Brainfuck;
+declare(strict_types=1);
+
+namespace Remorhaz\UniLex\Example\Brainfuck\Test;
 
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Example\Brainfuck\Command\OutputCommand;
@@ -13,7 +15,6 @@ use Remorhaz\UniLex\Example\Brainfuck\Runtime;
  */
 class RuntimeTest extends TestCase
 {
-
     /**
      * @param int $memory
      * @dataProvider providerNonPositiveMemory

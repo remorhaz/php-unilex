@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Test\RegExp\FSM;
 
 use Closure;
@@ -13,7 +15,6 @@ use Remorhaz\UniLex\RegExp\FSM\TransitionMap;
  */
 class TransitionMapTest extends TestCase
 {
-
     /**
      * @throws UniLexException
      */

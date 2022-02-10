@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Example\Brainfuck\Grammar;
 
 use Remorhaz\UniLex\Grammar\ContextFree\GrammarLoader;
 
 return [
-
     /**
      * Map of terminal symbols and matching tokens.
      * Format:

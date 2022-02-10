@@ -14,7 +14,6 @@ use function is_object;
 
 final class InvalidPropertyRangeSetException extends UnexpectedValueException implements ExceptionInterface
 {
-
     private $propertyName;
 
     private $propertyFile;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Lexer;
 
 use phpDocumentor\Reflection\DocBlock;
@@ -10,7 +12,6 @@ use Remorhaz\UniLex\Exception;
 
 class TokenMatcherSpecParser
 {
-
     private const TAG_LEX_TARGET_CLASS = 'lexTargetClass';
     private const TAG_LEX_TEMPLATE_CLASS = 'lexTemplateClass';
     private const TAG_LEX_HEADER = 'lexHeader';
@@ -284,7 +285,7 @@ class TokenMatcherSpecParser
         if (!$this->isCurrentCodeBlock(self::TAG_LEX_TOKEN)) {
             return;
         }
-        $tagValue = $docBlock->getTagsByName(self::TAG_LEX_TOKEN)[0];
+        $tagValue = (string) $docBlock->getTagsByName(self::TAG_LEX_TOKEN)[0];
         $matchResult = preg_match('#^/(?P<regexp>.*)/$#', $tagValue, $matches);
         if (1 !== $matchResult) {
             throw new Exception("Invalid lexer specification: regular expression is not framed by \"/\"");
@@ -294,7 +295,7 @@ class TokenMatcherSpecParser
         $this->appendCodeBlock($regExp);
         $this->restoreCurrentCodeBlock();
         $context = $docBlock->hasTag(self::TAG_LEX_MODE)
-            ? $docBlock->getTagsByName(self::TAG_LEX_MODE)[0]
+            ? (string) $docBlock->getTagsByName(self::TAG_LEX_MODE)[0]
             : TokenMatcherInterface::DEFAULT_MODE;
         $matchResult = preg_match('#^[a-zA-Z][0-9a-zA-Z]*$#i', $context);
         if (1 !== $matchResult) {

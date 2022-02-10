@@ -1,12 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\AST;
 
 use Remorhaz\UniLex\Stack\StackableSymbolInterface;
 
 class EopSymbol implements StackableSymbolInterface
 {
-
     private $node;
 
     public function __construct(Node $node)

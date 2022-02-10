@@ -34,7 +34,6 @@ use const SORT_STRING;
 
 final class BuildLookupTableCommand extends Command
 {
-
     private const TYPE_LL_1 = 'll-1';
 
     protected static $defaultName = 'build-lookup-table';

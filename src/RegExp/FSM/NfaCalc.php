@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\RegExp\FSM;
 
 class NfaCalc
 {
-
     private $nfa;
 
     public function __construct(Nfa $nfa)

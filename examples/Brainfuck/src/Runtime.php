@@ -1,12 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Example\Brainfuck;
 
 use Remorhaz\UniLex\Example\Brainfuck\Command\AbstractCommand;
 
 class Runtime
 {
-
     private const DEFAULT_MEMORY = 30000;
 
     private $memory;

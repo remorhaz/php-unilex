@@ -31,7 +31,6 @@ use function in_array;
 
 class TokenMatcherGenerator
 {
-
     private $spec;
 
     private $output;
@@ -61,7 +60,6 @@ class TokenMatcherGenerator
             "{$this->buildHeader()}\n" .
             "class {$this->spec->getTargetShortName()} extends {$this->spec->getTemplateClass()->getShortName()}\n" .
             "{\n" .
-            "\n" .
             "    public function match({$this->buildMatchParameters()}): bool\n" .
             "    {\n{$this->buildMatchBody()}" .
             "    }\n" .

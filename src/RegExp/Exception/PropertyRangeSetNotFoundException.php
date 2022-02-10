@@ -9,7 +9,6 @@ use Throwable;
 
 final class PropertyRangeSetNotFoundException extends OutOfRangeException implements ExceptionInterface
 {
-
     private $propertyName;
 
     public function __construct(string $propertyName, Throwable $previous = null)

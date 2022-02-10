@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Test\Unicode\Grammar;
 
 use PHPUnit\Framework\TestCase;
@@ -15,7 +17,6 @@ use Remorhaz\UniLex\Unicode\Grammar\Utf8TokenMatcher;
  */
 class Utf8TokenMatcherTest extends TestCase
 {
-
     /**
      * @param string $text
      * @dataProvider providerValidSymbolList

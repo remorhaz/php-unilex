@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Unicode;
 
 use Remorhaz\UniLex\Exception;
@@ -16,7 +18,6 @@ use Remorhaz\UniLex\Unicode\Grammar\Utf8TokenMatcher;
 
 class CharBuffer implements CharBufferInterface, TokenExtractInterface
 {
-
     private $source;
 
     private $matcher;

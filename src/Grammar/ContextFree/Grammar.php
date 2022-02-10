@@ -1,12 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Grammar\ContextFree;
 
 use Remorhaz\UniLex\Exception;
 
 class Grammar implements GrammarInterface
 {
-
     private $tokenMap = [];
 
     private $productionMap = [];

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Test\AST;
 
 use PHPUnit\Framework\TestCase;
@@ -12,7 +14,6 @@ use Remorhaz\UniLex\Exception;
  */
 class SymbolTest extends TestCase
 {
-
     public function testGetHeader_ConstructedWithValue_ReturnsSameValue(): void
     {
         $node = new Node(1, 'a');

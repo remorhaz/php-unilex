@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\Test\RegExp\FSM;
 
 use PHPUnit\Framework\TestCase;
@@ -20,7 +22,6 @@ use function array_map;
  */
 class LanguageBuilderTest extends TestCase
 {
-
     /**
      * @throws UniLexException
      */
@@ -173,8 +174,8 @@ class LanguageBuilderTest extends TestCase
 
     private function createStateMap(): StateMapInterface
     {
-        return new class implements StateMapInterface {
-
+        return new class implements StateMapInterface
+        {
             public function stateExists(int $stateId): bool
             {
                 return true;

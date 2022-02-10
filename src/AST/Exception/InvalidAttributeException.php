@@ -11,7 +11,6 @@ use function gettype;
 
 final class InvalidAttributeException extends DomainException implements ExceptionInterface
 {
-
     private $name;
 
     private $value;

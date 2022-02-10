@@ -6,7 +6,6 @@ namespace Remorhaz\UniLex\RegExp\FSM;
 
 final class NfaReverser
 {
-
     public function reverseNfa(Nfa $sourceNfa): Nfa
     {
         $targetNfa = new Nfa();

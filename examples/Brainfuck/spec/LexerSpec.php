@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @lexTargetClass TokenMatcher
  * @lexHeader

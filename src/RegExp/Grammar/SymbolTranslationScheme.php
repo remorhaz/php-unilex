@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Remorhaz\UniLex\RegExp\Grammar;
 
 use Remorhaz\UniLex\AST\Tree;
@@ -9,7 +11,6 @@ use Remorhaz\UniLex\RegExp\AST\NodeType;
 
 class SymbolTranslationScheme
 {
-
     private $tree;
 
     public function __construct(Tree $tree)

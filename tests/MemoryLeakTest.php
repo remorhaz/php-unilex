@@ -30,7 +30,6 @@ use function var_export;
  */
 class MemoryLeakTest extends TestCase
 {
-
     /**
      * @throws FilesystemException
      * @throws UniLexException
@@ -43,7 +42,6 @@ class MemoryLeakTest extends TestCase
         $tableBuilder = new TableBuilder($grammar);
         $lookupTable = __DIR__ . '/../build/SimpleExprLookup.php';
         $lookupTableDump = var_export($tableBuilder->getTable()->exportMap(), true);
-        /** @noinspection PhpUnreachableStatementInspection */
         $content = "<?php return {$lookupTableDump};\n";
         Safe\file_put_contents($lookupTable, $content);
 
