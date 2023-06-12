@@ -11,14 +11,11 @@ use function gettype;
 
 final class InvalidPropertyConfigException extends DomainException implements ExceptionInterface
 {
-    private $propertyName;
-
-    private $propertyFile;
-
-    public function __construct(string $propertyName, $propertyFile, Throwable $previous = null)
-    {
-        $this->propertyName = $propertyName;
-        $this->propertyFile = $propertyFile;
+    public function __construct(
+        private string $propertyName,
+        private mixed $propertyFile,
+        ?Throwable $previous = null,
+    ) {
         parent::__construct($this->buildMessage(), 0, $previous);
     }
 
@@ -27,8 +24,8 @@ final class InvalidPropertyConfigException extends DomainException implements Ex
         $fileNameType = gettype($this->propertyFile);
 
         return
-            "Invalid config for Unicode property '{$this->propertyName}': " .
-            "{$fileNameType} instead of string filename";
+            "Invalid config for Unicode property '$this->propertyName': " .
+            "$fileNameType instead of string filename";
     }
 
     public function getPropertyName(): string
@@ -36,7 +33,7 @@ final class InvalidPropertyConfigException extends DomainException implements Ex
         return $this->propertyName;
     }
 
-    public function getPropertyFile(): string
+    public function getPropertyFile(): mixed
     {
         return $this->propertyFile;
     }

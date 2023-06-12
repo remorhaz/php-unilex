@@ -13,5 +13,8 @@ interface UnexpectedTokenErrorInterface
 
     public function getProductionHeader(): Symbol;
 
+    /**
+     * @return list<int>
+     */
     public function getExpectedTokenTypeList(): array;
 }

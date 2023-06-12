@@ -13,25 +13,20 @@ use Remorhaz\UniLex\Lexer\Token;
 
 class TranslationScheme implements TranslationSchemeInterface
 {
-    private $tree;
+    private SymbolTranslationScheme $symbolScheme;
 
-    private $symbolScheme;
+    private ProductionTranslationScheme $productionScheme;
 
-    private $productionScheme;
-
-    private $tokenScheme;
+    private TokenTranslationScheme $tokenScheme;
 
     public function __construct(Tree $tree)
     {
-        $this->tree = $tree;
         $this->symbolScheme = new SymbolTranslationScheme($tree);
         $this->productionScheme = new ProductionTranslationScheme($tree);
         $this->tokenScheme = new TokenTranslationScheme();
     }
 
     /**
-     * @param Production $production
-     * @param int $symbolIndex
      * @throws Exception
      */
     public function applySymbolActions(Production $production, int $symbolIndex): void
@@ -42,7 +37,6 @@ class TranslationScheme implements TranslationSchemeInterface
     }
 
     /**
-     * @param Production $production
      * @throws Exception
      */
     public function applyProductionActions(Production $production): void
@@ -53,8 +47,6 @@ class TranslationScheme implements TranslationSchemeInterface
     }
 
     /**
-     * @param Symbol $symbol
-     * @param Token $token
      * @throws Exception
      */
     public function applyTokenActions(Symbol $symbol, Token $token): void

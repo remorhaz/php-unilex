@@ -19,46 +19,35 @@ use Throwable;
 
 class Parser
 {
-    private $grammar;
-
     private $lookupTable;
 
-    private $symbolStack;
+    private SymbolStack $symbolStack;
 
     private $token;
-
-    private $tokenReader;
-
-    private $listener;
 
     private $nextSymbolIndex = 0;
 
     /**
      * @var Production[]
      */
-    private $productionMap = [];
+    private array $productionMap = [];
 
     public function __construct(
-        GrammarInterface $grammar,
-        TokenReaderInterface $tokenReader,
-        ParserListenerInterface $listener
+        private GrammarInterface $grammar,
+        private TokenReaderInterface $tokenReader,
+        private ParserListenerInterface $listener,
     ) {
-        $this->grammar = $grammar;
-        $this->tokenReader = $tokenReader;
-        $this->listener = $listener;
         $this->symbolStack = new SymbolStack();
     }
 
     /**
-     * @param string $fileName
      * @throws Exception
      */
     public function loadLookupTable(string $fileName): void
     {
-        /** @noinspection PhpIncludeInspection */
         $data = @include $fileName;
         if (false === $data) {
-            throw new Exception("Failed to load lookup table from file {$fileName}");
+            throw new Exception("Failed to load lookup table from file $fileName");
         }
         $table = new Table();
         $table->importMap($data);
@@ -99,6 +88,7 @@ class Parser
     {
         $rootSymbol = new Symbol($this->getNextSymbolIndex(), $this->grammar->getRootSymbol());
         $this->listener->onRootSymbol($rootSymbol);
+
         return $this->createParsedProduction($rootSymbol, 0);
     }
 
@@ -119,14 +109,10 @@ class Parser
 
     private function previewToken(): Token
     {
-        if (!isset($this->token)) {
-            $this->token = $this->tokenReader->read();
-        }
-        return $this->token;
+        return $this->token ??= $this->tokenReader->read();
     }
 
     /**
-     * @return StackableSymbolInterface
      * @throws Exception
      */
     private function popSymbol(): StackableSymbolInterface
@@ -135,20 +121,16 @@ class Parser
     }
 
     /**
-     * @param Symbol $symbol
      * @throws Exception
      */
     private function onSymbol(Symbol $symbol): void
     {
-        if (!isset($this->productionMap[$symbol->getIndex()])) {
-            throw new Exception("No production in map for symbol {$symbol->getIndex()}");
-        }
-        [$symbolIndex, $production] = $this->productionMap[$symbol->getIndex()];
+        [$symbolIndex, $production] = $this->productionMap[$symbol->getIndex()]
+            ?? throw new Exception("No production in map for symbol {$symbol->getIndex()}");
         $this->listener->onSymbol($symbolIndex, $production);
     }
 
     /**
-     * @param Symbol $symbol
      * @throws Exception
      */
     private function readSymbolToken(Symbol $symbol): void
@@ -165,7 +147,6 @@ class Parser
     }
 
     /**
-     * @param Symbol $symbol
      * @throws UnexpectedTokenException
      * @throws Exception
      */
@@ -187,9 +168,6 @@ class Parser
     }
 
     /**
-     * @param Symbol $symbol
-     * @param Token $token
-     * @return Production
      * @throws UnexpectedTokenException
      * @throws Exception
      */
@@ -203,6 +181,7 @@ class Parser
             $error = new UnexpectedTokenError($token, $symbol, ...$expectedTokenList);
             throw new UnexpectedTokenException($error, 0, $e);
         }
+
         return $this->createParsedProduction($symbol, $productionIndex);
     }
 
@@ -215,19 +194,15 @@ class Parser
         foreach ($grammarProduction->getSymbolList() as $symbolId) {
             $symbolList[] = new Symbol($this->getNextSymbolIndex(), $symbolId);
         }
+
         return new Production($symbol, $grammarProduction->getIndex(), ...$symbolList);
     }
 
     /**
-     * @return TableInterface
      * @throws Exception
      */
     private function getLookupTable(): TableInterface
     {
-        if (!isset($this->lookupTable)) {
-            $builder = new TableBuilder($this->grammar);
-            $this->lookupTable = $builder->getTable();
-        }
-        return $this->lookupTable;
+        return $this->lookupTable ??= (new TableBuilder($this->grammar))->getTable();
     }
 }

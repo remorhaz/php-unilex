@@ -9,33 +9,32 @@ use Remorhaz\UniLex\Grammar\ContextFree\Production;
 
 class FollowBuilder
 {
-    private $grammar;
+    private ?FollowInterface $follow = null;
 
-    private $first;
-
-    private $follow;
-
-    public function __construct(GrammarInterface $grammar, FirstInterface $first)
-    {
-        $this->grammar = $grammar;
-        $this->first = $first;
+    public function __construct(
+        private GrammarInterface $grammar,
+        private FirstInterface $first,
+    ) {
     }
 
     /**
      * @return Follow
      */
-    public function getFollow(): Follow
+    public function getFollow(): FollowInterface
     {
-        if (!isset($this->follow)) {
-            $follow = new Follow();
-            $this->addStartSymbol($follow);
-            do {
-                $follow->resetChangeCount();
-                $this->mergeProductionsFromNonTerminalMap($follow);
-            } while ($follow->getChangeCount() > 0);
-            $this->follow = $follow;
-        }
-        return $this->follow;
+        return $this->follow ??= $this->buildFollow();
+    }
+
+    private function buildFollow(): FollowInterface
+    {
+        $follow = new Follow();
+        $this->addStartSymbol($follow);
+        do {
+            $follow->resetChangeCount();
+            $this->mergeProductionsFromNonTerminalMap($follow);
+        } while ($follow->getChangeCount() > 0);
+
+        return $follow;
     }
 
     private function addStartSymbol(Follow $follow): void

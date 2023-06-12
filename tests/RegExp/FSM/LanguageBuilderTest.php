@@ -87,7 +87,10 @@ class LanguageBuilderTest extends TestCase
         self::assertEquals($expectedValue, $actualValue);
     }
 
-    public function providerAddTransitionCalledTwiceTransitions(): array
+    /**
+     * @return iterable<string, array{array, array, array}>
+     */
+    public static function providerAddTransitionCalledTwiceTransitions(): iterable
     {
         return [
             "Same ranges" => [
@@ -143,7 +146,10 @@ class LanguageBuilderTest extends TestCase
         self::assertEquals($expectedValue, $actualValue);
     }
 
-    public function providerAddTransitionCalledTwiceSymbols(): array
+    /**
+     * @return iterable<string, array{array, array, array, array, array}>
+     */
+    public static function providerAddTransitionCalledTwiceSymbols(): iterable
     {
         return [
             "Same ranges" => [[1, 2], [1, 3], [[1, 2]], [[1, 2]], [0 => [[1, 2]]]],

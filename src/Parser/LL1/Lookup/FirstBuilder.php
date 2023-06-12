@@ -8,13 +8,11 @@ use Remorhaz\UniLex\Grammar\ContextFree\GrammarInterface;
 
 class FirstBuilder
 {
-    private $grammar;
+    private ?FirstInterface $first = null;
 
-    private $first;
-
-    public function __construct(GrammarInterface $grammar)
-    {
-        $this->grammar = $grammar;
+    public function __construct(
+        private GrammarInterface $grammar,
+    ) {
     }
 
     /**
@@ -22,16 +20,19 @@ class FirstBuilder
      */
     public function getFirst(): FirstInterface
     {
-        if (!isset($this->first)) {
-            $first = new First();
-            $this->addTokensFromTerminalMap($first);
-            do {
-                $first->resetChangeCount();
-                $this->mergeProductionsFromNonTerminalMap($first);
-            } while ($first->getChangeCount() > 0);
-            $this->first = $first;
-        }
-        return $this->first;
+        return $this->first ??= $this->buildFirst();
+    }
+
+    private function buildFirst(): FirstInterface
+    {
+        $first = new First();
+        $this->addTokensFromTerminalMap($first);
+        do {
+            $first->resetChangeCount();
+            $this->mergeProductionsFromNonTerminalMap($first);
+        } while ($first->getChangeCount() > 0);
+
+        return $first;
     }
 
     /**

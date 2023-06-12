@@ -8,5 +8,8 @@ interface TokenExtractInterface
 {
     public function getTokenAsString(): string;
 
+    /**
+     * @return list<int>
+     */
     public function getTokenAsArray(): array;
 }

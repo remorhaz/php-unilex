@@ -9,21 +9,12 @@ use Throwable;
 
 final class PropertyFileNotLoadedException extends RuntimeException implements ExceptionInterface
 {
-    private $propertyName;
-
-    private $propertyFile;
-
-    private $errorMessage;
-
     public function __construct(
-        string $propertyName,
-        string $propertyFile,
-        ?string $errorMessage,
-        Throwable $previous = null
+        private string $propertyName,
+        private string $propertyFile,
+        private ?string $errorMessage,
+        ?Throwable $previous = null,
     ) {
-        $this->propertyName = $propertyName;
-        $this->propertyFile = $propertyFile;
-        $this->errorMessage = $errorMessage;
         parent::__construct($this->buildMessage(), 0, $previous);
     }
 
@@ -34,7 +25,7 @@ final class PropertyFileNotLoadedException extends RuntimeException implements E
             "from file {$this->propertyFile}";
 
         return isset($this->errorMessage)
-            ? "{$message}:\n{$this->errorMessage}"
+            ? "$message:\n$this->errorMessage"
             : $message;
     }
 

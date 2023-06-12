@@ -10,13 +10,16 @@ use Remorhaz\UniLex\Lexer\TokenPosition;
 
 class CharBuffer implements CharBufferInterface, TokenExtractInterface
 {
-    private $data;
+    /**
+     * @var list<int>
+     */
+    private array $data;
 
-    private $length;
+    private int $length;
 
-    private $startOffset = 0;
+    private int $startOffset = 0;
 
-    private $previewOffset = 0;
+    private int $previewOffset = 0;
 
     public function __construct(int ...$data)
     {
@@ -30,15 +33,13 @@ class CharBuffer implements CharBufferInterface, TokenExtractInterface
     }
 
     /**
-     * @return int
      * @throws Exception
      */
     public function getSymbol(): int
     {
-        if ($this->previewOffset == $this->length) {
-            throw new Exception("No symbol to preview at index {$this->previewOffset}");
-        }
-        return $this->data[$this->previewOffset];
+        return $this->previewOffset == $this->length
+            ? throw new Exception("No symbol to preview at index $this->previewOffset")
+            : $this->data[$this->previewOffset];
     }
 
     /**
@@ -46,14 +47,12 @@ class CharBuffer implements CharBufferInterface, TokenExtractInterface
      */
     public function nextSymbol(): void
     {
-        if ($this->previewOffset == $this->length) {
-            throw new Exception("Unexpected end of buffer on preview at index {$this->previewOffset}");
-        }
-        $this->previewOffset++;
+        $this->previewOffset == $this->length
+            ? throw new Exception("Unexpected end of buffer on preview at index $this->previewOffset")
+            : $this->previewOffset++;
     }
 
     /**
-     * @param int $repeat
      * @throws Exception
      */
     public function prevSymbol(int $repeat = 1): void
@@ -72,25 +71,25 @@ class CharBuffer implements CharBufferInterface, TokenExtractInterface
         $this->previewOffset = $this->startOffset;
     }
 
-    /**
-     * @param Token $token
-     */
     public function finishToken(Token $token): void
     {
         $this->startOffset = $this->previewOffset;
     }
 
+    /**
+     * @return list<int>
+     */
     public function getTokenAsArray(): array
     {
         $result = [];
         for ($i = $this->startOffset; $i < $this->previewOffset; $i++) {
             $result[] = $this->data[$i];
         }
+
         return $result;
     }
 
     /**
-     * @return string
      * @throws Exception
      */
     public function getTokenAsString(): string
@@ -99,15 +98,15 @@ class CharBuffer implements CharBufferInterface, TokenExtractInterface
         foreach ($this->getTokenAsArray() as $index => $char) {
             if ($char < 0 || $char > 0xFF) {
                 $offset = $this->startOffset + $index;
-                throw new Exception("Only 8-bit symbols can be converted to string, {$char} found at index {$offset}");
+                throw new Exception("Only 8-bit symbols can be converted to string, $char found at index $offset");
             }
             $result .= chr($char);
         }
+
         return $result;
     }
 
     /**
-     * @return TokenPosition
      * @throws Exception
      */
     public function getTokenPosition(): TokenPosition

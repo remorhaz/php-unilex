@@ -68,10 +68,10 @@ class FirstTest extends TestCase
     /**
      * @dataProvider providerMergeProductionTokens
      * @param int $sourceProductionId
-     * @param array $sourceTokenIdList
+     * @param list<int> $sourceTokenIdList
      * @param int $targetProductionId
-     * @param array $targetTokenIdList
-     * @param array $expectedValue
+     * @param list<int> $targetTokenIdList
+     * @param list<int> $expectedValue
      */
     public function testMergeProductionTokens_TokensSet_TargetGetTokensReturnsMergedTokens(
         int $sourceProductionId,
@@ -89,7 +89,10 @@ class FirstTest extends TestCase
         self::assertSame($expectedValue, $actualValue);
     }
 
-    public function providerMergeProductionTokens(): array
+    /**
+     * @return iterable<string, array{int, list<int>, int, list<int>, list<int>}>
+     */
+    public static function providerMergeProductionTokens(): iterable
     {
         return [
             "Both sets are empty" => [1, [], 2, [], []],

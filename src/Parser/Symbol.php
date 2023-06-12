@@ -10,16 +10,15 @@ use Remorhaz\UniLex\Stack\StackableSymbolInterface;
 
 class Symbol implements StackableSymbolInterface, AttributeListInterface
 {
-    private $symbolId;
+    /**
+     * @var array<string, mixed>
+     */
+    private array $attributeList = [];
 
-    private $attributeList = [];
-
-    private $index;
-
-    public function __construct(int $index, int $symbolId)
-    {
-        $this->index = $index;
-        $this->symbolId = $symbolId;
+    public function __construct(
+        private int $index,
+        private int $symbolId,
+    ) {
     }
 
     public function getSymbolId(): int
@@ -33,30 +32,23 @@ class Symbol implements StackableSymbolInterface, AttributeListInterface
     }
 
     /**
-     * @param string $name
-     * @return mixed
      * @throws Exception
      */
-    public function getAttribute(string $name)
+    public function getAttribute(string $name): mixed
     {
-        if (!array_key_exists($name, $this->attributeList)) {
-            throw new Exception("Attribute '{$name}' not defined in node {$this->getIndex()}");
-        }
-        return $this->attributeList[$name];
+        return $this->attributeList[$name]
+            ?? throw new Exception("Attribute '{$name}' not defined in node {$this->getIndex()}");
     }
 
     /**
-     * @param string $name
-     * @param $value
-     * @return $this
      * @throws Exception
      */
-    public function setAttribute(string $name, $value)
+    public function setAttribute(string $name, mixed $value): static
     {
-        if ($this->attributeExists($name)) {
-            throw new Exception("Attribute '{$name}' is already defined in node {$this->getIndex()}");
-        }
-        $this->attributeList[$name] = $value;
+        $this->attributeList[$name] = $this->attributeExists($name)
+            ? throw new Exception("Attribute '{$name}' is already defined in node {$this->getIndex()}")
+            : $value;
+
         return $this;
     }
 
@@ -69,9 +61,6 @@ class Symbol implements StackableSymbolInterface, AttributeListInterface
         return isset($this->attributeList[$name]);
     }
 
-    /**
-     * @return array|AttributeListShortcut
-     */
     public function getShortcut(): AttributeListShortcut
     {
         return new AttributeListShortcut($this);

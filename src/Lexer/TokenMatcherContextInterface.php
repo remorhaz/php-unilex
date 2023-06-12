@@ -10,7 +10,7 @@ interface TokenMatcherContextInterface
 {
     public function setNewToken(int $tokenType): self;
 
-    public function setTokenAttribute(string $name, $value): self;
+    public function setTokenAttribute(string $name, mixed $value): self;
 
     public function getToken(): Token;
 
@@ -18,6 +18,9 @@ interface TokenMatcherContextInterface
 
     public function getSymbolString(): string;
 
+    /**
+     * @return list<int>
+     */
     public function getSymbolList(): array;
 
     public function getMode(): string;

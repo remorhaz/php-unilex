@@ -8,11 +8,9 @@ use Remorhaz\UniLex\Stack\StackableSymbolInterface;
 
 class EopSymbol implements StackableSymbolInterface
 {
-    private $node;
-
-    public function __construct(Node $node)
-    {
-        $this->node = $node;
+    public function __construct(
+        private Node $node,
+    ) {
     }
 
     public function getNode(): Node

@@ -15,12 +15,10 @@ use Remorhaz\UniLex\Unicode\CharBufferFactory;
 
 class Interpreter
 {
-    private $output;
+    private ?string $output = null;
 
 
     /**
-     * @param string $text
-     * @throws Exception
      * @throws \Remorhaz\UniLex\Exception
      */
     public function exec(string $text): void
@@ -35,21 +33,14 @@ class Interpreter
     }
 
     /**
-     * @return string
      * @throws Exception
      */
     public function getOutput(): string
     {
-        if (!isset($this->output)) {
-            throw new Exception("Output is not defined");
-        }
-        return $this->output;
+        return $this->output ?? throw new Exception("Output is not defined");
     }
 
     /**
-     * @param string $text
-     * @param Runtime $runtime
-     * @return Parser
      * @throws \Remorhaz\UniLex\Exception
      */
     private function createParser(string $text, Runtime $runtime): Parser
@@ -60,6 +51,7 @@ class Interpreter
         $translator = new TranslationSchemeApplier(new TranslationScheme($runtime));
         $parser = new Parser($grammar, $tokenReader, $translator);
         $parser->loadLookupTable(__DIR__ . "/Grammar/LookupTable.php");
+
         return $parser;
     }
 }

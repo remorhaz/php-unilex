@@ -9,38 +9,50 @@ use ReflectionException;
 use ReflectionMethod;
 use Remorhaz\UniLex\Exception;
 
+use function array_keys;
+use function array_pop;
+use function asort;
+use function explode;
+use function implode;
+use function in_array;
+
 class TokenMatcherSpec
 {
-    private $targetClassName;
+    private ?ReflectionClass $templateClass = null;
 
-    private $templateClassName;
+    /**
+     * @var null|array<string>
+     */
+    private ?array $usedClassList = null;
 
-    private $templateClass;
+    private ?string $targetNamespaceName = null;
 
-    private $usedClassList;
+    private ?string $targetShortName = null;
 
-    private $targetNamespaceName;
+    /**
+     * @var list<string>
+     */
+    private array $fileCommentList = [];
 
-    private $targetShortName;
+    private string $header = '';
 
-    private $fileCommentList = [];
+    private string $beforeMatch = '';
 
-    private $header = '';
+    private string $onError = '';
 
-    private $beforeMatch = '';
+    private string $onTransition = '';
 
-    private $onError = '';
+    private string $onToken = '';
 
-    private $onTransition = '';
+    /**
+     * @var array<string, array<string, TokenSpec>>
+     */
+    private array $tokenSpecList = [];
 
-    private $onToken = '';
-
-    private $tokenSpecList = [];
-
-    public function __construct(string $targetClassName, string $templateClassName)
-    {
-        $this->targetClassName = $targetClassName;
-        $this->templateClassName = $templateClassName;
+    public function __construct(
+        private string $targetClassName,
+        private string $templateClassName,
+    ) {
     }
 
     /**
@@ -49,11 +61,7 @@ class TokenMatcherSpec
      */
     public function getTemplateClass(): ReflectionClass
     {
-        if (!isset($this->templateClass)) {
-            $this->templateClass = new ReflectionClass($this->templateClassName);
-        }
-
-        return $this->templateClass;
+        return $this->templateClass ??= new ReflectionClass($this->templateClassName);
     }
 
     public function getTargetClassName(): string
@@ -62,9 +70,6 @@ class TokenMatcherSpec
     }
 
     /**
-     * @param string      $name
-     * @param string|null $alias
-     * @return TokenMatcherSpec
      * @throws ReflectionException
      */
     public function addUsedClass(string $name, string $alias = null): self
@@ -73,15 +78,18 @@ class TokenMatcherSpec
         if (in_array($name, $this->usedClassList)) {
             return $this;
         }
+
         $class = new ReflectionClass($name);
         if ($this->getTargetNamespaceName() == $class->getNamespaceName()) {
             return $this;
         }
+
         if (isset($alias)) {
             $this->usedClassList[$alias] = $name;
 
             return $this;
         }
+
         $this->usedClassList[] = $name;
 
         return $this;
@@ -117,7 +125,7 @@ class TokenMatcherSpec
     public function getTargetNamespaceName(): string
     {
         if (!isset($this->targetNamespaceName)) {
-            [0 => $namespaceName] = $this->splitTargetClassName();
+            [$namespaceName] = $this->splitTargetClassName();
             $this->targetNamespaceName = $namespaceName;
         }
 
@@ -127,7 +135,7 @@ class TokenMatcherSpec
     public function getTargetShortName(): string
     {
         if (!isset($this->targetShortName)) {
-            [1 => $shortName] = $this->splitTargetClassName();
+            [, $shortName] = $this->splitTargetClassName();
             $this->targetShortName = $shortName;
         }
 
@@ -204,19 +212,15 @@ class TokenMatcherSpec
     }
 
     /**
-     * @param string    $context
-     * @param TokenSpec ...$tokenSpecList
-     * @return TokenMatcherSpec
      * @throws Exception
      */
     public function addTokenSpec(string $context, TokenSpec ...$tokenSpecList): self
     {
         foreach ($tokenSpecList as $tokenSpec) {
             $regExp = $tokenSpec->getRegExp();
-            if (isset($this->tokenSpecList[$context][$regExp])) {
-                throw new Exception("Token spec for pattern {$regExp} is already set");
-            }
-            $this->tokenSpecList[$context][$regExp] = $tokenSpec;
+            $this->tokenSpecList[$context][$regExp] = isset($this->tokenSpecList[$context][$regExp])
+                ? throw new Exception("Token spec for pattern $regExp is already set")
+                : $tokenSpec;
         }
 
         return $this;
@@ -224,13 +228,16 @@ class TokenMatcherSpec
 
     /**
      * @param string $mode
-     * @return TokenSpec[]
+     * @return array<string, TokenSpec>
      */
     public function getTokenSpecList(string $mode): array
     {
         return $this->tokenSpecList[$mode] ?? [];
     }
 
+    /**
+     * @throws Exception
+     */
     public function getTokenSpec(string $mode, string $regExp): TokenSpec
     {
         foreach ($this->getTokenSpecList($mode) ?? [] as $tokenSpec) {
@@ -243,13 +250,16 @@ class TokenMatcherSpec
     }
 
     /**
-     * @return string[]
+     * @return list<string>
      */
     public function getModeList(): array
     {
         return array_keys($this->tokenSpecList);
     }
 
+    /**
+     * @return array{string, string}
+     */
     private function splitTargetClassName(): array
     {
         $nameSpaceSeparator = '\\';
@@ -268,6 +278,7 @@ class TokenMatcherSpec
         if (isset($this->usedClassList)) {
             return;
         }
+
         $this->usedClassList = [];
         foreach ($this->getMatchMethod()->getParameters() as $parameter) {
             if ($parameter->hasType() && !$parameter->getType()->isBuiltin()) {

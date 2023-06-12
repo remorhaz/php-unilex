@@ -14,18 +14,17 @@ use function sort;
 
 class DfaBuilder
 {
-    private $dfa;
+    private ?NfaCalc $nfaCalc = null;
 
-    private $nfa;
+    /**
+     * @var list<array{int, list<int>}>
+     */
+    private array $stateBuffer = [];
 
-    private $nfaCalc;
-
-    private $stateBuffer = [];
-
-    public function __construct(Dfa $dfa, Nfa $nfa)
-    {
-        $this->dfa = $dfa;
-        $this->nfa = $nfa;
+    public function __construct(
+        private Dfa $dfa,
+        private Nfa $nfa,
+    ) {
     }
 
     /**
@@ -52,12 +51,8 @@ class DfaBuilder
                 if ($marked) {
                     continue;
                 }
-                $isFinishStateA = $stateA == $devilState
-                    ? false
-                    : $dfa->getStateMap()->isFinishState($stateA);
-                $isFinishStateB = $stateB == $devilState
-                    ? false
-                    : $dfa->getStateMap()->isFinishState($stateB);
+                $isFinishStateA = $stateA != $devilState && $dfa->getStateMap()->isFinishState($stateA);
+                $isFinishStateB = $stateB != $devilState && $dfa->getStateMap()->isFinishState($stateB);
                 if ($isFinishStateA == $isFinishStateB) {
                     continue;
                 }
@@ -276,11 +271,7 @@ class DfaBuilder
 
     private function getNfaCalc(): NfaCalc
     {
-        if (!isset($this->nfaCalc)) {
-            $this->nfaCalc = new NfaCalc($this->nfa);
-        }
-
-        return $this->nfaCalc;
+        return $this->nfaCalc ??= new NfaCalc($this->nfa);
     }
 
     /**
@@ -300,6 +291,9 @@ class DfaBuilder
         $this->stateBuffer = [[$dfaStartStateId, $nfaStateList]];
     }
 
+    /**
+     * @return array{int, list<int>}|null
+     */
     private function getNextState(): ?array
     {
         return array_pop($this->stateBuffer);

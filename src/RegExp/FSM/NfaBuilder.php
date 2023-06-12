@@ -22,25 +22,19 @@ use Remorhaz\UniLex\Stack\PushInterface;
 
 class NfaBuilder extends AbstractTranslatorListener
 {
-    private $nfa;
+    private ?TransitionMap $rangeTransitionMap = null;
 
-    private $propertyLoader;
-
-    private $rangeTransitionMap;
-
-    private $languageBuilder;
+    private ?LanguageBuilder $languageBuilder = null;
 
     private $startState;
 
-    public function __construct(Nfa $nfa, PropertyRangeLoaderInterface $propertyLoader)
-    {
-        $this->nfa = $nfa;
-        $this->propertyLoader = $propertyLoader;
+    public function __construct(
+        private Nfa $nfa,
+        private PropertyRangeLoaderInterface $propertyLoader,
+    ) {
     }
 
     /**
-     * @param CharBufferInterface $buffer
-     * @return Nfa
      * @throws Exception
      */
     public static function fromBuffer(CharBufferInterface $buffer): Nfa
@@ -52,8 +46,6 @@ class NfaBuilder extends AbstractTranslatorListener
     }
 
     /**
-     * @param Tree $tree
-     * @return Nfa
      * @throws Exception
      */
     public static function fromTree(Tree $tree): Nfa
@@ -65,19 +57,16 @@ class NfaBuilder extends AbstractTranslatorListener
     }
 
     /**
-     * @param int $state
      * @throws Exception
      */
     public function setStartState(int $state): void
     {
-        if (isset($this->startState)) {
-            throw new Exception("Start state is already set");
-        }
-        $this->startState = $state;
+        $this->startState = isset($this->startState)
+            ? throw new Exception("Start state is already set")
+            : $state;
     }
 
     /**
-     * @param Node $node
      * @throws Exception
      */
     public function onStart(Node $node): void
@@ -94,7 +83,6 @@ class NfaBuilder extends AbstractTranslatorListener
     }
 
     /**
-     * @return int
      * @throws Exception
      */
     private function getStartState(): int
@@ -120,7 +108,6 @@ class NfaBuilder extends AbstractTranslatorListener
         switch ($node->getName()) {
             case NodeType::ASSERT:
                 throw new Exception("AST nodes of type '{$node->getName()}' are not supported yet");
-                break;
 
             case NodeType::EMPTY:
             case NodeType::SYMBOL:
@@ -251,8 +238,6 @@ class NfaBuilder extends AbstractTranslatorListener
     }
 
     /**
-     * @param Symbol        $symbol
-     * @param PushInterface $stack
      * @throws Exception
      */
     public function onSymbol(Symbol $symbol, PushInterface $stack): void
@@ -267,7 +252,6 @@ class NfaBuilder extends AbstractTranslatorListener
     }
 
     /**
-     * @param Node $node
      * @throws Exception
      */
     public function onFinishProduction(Node $node): void
@@ -398,16 +382,12 @@ class NfaBuilder extends AbstractTranslatorListener
 
     private function getLanguageBuilder(): LanguageBuilder
     {
-        if (!isset($this->languageBuilder)) {
-            $this->languageBuilder = LanguageBuilder::forNfa($this->nfa);
-        }
-
-        return $this->languageBuilder;
+        return $this->languageBuilder ??= LanguageBuilder::forNfa($this->nfa);
     }
 
     /**
      * @param Node $node
-     * @return int[]
+     * @return array{int, int}
      * @throws Exception
      */
     private function getNodeStates(Node $node): array
@@ -454,11 +434,6 @@ class NfaBuilder extends AbstractTranslatorListener
     }
 
     /**
-     * @param Node $node
-     * @param int  $stateIn
-     * @param int  $stateOut
-     * @param int  $index
-     * @return Symbol
      * @throws Exception
      */
     private function createSymbolFromClonedNodeChild(Node $node, int $stateIn, int $stateOut, int $index = 0): Symbol
@@ -475,11 +450,6 @@ class NfaBuilder extends AbstractTranslatorListener
     }
 
     /**
-     * @param Node $node
-     * @param int  $stateIn
-     * @param int  $stateOut
-     * @param int  $index
-     * @return Symbol
      * @throws Exception
      */
     private function createSymbolFromNodeChild(Node $node, int $stateIn, int $stateOut, int $index = 0): Symbol
@@ -493,7 +463,6 @@ class NfaBuilder extends AbstractTranslatorListener
     }
 
     /**
-     * @return int
      * @throws Exception
      */
     private function createState(): int
@@ -506,22 +475,13 @@ class NfaBuilder extends AbstractTranslatorListener
 
     private function getRangeTransitionMap(): TransitionMap
     {
-        if (!isset($this->rangeTransitionMap)) {
-            $this->rangeTransitionMap = new TransitionMap($this->nfa->getStateMap());
-        }
-
-        return $this->rangeTransitionMap;
+        return $this->rangeTransitionMap ??= new TransitionMap($this->nfa->getStateMap());
     }
 
     /**
-     * @param int      $stateIn
-     * @param int      $stateOut
-     * @param int      $start
-     * @param int|null $finish
-     * @return NfaBuilder
      * @throws Exception
      */
-    private function addRangeTransition(int $stateIn, int $stateOut, int $start, int $finish = null): self
+    private function addRangeTransition(int $stateIn, int $stateOut, int $start, ?int $finish = null): self
     {
         $this->setRangeTransition(
             $stateIn,
@@ -535,10 +495,6 @@ class NfaBuilder extends AbstractTranslatorListener
     }
 
     /**
-     * @param int               $stateIn
-     * @param int               $stateOut
-     * @param RangeSetInterface $rangeSet
-     * @return NfaBuilder
      * @throws Exception
      */
     private function setRangeTransition(int $stateIn, int $stateOut, RangeSetInterface $rangeSet): self
@@ -551,9 +507,6 @@ class NfaBuilder extends AbstractTranslatorListener
     }
 
     /**
-     * @param int $stateIn
-     * @param int $stateOut
-     * @return RangeSetInterface
      * @throws Exception
      */
     private function getRangeTransition(int $stateIn, int $stateOut): RangeSetInterface
@@ -566,6 +519,7 @@ class NfaBuilder extends AbstractTranslatorListener
                 ->getRangeTransitionMap()
                 ->getTransition($stateIn, $stateOut);
         }
+
         $rangeSet = RangeSet::create();
         $this
             ->getRangeTransitionMap()
@@ -575,9 +529,6 @@ class NfaBuilder extends AbstractTranslatorListener
     }
 
     /**
-     * @param int $stateIn
-     * @param int $stateOut
-     * @return NfaBuilder
      * @throws Exception
      */
     private function addEpsilonTransition(int $stateIn, int $stateOut): self

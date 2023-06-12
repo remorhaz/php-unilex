@@ -6,9 +6,9 @@ namespace Remorhaz\UniLex;
 
 interface AttributeListInterface
 {
-    public function getAttribute(string $name);
+    public function getAttribute(string $name): mixed;
 
-    public function setAttribute(string $name, $value);
+    public function setAttribute(string $name, mixed $value): static;
 
     public function attributeExists(string $name): bool;
 }

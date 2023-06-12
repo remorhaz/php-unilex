@@ -6,19 +6,20 @@ namespace Remorhaz\UniLex\Parser;
 
 use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\Stack\StackableSymbolInterface;
+use Stringable;
 
-class Production implements StackableSymbolInterface
+class Production implements StackableSymbolInterface, Stringable
 {
-    private $header;
+    /**
+     * @var list<Symbol>
+     */
+    private array $symbolList;
 
-    private $index;
-
-    private $symbolList;
-
-    public function __construct(Symbol $header, int $index, Symbol ...$symbolList)
-    {
-        $this->header = $header;
-        $this->index = $index;
+    public function __construct(
+        private Symbol $header,
+        private int $index,
+        Symbol ...$symbolList,
+    ) {
         $this->symbolList = $symbolList;
     }
 
@@ -27,17 +28,11 @@ class Production implements StackableSymbolInterface
         return "{$this->header->getSymbolId()}:{$this->index}";
     }
 
-    /**
-     * @return array|AttributeListShortcut
-     */
     public function getHeaderShortcut(): AttributeListShortcut
     {
         return $this->header->getShortcut();
     }
 
-    /**
-     * @return array[]|SymbolListShortcut
-     */
     public function getSymbolListShortcut(): SymbolListShortcut
     {
         return new SymbolListShortcut($this);
@@ -54,7 +49,7 @@ class Production implements StackableSymbolInterface
     }
 
     /**
-     * @return Symbol[]
+     * @return list<Symbol>
      */
     public function getSymbolList(): array
     {
@@ -62,21 +57,17 @@ class Production implements StackableSymbolInterface
     }
 
     /**
-     * @param int $index
-     * @return Symbol
      * @throws Exception
      */
     public function getSymbol(int $index): Symbol
     {
-        if (!$this->symbolExists($index)) {
-            throw new Exception("Symbol at index {$index} is undefined in production {$this}");
-        }
-        return $this->symbolList[$index];
+        return $this->symbolList[$index]
+            ?? throw new Exception("Symbol at index $index is undefined in production $this");
     }
 
     public function isEpsilon(): bool
     {
-        return empty($this->getSymbolList());
+        return empty($this->symbolList);
     }
 
     public function symbolExists(int $index): bool

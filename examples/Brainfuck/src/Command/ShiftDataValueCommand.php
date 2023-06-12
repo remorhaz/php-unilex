@@ -9,12 +9,11 @@ use Remorhaz\UniLex\Example\Brainfuck\Runtime;
 
 class ShiftDataValueCommand extends AbstractCommand
 {
-    private $value;
-
-    public function __construct(Runtime $runtime, int $value)
-    {
+    public function __construct(
+        Runtime $runtime,
+        private int $value,
+    ) {
         parent::__construct($runtime);
-        $this->value = $value;
     }
 
     /**

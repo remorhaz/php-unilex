@@ -9,12 +9,11 @@ use Remorhaz\UniLex\Example\Brainfuck\Runtime;
 
 class SetCommandIndexCommand extends AbstractCommand
 {
-    private $commandIndex;
-
-    public function __construct(Runtime $runtime, int $index)
-    {
+    public function __construct(
+        Runtime $runtime,
+        private int $commandIndex,
+    ) {
         parent::__construct($runtime);
-        $this->commandIndex = $index;
     }
 
     /**

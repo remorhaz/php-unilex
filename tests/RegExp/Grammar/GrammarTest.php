@@ -34,7 +34,10 @@ class GrammarTest extends TestCase
         self::assertEquals($expectedValue, $this->exportSyntaxTree($tree));
     }
 
-    public function providerSyntaxTree(): array
+    /**
+     * @return iterable<string, array{string, object}>
+     */
+    public static function providerSyntaxTree(): iterable
     {
         $symbolEmpty = (object) [
             'name' => NodeType::EMPTY,

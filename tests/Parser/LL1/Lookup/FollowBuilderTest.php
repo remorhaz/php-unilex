@@ -21,7 +21,7 @@ class FollowBuilderTest extends TestCase
     /**
      * @param string $configFile
      * @param int $symbolId
-     * @param array $expectedValue
+     * @param list<int> $expectedValue
      * @throws UnilexException
      * @dataProvider providerValidGrammars
      */
@@ -38,18 +38,24 @@ class FollowBuilderTest extends TestCase
         self::assertEquals($expectedValue, $actualValue);
     }
 
-    public function providerValidGrammars(): array
+    /**
+     * @return iterable<string, array{string, int, list<int>}>
+     */
+    public static function providerValidGrammars(): iterable
     {
         $data = [];
-        foreach ($this->getSimpleExprGrammarFollowList() as $key => $follows) {
+        foreach (self::getSimpleExprGrammarFollowList() as $key => $follows) {
             [$symbolId, $expectedFollows] = $follows;
-            $data["Grammar from SimpleExpr example, symbol {$key}"] =
+            $data["Grammar from SimpleExpr example, symbol $key"] =
                 [ConfigFile::getPath(), $symbolId, $expectedFollows];
         }
         return $data;
     }
 
-    private function getSimpleExprGrammarFollowList(): array
+    /**
+     * @return iterable<string, array{int, list<int>}>
+     */
+    private static function getSimpleExprGrammarFollowList(): iterable
     {
         return [
             "NT_E0" => [SymbolType::NT_E0, [TokenType::R_PARENTHESIS, TokenType::EOI]],
@@ -63,7 +69,7 @@ class FollowBuilderTest extends TestCase
                     TokenType::STAR,
                     TokenType::R_PARENTHESIS,
                     TokenType::EOI,
-                ]
+                ],
             ],
         ];
     }

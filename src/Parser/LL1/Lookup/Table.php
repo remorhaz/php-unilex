@@ -8,36 +8,34 @@ use Remorhaz\UniLex\Exception;
 
 class Table implements TableInterface
 {
-    private $map = [];
+    /**
+     * @var array<int, array<int, int>>
+     */
+    private array $map = [];
 
     /**
-     * @param int $symbolId
-     * @param int $tokenId
-     * @param int $productionIndex
      * @throws Exception
      */
     public function addProduction(int $symbolId, int $tokenId, int $productionIndex): void
     {
-        if ($this->hasProduction($symbolId, $tokenId)) {
-            throw new Exception("Production for [{$symbolId}:{$tokenId}] is already defined");
-        }
-        $this->map[$symbolId][$tokenId] = $productionIndex;
+        $this->map[$symbolId][$tokenId] = $this->hasProduction($symbolId, $tokenId)
+            ? throw new Exception("Production for [{$symbolId}:{$tokenId}] is already defined")
+            : $productionIndex;
     }
 
     /**
-     * @param int $symbolId
-     * @param int $tokenId
-     * @return int
      * @throws Exception
      */
     public function getProductionIndex(int $symbolId, int $tokenId): int
     {
-        if (!$this->hasProduction($symbolId, $tokenId)) {
-            throw new Exception("Production for [{$symbolId}:{$tokenId}] is not defined");
-        }
-        return $this->map[$symbolId][$tokenId];
+        return $this->map[$symbolId][$tokenId]
+            ?? throw new Exception("Production for [{$symbolId}:{$tokenId}] is not defined");
     }
 
+    /**
+     * @param int $symbolId
+     * @return array<int, int>
+     */
     public function getExpectedTokenList(int $symbolId): array
     {
         return isset($this->map[$symbolId]) ? array_keys($this->map[$symbolId]) : [];
@@ -48,11 +46,18 @@ class Table implements TableInterface
         return isset($this->map[$symbolId][$tokenId]);
     }
 
+    /**
+     * @return array<int, array<int, int>>
+     */
     public function exportMap(): array
     {
         return $this->map;
     }
 
+    /**
+     * @param array<int, array<int, int>> $map
+     * @return void
+     */
     public function importMap(array $map): void
     {
         $this->map = $map;

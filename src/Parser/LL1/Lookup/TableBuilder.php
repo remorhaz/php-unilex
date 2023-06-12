@@ -10,32 +10,35 @@ use Remorhaz\UniLex\Grammar\ContextFree\Production;
 
 class TableBuilder
 {
-    private $grammar;
+    private ?FirstInterface $first = null;
 
-    private $first;
+    private ?FollowInterface $follow = null;
 
-    private $follow;
+    private ?TableInterface $table = null;
 
-    private $table;
-
-    public function __construct(GrammarInterface $grammar)
-    {
-        $this->grammar = $grammar;
+    public function __construct(
+        private GrammarInterface $grammar,
+    ) {
     }
 
     /**
-     * @return Table
      * @throws Exception
      */
     public function getTable(): TableInterface
     {
-        if (!isset($this->table)) {
-            $this->checkGrammarConflicts();
-            $table = new Table();
-            $this->addProductionsFromNonTerminalMap($table);
-            $this->table = $table;
-        }
-        return $this->table;
+        return $this->table ??= $this->buildTable();
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function buildTable(): TableInterface
+    {
+        $this->checkGrammarConflicts();
+        $table = new Table();
+        $this->addProductionsFromNonTerminalMap($table);
+
+        return $table;
     }
 
     /**
@@ -52,11 +55,7 @@ class TableBuilder
      */
     private function getFirst(): FirstInterface
     {
-        if (!isset($this->first)) {
-            $builder = new FirstBuilder($this->grammar);
-            $this->first = $builder->getFirst();
-        }
-        return $this->first;
+        return $this->first ??= (new FirstBuilder($this->grammar))->getFirst();
     }
 
     /**
@@ -64,11 +63,7 @@ class TableBuilder
      */
     private function getFollow(): FollowInterface
     {
-        if (!isset($this->follow)) {
-            $builder = new FollowBuilder($this->grammar, $this->getFirst());
-            $this->follow = $builder->getFollow();
-        }
-        return $this->follow;
+        return $this->follow ??= (new FollowBuilder($this->grammar, $this->getFirst()))->getFollow();
     }
 
     /**

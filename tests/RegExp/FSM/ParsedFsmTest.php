@@ -46,7 +46,10 @@ class ParsedFsmTest extends TestCase
         self::assertEquals($expectedSymbolTable, $actualSymbolTable);
     }
 
-    public function providerRegExpStateMaps(): array
+    /**
+     * @return iterable<string, array{string, array, array, array>}>
+     */
+    public static function providerRegExpStateMaps(): iterable
     {
         $data = [];
 

@@ -26,7 +26,7 @@ class ParserTest extends TestCase
 {
     /**
      * @param string $configFile
-     * @param int[] $input
+     * @param list<int> $input
      * @throws UniLexException
      * @dataProvider providerValidGrammarInput
      */
@@ -107,7 +107,10 @@ class ParserTest extends TestCase
         self::assertSame(TokenType::STAR, $actualValue);
     }
 
-    public function providerValidGrammarInput(): array
+    /**
+     * @return iterable<string, array{string, list<int>}>
+     */
+    public static function providerValidGrammarInput(): iterable
     {
         $data = [];
         $inputList = [
@@ -120,7 +123,7 @@ class ParserTest extends TestCase
             ],
         ];
         foreach ($inputList as $inputText => $input) {
-            $data["SimpleExpr example: {$inputText}"] =
+            $data["SimpleExpr example: $inputText"] =
                 [ConfigFile::getPath(), $input];
         }
         return $data;

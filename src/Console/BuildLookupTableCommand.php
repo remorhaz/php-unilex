@@ -18,15 +18,16 @@ use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\Grammar\ContextFree\GrammarLoader;
 use Remorhaz\UniLex\Parser\LL1\Lookup\TableBuilder;
 use RuntimeException;
+use Safe;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidOptionException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Throwable;
 
 use function array_flip;
-use function realpath;
 use function sort;
 
 use const SORT_ASC;
@@ -38,18 +39,17 @@ final class BuildLookupTableCommand extends Command
 
     protected static $defaultName = 'build-lookup-table';
 
-    private $printer;
+    private BuilderFactory $builder;
 
-    private $builder;
-
-    public function __construct(PrettyPrinterAbstract $printer, string $name = null)
-    {
+    public function __construct(
+        private PrettyPrinterAbstract $printer,
+        ?string $name = null,
+    ) {
         parent::__construct($name);
-        $this->printer = $printer;
         $this->builder = new BuilderFactory();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setDescription('Builds parser lookup table.')
@@ -62,12 +62,9 @@ final class BuildLookupTableCommand extends Command
     }
 
     /**
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     * @return int
      * @throws UniLexException
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln('Building parser lookup table...');
         $map = $this->buildMap($input, $output);
@@ -78,7 +75,7 @@ final class BuildLookupTableCommand extends Command
         if (isset($symbolsClass)) {
             $output->writeln("Symbols: {$symbolsClass->getName()}");
             $uses[] = $symbolsClass->getName();
-            $symbols = (array) array_flip($symbolsClass->getConstants());
+            $symbols = array_flip($symbolsClass->getConstants());
         }
 
         $tokens = [];
@@ -86,7 +83,7 @@ final class BuildLookupTableCommand extends Command
         if (isset($tokensClass)) {
             $output->writeln("Tokens: {$tokensClass->getName()}");
             $uses[] = $tokensClass->getName();
-            $tokens = (array) array_flip($tokensClass->getConstants());
+            $tokens = array_flip($tokensClass->getConstants());
         }
 
         $description = $this->findDescription($input);
@@ -108,7 +105,7 @@ EOF;
         $nodes[] = $declare;
 
         sort($uses, SORT_STRING | SORT_ASC);
-        foreach ($uses as $index => $use) {
+        foreach ($uses as $use) {
             $nodes[] = $this->builder->use($use)->getNode();
         }
 
@@ -120,19 +117,19 @@ EOF;
                     $this->builder->val($production),
                     isset($tokens[$token])
                         ? $this->builder->classConstFetch($tokensClass->getShortName(), $tokens[$token])
-                        : $this->builder->val($token)
+                        : $this->builder->val($token),
                 );
             }
             $items[] = new ArrayItem(
                 new Array_($productionItems, ['kind' => Array_::KIND_SHORT]),
                 isset($symbols[$symbol])
                     ? $this->builder->classConstFetch($symbolsClass->getShortName(), $symbols[$symbol])
-                    : $this->builder->val($symbol)
+                    : $this->builder->val($symbol),
             );
         }
 
         $nodes[] = new Return_(
-            new Array_($items, ['kind' => Array_::KIND_SHORT])
+            new Array_($items, ['kind' => Array_::KIND_SHORT]),
         );
 
         $generatedCode = $this->printer->prettyPrintFile($nodes);
@@ -147,9 +144,6 @@ EOF;
     }
 
     /**
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     * @return array
      * @throws UniLexException
      */
     private function buildMap(InputInterface $input, OutputInterface $output): array
@@ -166,39 +160,37 @@ EOF;
     private function getSpecFile(InputInterface $input): string
     {
         $specFile = $input->getArgument('spec');
-        $specFile = realpath($specFile);
-        if (false === $specFile) {
-            throw new InvalidOptionException("Argument #1 must contain valid path to specification file");
+        try {
+            return Safe\realpath($specFile);
+        } catch (Throwable $e) {
+            throw new InvalidOptionException(
+                "Argument #1 must contain valid path to specification file",
+                previous: $e,
+            );
         }
-
-        return $specFile;
     }
 
     private function findSymbols(InputInterface $input): ?ReflectionClass
     {
         $className = $input->getOption('symbol');
-        if (!isset($className)) {
-            return null;
-        }
-
         try {
-            return new ReflectionClass($className);
+            return isset($className)
+                ? new ReflectionClass($className)
+                : null;
         } catch (ReflectionException $e) {
-            throw new InvalidOptionException("Option --symbol must contain valid PHP class", 0, $e);
+            throw new InvalidOptionException("Option --symbol must contain valid PHP class", previous: $e);
         }
     }
 
     private function findTokens(InputInterface $input): ?ReflectionClass
     {
         $className = $input->getOption('token');
-        if (!isset($className)) {
-            return null;
-        }
-
         try {
-            return new ReflectionClass($className);
+            return isset($className)
+                ? new ReflectionClass($className)
+                : null;
         } catch (ReflectionException $e) {
-            throw new InvalidOptionException("Option --token must contain valid PHP class", 0, $e);
+            throw new InvalidOptionException("Option --token must contain valid PHP class", previous: $e);
         }
     }
 
@@ -210,12 +202,14 @@ EOF;
     private function buildTarget(InputInterface $input, OutputInterface $output, string $content): void
     {
         $targetFile = $this->getTargetFile($input);
-        $output->writeln("Saving generated data to file {$targetFile}...");
+        $output->writeln("Saving generated data to file $targetFile...");
 
-        if (false === file_put_contents($targetFile, $content)) {
-            throw new RuntimeException("Failed to write file {$targetFile}");
+        try {
+            Safe\file_put_contents($targetFile, $content);
+        } catch (Throwable $e) {
+            throw new RuntimeException("Failed to write file $targetFile", previous: $e);
         }
         $byteCount = strlen($content);
-        $output->writeln("Done ({$byteCount} bytes)!");
+        $output->writeln("Done ($byteCount bytes)!");
     }
 }

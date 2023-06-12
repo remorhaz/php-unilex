@@ -12,20 +12,29 @@ use function count;
 
 class StateMap implements StateMapInterface
 {
-    private $lastStateId = 0;
-
-    private $stateList = [];
-
-    private $startStateList = [];
-
-    private $finishStateList = [];
+    private int $lastStateId = 0;
 
     /**
-     * @param bool $value
+     * @var array<int, mixed>
+     */
+    private array $stateList = [];
+
+    /**
+     * @var array<int, mixed>
+     */
+    private array $startStateList = [];
+
+    /**
+     * @var array<int, mixed>
+     */
+    private array $finishStateList = [];
+
+    /**
+     * @param mixed $value
      * @return int
      * @throws Exception
      */
-    public function createState($value = true): int
+    public function createState(mixed $value = true): int
     {
         if (is_null($value)) {
             throw new Exception("Null state value is not allowed");
@@ -37,7 +46,7 @@ class StateMap implements StateMapInterface
     }
 
     /**
-     * @return int[]
+     * @return list<int>
      */
     public function getStateList(): array
     {
@@ -45,21 +54,17 @@ class StateMap implements StateMapInterface
     }
 
     /**
-     * @param int $stateId
-     * @return mixed
      * @throws Exception
      */
-    public function getStateValue(int $stateId)
+    public function getStateValue(int $stateId): mixed
     {
         return $this->stateList[$this->getValidState($stateId)];
     }
 
     /**
-     * @param     $value
-     * @param int ...$stateList
      * @throws Exception
      */
-    public function importState($value, int ...$stateList): void
+    public function importState(mixed $value, int ...$stateList): void
     {
         foreach ($stateList as $stateId) {
             if (isset($this->stateList[$stateId])) {
@@ -78,31 +83,33 @@ class StateMap implements StateMapInterface
     {
         foreach ($stateList as $stateId) {
             $validStateId = $this->getValidState($stateId);
-            if (isset($this->startStateList[$validStateId])) {
-                throw new Exception("Start state {$validStateId} is already set");
-            }
-            $this->startStateList[$validStateId] = $this->stateList[$validStateId];
+            $this->startStateList[$validStateId] = isset($this->startStateList[$validStateId])
+                ? throw new Exception("Start state $validStateId is already set")
+                : $this->stateList[$validStateId];
         }
     }
 
     /**
-     * @return int
      * @throws Exception
      */
     public function getStartState(): int
     {
-        if (count($this->startStateList) == 1) {
-            return array_key_first($this->startStateList);
-        }
-
-        throw new Exception("Start state is undefined");
+        return count($this->startStateList) == 1
+            ? array_key_first($this->startStateList)
+            : throw new Exception("Start state is undefined");
     }
 
+    /**
+     * @return list<int>
+     */
     public function getStartStateList(): array
     {
         return array_keys($this->startStateList);
     }
 
+    /**
+     * @throws Exception
+     */
     public function replaceStartStateList(int ...$stateIdList): void
     {
         $this->startStateList = [];
@@ -110,7 +117,6 @@ class StateMap implements StateMapInterface
     }
 
     /**
-     * @param int[] $stateList
      * @throws Exception
      */
     public function addFinishState(int ...$stateList): void
@@ -125,8 +131,6 @@ class StateMap implements StateMapInterface
     }
 
     /**
-     * @param int $stateId
-     * @return bool
      * @throws Exception
      */
     public function isFinishState(int $stateId): bool
@@ -137,8 +141,6 @@ class StateMap implements StateMapInterface
     }
 
     /**
-     * @param int $stateId
-     * @return bool
      * @throws Exception
      */
     public function isStartState(int $stateId): bool
@@ -149,7 +151,7 @@ class StateMap implements StateMapInterface
     }
 
     /**
-     * @return int[]
+     * @return list<int>
      */
     public function getFinishStateList(): array
     {
@@ -167,31 +169,24 @@ class StateMap implements StateMapInterface
     }
 
     /**
-     * @param $value
-     * @return false|int|string
      * @throws Exception
      */
-    public function getValueState($value)
+    public function getValueState(mixed $value): int
     {
         $stateId = array_search($value, $this->stateList);
-        if (false === $stateId) {
-            throw new Exception("Value not found in state map");
-        }
 
-        return $stateId;
+        return false === $stateId
+            ? throw new Exception("Value not found in state map")
+            : $stateId;
     }
 
     /**
-     * @param int $stateId
-     * @return int
      * @throws Exception
      */
     private function getValidState(int $stateId): int
     {
-        if (!$this->stateExists($stateId)) {
-            throw new Exception("State {$stateId} is undefined");
-        }
-
-        return $stateId;
+        return $this->stateExists($stateId)
+            ? $stateId
+            : throw new Exception("State $stateId is undefined");
     }
 }

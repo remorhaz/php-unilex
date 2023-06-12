@@ -9,16 +9,12 @@ use Remorhaz\UniLex\Stack\StackableSymbolInterface;
 
 class Symbol implements StackableSymbolInterface
 {
-    private $header;
+    private ?Node $symbol = null;
 
-    private $index;
-
-    private $symbol;
-
-    public function __construct(Node $header, int $index)
-    {
-        $this->header = $header;
-        $this->index = $index;
+    public function __construct(
+        private Node $header,
+        private int $index,
+    ) {
     }
 
     public function setSymbol(Node $node): void
@@ -37,16 +33,12 @@ class Symbol implements StackableSymbolInterface
     }
 
     /**
-     * @return Node
      * @throws Exception
      */
     public function getSymbol(): Node
     {
-        if (!isset($this->symbol)) {
-            $this->symbol = $this
-                ->getHeader()
-                ->getChild($this->getIndex());
-        }
-        return $this->symbol;
+        return $this->symbol ??= $this
+            ->getHeader()
+            ->getChild($this->getIndex());
     }
 }

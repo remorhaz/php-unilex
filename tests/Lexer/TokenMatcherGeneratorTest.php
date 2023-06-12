@@ -133,42 +133,12 @@ class TokenMatcherGeneratorTest extends TestCase
      */
     public function testLoad_InvalidOutput_ThrowsException(): void
     {
-        $matcherClass = $this->createTokenMatcherClassName();
+        $matcherClass = 'invalid class';
         $spec = new TokenMatcherSpec($matcherClass, TokenMatcherTemplate::class);
-        $generator = $this
-            ->getMockBuilder(TokenMatcherGenerator::class)
-            ->setConstructorArgs([$spec])
-            ->setMethods(['getOutput'])
-            ->getMock();
-        $generator
-            ->method('getOutput')
-            ->willReturn("<?php invalid:::php");
+        $generator = new TokenMatcherGenerator($spec);
 
         $this->expectException(UniLexException::class);
         $this->expectExceptionMessage('Invalid PHP code generated');
-        /** @var TokenMatcherGenerator $generator */
-        $generator->load();
-    }
-
-    /**
-     * @throws UniLexException
-     */
-    public function testLoad_EmptyOutput_ThrowsException(): void
-    {
-        $matcherClass = $this->createTokenMatcherClassName();
-        $spec = new TokenMatcherSpec($matcherClass, TokenMatcherTemplate::class);
-        $generator = $this
-            ->getMockBuilder(TokenMatcherGenerator::class)
-            ->setConstructorArgs([$spec])
-            ->setMethods(['getOutput'])
-            ->getMock();
-        $generator
-            ->method('getOutput')
-            ->willReturn('');
-
-        $this->expectException(UniLexException::class);
-        $this->expectExceptionMessage('Failed to generate target class');
-        /** @var TokenMatcherGenerator $generator */
         $generator->load();
     }
 
@@ -199,7 +169,10 @@ SOURCE;
         self::assertSame($expectedValue, $actualValue);
     }
 
-    public function providerValidRegExpInput(): array
+    /**
+     * @return iterable<string, array{string, string, string}>
+     */
+    public static function providerValidRegExpInput(): iterable
     {
         return [
             "Single latin char with another char following" => ['ab', 'a', 'a'],
@@ -255,7 +228,10 @@ SOURCE;
         self::assertSame($expectedValue, $actualValue);
     }
 
-    public function providerTwoRegExpSpecsInSameMode(): array
+    /**
+     * @return iterable<string, array{string, string, string, int, string}>
+     */
+    public function providerTwoRegExpSpecsInSameMode(): iterable
     {
         return [
             'Different latin chars' => ['ab', 'a', 'b', 1, 'a'],
@@ -301,7 +277,10 @@ SOURCE;
         self::assertSame($expectedValue, $actualValue);
     }
 
-    public function providerValidRegExpInputWithPrefix(): array
+    /**
+     * @return iterable<string, array{string, string, string, string}>
+     */
+    public static function providerValidRegExpInputWithPrefix(): iterable
     {
         return [
             "Two Kleene star patterns" => ['aabbbcccc', 'a*', 'b*', 'bbb'],

@@ -37,6 +37,7 @@ class Utf8Encoder
             }
             $buffer .= '�';
         }
+
         return $buffer;
     }
 }

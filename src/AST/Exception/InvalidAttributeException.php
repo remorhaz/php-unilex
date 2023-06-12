@@ -11,22 +11,17 @@ use function gettype;
 
 final class InvalidAttributeException extends DomainException implements ExceptionInterface
 {
-    private $name;
-
-    private $value;
-
-    private $expectedType;
-
-    public function __construct(string $name, $value, string $expectedType, Throwable $previous = null)
-    {
-        $this->name = $name;
-        $this->value = $value;
-        $this->expectedType = $expectedType;
+    public function __construct(
+        private string $name,
+        private mixed $value,
+        private string $expectedType,
+        ?Throwable $previous = null,
+    ) {
         $actualType = gettype($this->value);
         parent::__construct(
-            "Node attribute '{$this->name}' has invalid type: {$actualType} instead of expected {$this->expectedType}",
+            "Node attribute '$this->name' has invalid type: $actualType instead of expected $this->expectedType",
             0,
-            $previous
+            $previous,
         );
     }
 }

@@ -9,11 +9,9 @@ use Remorhaz\UniLex\Lexer\TokenFactoryInterface;
 
 class TokenFactory implements TokenFactoryInterface
 {
-    private $grammar;
-
-    public function __construct(GrammarInterface $grammar)
-    {
-        $this->grammar = $grammar;
+    public function __construct(
+        private GrammarInterface $grammar,
+    ) {
     }
 
     public function createToken(int $tokenId): Token

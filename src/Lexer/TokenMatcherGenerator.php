@@ -28,11 +28,10 @@ use function array_unique;
 use function count;
 use function implode;
 use function in_array;
+use function str_repeat;
 
 class TokenMatcherGenerator
 {
-    private $spec;
-
     private $output;
 
     private $dfa;
@@ -41,9 +40,9 @@ class TokenMatcherGenerator
 
     private $conditionFunctions = [];
 
-    public function __construct(TokenMatcherSpec $spec)
-    {
-        $this->spec = $spec;
+    public function __construct(
+        private TokenMatcherSpec $spec,
+    ) {
     }
 
     /**
@@ -90,18 +89,14 @@ class TokenMatcherGenerator
     }
 
     /**
-     * @param bool $asFile
-     * @return string
      * @throws Exception
      * @throws ReflectionException
      */
     public function getOutput(bool $asFile = true): string
     {
-        if (!isset($this->output)) {
-            $this->output = $this->buildOutput();
-        }
+        $this->output ??= $this->buildOutput();
 
-        return $asFile ? "<?php\n\n{$this->output}" : $this->output;
+        return $asFile ? "<?php\n\n$this->output" : $this->output;
     }
 
     private function buildFileComment(): string
@@ -121,7 +116,6 @@ class TokenMatcherGenerator
     }
 
     /**
-     * @return string
      * @throws ReflectionException
      */
     public function buildHeader(): string
@@ -144,7 +138,6 @@ class TokenMatcherGenerator
     }
 
     /**
-     * @return string
      * @throws ReflectionException
      */
     private function buildUseList(): string
@@ -159,7 +152,6 @@ class TokenMatcherGenerator
     }
 
     /**
-     * @return string
      * @throws ReflectionException
      */
     private function buildMatchParameters(): string
@@ -182,7 +174,6 @@ class TokenMatcherGenerator
     }
 
     /**
-     * @return string
      * @throws Exception
      */
     private function buildMatchBody(): string
@@ -218,8 +209,6 @@ class TokenMatcherGenerator
     }
 
     /**
-     * @param string $mode
-     * @param int    $indent
      * @return string
      * @throws Exception
      */
@@ -236,12 +225,10 @@ class TokenMatcherGenerator
             ? ''
             : ucfirst($mode);
 
-        return "{$prefix}{$contextSuffix}{$state}";
+        return "$prefix$contextSuffix$state";
     }
 
     /**
-     * @param string $mode
-     * @return string
      * @throws Exception
      */
     private function buildFsmMoves(string $mode): string
@@ -261,9 +248,6 @@ class TokenMatcherGenerator
     }
 
     /**
-     * @param string $mode
-     * @param int    $stateIn
-     * @return string
      * @throws Exception
      */
     private function buildStateEntry(string $mode, int $stateIn): string
@@ -286,9 +270,6 @@ class TokenMatcherGenerator
     }
 
     /**
-     * @param string $mode
-     * @param int    $stateIn
-     * @return string
      * @throws Exception
      */
     private function buildStateTransitionList(string $mode, int $stateIn): string
@@ -310,21 +291,12 @@ class TokenMatcherGenerator
         return $result;
     }
 
-    /**
-     * @param string $mode
-     * @param int    $stateOut
-     * @param int    $indent
-     * @return string
-     */
     private function buildStateTransition(string $mode, int $stateOut, int $indent = 3): string
     {
         return $this->buildMethodPart("goto {$this->buildStateLabel('state', $mode, $stateOut)};", $indent);
     }
 
     /**
-     * @param string $mode
-     * @param int    $stateOut
-     * @return bool
      * @throws Exception
      */
     private function isFinishStateWithSingleEnteringTransition(string $mode, int $stateOut): bool
@@ -346,33 +318,30 @@ class TokenMatcherGenerator
     {
         $hexChar = strtoupper(dechex($char));
         if (strlen($hexChar) % 2 != 0) {
-            $hexChar = "0{$hexChar}";
+            $hexChar = "0$hexChar";
         }
 
-        return "0x{$hexChar}";
+        return "0x$hexChar";
     }
 
     private function buildRangeCondition(RangeInterface $range): array
     {
         $startChar = $this->buildHex($range->getStart());
         if ($range->getStart() == $range->getFinish()) {
-            return ["{$startChar} == \$char"];
+            return ["$startChar == \$char"];
         }
         $finishChar = $this->buildHex($range->getFinish());
         if ($range->getStart() + 1 == $range->getFinish()) {
             return [
-                "{$startChar} == \$char",
-                "{$finishChar} == \$char",
+                "$startChar == \$char",
+                "$finishChar == \$char",
             ];
         }
 
-        return ["{$startChar} <= \$char && \$char <= {$finishChar}"];
+        return ["$startChar <= \$char && \$char <= $finishChar"];
     }
 
     /**
-     * @param string $mode
-     * @param int    $symbol
-     * @return string
      * @throws Exception
      */
     private function buildRangeSetCondition(string $mode, int $symbol): string
@@ -392,7 +361,7 @@ class TokenMatcherGenerator
             $method = "isMode" . ucfirst($mode) . "Symbol{$symbol}";
             $this->conditionFunctions[$method] = $result;
 
-            return "\$this->{$method}(\$char)";
+            return "\$this->$method(\$char)";
         }
 
         return "\n    " . ltrim($result);
@@ -442,10 +411,11 @@ class TokenMatcherGenerator
      */
     private function buildToken(string $mode, int $stateIn, int $indent = 2): string
     {
-        if (!isset($this->regExpFinishMap[$mode][$stateIn])) {
-            throw new Exception("No regular expressions found for state {$mode}:{$stateIn}");
-        }
-        $tokenSpec = $this->spec->getTokenSpec($mode, $this->regExpFinishMap[$mode][$stateIn]);
+        $tokenSpec = $this->spec->getTokenSpec(
+            $mode,
+            $this->regExpFinishMap[$mode][$stateIn]
+                ?? throw new Exception("No regular expressions found for state $mode:$stateIn"),
+        );
 
         return
             $this->buildMethodPart("// {$tokenSpec->getRegExp()}", $indent) .
@@ -474,13 +444,11 @@ class TokenMatcherGenerator
         if ('' == $code) {
             return '';
         }
+
         $result = '';
         $codeLineList = explode("\n", $code);
         foreach ($codeLineList as $codeLine) {
-            $line = '';
-            for ($i = 0; $i < $indent; $i++) {
-                $line .= "    ";
-            }
+            $line = str_repeat("    ", $indent);
             $result .= rtrim($line . $codeLine) . "\n";
         }
 
@@ -498,22 +466,14 @@ class TokenMatcherGenerator
     }
 
     /**
-     * @param string $context
-     * @return Dfa
      * @throws Exception
      */
     private function getDfa(string $context): Dfa
     {
-        if (!isset($this->dfa[$context])) {
-            $this->dfa[$context] = $this->buildDfa($context);
-        }
-
-        return $this->dfa[$context];
+        return $this->dfa[$context] ??= $this->buildDfa($context);
     }
 
     /**
-     * @param string $mode
-     * @return Dfa
      * @throws Exception
      */
     private function buildDfa(string $mode): Dfa
@@ -572,7 +532,7 @@ class TokenMatcherGenerator
                         $joinedNfa->getSymbolTransitionMap()->replaceTransition(
                             $joinedNfaStates[$dfaStateIn],
                             $joinedNfaStates[$dfaStateOut],
-                            array_unique(array_merge($oldSymbols, $newSymbols))
+                            array_unique(array_merge($oldSymbols, $newSymbols)),
                         );
                     }
                 }
@@ -624,8 +584,6 @@ class TokenMatcherGenerator
     }
 
     /**
-     * @param string $regExp
-     * @return Dfa
      * @throws Exception
      */
     private function buildIndependentRegExp(string $regExp): Dfa

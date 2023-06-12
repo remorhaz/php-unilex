@@ -10,7 +10,7 @@ interface FirstInterface extends SetInterface
      * Returns FIRST(X1..XN) set.
      *
      * @param int ...$symbolIdList
-     * @return array
+     * @return list<int>
      */
     public function getProductionTokens(int ...$symbolIdList): array;
 

@@ -68,7 +68,10 @@ class NfaBuilderTest extends TestCase
         $builder->onBeginProduction($node, $stack);
     }
 
-    public function providerNotTerminalNodeNames(): array
+    /**
+     * @return iterable<array{string}>
+     */
+    public static function providerNotTerminalNodeNames(): iterable
     {
         return [
             [NodeType::ALTERNATIVE],
@@ -93,7 +96,10 @@ class NfaBuilderTest extends TestCase
         self::assertTrue($actualValue);
     }
 
-    public function providerTerminalNodeNames(): array
+    /**
+     * @return iterable<array{string}>
+     */
+    public static function providerTerminalNodeNames(): iterable
     {
         return [
             [NodeType::SYMBOL],
@@ -188,7 +194,10 @@ class NfaBuilderTest extends TestCase
         $builder->onBeginProduction($node, $symbolStack);
     }
 
-    public function providerNotImplementedNodeNames(): array
+    /**
+     * @return iterable<array{string}>
+     */
+    public static function providerNotImplementedNodeNames(): iterable
     {
         return [
             [NodeType::ASSERT],
@@ -386,7 +395,10 @@ class NfaBuilderTest extends TestCase
         $builder->onFinishProduction($node);
     }
 
-    public function providerNotImplementedSimpleEscapeCodes(): array
+    /**
+     * @return iterable<array{int}>
+     */
+    public static function providerNotImplementedSimpleEscapeCodes(): iterable
     {
         return [
             [0x41],

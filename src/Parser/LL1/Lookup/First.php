@@ -10,13 +10,16 @@ namespace Remorhaz\UniLex\Parser\LL1\Lookup;
  */
 class First extends Set implements FirstInterface
 {
-    private $epsilonMap = [];
+    /**
+     * @var array<int, bool>
+     */
+    private array $epsilonMap = [];
 
     /**
      * Returns FIRST(X) set.
      *
      * @param int ...$symbolIdList
-     * @return array
+     * @return list<int>
      */
     public function getProductionTokens(int ...$symbolIdList): array
     {
@@ -27,6 +30,7 @@ class First extends Set implements FirstInterface
                 break;
             }
         }
+
         return $first;
     }
 
@@ -40,6 +44,7 @@ class First extends Set implements FirstInterface
         if ($this->hasEpsilon($symbolId)) {
             return;
         }
+
         $this->epsilonMap[$symbolId] = true;
         $this->increaseChangeCount();
     }
@@ -55,24 +60,23 @@ class First extends Set implements FirstInterface
         if (empty($symbolIdList)) {
             return true;
         }
+
         foreach ($symbolIdList as $symbolId) {
             if (!$this->hasEpsilon($symbolId)) {
                 return false;
             }
         }
+
         return true;
     }
 
-    public function hasEpsilon(int $symbolId)
+    public function hasEpsilon(int $symbolId): bool
     {
         return $this->epsilonMap[$symbolId] ?? false;
     }
 
     /**
      * Adds all tokens from source production's FIRST(X) to target production's FIRST(Y).
-     *
-     * @param int $targetSymbolId
-     * @param int ...$sourceSymbolIdList
      */
     public function mergeProductionTokens(int $targetSymbolId, int ...$sourceSymbolIdList): void
     {

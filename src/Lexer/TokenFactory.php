@@ -6,11 +6,9 @@ namespace Remorhaz\UniLex\Lexer;
 
 class TokenFactory implements TokenFactoryInterface
 {
-    private $eoiTokenId;
-
-    public function __construct(int $eoiTokenId)
-    {
-        $this->eoiTokenId = $eoiTokenId;
+    public function __construct(
+        private int $eoiTokenId,
+    ) {
     }
 
     public function createToken(int $tokenId): Token

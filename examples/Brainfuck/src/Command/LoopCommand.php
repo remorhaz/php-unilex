@@ -5,16 +5,10 @@ declare(strict_types=1);
 namespace Remorhaz\UniLex\Example\Brainfuck\Command;
 
 use Remorhaz\UniLex\Example\Brainfuck\Exception;
-use Remorhaz\UniLex\Example\Brainfuck\Runtime;
 
 class LoopCommand extends AbstractCommand
 {
-    private $endLoopIndex;
-
-    public function __construct(Runtime $runtime)
-    {
-        parent::__construct($runtime);
-    }
+    private ?int $endLoopIndex = null;
 
     /**
      * @throws Exception
@@ -34,14 +28,10 @@ class LoopCommand extends AbstractCommand
     }
 
     /**
-     * @return int
      * @throws Exception
      */
     private function getEndLoopIndex(): int
     {
-        if (!isset($this->endLoopIndex)) {
-            throw new Exception("End loop index is not defined");
-        }
-        return $this->endLoopIndex;
+        return $this->endLoopIndex ?? throw new Exception("End loop index is not defined");
     }
 }

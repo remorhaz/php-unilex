@@ -8,36 +8,34 @@ use Remorhaz\UniLex\Example\Brainfuck\Command\AbstractCommand;
 
 class Runtime
 {
-    private const DEFAULT_MEMORY = 30000;
+    private const DEFAULT_MEMORY = 30_000;
 
-    private $memory;
+    private array $dataList;
 
-    private $dataList;
+    private int $dataIndex = 0;
 
-    private $dataIndex = 0;
+    private int $commandIndex = 0;
 
-    private $commandIndex = 0;
-
-    private $output = '';
+    private string $output = '';
 
     /**
      * @var AbstractCommand[]
      */
-    private $commandList = [];
+    private array $commandList = [];
 
-    private $nextCommandIndex = 0;
+    private int $nextCommandIndex = 0;
 
     /**
      * Runtime constructor.
      * @param int $memory
      * @throws Exception
      */
-    public function __construct(int $memory = self::DEFAULT_MEMORY)
-    {
+    public function __construct(
+        private int $memory = self::DEFAULT_MEMORY,
+    ) {
         if (0 >= $memory) {
             throw new Exception("Memory amount must be positive");
         }
-        $this->memory = $memory;
         $this->dataList = array_fill(0, $this->memory, 0);
     }
 
@@ -53,7 +51,6 @@ class Runtime
     }
 
     /**
-     * @param int $index
      * @throws Exception
      */
     public function shiftDataIndex(int $index): void
@@ -62,15 +59,13 @@ class Runtime
     }
 
     /**
-     * @param int $index
      * @throws Exception
      */
     private function setDataIndex(int $index): void
     {
-        if (!isset($this->dataList[$index])) {
-            throw new Exception("Failed to move data pointer to position {$index}");
-        }
-        $this->dataIndex = $index;
+        $this->dataIndex = isset($this->dataList[$index])
+            ? $index
+            : throw new Exception("Failed to move data pointer to position $index");
     }
 
     public function shiftDataValue(int $value): void

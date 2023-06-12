@@ -8,33 +8,30 @@ use Remorhaz\UniLex\Exception;
 
 class Tree
 {
-    private $nextNodeId = 1;
+    private int $nextNodeId = 1;
 
     /**
-     * @var Node[]
+     * @var array<int, Node>
      */
-    private $nodeMap = [];
+    private array $nodeMap = [];
 
-    private $rootNodeId;
+    private ?int $rootNodeId = null;
 
     public function createNode(string $name, int $id = null): Node
     {
         $node = new Node($id ?? $this->getNextNodeId(), $name);
         $this->nodeMap[$node->getId()] = $node;
+
         return $node;
     }
 
     /**
-     * @param int $id
-     * @return Node
      * @throws Exception
      */
     public function getNode(int $id): Node
     {
-        if (!isset($this->nodeMap[$id])) {
-            throw new Exception("Node {$id} is not defined in syntax tree");
-        }
-        return $this->nodeMap[$id];
+        return $this->nodeMap[$id]
+            ?? throw new Exception("Node $id is not defined in syntax tree");
     }
 
     /**
@@ -43,10 +40,9 @@ class Tree
      */
     public function setRootNode(Node $node): void
     {
-        if (isset($this->rootNodeId)) {
-            throw new Exception("Root node of syntax tree is already set");
-        }
-        $this->rootNodeId = $node->getId();
+        $this->rootNodeId = isset($this->rootNodeId)
+            ? throw new Exception("Root node of syntax tree is already set")
+            : $node->getId();
     }
 
     /**
@@ -55,10 +51,9 @@ class Tree
      */
     public function getRootNode(): Node
     {
-        if (!isset($this->rootNodeId)) {
-            throw new Exception("Root node of syntax tree is undefined");
-        }
-        return $this->getNode($this->rootNodeId);
+        return $this->getNode(
+            $this->rootNodeId ?? throw new Exception("Root node of syntax tree is undefined"),
+        );
     }
 
     private function getNextNodeId(): int

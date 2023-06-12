@@ -4,24 +4,26 @@ declare(strict_types=1);
 
 namespace Remorhaz\UniLex\Grammar\ContextFree;
 
-class Production
+use Stringable;
+
+class Production implements Stringable
 {
-    private $headerId;
+    /**
+     * @var list<int>
+     */
+    private array $symbolList;
 
-    private $index;
-
-    private $symbolList;
-
-    public function __construct(int $headerId, int $index, int ...$symbolList)
-    {
-        $this->headerId = $headerId;
-        $this->index = $index;
+    public function __construct(
+        private int $headerId,
+        private int $index,
+        int ...$symbolList,
+    ) {
         $this->symbolList = $symbolList;
     }
 
     public function __toString()
     {
-        return "{$this->getHeaderId()}:{$this->getIndex()}";
+        return "$this->headerId:$this->index";
     }
 
     public function getHeaderId(): int
@@ -35,7 +37,7 @@ class Production
     }
 
     /**
-     * @return int[]
+     * @return list<int>
      */
     public function getSymbolList(): array
     {
@@ -44,6 +46,6 @@ class Production
 
     public function isEpsilon(): bool
     {
-        return empty($this->getSymbolList());
+        return empty($this->symbolList);
     }
 }

@@ -9,12 +9,11 @@ use Remorhaz\UniLex\Exception;
 class SymbolStack implements PushInterface
 {
     /**
-     * @var StackableSymbolInterface[]
+     * @var list<StackableSymbolInterface>
      */
-    private $data = [];
+    private array $data = [];
 
     /**
-     * @return StackableSymbolInterface
      * @throws Exception
      */
     public function pop(): StackableSymbolInterface
@@ -22,6 +21,7 @@ class SymbolStack implements PushInterface
         if (empty($this->data)) {
             throw new Exception("Unexpected end of stack");
         }
+
         return array_pop($this->data);
     }
 
@@ -30,6 +30,7 @@ class SymbolStack implements PushInterface
         if (empty($symbolList)) {
             return;
         }
+
         array_push($this->data, ...array_reverse($symbolList));
     }
 

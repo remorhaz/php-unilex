@@ -48,7 +48,10 @@ class Utf8TokenMatcherTest extends TestCase
         self::assertEquals($expectedSymbol, $actualValue);
     }
 
-    public function providerValidSymbolList(): array
+    /**
+     * @return iterable<string, array{string, int}>
+     */
+    public static function providerValidSymbolList(): iterable
     {
         return [
             'Single ASCII char' => ['a', 0x61],
@@ -75,7 +78,10 @@ class Utf8TokenMatcherTest extends TestCase
         self::assertEquals(TokenType::INVALID_BYTES, $actual);
     }
 
-    public function providerInvalidText(): array
+    /**
+     * @return iterable<string, array{string, int, int}>
+     */
+    public static function providerInvalidText(): iterable
     {
         return [
             'Single tail byte' => ["\x80", 1, 0x80],

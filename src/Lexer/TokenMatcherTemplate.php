@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace Remorhaz\UniLex\Lexer;
 
+use Closure;
 use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\IO\CharBufferInterface;
 use Remorhaz\UniLex\IO\TokenExtractInterface;
 
 abstract class TokenMatcherTemplate implements TokenMatcherInterface
 {
-    private $token;
+    private ?Token $token = null;
 
-    private $mode = self::DEFAULT_MODE;
+    private string $mode = self::DEFAULT_MODE;
 
     /**
      * @return Token
@@ -20,16 +21,12 @@ abstract class TokenMatcherTemplate implements TokenMatcherInterface
      */
     public function getToken(): Token
     {
-        if (!isset($this->token)) {
-            throw new Exception("Token is not defined");
-        }
-
-        return $this->token;
+        return $this->token ?? throw new Exception("Token is not defined");
     }
 
     protected function createContext(
         CharBufferInterface $buffer,
-        TokenFactoryInterface $tokenFactory
+        TokenFactoryInterface $tokenFactory,
     ): TokenMatcherContextInterface {
         $onConstruct = function (): void {
             unset($this->token);
@@ -37,15 +34,11 @@ abstract class TokenMatcherTemplate implements TokenMatcherInterface
         $onSetNewToken = function (int $tokenType) use ($tokenFactory): void {
             $this->token = $tokenFactory->createToken($tokenType);
         };
-        $onGetToken = function (): Token {
-            return $this->getToken();
-        };
+        $onGetToken = fn (): Token => $this->getToken();
         $onSetMode = function (string $mode): void {
             $this->mode = $mode;
         };
-        $onGetMode = function (): string {
-            return $this->mode;
-        };
+        $onGetMode = fn (): string =>  $this->mode;
 
         return new class (
             $buffer,
@@ -53,48 +46,60 @@ abstract class TokenMatcherTemplate implements TokenMatcherInterface
             $onSetNewToken,
             $onGetToken,
             $onSetMode,
-            $onGetMode
+            $onGetMode,
         ) implements TokenMatcherContextInterface
         {
-            private $buffer;
+            /**
+             * @var Closure(int):void
+             */
+            private Closure $onSetNewToken;
 
-            private $onSetNewToken;
+            /**
+             * @var Closure():Token
+             */
+            private Closure $onGetToken;
 
-            private $onGetToken;
+            /**
+             * @var Closure(string):void
+             */
+            private Closure $onSetMode;
 
-            private $onSetMode;
+            /**
+             * @var Closure():string
+             */
+            private Closure $onGetMode;
 
-            private $onGetMode;
-
+            /**
+             * @param CharBufferInterface   $buffer
+             * @param callable():void       $onConstruct
+             * @param callable(int):void    $onSetNewToken
+             * @param callable():Token      $onGetToken
+             * @param callable(string):void $onSetMode
+             * @param callable():string     $onGetMode
+             */
             public function __construct(
-                CharBufferInterface $buffer,
+                private CharBufferInterface $buffer,
                 callable $onConstruct,
                 callable $onSetNewToken,
                 callable $onGetToken,
                 callable $onSetMode,
                 callable $onGetMode
             ) {
-                $this->buffer = $buffer;
-                $this->onSetNewToken = $onSetNewToken;
-                $this->onGetToken = $onGetToken;
-                $this->onSetMode = $onSetMode;
-                $this->onGetMode = $onGetMode;
-                call_user_func($onConstruct);
+                $this->onSetNewToken = Closure::fromCallable($onSetNewToken);
+                $this->onGetToken = Closure::fromCallable($onGetToken);
+                $this->onSetMode = Closure::fromCallable($onSetMode);
+                $this->onGetMode = Closure::fromCallable($onGetMode);
+                $onConstruct();
             }
 
             public function setNewToken(int $tokenType): TokenMatcherContextInterface
             {
-                call_user_func($this->onSetNewToken, $tokenType);
+                ($this->onSetNewToken)($tokenType);
 
                 return $this;
             }
 
-            /**
-             * @param string $name
-             * @param        $value
-             * @return TokenMatcherContextInterface
-             */
-            public function setTokenAttribute(string $name, $value): TokenMatcherContextInterface
+            public function setTokenAttribute(string $name, mixed $value): TokenMatcherContextInterface
             {
                 $this
                     ->getToken()
@@ -105,7 +110,7 @@ abstract class TokenMatcherTemplate implements TokenMatcherInterface
 
             public function getToken(): Token
             {
-                return call_user_func($this->onGetToken);
+                return ($this->onGetToken)();
             }
 
             public function getBuffer(): CharBufferInterface
@@ -116,29 +121,32 @@ abstract class TokenMatcherTemplate implements TokenMatcherInterface
             public function getSymbolString(): string
             {
                 $buffer = $this->getBuffer();
-                if ($buffer instanceof TokenExtractInterface) {
-                    return $buffer->getTokenAsString();
-                }
-                throw new Exception("Extracting strings is not supported by buffer");
+
+                return $buffer instanceof TokenExtractInterface
+                    ? $buffer->getTokenAsString()
+                    : throw new Exception("Extracting strings is not supported by buffer");
             }
 
+            /**
+             * @return list<int>
+             */
             public function getSymbolList(): array
             {
                 $buffer = $this->getBuffer();
-                if ($buffer instanceof TokenExtractInterface) {
-                    return $buffer->getTokenAsArray();
-                }
-                throw new Exception("Extracting arrays is not supported by buffer");
+
+                return $buffer instanceof TokenExtractInterface
+                    ? $buffer->getTokenAsArray()
+                    : throw new Exception("Extracting arrays is not supported by buffer");
             }
 
             public function getMode(): string
             {
-                return call_user_func($this->onGetMode);
+                return ($this->onGetMode)();
             }
 
             public function setMode(string $mode): TokenMatcherContextInterface
             {
-                call_user_func($this->onSetMode, $mode);
+                ($this->onSetMode)($mode);
 
                 return $this;
             }

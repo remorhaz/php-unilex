@@ -10,17 +10,15 @@ use Remorhaz\UniLex\Lexer\TokenPosition;
 
 class StringBuffer implements CharBufferInterface, TokenExtractInterface
 {
-    private $data;
+    private int $length;
 
-    private $length;
+    private int $startOffset = 0;
 
-    private $startOffset = 0;
+    private int $previewOffset = 0;
 
-    private $previewOffset = 0;
-
-    public function __construct(string $data)
-    {
-        $this->data = $data;
+    public function __construct(
+        private string $data,
+    ) {
         $this->length = strlen($data);
     }
 
@@ -30,15 +28,13 @@ class StringBuffer implements CharBufferInterface, TokenExtractInterface
     }
 
     /**
-     * @return int
      * @throws Exception
      */
     public function getSymbol(): int
     {
-        if ($this->previewOffset == $this->length) {
-            throw new Exception("No symbol to preview at index {$this->previewOffset}");
-        }
-        return ord($this->data[$this->previewOffset]);
+        return $this->previewOffset == $this->length
+            ? throw new Exception("No symbol to preview at index {$this->previewOffset}")
+            : ord($this->data[$this->previewOffset]);
     }
 
     /**
@@ -46,14 +42,12 @@ class StringBuffer implements CharBufferInterface, TokenExtractInterface
      */
     public function nextSymbol(): void
     {
-        if ($this->previewOffset == $this->length) {
-            throw new Exception("Unexpected end of buffer on preview at index {$this->previewOffset}");
-        }
-        $this->previewOffset++;
+        $this->previewOffset == $this->length
+            ? throw new Exception("Unexpected end of buffer on preview at index {$this->previewOffset}")
+            : $this->previewOffset++;
     }
 
     /**
-     * @param int $repeat
      * @throws Exception
      */
     public function prevSymbol(int $repeat = 1): void
@@ -61,9 +55,11 @@ class StringBuffer implements CharBufferInterface, TokenExtractInterface
         if ($repeat < 1) {
             throw new Exception("Non-positive unread repeat counter: {$repeat}");
         }
+
         if ($this->previewOffset - $repeat < $this->startOffset) {
             throw new Exception("Invalid unread repeat counter: {$repeat}");
         }
+
         $this->previewOffset -= $repeat;
     }
 
@@ -78,7 +74,6 @@ class StringBuffer implements CharBufferInterface, TokenExtractInterface
     }
 
     /**
-     * @return TokenPosition
      * @throws Exception
      */
     public function getTokenPosition(): TokenPosition
@@ -91,12 +86,16 @@ class StringBuffer implements CharBufferInterface, TokenExtractInterface
         return substr($this->data, $this->startOffset, $this->previewOffset - $this->startOffset);
     }
 
+    /**
+     * @return list<int>
+     */
     public function getTokenAsArray(): array
     {
         $result = [];
         for ($i = $this->startOffset; $i < $this->previewOffset; $i++) {
             $result[] = ord($this->data[$i]);
         }
+
         return $result;
     }
 }

@@ -11,13 +11,11 @@ use Throwable;
 
 class TokenTranslationScheme
 {
-    private $symbol;
+    private ?Symbol $symbol = null;
 
-    private $token;
+    private ?Token $token = null;
 
     /**
-     * @param Symbol $symbol
-     * @param Token $token
      * @throws Exception
      */
     public function applyActions(Symbol $symbol, Token $token): void
@@ -80,12 +78,9 @@ class TokenTranslationScheme
     }
 
     /**
-     * @param string $symbolAttr
-     * @param string $tokenAttr
-     * @return $this
      * @throws Exception
      */
-    private function copyTokenAttribute(string $symbolAttr, string $tokenAttr)
+    private function copyTokenAttribute(string $symbolAttr, string $tokenAttr): self
     {
         try {
             $value = $this
@@ -99,6 +94,7 @@ class TokenTranslationScheme
             $tokenText = "{$this->getToken()->getType()}.{$tokenAttr}";
             throw new Exception("Failed to synthesize attribute {$symbolText} from token {$tokenText}", 0, $e);
         }
+
         return $this;
     }
 
@@ -110,26 +106,20 @@ class TokenTranslationScheme
     }
 
     /**
-     * @return Symbol
      * @throws Exception
      */
     private function getSymbol(): Symbol
     {
-        if (!isset($this->symbol)) {
-            throw new Exception("No symbol defined in token translation scheme");
-        }
-        return $this->symbol;
+        return $this->symbol
+            ?? throw new Exception("No symbol defined in token translation scheme");
     }
 
     /**
-     * @return Token
      * @throws Exception
      */
     private function getToken(): Token
     {
-        if (!isset($this->token)) {
-            throw new Exception("No token defined in token translation scheme");
-        }
-        return $this->token;
+        return $this->token
+            ?? throw new Exception("No token defined in token translation scheme");
     }
 }

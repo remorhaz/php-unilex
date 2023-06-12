@@ -27,7 +27,10 @@ class RuntimeTest extends TestCase
         new Runtime($memory);
     }
 
-    public function providerNonPositiveMemory(): array
+    /**
+     * @return iterable<string, array{int}>
+     */
+    public static function providerNonPositiveMemory(): iterable
     {
         return [
             'Zero memory' => [0],

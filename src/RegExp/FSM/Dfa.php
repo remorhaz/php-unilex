@@ -8,48 +8,34 @@ use Remorhaz\UniLex\Exception;
 
 class Dfa
 {
-    private $stateMap;
+    private ?StateMap $stateMap = null;
 
-    private $symbolTable;
+    private ?SymbolTable $symbolTable = null;
 
-    private $transitionMap;
+    private ?TransitionMap $transitionMap = null;
 
     public function getStateMap(): StateMap
     {
-        if (!isset($this->stateMap)) {
-            $this->stateMap = new StateMap();
-        }
-
-        return $this->stateMap;
+        return $this->stateMap ??= new StateMap();
     }
 
     public function getTransitionMap(): TransitionMap
     {
-        if (!isset($this->transitionMap)) {
-            $this->transitionMap = new TransitionMap($this->getStateMap());
-        }
-
-        return $this->transitionMap;
+        return $this->transitionMap ??= new TransitionMap($this->getStateMap());
     }
 
     public function getSymbolTable(): SymbolTable
     {
-        if (!isset($this->symbolTable)) {
-            $this->symbolTable = new SymbolTable();
-        }
-
-        return $this->symbolTable;
+        return $this->symbolTable ??= new SymbolTable();
     }
 
     /**
-     * @param SymbolTable $symbolTable
      * @throws Exception
      */
     public function setSymbolTable(SymbolTable $symbolTable): void
     {
-        if (isset($this->symbolTable)) {
-            throw new Exception("Symbol table already exists in DFA");
-        }
-        $this->symbolTable = $symbolTable;
+        $this->symbolTable = isset($this->symbolTable)
+            ? throw new Exception("Symbol table already exists in DFA")
+            : $symbolTable;
     }
 }

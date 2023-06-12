@@ -11,11 +11,9 @@ use Remorhaz\UniLex\RegExp\AST\NodeType;
 
 class SymbolTranslationScheme
 {
-    private $tree;
-
-    public function __construct(Tree $tree)
-    {
-        $this->tree = $tree;
+    public function __construct(
+        private Tree $tree,
+    ) {
     }
 
     /**

@@ -35,7 +35,10 @@ class TokenMatcherTest extends TestCase
         self::assertEquals($expectedType, $actualValue);
     }
 
-    public function providerValidTokenType(): array
+    /**
+     * @return iterable<array{int, int}>
+     */
+    public static function providerValidTokenType(): iterable
     {
         return [
             [TokenType::CTL_ASCII, ord("\t")],
@@ -100,10 +103,13 @@ class TokenMatcherTest extends TestCase
         self::assertEquals($symbol, $actualValue);
     }
 
-    public function providerValidTokenSymbol(): array
+    /**
+     * @return iterable<int>
+     */
+    public static function providerValidTokenSymbol(): iterable
     {
         $data = [];
-        foreach ($this->providerValidTokenType() as $key => $dataSet) {
+        foreach (self::providerValidTokenType() as $key => $dataSet) {
             $data[$key] = [$dataSet[1]];
         }
         return $data;

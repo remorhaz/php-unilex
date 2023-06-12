@@ -10,17 +10,11 @@ use Remorhaz\UniLex\Grammar\ContextFree\Production;
 
 class TableConflictChecker
 {
-    private $grammar;
-
-    private $first;
-
-    private $follow;
-
-    public function __construct(GrammarInterface $grammar, FirstInterface $first, FollowInterface $follow)
-    {
-        $this->grammar = $grammar;
-        $this->first = $first;
-        $this->follow = $follow;
+    public function __construct(
+        private GrammarInterface $grammar,
+        private FirstInterface $first,
+        private FollowInterface $follow,
+    ) {
     }
 
     /**
@@ -34,7 +28,6 @@ class TableConflictChecker
     }
 
     /**
-     * @param int $symbolId
      * @throws Exception
      */
     private function checkSymbolConflicts(int $symbolId): void
@@ -49,8 +42,6 @@ class TableConflictChecker
     }
 
     /**
-     * @param Production $alpha
-     * @param Production $beta
      * @throws Exception
      */
     private function checkProductionConflicts(Production $alpha, Production $beta): void
@@ -58,13 +49,12 @@ class TableConflictChecker
         if ($alpha->getIndex() == $beta->getIndex()) {
             return;
         }
+
         $this->checkFirstFirstConflict($alpha, $beta);
         $this->checkFirstFollowConflict($alpha, $beta);
     }
 
     /**
-     * @param int $symbolId
-     * @param Production ...$productionList
      * @throws Exception
      */
     private function checkMultipleEpsilons(int $symbolId, Production ...$productionList): void
@@ -72,6 +62,7 @@ class TableConflictChecker
         $isEpsilonProduction = function (Production $production): bool {
             return $production->isEpsilon();
         };
+
         $epsilonProductionList = array_filter($productionList, $isEpsilonProduction);
         if (count($epsilonProductionList) > 1) {
             throw new Exception("Symbol {$symbolId} has multiple ε-productions");
@@ -79,8 +70,6 @@ class TableConflictChecker
     }
 
     /**
-     * @param Production $alpha
-     * @param Production $beta
      * @throws Exception
      */
     private function checkFirstFirstConflict(Production $alpha, Production $beta): void
@@ -92,8 +81,6 @@ class TableConflictChecker
     }
 
     /**
-     * @param Production $alpha
-     * @param Production $beta
      * @throws Exception
      */
     private function checkFirstFollowConflict(Production $alpha, Production $beta): void
@@ -101,6 +88,7 @@ class TableConflictChecker
         if (!$this->first->productionHasEpsilon(...$beta->getSymbolList())) {
             return;
         }
+
         $follow = $this->follow->getTokens($alpha->getHeaderId());
         $firstAlpha = $this->first->getProductionTokens(...$alpha->getSymbolList());
         $message = "FIRST({$alpha})/FOLLOW({$alpha->getHeaderId()}) conflict (ε ∈ {$beta})";
@@ -108,8 +96,8 @@ class TableConflictChecker
     }
 
     /**
-     * @param array $tokenListA
-     * @param array $tokenListB
+     * @param list<int> $tokenListA
+     * @param list<int> $tokenListB
      * @param string $message
      * @throws Exception
      */

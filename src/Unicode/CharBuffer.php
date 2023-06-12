@@ -18,25 +18,26 @@ use Remorhaz\UniLex\Unicode\Grammar\Utf8TokenMatcher;
 
 class CharBuffer implements CharBufferInterface, TokenExtractInterface
 {
-    private $source;
+    private ?TokenMatcherInterface $matcher = null;
 
-    private $matcher;
+    private ?int $char = null;
 
-    private $char;
+    private ?TokenFactoryInterface $tokenFactory = null;
 
-    private $tokenFactory;
+    private int $startOffset = 0;
 
-    private $startOffset = 0;
+    private int $previewOffset = 0;
 
-    private $previewOffset = 0;
+    /**
+     * @var list<int>
+     */
+    private array $buffer = [];
 
-    private $buffer = [];
+    private int $sourcePreviewOffset = 0;
 
-    private $sourcePreviewOffset = 0;
-
-    public function __construct(CharBufferInterface $source)
-    {
-        $this->source = $source;
+    public function __construct(
+        private CharBufferInterface $source,
+    ) {
     }
 
     public function setMatcher(TokenMatcherInterface $matcher): void
@@ -55,16 +56,11 @@ class CharBuffer implements CharBufferInterface, TokenExtractInterface
     }
 
     /**
-     * @return int
      * @throws Exception
      */
     public function getSymbol(): int
     {
-        if (!isset($this->char)) {
-            $this->char = $this->getMatchedChar();
-        }
-
-        return $this->char;
+        return $this->char ??= $this->getMatchedChar();
     }
 
     /**
@@ -143,7 +139,6 @@ class CharBuffer implements CharBufferInterface, TokenExtractInterface
     }
 
     /**
-     * @return TokenPosition
      * @throws Exception
      */
     public function getTokenPosition(): TokenPosition
@@ -152,7 +147,6 @@ class CharBuffer implements CharBufferInterface, TokenExtractInterface
     }
 
     /**
-     * @return string
      * @throws Exception
      */
     public function getTokenAsString(): string
@@ -170,13 +164,14 @@ class CharBuffer implements CharBufferInterface, TokenExtractInterface
         if ($this->sourcePreviewOffset == 0) {
             return;
         }
+
         $this->source->prevSymbol($this->sourcePreviewOffset);
         $this->sourcePreviewOffset = 0;
         unset($this->char);
     }
 
     /**
-     * @return array
+     * @return list<int>
      */
     public function getTokenAsArray(): array
     {

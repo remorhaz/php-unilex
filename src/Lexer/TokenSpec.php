@@ -6,14 +6,10 @@ namespace Remorhaz\UniLex\Lexer;
 
 class TokenSpec
 {
-    private $regExp;
-
-    private $code;
-
-    public function __construct(string $regExp, string $code)
-    {
-        $this->regExp = $regExp;
-        $this->code = $code;
+    public function __construct(
+        private string $regExp,
+        private string $code,
+    ) {
     }
 
     public function getRegExp(): string

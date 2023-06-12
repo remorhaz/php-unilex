@@ -50,7 +50,10 @@ class TokenPositionTest extends TestCase
         self::assertSame($expectedLength, $actualValue);
     }
 
-    public function providerOffsetsWithLength(): array
+    /**
+     * @return iterable<string, array{int, int, int}>
+     */
+    public static function providerOffsetsWithLength(): iterable
     {
         return [
             'Single symbol token' => [0, 1, 1],

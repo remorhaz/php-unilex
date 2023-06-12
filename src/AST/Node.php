@@ -13,18 +13,20 @@ use function is_int;
 
 class Node implements StackableSymbolInterface
 {
-    private $id;
+    /**
+     * @var array<string, mixed>
+     */
+    private array $attributeMap = [];
 
-    private $name;
+    /**
+     * @var list<Node>
+     */
+    private array $childMap = [];
 
-    private $attributeMap = [];
-
-    private $childMap = [];
-
-    public function __construct(int $id, string $name)
-    {
-        $this->id = $id;
-        $this->name = $name;
+    public function __construct(
+        private int $id,
+        private string $name,
+    ) {
     }
 
     public function getId(): int
@@ -49,33 +51,24 @@ class Node implements StackableSymbolInterface
     }
 
     /**
-     * @param string $name
-     * @param        $value
-     * @return Node
      * @throws UniLexException
      */
-    public function setAttribute(string $name, $value): self
+    public function setAttribute(string $name, mixed $value): self
     {
-        if (isset($this->attributeMap[$name])) {
-            throw new UniLexException("Attribute '{$name}' is already defined in syntax tree node {$this->getId()}");
-        }
-        $this->attributeMap[$name] = $value;
+        $this->attributeMap[$name] = isset($this->attributeMap[$name])
+            ? throw new UniLexException("Attribute '$name' is already defined in syntax tree node {$this->getId()}")
+            : $value;
 
         return $this;
     }
 
     /**
-     * @param string $name
-     * @return mixed
      * @throws UniLexException
      */
-    public function getAttribute(string $name)
+    public function getAttribute(string $name): mixed
     {
-        if (!isset($this->attributeMap[$name])) {
-            throw new UniLexException("Attribute '{$name}' is not defined in syntax tree node {$this->getId()}");
-        }
-
-        return $this->attributeMap[$name];
+        return $this->attributeMap[$name]
+            ?? throw new UniLexException("Attribute '{$name}' is not defined in syntax tree node {$this->getId()}");
     }
 
     /**
@@ -86,11 +79,10 @@ class Node implements StackableSymbolInterface
     public function getIntAttribute(string $name): int
     {
         $attribute = $this->getAttribute($name);
-        if (is_int($attribute)) {
-            return $attribute;
-        }
 
-        throw new Exception\InvalidAttributeException($name, $attribute, 'integer');
+        return is_int($attribute)
+            ? $attribute
+            : throw new Exception\InvalidAttributeException($name, $attribute, 'integer');
     }
 
     /**
@@ -104,11 +96,9 @@ class Node implements StackableSymbolInterface
         if (is_array($attribute)) {
             $string = '';
             foreach ($attribute as $symbol) {
-                if (!is_int($symbol) || $symbol > 0xFF) {
-                    throw new Exception\InvalidAttributeException($name, $attribute, 'integer[]');
-                }
-
-                $string .= chr($symbol);
+                $string .= is_int($symbol) && $symbol <= 0xFF
+                    ? chr($symbol)
+                    : throw new Exception\InvalidAttributeException($name, $attribute, 'integer[]');
             }
 
             return $string;
@@ -131,15 +121,12 @@ class Node implements StackableSymbolInterface
      */
     public function getChild(int $index): Node
     {
-        if (!isset($this->childMap[$index])) {
-            throw new UniLexException("Child node at index {$index} in node {$this->getId()} is not defined");
-        }
-
-        return $this->childMap[$index];
+        return $this->childMap[$index]
+            ?? throw new UniLexException("Child node at index {$index} in node {$this->getId()} is not defined");
     }
 
     /**
-     * @return Node[]
+     * @return list<Node>
      */
     public function getChildList(): array
     {
@@ -147,13 +134,16 @@ class Node implements StackableSymbolInterface
     }
 
     /**
-     * @return int[]
+     * @return list<int>
      */
     public function getChildIndexList(): array
     {
         return array_keys($this->childMap);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getAttributeList(): array
     {
         return $this->attributeMap;

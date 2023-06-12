@@ -9,18 +9,14 @@ use Remorhaz\UniLex\IO\CharBufferInterface;
 
 class TokenMatcherByType implements TokenMatcherInterface
 {
-    private $token;
+    private ?Token $token = null;
 
     /**
-     * @return Token
      * @throws Exception
      */
     public function getToken(): Token
     {
-        if (!isset($this->token)) {
-            throw new Exception("Token is not defined");
-        }
-        return $this->token;
+        return $this->token ?? throw new Exception("Token is not defined");
     }
 
     public function match(CharBufferInterface $buffer, TokenFactoryInterface $tokenFactory): bool
@@ -29,6 +25,7 @@ class TokenMatcherByType implements TokenMatcherInterface
         $tokenId = $buffer->getSymbol();
         $this->token = $tokenFactory->createToken($tokenId);
         $buffer->nextSymbol();
+
         return true;
     }
 }

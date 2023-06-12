@@ -9,16 +9,16 @@ use Remorhaz\UniLex\Parser\Symbol;
 
 class UnexpectedTokenError implements UnexpectedTokenErrorInterface
 {
-    private $unexpectedToken;
+    /**
+     * @var list<int>
+     */
+    private array $expectedTokenTypeList;
 
-    private $productionHeader;
-
-    private $expectedTokenTypeList;
-
-    public function __construct(Token $unexpectedToken, Symbol $productionHeader, int ...$expectedTokenTypeList)
-    {
-        $this->unexpectedToken = $unexpectedToken;
-        $this->productionHeader = $productionHeader;
+    public function __construct(
+        private Token $unexpectedToken,
+        private Symbol $productionHeader,
+        int ...$expectedTokenTypeList,
+    ) {
         $this->expectedTokenTypeList = $expectedTokenTypeList;
     }
 
@@ -27,6 +27,9 @@ class UnexpectedTokenError implements UnexpectedTokenErrorInterface
         return $this->unexpectedToken;
     }
 
+    /**
+     * @return list<int>
+     */
     public function getExpectedTokenTypeList(): array
     {
         return $this->expectedTokenTypeList;

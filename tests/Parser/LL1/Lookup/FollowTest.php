@@ -8,7 +8,8 @@ use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Parser\LL1\Lookup\Follow;
 
 /**
- * @covers \Remorhaz\UniLex\Parser\LL1\Lookup\Follow<extended>
+ * @covers \Remorhaz\UniLex\Parser\LL1\Lookup\Follow
+ * @covers \Remorhaz\UniLex\Parser\LL1\Lookup\Set
  */
 class FollowTest extends TestCase
 {
@@ -19,7 +20,7 @@ class FollowTest extends TestCase
     }
 
     /**
-     * @param array $tokenIdList
+     * @param list<int> $tokenIdList
      * @dataProvider providerAddTokenCalledOnce
      */
     public function testAddToken_CalledOnce_GetTokenReturnsAddedTokens(array $tokenIdList): void
@@ -31,7 +32,10 @@ class FollowTest extends TestCase
         self::assertSame($tokenIdList, $actualValue);
     }
 
-    public function providerAddTokenCalledOnce(): array
+    /**
+     * @return iterable<string, array{list<int>}>
+     */
+    public static function providerAddTokenCalledOnce(): iterable
     {
         return [
             "No tokens" => [[]],
@@ -41,9 +45,9 @@ class FollowTest extends TestCase
     }
 
     /**
-     * @param array $firstTokenIdList
-     * @param array $secondTokenIdList
-     * @param array $expectedValue
+     * @param list<int> $firstTokenIdList
+     * @param list<int> $secondTokenIdList
+     * @param list<int> $expectedValue
      * @dataProvider providerAddTokenCalledTwice
      */
     public function testAddToken_CalledTwice_GetTokenReturnsMergedTokens(
@@ -60,9 +64,9 @@ class FollowTest extends TestCase
     }
 
     /**
-     * @param array $firstTokenIdList
-     * @param array $secondTokenIdList
-     * @param array $mergedList
+     * @param list<int> $firstTokenIdList
+     * @param list<int> $secondTokenIdList
+     * @param list<int> $mergedList
      * @dataProvider providerAddTokenCalledTwice
      */
     public function testAddToken_CalledTwice_GetChangeCountReturnsMergedTokensAmount(
@@ -78,7 +82,10 @@ class FollowTest extends TestCase
         self::assertEquals($expectedValue, $actualValue);
     }
 
-    public function providerAddTokenCalledTwice(): array
+    /**
+     * @return iterable<string, array{list<int>, list<int>, list<int>}>
+     */
+    public static function providerAddTokenCalledTwice(): iterable
     {
         return [
             "Non-crossing sets" => [[2, 3], [4], [2, 3, 4]],
@@ -107,10 +114,10 @@ class FollowTest extends TestCase
     /**
      * @dataProvider providerMergeTokens
      * @param int $sourceProductionId
-     * @param array $sourceTokenIdList
+     * @param list<int> $sourceTokenIdList
      * @param int $targetProductionId
-     * @param array $targetTokenIdList
-     * @param array $expectedValue
+     * @param list<int> $targetTokenIdList
+     * @param list<int> $expectedValue
      */
     public function testMergeTokens_TokensSet_TargetGetTokensReturnsMergedTokens(
         int $sourceProductionId,
@@ -128,7 +135,10 @@ class FollowTest extends TestCase
         self::assertSame($expectedValue, $actualValue);
     }
 
-    public function providerMergeTokens(): array
+    /**
+     * @return iterable<string, array{int, list<int>, int, list<int>, list<int>}>
+     */
+    public static function providerMergeTokens(): iterable
     {
         return [
             "Both sets are empty" => [1, [], 2, [], []],

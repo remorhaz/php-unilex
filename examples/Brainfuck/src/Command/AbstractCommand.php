@@ -9,13 +9,10 @@ use Remorhaz\UniLex\Example\Brainfuck\Runtime;
 
 abstract class AbstractCommand
 {
-    protected $runtime;
+    protected ?int $index = null;
 
-    protected $index;
-
-    public function __construct(Runtime $runtime)
+    public function __construct(protected Runtime $runtime)
     {
-        $this->runtime = $runtime;
     }
 
     abstract public function exec(): void;
@@ -31,9 +28,6 @@ abstract class AbstractCommand
      */
     public function getIndex(): int
     {
-        if (!isset($this->index)) {
-            throw new Exception("Command index is undefined");
-        }
-        return $this->index;
+        return $this->index ?? throw new Exception("Command index is undefined");
     }
 }

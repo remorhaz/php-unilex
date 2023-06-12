@@ -10,14 +10,10 @@ use Remorhaz\UniLex\Exception as UniLexException;
 
 class LanguageBuilder
 {
-    private $symbolTable;
-
-    private $transitionMap;
-
-    public function __construct(SymbolTable $symbolTable, TransitionMap $transitionMap)
-    {
-        $this->symbolTable = $symbolTable;
-        $this->transitionMap = $transitionMap;
+    public function __construct(
+        private SymbolTable $symbolTable,
+        private TransitionMap $transitionMap,
+    ) {
     }
 
     public static function forNfa(Nfa $nfa): self
@@ -26,9 +22,6 @@ class LanguageBuilder
     }
 
     /**
-     * @param int            $stateIn
-     * @param int            $stateOut
-     * @param RangeInterface ...$ranges
      * @throws UniLexException
      */
     public function addTransition(int $stateIn, int $stateOut, RangeInterface ...$ranges): void
@@ -38,7 +31,7 @@ class LanguageBuilder
 
     /**
      * @param RangeInterface ...$ranges
-     * @return array
+     * @return list<int>
      * @throws UniLexException
      */
     public function getSymbolList(RangeInterface ...$ranges): array

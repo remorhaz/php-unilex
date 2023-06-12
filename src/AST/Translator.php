@@ -9,16 +9,12 @@ use Remorhaz\UniLex\Stack\SymbolStack;
 
 class Translator
 {
-    private $tree;
+    private SymbolStack $stack;
 
-    private $listener;
-
-    private $stack;
-
-    public function __construct(Tree $tree, TranslatorListenerInterface $listener)
-    {
-        $this->tree = $tree;
-        $this->listener = $listener;
+    public function __construct(
+        private Tree $tree,
+        private TranslatorListenerInterface $listener,
+    ) {
         $this->stack = new SymbolStack();
     }
 

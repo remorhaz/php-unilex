@@ -10,67 +10,54 @@ use Remorhaz\UniLex\Exception;
 class SymbolTable
 {
     /**
-     * @var RangeSetInterface[]
+     * @var array<int, RangeSetInterface>
      */
-    private $rangeSetList = [];
+    private array $rangeSetList = [];
 
-    private $nextSymbol = 0;
+    private int $nextSymbol = 0;
 
-    /**
-     * @param RangeSetInterface $rangeSet
-     * @return int
-     */
     public function addSymbol(RangeSetInterface $rangeSet): int
     {
         $symbolId = $this->nextSymbol++;
         $this->rangeSetList[$symbolId] = $rangeSet;
+
         return $symbolId;
     }
 
     /**
-     * @param int $symbolId
-     * @param RangeSetInterface $rangeSet
      * @throws Exception
      */
     public function importSymbol(int $symbolId, RangeSetInterface $rangeSet): void
     {
-        if (isset($this->rangeSetList[$symbolId])) {
-            throw new Exception("Symbol {$symbolId} already defined in symbol table");
-        }
-        $this->rangeSetList[$symbolId] = $rangeSet;
+        $this->rangeSetList[$symbolId] = isset($this->rangeSetList[$symbolId])
+            ? throw new Exception("Symbol $symbolId already defined in symbol table")
+            : $rangeSet;
         $this->nextSymbol = max(array_keys($this->rangeSetList));
     }
 
     /**
-     * @param int $symbolId
-     * @param RangeSetInterface $rangeSet
-     * @return SymbolTable
      * @throws Exception
      */
     public function replaceSymbol(int $symbolId, RangeSetInterface $rangeSet): self
     {
-        if (!isset($this->rangeSetList[$symbolId])) {
-            throw new Exception("Symbol {$symbolId} is not defined in symbol table");
-        }
-        $this->rangeSetList[$symbolId] = $rangeSet;
+        $this->rangeSetList[$symbolId] = isset($this->rangeSetList[$symbolId])
+            ? $rangeSet
+            : throw new Exception("Symbol {$symbolId} is not defined in symbol table");
+
         return $this;
     }
 
     /**
-     * @param int $symbolId
-     * @return RangeSetInterface
      * @throws Exception
      */
     public function getRangeSet(int $symbolId): RangeSetInterface
     {
-        if (!isset($this->rangeSetList[$symbolId])) {
-            throw new Exception("Symbol {$symbolId} is not defined in symbol table");
-        }
-        return $this->rangeSetList[$symbolId];
+        return $this->rangeSetList[$symbolId]
+            ?? throw new Exception("Symbol $symbolId is not defined in symbol table");
     }
 
     /**
-     * @return RangeSetInterface[]
+     * @return array<int, RangeSetInterface>
      */
     public function getRangeSetList(): array
     {
@@ -78,7 +65,7 @@ class SymbolTable
     }
 
     /**
-     * @return int[]
+     * @return list<int>
      */
     public function getSymbolList(): array
     {

@@ -7,37 +7,36 @@ namespace Remorhaz\UniLex\Parser\LL1\Lookup;
 abstract class Set
 {
     /**
-     * @var array
+     * @var array<int, list<int>>
      */
-    private $tokenMap = [];
+    private array $tokenMap = [];
 
     /**
      * This counter increases each time changes are made to set.
-     *
-     * @var int
      */
-    private $changeCount = 0;
+    private int $changeCount = 0;
 
     /**
      * Adds list of tokens to the set.
-     *
-     * @param int $symbolId
-     * @param int ...$tokenIdList
      */
     public function addToken(int $symbolId, int ...$tokenIdList): void
     {
         if (empty($tokenIdList)) {
             return;
         }
+
         if (!isset($this->tokenMap[$symbolId])) {
             $this->tokenMap[$symbolId] = $tokenIdList;
             $this->increaseChangeCount(count($tokenIdList));
+
             return;
         }
+
         $newTokenIdList = array_diff($tokenIdList, $this->tokenMap[$symbolId]);
         if (empty($newTokenIdList)) {
             return;
         }
+
         $this->tokenMap[$symbolId] = array_merge($this->tokenMap[$symbolId], $newTokenIdList);
         $this->increaseChangeCount(count($newTokenIdList));
     }
@@ -47,6 +46,10 @@ abstract class Set
         $this->changeCount += $amount;
     }
 
+    /**
+     * @param int $symbolId
+     * @return list<int>
+     */
     public function getTokens(int $symbolId): array
     {
         return $this->tokenMap[$symbolId] ?? [];
@@ -54,8 +57,6 @@ abstract class Set
 
     /**
      * Returns amount of changes since last reset.
-     *
-     * @return int
      */
     public function getChangeCount(): int
     {
@@ -72,9 +73,6 @@ abstract class Set
 
     /**
      * Merges token sets.
-     *
-     * @param int $targetSymbolId
-     * @param int $sourceSymbolId
      */
     public function mergeTokens(int $targetSymbolId, int $sourceSymbolId): void
     {

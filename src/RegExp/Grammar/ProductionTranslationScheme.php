@@ -11,15 +11,12 @@ use Remorhaz\UniLex\RegExp\AST\NodeType;
 
 class ProductionTranslationScheme
 {
-    private $tree;
-
-    public function __construct(Tree $tree)
-    {
-        $this->tree = $tree;
+    public function __construct(
+        private Tree $tree,
+    ) {
     }
 
     /**
-     * @param Production $production
      * @throws Exception
      */
     public function applyActions(Production $production): void

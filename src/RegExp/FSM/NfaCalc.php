@@ -6,13 +6,15 @@ namespace Remorhaz\UniLex\RegExp\FSM;
 
 class NfaCalc
 {
-    private $nfa;
-
-    public function __construct(Nfa $nfa)
-    {
-        $this->nfa = $nfa;
+    public function __construct(
+        private Nfa $nfa,
+    ) {
     }
 
+    /**
+     * @param int ...$stateList
+     * @return list<int>
+     */
     public function getEpsilonClosure(int ...$stateList): array
     {
         $notProcessedStateList = $stateList;
@@ -25,9 +27,15 @@ class NfaCalc
             $notProcessedStateList = array_merge($notProcessedStateList, $newNotProcessedStateList);
         }
         sort($processedStateList);
+
         return $processedStateList;
     }
 
+    /**
+     * @param int $symbolId
+     * @param int ...$stateList
+     * @return list<int>
+     */
     public function getSymbolMoves(int $symbolId, int ...$stateList): array
     {
         $result = [];
@@ -37,9 +45,15 @@ class NfaCalc
             $result = array_merge($result, $newMoveList);
         }
         sort($result);
+
         return $result;
     }
 
+    /**
+     * @param int $symbolId
+     * @param int $stateIn
+     * @return list<int>
+     */
     private function getStateSymbolMoves(int $symbolId, int $stateIn): array
     {
         $moveList = $this
@@ -52,9 +66,13 @@ class NfaCalc
                 $stateOutList[] = $stateOut;
             }
         }
+
         return $stateOutList;
     }
 
+    /**
+     * @return list<int>
+     */
     private function getStateEpsilonMoves(int $stateIn): array
     {
         $moveList = $this
@@ -62,6 +80,7 @@ class NfaCalc
             ->getEpsilonTransitionMap()
             ->getExitList($stateIn);
         $moveList[$stateIn] = true;
+
         return array_keys($moveList);
     }
 }

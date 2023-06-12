@@ -19,9 +19,6 @@ use Remorhaz\UniLex\Lexer\TokenReader;
 abstract class ParserFactory
 {
     /**
-     * @param Tree                $tree
-     * @param CharBufferInterface $buffer
-     * @return Parser
      * @throws Exception
      */
     public static function createFromBuffer(Tree $tree, CharBufferInterface $buffer): Parser

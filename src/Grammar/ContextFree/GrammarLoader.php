@@ -19,11 +19,9 @@ abstract class GrammarLoader
     public const EOI_SYMBOL_KEY = 'eoi_symbol';
 
     /**
-     * @param array $config
-     * @return Grammar
      * @throws Exception
      */
-    public static function loadConfig($config): Grammar
+    public static function loadConfig(mixed $config): Grammar
     {
         $tokenMap = self::getConfigValue($config, self::TOKEN_MAP_KEY);
         $productionMap = self::getConfigValue($config, self::PRODUCTION_MAP_KEY);
@@ -32,41 +30,44 @@ abstract class GrammarLoader
         $eoiSymbol = self::getConfigValue($config, self::EOI_SYMBOL_KEY);
         $grammar = new Grammar($rootSymbol, $startSymbol, $eoiSymbol);
         self::loadFromMaps($grammar, $tokenMap, $productionMap);
+
         return $grammar;
     }
 
     /**
-     * @param string $fileName
-     * @return Grammar
      * @throws Exception
      */
     public static function loadFile(string $fileName): Grammar
     {
-        /** @noinspection PhpIncludeInspection */
         $config = @include $fileName;
-        if (false === $config) {
-            throw new Exception("Config file {$fileName} not found");
-        }
-        return self::loadConfig($config);
+
+        return false === $config
+            ? throw new Exception("Config file {$fileName} not found")
+            : self::loadConfig($config);
     }
 
     /**
-     * @param mixed $config
-     * @param string $key
-     * @return mixed
      * @throws Exception
      */
-    private static function getConfigValue($config, string $key)
+    private static function getConfigValue(mixed $config, string $key): mixed
     {
         if (!is_array($config)) {
             throw new Exception("Config should be an array");
         }
+
         if (!isset($config[$key])) {
-            throw new Exception("Key '{$key}' not found in config");
+            throw new Exception("Key '$key' not found in config");
         }
+
         return $config[$key];
     }
 
+    /**
+     * @param Grammar                                  $grammar
+     * @param array<int, int>                          $tokenMap
+     * @param array<int, array<int, list<Production>>> $productionMap
+     * @return void
+     */
     private static function loadFromMaps(Grammar $grammar, array $tokenMap, array $productionMap): void
     {
         foreach ($tokenMap as $symbolId => $tokenId) {

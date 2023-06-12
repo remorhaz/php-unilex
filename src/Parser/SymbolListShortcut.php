@@ -6,56 +6,54 @@ namespace Remorhaz\UniLex\Parser;
 
 use ArrayAccess;
 use Remorhaz\UniLex\Exception;
-use ReturnTypeWillChange;
 
+use function is_int;
+
+/**
+ * @template ArrayAccess<int, AttributeListShortcut>
+ */
 class SymbolListShortcut implements ArrayAccess
 {
-    private $production;
-
-    public function __construct(Production $production)
-    {
-        $this->production = $production;
+    public function __construct(
+        private Production $production,
+    ) {
     }
 
     /**
-     * @param mixed $offset
-     * @return mixed|array|AttributeListShortcut
      * @throws Exception
      */
-    #[ReturnTypeWillChange]
-    public function offsetGet($offset)
+    #[\ReturnTypeWillChange]
+    public function offsetGet(mixed $offset): AttributeListShortcut
     {
         $symbol = $this
             ->production
             ->getSymbol($offset);
+
         return new AttributeListShortcut($symbol);
     }
 
     /**
-     * @param mixed $offset
-     * @param mixed $value
      * @throws Exception
      */
-    #[ReturnTypeWillChange]
-    public function offsetSet($offset, $value)
+    #[\ReturnTypeWillChange]
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         throw new Exception("Cannot change production symbol");
     }
 
     /**
-     * @param mixed $offset
      * @throws Exception
      */
-    #[ReturnTypeWillChange]
-    public function offsetUnset($offset)
+    #[\ReturnTypeWillChange]
+    public function offsetUnset(mixed $offset): void
     {
         throw new Exception("Cannot remove production symbol");
     }
 
-    #[ReturnTypeWillChange]
-    public function offsetExists($offset)
+    #[\ReturnTypeWillChange]
+    public function offsetExists(mixed $offset): bool
     {
-        return $this
+        return is_int($offset) && $this
             ->production
             ->symbolExists($offset);
     }

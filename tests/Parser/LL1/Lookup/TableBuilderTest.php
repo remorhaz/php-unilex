@@ -33,17 +33,23 @@ class TableBuilderTest extends TestCase
         self::assertEquals($expectedValue, $actualValue);
     }
 
-    public function providerValidGrammarTables(): array
+    /**
+     * @return iterable<string, array{string, array<int, array<int, int>>}>
+     */
+    public static function providerValidGrammarTables(): iterable
     {
         return [
             "Grammar from SimpleExpr example" => [
                 ConfigFile::getPath(),
-                $this->getSimpleExprGrammarTable(),
+                self::getSimpleExprGrammarTable(),
             ],
         ];
     }
 
-    private function getSimpleExprGrammarTable(): array
+    /**
+     * @return array<int, array<int, int>>
+     */
+    private static function getSimpleExprGrammarTable(): array
     {
         return [
             SymbolType::NT_E0 => [

@@ -33,20 +33,26 @@ interface GrammarInterface
      */
     public function getToken(int $symbolId): int;
 
+    /**
+     * @return list<int>
+     */
     public function getTerminalList(): array;
 
+    /**
+     * @return list<int>
+     */
     public function getNonTerminalList(): array;
 
     /**
      * @param int $symbolId
-     * @return Production[]
+     * @return array<int, Production>
      */
     public function getProductionList(int $symbolId): array;
 
     public function getProduction(int $symbolId, int $productionIndex): Production;
 
     /**
-     * @return Production[]
+     * @return list<Production>
      */
     public function getFullProductionList(): array;
 

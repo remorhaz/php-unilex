@@ -7,23 +7,22 @@ namespace Remorhaz\UniLex\Parser;
 use ArrayAccess;
 use Remorhaz\UniLex\AttributeListInterface;
 use Remorhaz\UniLex\Exception;
-use ReturnTypeWillChange;
 
+use function gettype;
+use function is_string;
+
+/**
+ * @template ArrayAccess<string, mixed>
+ */
 class AttributeListShortcut implements ArrayAccess
 {
-    private $attributeList;
-
-    public function __construct(AttributeListInterface $attributeList)
-    {
-        $this->attributeList = $attributeList;
+    public function __construct(
+        private AttributeListInterface $attributeList,
+    ) {
     }
 
-    /**
-     * @param mixed $offset
-     * @return mixed
-     */
-    #[ReturnTypeWillChange]
-    public function offsetGet($offset)
+    #[\ReturnTypeWillChange]
+    public function offsetGet(mixed $offset): mixed
     {
         return $this
             ->attributeList
@@ -31,35 +30,34 @@ class AttributeListShortcut implements ArrayAccess
     }
 
     /**
-     * @param mixed $offset
-     * @param mixed $value
+     * @throws Exception
      */
-    #[ReturnTypeWillChange]
-    public function offsetSet($offset, $value)
+    #[\ReturnTypeWillChange]
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         $this
             ->attributeList
-            ->setAttribute($offset, $value);
+            ->setAttribute(
+                is_string($offset)
+                    ? $offset
+                    : throw new Exception("Invalid attribute offset type: " . gettype($offset)),
+                $value,
+            );
     }
 
-    /**
-     * @param mixed $offset
-     * @return bool
-     */
-    #[ReturnTypeWillChange]
-    public function offsetExists($offset)
+    #[\ReturnTypeWillChange]
+    public function offsetExists(mixed $offset): bool
     {
-        return $this
+        return is_string($offset) && $this
             ->attributeList
             ->attributeExists($offset);
     }
 
     /**
-     * @param mixed $offset
      * @throws Exception
      */
-    #[ReturnTypeWillChange]
-    public function offsetUnset($offset)
+    #[\ReturnTypeWillChange]
+    public function offsetUnset(mixed $offset): void
     {
         throw new Exception("Cannot remove symbol attribute");
     }

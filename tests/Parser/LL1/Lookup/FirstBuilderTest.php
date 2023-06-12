@@ -20,7 +20,7 @@ class FirstBuilderTest extends TestCase
     /**
      * @param string $configFile
      * @param int $symbolId
-     * @param array $expectedValue
+     * @param list<int> $expectedValue
      * @throws UnilexException
      * @dataProvider providerValidGrammarFirsts
      */
@@ -36,10 +36,13 @@ class FirstBuilderTest extends TestCase
         self::assertEquals($expectedValue, $actualValue);
     }
 
-    public function providerValidGrammarFirsts(): array
+    /**
+     * @return iterable<string, array{string, int, list<int>}>
+     */
+    public static function providerValidGrammarFirsts(): iterable
     {
         $data = [];
-        foreach ($this->getSimpleExprGrammarFirstList() as $key => $firsts) {
+        foreach (self::getSimpleExprGrammarFirstList() as $key => $firsts) {
             [$symbolId, $expectedFirst] = $firsts;
             $data["Grammar from SimpleExpr example, symbol {$key}"] =
                 [ConfigFile::getPath(), $symbolId, $expectedFirst];
@@ -47,7 +50,10 @@ class FirstBuilderTest extends TestCase
         return $data;
     }
 
-    private function getSimpleExprGrammarFirstList(): array
+    /**
+     * @return array<string, array{int, list<int>}>
+     */
+    private static function getSimpleExprGrammarFirstList(): array
     {
         return [
             "T_PLUS"            => [SymbolType::T_PLUS, [TokenType::PLUS]],
@@ -82,18 +88,24 @@ class FirstBuilderTest extends TestCase
         self::assertEquals($expectedValue, $actualValue);
     }
 
-    public function providerValidGrammarEpsilons(): array
+    /**
+     * @return iterable<string, array{string, int, bool}>
+     */
+    public static function providerValidGrammarEpsilons(): iterable
     {
         $data = [];
-        foreach ($this->getSimpleExprGrammarEpsilonList() as $key => $epsilon) {
+        foreach (self::getSimpleExprGrammarEpsilonList() as $key => $epsilon) {
             [$symbolId, $expectedValue] = $epsilon;
-            $data["Grammar from SimpleExpr example, symbol {$key}"] =
+            $data["Grammar from SimpleExpr example, symbol $key"] =
                 [ConfigFile::getPath(), $symbolId, $expectedValue];
         }
         return $data;
     }
 
-    private function getSimpleExprGrammarEpsilonList(): array
+    /**
+     * @return array<string, array{int, bool}>
+     */
+    private static function getSimpleExprGrammarEpsilonList(): array
     {
         return [
             "T_PLUS"            => [SymbolType::T_PLUS, false],

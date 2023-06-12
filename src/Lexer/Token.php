@@ -10,16 +10,15 @@ use Remorhaz\UniLex\Parser\AttributeListShortcut;
 
 class Token implements AttributeListInterface
 {
-    private $type;
+    /**
+     * @var array<string, mixed>
+     */
+    private array $attributeList = [];
 
-    private $isEoi;
-
-    private $attributeList = [];
-
-    public function __construct(int $type, bool $isEoi)
-    {
-        $this->type = $type;
-        $this->isEoi = $isEoi;
+    public function __construct(
+        private int $type,
+        private bool $isEoi,
+    ) {
     }
 
     public function getType(): int
@@ -33,43 +32,31 @@ class Token implements AttributeListInterface
     }
 
     /**
-     * @param string $name
-     * @param mixed $value
      * @throws Exception
      */
-    public function setAttribute(string $name, $value): void
+    public function setAttribute(string $name, mixed $value): static
     {
-        if (isset($this->attributeList[$name])) {
-            throw new Exception("Token attribute '{$name}' is already set");
-        }
-        $this->attributeList[$name] = $value;
+        $this->attributeList[$name] = isset($this->attributeList[$name])
+            ? throw new Exception("Token attribute '{$name}' is already set")
+            : $value;
+
+        return $this;
     }
 
     /**
-     * @param string $name
-     * @return mixed
      * @throws Exception
      */
-    public function getAttribute(string $name)
+    public function getAttribute(string $name): mixed
     {
-        if (!$this->attributeExists($name)) {
-            throw new Exception("Token attribute '{$name}' is not defined");
-        }
-        return $this->attributeList[$name];
+        return $this->attributeList[$name]
+            ?? throw new Exception("Token attribute '$name' is not defined");
     }
 
-    /**
-     * @param string $name
-     * @return bool
-     */
     public function attributeExists(string $name): bool
     {
         return isset($this->attributeList[$name]);
     }
 
-    /**
-     * @return array|AttributeListShortcut
-     */
     public function getShortcut(): AttributeListShortcut
     {
         return new AttributeListShortcut($this);

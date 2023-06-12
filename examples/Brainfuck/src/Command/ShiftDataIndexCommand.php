@@ -9,12 +9,11 @@ use Remorhaz\UniLex\Example\Brainfuck\Runtime;
 
 class ShiftDataIndexCommand extends AbstractCommand
 {
-    private $dataIndex;
-
-    public function __construct(Runtime $runtime, int $index)
-    {
+    public function __construct(
+        Runtime $runtime,
+        private int $dataIndex,
+    ) {
         parent::__construct($runtime);
-        $this->dataIndex = $index;
     }
 
     /**
