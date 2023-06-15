@@ -79,16 +79,19 @@
       "vendor/bin/phpcs -sp"
     ],
     "test-unit": [
-      "vendor/bin/phpunit --coverage-xml=build/logs/coverage-xml --log-junit=build/logs/junit.xml"
+      "vendor/bin/phpunit --coverage-xml=build/logs/coverage-xml --coverage-clover=build/logs/clover.xml --log-junit=build/logs/junit.xml"
     ],
     "test": [
       "@test-cs",
       "@test-unit"
     ],
     "infection": [
-      "@test-unit",
       "mkdir -p build/logs/infection",
       "vendor/bin/infection --threads=4 --coverage=build/logs --no-progress --skip-initial-tests"
+    ],
+    "test-infection": [
+      "@test-unit",
+      "@infection"
     ]
   },
   "config": {
