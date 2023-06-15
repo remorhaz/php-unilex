@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Removed
 - Dropped support dor PHP 7.
+### Added
+- Added support for `thecondingmachine/safe` version 2.
 
 ## [0.4.2] - 2022-02-10
 ### Fixed
