@@ -21,7 +21,7 @@
     "bin/unilex"
   ],
   "require": {
-    "php": "^8",
+    "php": "~8.0.0 || ~8.1.0 || ~8.2.0",
     "phpdocumentor/reflection-docblock": "^4.3 || ^5",
     "nikic/php-parser": "^4.12",
     "remorhaz/int-rangesets": "^0.2.1",
