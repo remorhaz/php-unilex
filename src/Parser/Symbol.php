@@ -8,6 +8,8 @@ use Remorhaz\UniLex\AttributeListInterface;
 use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\Stack\StackableSymbolInterface;
 
+use function array_key_exists;
+
 class Symbol implements StackableSymbolInterface, AttributeListInterface
 {
     /**
@@ -36,8 +38,9 @@ class Symbol implements StackableSymbolInterface, AttributeListInterface
      */
     public function getAttribute(string $name): mixed
     {
-        return $this->attributeList[$name]
-            ?? throw new Exception("Attribute '{$name}' not defined in node {$this->getIndex()}");
+        return $this->attributeExists($name)
+            ? $this->attributeList[$name]
+            : throw new Exception("Attribute '$name' not defined in node {$this->getIndex()}");
     }
 
     /**
@@ -46,7 +49,7 @@ class Symbol implements StackableSymbolInterface, AttributeListInterface
     public function setAttribute(string $name, mixed $value): static
     {
         $this->attributeList[$name] = $this->attributeExists($name)
-            ? throw new Exception("Attribute '{$name}' is already defined in node {$this->getIndex()}")
+            ? throw new Exception("Attribute '$name' is already defined in node {$this->getIndex()}")
             : $value;
 
         return $this;
@@ -58,7 +61,7 @@ class Symbol implements StackableSymbolInterface, AttributeListInterface
      */
     public function attributeExists(string $name): bool
     {
-        return isset($this->attributeList[$name]);
+        return array_key_exists($name, $this->attributeList);
     }
 
     public function getShortcut(): AttributeListShortcut
