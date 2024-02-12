@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Remorhaz\UniLex\Parser\LL1\Lookup;
 
+use function array_values;
+
 abstract class Set
 {
     /**
@@ -26,7 +28,7 @@ abstract class Set
         }
 
         if (!isset($this->tokenMap[$symbolId])) {
-            $this->tokenMap[$symbolId] = $tokenIdList;
+            $this->tokenMap[$symbolId] = array_values($tokenIdList);
             $this->increaseChangeCount(count($tokenIdList));
 
             return;

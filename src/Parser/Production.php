@@ -16,16 +16,16 @@ class Production implements StackableSymbolInterface, Stringable
     private array $symbolList;
 
     public function __construct(
-        private Symbol $header,
-        private int $index,
+        private readonly Symbol $header,
+        private readonly int $index,
         Symbol ...$symbolList,
     ) {
-        $this->symbolList = $symbolList;
+        $this->symbolList = \array_values($symbolList);
     }
 
-    public function __toString()
+    public function __toString(): string
     {
-        return "{$this->header->getSymbolId()}:{$this->index}";
+        return "{$this->header->getSymbolId()}:$this->index";
     }
 
     public function getHeaderShortcut(): AttributeListShortcut

@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace Remorhaz\UniLex\Test\Grammar\ContextFree;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Example\SimpleExpr\Grammar\ConfigFile;
 use Remorhaz\UniLex\Example\SimpleExpr\Grammar\TokenType;
 use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\Grammar\ContextFree\GrammarLoader;
 
-/**
- * @covers \Remorhaz\UniLex\Grammar\ContextFree\GrammarLoader
- */
+#[CoversClass(GrammarLoader::class)]
 class GrammarLoaderTest extends TestCase
 {
     /**

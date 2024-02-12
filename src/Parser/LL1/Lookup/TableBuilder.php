@@ -17,7 +17,7 @@ class TableBuilder
     private ?TableInterface $table = null;
 
     public function __construct(
-        private GrammarInterface $grammar,
+        private readonly GrammarInterface $grammar,
     ) {
     }
 

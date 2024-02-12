@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Remorhaz\UniLex\Test\Parser\LL1;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Example\SimpleExpr\Grammar\ConfigFile;
 use Remorhaz\UniLex\Example\SimpleExpr\Grammar\TokenType;
@@ -19,17 +21,15 @@ use Remorhaz\UniLex\Lexer\TokenReader;
 use Remorhaz\UniLex\Lexer\TokenMatcherByType;
 use Remorhaz\UniLex\Parser\LL1\UnexpectedTokenException;
 
-/**
- * @covers \Remorhaz\UniLex\Parser\LL1\Parser
- */
+#[CoversClass(Parser::class)]
 class ParserTest extends TestCase
 {
     /**
      * @param string $configFile
      * @param list<int> $input
      * @throws UniLexException
-     * @dataProvider providerValidGrammarInput
      */
+    #[DataProvider('providerValidGrammarInput')]
     public function testRun_ValidBuffer_OnTokenTriggeredForEachToken(string $configFile, array $input): void
     {
         $grammar = GrammarLoader::loadFile($configFile);

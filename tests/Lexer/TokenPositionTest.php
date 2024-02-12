@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Remorhaz\UniLex\Test\Lexer;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\Lexer\TokenPosition;
 
-/**
- * @covers \Remorhaz\UniLex\Lexer\TokenPosition
- */
+#[CoversClass(TokenPosition::class)]
 class TokenPositionTest extends TestCase
 {
     /**
@@ -34,16 +34,13 @@ class TokenPositionTest extends TestCase
     }
 
     /**
-     * @param int $startOffset
-     * @param int $finishOffset
-     * @param int $expectedLength
-     * @dataProvider providerOffsetsWithLength
      * @throws UniLexException
      */
+    #[DataProvider('providerOffsetsWithLength')]
     public function testGetLength_Constructed_ReturnsCorrectSize(
         int $startOffset,
         int $finishOffset,
-        int $expectedLength
+        int $expectedLength,
     ): void {
         $position = new TokenPosition($startOffset, $finishOffset);
         $actualValue = $position->getLength();

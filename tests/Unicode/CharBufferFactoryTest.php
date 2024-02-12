@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace Remorhaz\UniLex\Test\Unicode;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\IO\StringBuffer;
 use Remorhaz\UniLex\Unicode\CharBufferFactory;
 use Remorhaz\UniLex\Unicode\Grammar\Utf8TokenMatcher;
 
-/**
- * @covers \Remorhaz\UniLex\Unicode\CharBufferFactory
- */
+#[CoversClass(CharBufferFactory::class)]
 class CharBufferFactoryTest extends TestCase
 {
     public function testCreateFromBuffer_BufferWithCharacter_ResultGetSymbolReturnsCharacterCode(): void

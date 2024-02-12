@@ -18,8 +18,8 @@ class Symbol implements StackableSymbolInterface, AttributeListInterface
     private array $attributeList = [];
 
     public function __construct(
-        private int $index,
-        private int $symbolId,
+        private readonly int $index,
+        private readonly int $symbolId,
     ) {
     }
 

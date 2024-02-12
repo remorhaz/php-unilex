@@ -11,9 +11,11 @@ final class PrettyPrinter extends Standard
 {
     protected function pExpr_Array(Expr\Array_ $node): string
     {
+        // $this->options was replaced by set of specific properties in 5.0
+        $shortArraySyntax = $this->options['shortArraySyntax'] ?? $this->shortArraySyntax ?? false;
         $syntax = $node->getAttribute(
             'kind',
-            $this->options['shortArraySyntax'] ? Expr\Array_::KIND_SHORT : Expr\Array_::KIND_LONG,
+            $shortArraySyntax ? Expr\Array_::KIND_SHORT : Expr\Array_::KIND_LONG,
         );
 
         return $syntax === Expr\Array_::KIND_SHORT

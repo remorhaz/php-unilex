@@ -1,33 +1,34 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <phpunit
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.5/phpunit.xsd"
-        backupGlobals="true"
-        forceCoversAnnotation="true"
-        defaultTestSuite="all">
-    <testsuites>
-        <testsuite name="all">
-            <directory>tests/</directory>
-            <directory>examples/Brainfuck/tests/</directory>
-            <directory>examples/SimpleExpr/tests/</directory>
-        </testsuite>
-        <testsuite name="examples">
-            <directory>examples/Brainfuck/tests/</directory>
-            <directory>examples/SimpleExpr/tests/</directory>
-        </testsuite>
-        <testsuite name="library">
-            <directory>tests/</directory>
-        </testsuite>
-    </testsuites>
-    <coverage processUncoveredFiles="true">
-        <include>
-            <directory suffix=".php">src/</directory>
-            <directory suffix=".php">examples/Brainfuck/src/</directory>
-            <directory suffix=".php">examples/SimpleExpr/src/</directory>
-        </include>
-        <exclude>
-            <file>src/RegExp/PropertyIndex.php</file>
-            <directory>src/RegExp/Properties/</directory>
-        </exclude>
-    </coverage>
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.1/phpunit.xsd"
+    backupGlobals="true"
+    defaultTestSuite="all"
+    cacheDirectory="build/.phpunit.cache"
+    requireCoverageMetadata="true">
+  <testsuites>
+    <testsuite name="all">
+      <directory>tests/</directory>
+      <directory>examples/Brainfuck/tests/</directory>
+      <directory>examples/SimpleExpr/tests/</directory>
+    </testsuite>
+    <testsuite name="examples">
+      <directory>examples/Brainfuck/tests/</directory>
+      <directory>examples/SimpleExpr/tests/</directory>
+    </testsuite>
+    <testsuite name="library">
+      <directory>tests/</directory>
+    </testsuite>
+  </testsuites>
+  <source>
+    <include>
+      <directory>src/</directory>
+      <directory>examples/Brainfuck/src/</directory>
+      <directory>examples/SimpleExpr/src/</directory>
+    </include>
+    <exclude>
+      <file>src/RegExp/PropertyIndex.php</file>
+      <directory>src/RegExp/Properties/</directory>
+    </exclude>
+  </source>
 </phpunit>

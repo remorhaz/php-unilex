@@ -36,7 +36,7 @@ class CharBuffer implements CharBufferInterface, TokenExtractInterface
     private int $sourcePreviewOffset = 0;
 
     public function __construct(
-        private CharBufferInterface $source,
+        private readonly CharBufferInterface $source,
     ) {
     }
 
@@ -180,19 +180,11 @@ class CharBuffer implements CharBufferInterface, TokenExtractInterface
 
     private function getMatcher(): TokenMatcherInterface
     {
-        if (!isset($this->matcher)) {
-            $this->matcher = new Utf8TokenMatcher();
-        }
-
-        return $this->matcher;
+        return $this->matcher ??= new Utf8TokenMatcher();
     }
 
     private function getTokenFactory(): TokenFactoryInterface
     {
-        if (!isset($this->tokenFactory)) {
-            $this->tokenFactory = new TokenFactory();
-        }
-
-        return $this->tokenFactory;
+        return $this->tokenFactory ??= new TokenFactory();
     }
 }

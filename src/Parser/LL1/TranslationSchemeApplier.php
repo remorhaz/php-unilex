@@ -12,7 +12,7 @@ use Remorhaz\UniLex\Lexer\Token;
 class TranslationSchemeApplier extends AbstractParserListener
 {
     public function __construct(
-        private TranslationSchemeInterface $scheme,
+        private readonly TranslationSchemeInterface $scheme,
     ) {
     }
 

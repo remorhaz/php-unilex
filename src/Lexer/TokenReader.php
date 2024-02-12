@@ -12,9 +12,9 @@ class TokenReader implements TokenReaderInterface
     private bool $isEnd = false;
 
     public function __construct(
-        private CharBufferInterface $buffer,
-        private TokenMatcherInterface $matcher,
-        private TokenFactoryInterface $tokenFactory,
+        private readonly CharBufferInterface $buffer,
+        private readonly TokenMatcherInterface $matcher,
+        private readonly TokenFactoryInterface $tokenFactory,
     ) {
     }
 

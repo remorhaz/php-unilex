@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Remorhaz\UniLex\Test\Parser\LL1\Lookup;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\Grammar\ContextFree\GrammarLoader;
@@ -11,9 +12,7 @@ use Remorhaz\UniLex\Parser\LL1\Lookup\FirstBuilder;
 use Remorhaz\UniLex\Parser\LL1\Lookup\FollowBuilder;
 use Remorhaz\UniLex\Parser\LL1\Lookup\TableConflictChecker;
 
-/**
- * @covers \Remorhaz\UniLex\Parser\LL1\Lookup\TableConflictChecker
- */
+#[CoversClass(TableConflictChecker::class)]
 class TableConflictCheckerTest extends TestCase
 {
     /**

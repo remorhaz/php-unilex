@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace Remorhaz\UniLex\Test\Grammar\ContextFree;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Grammar\ContextFree\Production;
 
-/**
- * @covers \Remorhaz\UniLex\Grammar\ContextFree\Production
- */
+#[CoversClass(Production::class)]
 class ProductionTest extends TestCase
 {
     public function testCastToString_Constructed_ReturnsMatchingString(): void

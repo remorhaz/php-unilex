@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace Remorhaz\UniLex\Test\Unicode\Grammar;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Unicode\Grammar\TokenFactory;
 use Remorhaz\UniLex\Unicode\Grammar\TokenType;
 
-/**
- * @covers \Remorhaz\UniLex\Unicode\Grammar\TokenFactory
- */
+#[CoversClass(TokenFactory::class)]
 class TokenFactoryTest extends TestCase
 {
     public function testCreateEoiToken_Constructed_ResultIsEoiReturnsTrue(): void

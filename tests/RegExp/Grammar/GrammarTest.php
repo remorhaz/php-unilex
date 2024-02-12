@@ -4,29 +4,33 @@ declare(strict_types=1);
 
 namespace Remorhaz\UniLex\Test\RegExp\Grammar;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\AST\Node;
 use Remorhaz\UniLex\AST\Tree;
 use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\RegExp\AST\NodeType;
+use Remorhaz\UniLex\RegExp\Grammar\ProductionTranslationScheme;
+use Remorhaz\UniLex\RegExp\Grammar\SymbolTranslationScheme;
+use Remorhaz\UniLex\RegExp\Grammar\TokenTranslationScheme;
+use Remorhaz\UniLex\RegExp\Grammar\TranslationScheme;
 use Remorhaz\UniLex\RegExp\ParserFactory;
 use Remorhaz\UniLex\Unicode\CharBufferFactory;
 
-/**
- * @covers \Remorhaz\UniLex\RegExp\Grammar\TranslationScheme
- * @covers \Remorhaz\UniLex\RegExp\Grammar\SymbolTranslationScheme
- * @covers \Remorhaz\UniLex\RegExp\Grammar\ProductionTranslationScheme
- * @covers \Remorhaz\UniLex\RegExp\Grammar\TokenTranslationScheme
- */
+#[
+    CoversClass(TranslationScheme::class),
+    CoversClass(SymbolTranslationScheme::class),
+    CoversClass(ProductionTranslationScheme::class),
+    CoversClass(TokenTranslationScheme::class),
+]
 class GrammarTest extends TestCase
 {
     /**
-     * @param string $text
-     * @param $expectedValue
      * @throws UniLexException
-     * @dataProvider providerSyntaxTree
      */
-    public function testRun_ValidBuffer_CreatesMatchingSyntaxTree(string $text, $expectedValue): void
+    #[DataProvider('providerSyntaxTree')]
+    public function testRun_ValidBuffer_CreatesMatchingSyntaxTree(string $text, object $expectedValue): void
     {
         $buffer = CharBufferFactory::createFromString($text);
         $tree = new Tree();
@@ -415,20 +419,14 @@ class GrammarTest extends TestCase
     }
 
     /**
-     * @param Tree $tree
-     * @return mixed
      * @throws UniLexException
      */
-    private function exportSyntaxTree(Tree $tree)
+    private function exportSyntaxTree(Tree $tree): object
     {
         return $this->exportSyntaxTreeNode($tree->getRootNode());
     }
 
-    /**
-     * @param Node $node
-     * @return mixed
-     */
-    private function exportSyntaxTreeNode(Node $node)
+    private function exportSyntaxTreeNode(Node $node): object
     {
         $data = [
             'name' => $node->getName(),

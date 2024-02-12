@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Remorhaz\UniLex\Test;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Example\SimpleExpr\Grammar\ConfigFile;
 use Remorhaz\UniLex\Example\SimpleExpr\Grammar\TokenType;
@@ -25,9 +26,7 @@ use function array_unique;
 use function memory_get_usage;
 use function var_export;
 
-/**
- * @coversNothing
- */
+#[CoversNothing]
 class MemoryLeakTest extends TestCase
 {
     /**
@@ -42,7 +41,7 @@ class MemoryLeakTest extends TestCase
         $tableBuilder = new TableBuilder($grammar);
         $lookupTable = __DIR__ . '/../build/SimpleExprLookup.php';
         $lookupTableDump = var_export($tableBuilder->getTable()->exportMap(), true);
-        $content = "<?php return {$lookupTableDump};\n";
+        $content = "<?php return $lookupTableDump;\n";
         Safe\file_put_contents($lookupTable, $content);
 
         $attemptCount = 1000;
@@ -53,7 +52,7 @@ class MemoryLeakTest extends TestCase
             $parser = new Parser($grammar, $reader, $listener);
             $parser->loadLookupTable($lookupTable);
             $parser->run();
-            $memory[$i] = memory_get_usage();
+            $memory[$i] = memory_get_usage(true);
         }
         self::assertCount(1, array_unique($memory));
     }

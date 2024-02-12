@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace Remorhaz\UniLex\Test\RegExp\FSM;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\RegExp\FSM\StateMap;
 
-/**
- * @covers \Remorhaz\UniLex\RegExp\FSM\StateMap
- */
+#[CoversClass(StateMap::class)]
 class StateMapTest extends TestCase
 {
     /**

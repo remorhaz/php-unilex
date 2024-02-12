@@ -8,6 +8,8 @@ use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\Lexer\Token;
 use Remorhaz\UniLex\Lexer\TokenPosition;
 
+use function array_values;
+
 class CharBuffer implements CharBufferInterface, TokenExtractInterface
 {
     /**
@@ -23,7 +25,7 @@ class CharBuffer implements CharBufferInterface, TokenExtractInterface
 
     public function __construct(int ...$data)
     {
-        $this->data = $data;
+        $this->data = array_values($data);
         $this->length = count($data);
     }
 

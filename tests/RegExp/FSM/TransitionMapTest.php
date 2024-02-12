@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace Remorhaz\UniLex\Test\RegExp\FSM;
 
 use Closure;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\RegExp\FSM\StateMapInterface;
 use Remorhaz\UniLex\RegExp\FSM\TransitionMap;
 
-/**
- * @covers \Remorhaz\UniLex\RegExp\FSM\TransitionMap
- */
+#[CoversClass(TransitionMap::class)]
 class TransitionMapTest extends TestCase
 {
     /**
@@ -84,9 +83,7 @@ class TransitionMapTest extends TestCase
      */
     public function testTransitionExists_TransitionAdded_ReturnsTrue(): void
     {
-        $stateExists = function (): bool {
-            return true;
-        };
+        $stateExists = fn (): bool => true;
         $stateMap = $this->createStateExistenceProvider($stateExists);
         $transitionMap = new TransitionMap($stateMap);
         $transitionMap->addTransition(1, 2, true);
@@ -99,9 +96,7 @@ class TransitionMapTest extends TestCase
      */
     public function testTransitionExists_TransitionNotAdded_ReturnsFalse(): void
     {
-        $stateExists = function (): bool {
-            return true;
-        };
+        $stateExists = fn (): bool => true;
         $stateMap = $this->createStateExistenceProvider($stateExists);
         $transitionMap = new TransitionMap($stateMap);
         $actualValue = $transitionMap->transitionExists(1, 2);
@@ -114,9 +109,7 @@ class TransitionMapTest extends TestCase
      */
     public function testGetTransition_FromStateNotExists_ThrowsException(): void
     {
-        $stateExists = function (int $stateId): bool {
-            return 1 == $stateId;
-        };
+        $stateExists = fn (int $stateId): bool => 1 == $stateId;
         $stateMap = $this->createStateExistenceProvider($stateExists);
         $transitionMap = new TransitionMap($stateMap);
 
@@ -130,9 +123,7 @@ class TransitionMapTest extends TestCase
      */
     public function testGetTransition_ToStateNotExists_ThrowsException(): void
     {
-        $stateExists = function (int $stateId): bool {
-            return 1 == $stateId;
-        };
+        $stateExists = fn (int $stateId): bool => 1 == $stateId;
         $stateMap = $this->createStateExistenceProvider($stateExists);
         $transitionMap = new TransitionMap($stateMap);
 
@@ -146,9 +137,7 @@ class TransitionMapTest extends TestCase
      */
     public function testGetTransition_TransitionAdded_ReturnsMatchingData(): void
     {
-        $stateExists = function (): bool {
-            return true;
-        };
+        $stateExists = fn (): bool => true;
         $stateMap = $this->createStateExistenceProvider($stateExists);
         $transitionMap = new TransitionMap($stateMap);
         $transitionMap->addTransition(1, 2, 3);
@@ -161,9 +150,7 @@ class TransitionMapTest extends TestCase
      */
     public function testGetTransition_TransitionNotAdded_ThrowsException(): void
     {
-        $stateExists = function (): bool {
-            return true;
-        };
+        $stateExists = fn (): bool => true;
         $stateMap = $this->createStateExistenceProvider($stateExists);
         $transitionMap = new TransitionMap($stateMap);
 
@@ -177,9 +164,7 @@ class TransitionMapTest extends TestCase
      */
     public function testAddTransition_TransitionAdded_ThrowsException(): void
     {
-        $stateExists = function (): bool {
-            return true;
-        };
+        $stateExists = fn (): bool => true;
         $stateMap = $this->createStateExistenceProvider($stateExists);
         $transitionMap = new TransitionMap($stateMap);
         $transitionMap->addTransition(1, 2, 3);
@@ -194,9 +179,7 @@ class TransitionMapTest extends TestCase
      */
     public function testReplaceTransition_TransitionAdded_GetTransitionReturnsNewData(): void
     {
-        $stateExists = function (): bool {
-            return true;
-        };
+        $stateExists = fn (): bool => true;
         $stateMap = $this->createStateExistenceProvider($stateExists);
         $transitionMap = new TransitionMap($stateMap);
         $transitionMap->addTransition(1, 2, 3);
@@ -210,9 +193,7 @@ class TransitionMapTest extends TestCase
      */
     public function testReplaceTransition_TransitionNotAdded_GetTransitionReturnsData(): void
     {
-        $stateExists = function (): bool {
-            return true;
-        };
+        $stateExists = fn (): bool => true;
         $stateMap = $this->createStateExistenceProvider($stateExists);
         $transitionMap = new TransitionMap($stateMap);
         $transitionMap->replaceTransition(1, 2, 3);
@@ -222,9 +203,7 @@ class TransitionMapTest extends TestCase
 
     public function testGetTransitionList_TransitionNotAdded_ReturnsEmptyArray(): void
     {
-        $stateExists = function (): bool {
-            return true;
-        };
+        $stateExists = fn (): bool => true;
         $stateMap = $this->createStateExistenceProvider($stateExists);
         $actualValue = (new TransitionMap($stateMap))->getTransitionList();
         self::assertSame([], $actualValue);
@@ -235,9 +214,7 @@ class TransitionMapTest extends TestCase
      */
     public function testGetTransitionList_TransitionAdded_ReturnsArrayWithTransition(): void
     {
-        $stateExists = function (): bool {
-            return true;
-        };
+        $stateExists = fn (): bool => true;
         $stateMap = $this->createStateExistenceProvider($stateExists);
         $transitionMap = new TransitionMap($stateMap);
         $transitionMap->addTransition(1, 2, 3);

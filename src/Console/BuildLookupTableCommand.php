@@ -19,6 +19,7 @@ use Remorhaz\UniLex\Grammar\ContextFree\GrammarLoader;
 use Remorhaz\UniLex\Parser\LL1\Lookup\TableBuilder;
 use RuntimeException;
 use Safe;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidOptionException;
 use Symfony\Component\Console\Input\InputArgument;
@@ -33,11 +34,10 @@ use function sort;
 use const SORT_ASC;
 use const SORT_STRING;
 
+#[AsCommand('build-lookup-table')]
 final class BuildLookupTableCommand extends Command
 {
     private const TYPE_LL_1 = 'll-1';
-
-    protected static $defaultName = 'build-lookup-table';
 
     private BuilderFactory $builder;
 

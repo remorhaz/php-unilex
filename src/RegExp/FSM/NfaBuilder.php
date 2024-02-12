@@ -26,11 +26,11 @@ class NfaBuilder extends AbstractTranslatorListener
 
     private ?LanguageBuilder $languageBuilder = null;
 
-    private $startState;
+    private ?int $startState = null;
 
     public function __construct(
-        private Nfa $nfa,
-        private PropertyRangeLoaderInterface $propertyLoader,
+        private readonly Nfa $nfa,
+        private readonly PropertyRangeLoaderInterface $propertyLoader,
     ) {
     }
 

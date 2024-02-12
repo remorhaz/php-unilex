@@ -16,8 +16,8 @@ class Token implements AttributeListInterface
     private array $attributeList = [];
 
     public function __construct(
-        private int $type,
-        private bool $isEoi,
+        private readonly int $type,
+        private readonly bool $isEoi,
     ) {
     }
 

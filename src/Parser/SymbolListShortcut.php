@@ -15,7 +15,7 @@ use function is_int;
 class SymbolListShortcut implements ArrayAccess
 {
     public function __construct(
-        private Production $production,
+        private readonly Production $production,
     ) {
     }
 

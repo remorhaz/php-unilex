@@ -17,7 +17,7 @@ use function is_string;
 class AttributeListShortcut implements ArrayAccess
 {
     public function __construct(
-        private AttributeListInterface $attributeList,
+        private readonly AttributeListInterface $attributeList,
     ) {
     }
 

@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace Remorhaz\UniLex\Test\Lexer;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\Lexer\Token;
 
-/**
- * @covers \Remorhaz\UniLex\Lexer\Token
- */
+#[CoversClass(Token::class)]
 class TokenTest extends TestCase
 {
     public function testGetType_ConstructedWithValue_ReturnsSameValue(): void

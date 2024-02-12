@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Remorhaz\UniLex\Test\Parser\LL1\Lookup;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Example\SimpleExpr\Grammar\ConfigFile;
 use Remorhaz\UniLex\Example\SimpleExpr\Grammar\SymbolType;
@@ -12,9 +14,7 @@ use Remorhaz\UniLex\Exception as UnilexException;
 use Remorhaz\UniLex\Grammar\ContextFree\GrammarLoader;
 use Remorhaz\UniLex\Parser\LL1\Lookup\FirstBuilder;
 
-/**
- * @covers \Remorhaz\UniLex\Parser\LL1\Lookup\FirstBuilder
- */
+#[CoversClass(FirstBuilder::class)]
 class FirstBuilderTest extends TestCase
 {
     /**
@@ -22,12 +22,12 @@ class FirstBuilderTest extends TestCase
      * @param int $symbolId
      * @param list<int> $expectedValue
      * @throws UnilexException
-     * @dataProvider providerValidGrammarFirsts
      */
+    #[DataProvider('providerValidGrammarFirsts')]
     public function testGetFirst_ValidGrammar_ResultGetTokensReturnsMatchingValue(
         string $configFile,
         int $symbolId,
-        array $expectedValue
+        array $expectedValue,
     ): void {
         $grammar = GrammarLoader::loadFile($configFile);
         $first = (new FirstBuilder($grammar))->getFirst();
@@ -41,13 +41,11 @@ class FirstBuilderTest extends TestCase
      */
     public static function providerValidGrammarFirsts(): iterable
     {
-        $data = [];
         foreach (self::getSimpleExprGrammarFirstList() as $key => $firsts) {
             [$symbolId, $expectedFirst] = $firsts;
-            $data["Grammar from SimpleExpr example, symbol {$key}"] =
+            yield "Grammar from SimpleExpr example, symbol $key" =>
                 [ConfigFile::getPath(), $symbolId, $expectedFirst];
         }
-        return $data;
     }
 
     /**
@@ -71,16 +69,13 @@ class FirstBuilderTest extends TestCase
     }
 
     /**
-     * @param string $configFile
-     * @param int $symbolId
-     * @param bool $expectedValue
      * @throws UnilexException
-     * @dataProvider providerValidGrammarEpsilons
      */
+    #[DataProvider('providerValidGrammarEpsilons')]
     public function testGetFirst_ValidGrammar_ResultHasEpsilonReturnsMatchingValue(
         string $configFile,
         int $symbolId,
-        bool $expectedValue
+        bool $expectedValue,
     ): void {
         $grammar = GrammarLoader::loadFile($configFile);
         $first = (new FirstBuilder($grammar))->getFirst();
@@ -93,13 +88,11 @@ class FirstBuilderTest extends TestCase
      */
     public static function providerValidGrammarEpsilons(): iterable
     {
-        $data = [];
         foreach (self::getSimpleExprGrammarEpsilonList() as $key => $epsilon) {
             [$symbolId, $expectedValue] = $epsilon;
-            $data["Grammar from SimpleExpr example, symbol $key"] =
+            yield "Grammar from SimpleExpr example, symbol $key" =>
                 [ConfigFile::getPath(), $symbolId, $expectedValue];
         }
-        return $data;
     }
 
     /**

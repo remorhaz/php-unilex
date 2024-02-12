@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace Remorhaz\UniLex\Test\RegExp\FSM;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\IntRangeSets\Range;
 use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\IntRangeSets\RangeSet;
 use Remorhaz\UniLex\RegExp\FSM\SymbolTable;
 
-/**
- * @covers \Remorhaz\UniLex\RegExp\FSM\SymbolTable
- */
+#[CoversClass(SymbolTable::class)]
 class SymbolTableTest extends TestCase
 {
     public function testAddSymbol_NoSymbolAdded_ReturnsZero(): void

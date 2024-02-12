@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Remorhaz\UniLex\Test\RegExp\FSM;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UCD\PropertyRangeLoaderInterface;
 use Remorhaz\UniLex\AST\Node;
@@ -13,9 +15,7 @@ use Remorhaz\UniLex\RegExp\FSM\Nfa;
 use Remorhaz\UniLex\RegExp\FSM\NfaBuilder;
 use Remorhaz\UniLex\Stack\SymbolStack;
 
-/**
- * @covers \Remorhaz\UniLex\RegExp\FSM\NfaBuilder
- */
+#[CoversClass(NfaBuilder::class)]
 class NfaBuilderTest extends TestCase
 {
     /**
@@ -52,10 +52,9 @@ class NfaBuilderTest extends TestCase
     }
 
     /**
-     * @param string $name
      * @throws UniLexException
-     * @dataProvider providerNotTerminalNodeNames
      */
+    #[DataProvider('providerNotTerminalNodeNames')]
     public function testOnBeginProduction_NotTerminalNodeWithoutChildren_ThrowsException(string $name): void
     {
         $node = new Node(1, $name);
@@ -81,10 +80,9 @@ class NfaBuilderTest extends TestCase
     }
 
     /**
-     * @param string $name
      * @throws UniLexException
-     * @dataProvider providerTerminalNodeNames
      */
+    #[DataProvider('providerTerminalNodeNames')]
     public function testOnBeginProduction_TerminalNode_PushesNothingToStack(string $name): void
     {
         $node = new Node(1, $name);
@@ -178,10 +176,9 @@ class NfaBuilderTest extends TestCase
     }
 
     /**
-     * @param string $name
      * @throws UniLexException
-     * @dataProvider providerNotImplementedNodeNames
      */
+    #[DataProvider('providerNotImplementedNodeNames')]
     public function testOnBeginProduction_NotImplementedNode_ThrowsException(string $name): void
     {
         $propertyLoader = $this->createMock(PropertyRangeLoaderInterface::class);
@@ -375,10 +372,9 @@ class NfaBuilderTest extends TestCase
     }
 
     /**
-     * @param int $code
      * @throws UniLexException
-     * @dataProvider providerNotImplementedSimpleEscapeCodes
      */
+    #[DataProvider('providerNotImplementedSimpleEscapeCodes')]
     public function testOnFinishProduction_SimpleEscapeWithNotImplementedCode_ThrowsException(int $code): void
     {
         $propertyLoader = $this->createMock(PropertyRangeLoaderInterface::class);

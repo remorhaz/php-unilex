@@ -12,8 +12,8 @@ class FollowBuilder
     private ?FollowInterface $follow = null;
 
     public function __construct(
-        private GrammarInterface $grammar,
-        private FirstInterface $first,
+        private readonly GrammarInterface $grammar,
+        private readonly FirstInterface $first,
     ) {
     }
 

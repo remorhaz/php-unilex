@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Remorhaz\UniLex\Test\Unicode\Grammar;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\IO\StringBuffer;
@@ -12,16 +14,13 @@ use Remorhaz\UniLex\Unicode\Grammar\TokenType;
 use Remorhaz\UniLex\Unicode\Grammar\TokenFactory;
 use Remorhaz\UniLex\Unicode\Grammar\Utf8TokenMatcher;
 
-/**
- * @covers \Remorhaz\UniLex\Unicode\Grammar\Utf8TokenMatcher
- */
+#[CoversClass(Utf8TokenMatcher::class)]
 class Utf8TokenMatcherTest extends TestCase
 {
     /**
-     * @param string $text
-     * @dataProvider providerValidSymbolList
      * @throws UniLexException
      */
+    #[DataProvider('providerValidSymbolList')]
     public function testMatch_ValidText_ReturnsSymbolToken(string $text): void
     {
         $buffer = new StringBuffer($text);
@@ -32,14 +31,12 @@ class Utf8TokenMatcherTest extends TestCase
     }
 
     /**
-     * @param string $text
-     * @param int $expectedSymbol
-     * @dataProvider providerValidSymbolList
      * @throws UniLexException
      */
+    #[DataProvider('providerValidSymbolList')]
     public function testMatch_ValidText_ReturnsTokenWithMatchingSymbolAttribute(
         string $text,
-        int $expectedSymbol
+        int $expectedSymbol,
     ): void {
         $buffer = new StringBuffer($text);
         $matcher = new Utf8TokenMatcher();
@@ -65,10 +62,9 @@ class Utf8TokenMatcherTest extends TestCase
     }
 
     /**
-     * @param string $text
-     * @dataProvider providerInvalidText
      * @throws UniLexException
      */
+    #[DataProvider('providerInvalidText')]
     public function testMatch_InvalidText_ReturnsInvalidBytesToken(string $text): void
     {
         $buffer = new StringBuffer($text);

@@ -7,8 +7,8 @@ namespace Remorhaz\UniLex\Lexer;
 class TokenSpec
 {
     public function __construct(
-        private string $regExp,
-        private string $code,
+        private readonly string $regExp,
+        private readonly string $code,
     ) {
     }
 

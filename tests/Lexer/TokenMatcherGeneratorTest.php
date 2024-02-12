@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Remorhaz\UniLex\Test\Lexer;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use Remorhaz\UniLex\Exception as UniLexException;
@@ -17,9 +19,7 @@ use Remorhaz\UniLex\Lexer\TokenSpec;
 use Remorhaz\UniLex\Lexer\TokenMatcherTemplate;
 use Remorhaz\UniLex\Unicode\CharBufferFactory;
 
-/**
- * @covers \Remorhaz\UniLex\Lexer\TokenMatcherGenerator
- */
+#[CoversClass(TokenMatcherGenerator::class)]
 class TokenMatcherGeneratorTest extends TestCase
 {
     /**
@@ -143,12 +143,9 @@ class TokenMatcherGeneratorTest extends TestCase
     }
 
     /**
-     * @param string $text
-     * @param string $regExp
-     * @param string $expectedValue
      * @throws UniLexException
-     * @dataProvider providerValidRegExpInput
      */
+    #[DataProvider('providerValidRegExpInput')]
     public function testLoad_ValidInput_MatchesValidToken(string $text, string $regExp, string $expectedValue): void
     {
         $matcherClass = $this->createTokenMatcherClassName();
@@ -188,20 +185,15 @@ SOURCE;
     }
 
     /**
-     * @param string $text
-     * @param string $firstRegExp
-     * @param string $secondRegExp
-     * @param int    $token
-     * @param string $expectedValue
      * @throws UniLexException
-     * @dataProvider providerTwoRegExpSpecsInSameMode
      */
+    #[DataProvider('providerTwoRegExpSpecsInSameMode')]
     public function testLoad_TwoRegExpSpecsInSameMode_MatchesValidToken(
         string $text,
         string $firstRegExp,
         string $secondRegExp,
         int $token,
-        string $expectedValue
+        string $expectedValue,
     ): void {
         $matcherClass = $this->createTokenMatcherClassName();
         $spec = new TokenMatcherSpec($matcherClass, TokenMatcherTemplate::class);
@@ -231,7 +223,7 @@ SOURCE;
     /**
      * @return iterable<string, array{string, string, string, int, string}>
      */
-    public function providerTwoRegExpSpecsInSameMode(): iterable
+    public static function providerTwoRegExpSpecsInSameMode(): iterable
     {
         return [
             'Different latin chars' => ['ab', 'a', 'b', 1, 'a'],
@@ -243,18 +235,14 @@ SOURCE;
     }
 
     /**
-     * @param string $text
-     * @param string $prefixRegExp
-     * @param string $regExp
-     * @param string $expectedValue
-     * @dataProvider providerValidRegExpInputWithPrefix
      * @throws UniLexException
      */
+    #[DataProvider('providerValidRegExpInputWithPrefix')]
     public function testLoad_ValidInputWithPrefix_MatchesValidToken(
         string $text,
         string $prefixRegExp,
         string $regExp,
-        string $expectedValue
+        string $expectedValue,
     ): void {
         $matcherClass = $this->createTokenMatcherClassName();
         $spec = new TokenMatcherSpec($matcherClass, TokenMatcherTemplate::class);
@@ -291,6 +279,6 @@ SOURCE;
     {
         static $nextMatcherClassIndex = 1;
 
-        return __CLASS__ . '\TokenMatcher' . (string) $nextMatcherClassIndex++;
+        return __CLASS__ . '\TokenMatcher' . $nextMatcherClassIndex++;
     }
 }

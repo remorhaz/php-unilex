@@ -32,16 +32,25 @@ use function str_repeat;
 
 class TokenMatcherGenerator
 {
-    private $output;
+    private ?string $output = null;
 
-    private $dfa;
+    /**
+     * @var array<string, Dfa>
+     */
+    private array $dfa = [];
 
-    private $regExpFinishMap = [];
+    /**
+     * @var array<string, array<int, string>>
+     */
+    private array $regExpFinishMap = [];
 
-    private $conditionFunctions = [];
+    /**
+     * @var array<string, string>
+     */
+    private array $conditionFunctions = [];
 
     public function __construct(
-        private TokenMatcherSpec $spec,
+        private readonly TokenMatcherSpec $spec,
     ) {
     }
 
@@ -108,7 +117,7 @@ class TokenMatcherGenerator
         $comment = "/**\n";
         $commentLineList = explode("\n", $content);
         foreach ($commentLineList as $commentLine) {
-            $comment .= rtrim(" * {$commentLine}") . "\n";
+            $comment .= rtrim(" * $commentLine") . "\n";
         }
         $comment .= " */\n";
 
@@ -123,7 +132,7 @@ class TokenMatcherGenerator
         $headerParts = [];
         $namespace = $this->spec->getTargetNamespaceName();
         if ($namespace != '') {
-            $headerParts[] = $this->buildMethodPart("namespace {$namespace};", 0);
+            $headerParts[] = $this->buildMethodPart("namespace $namespace;", 0);
         }
         $useList = $this->buildUseList();
         if ('' != $useList) {
@@ -144,8 +153,8 @@ class TokenMatcherGenerator
     {
         $result = '';
         foreach ($this->spec->getUsedClassList() as $alias => $className) {
-            $classWithAlias = is_string($alias) ? "{$className} {$alias}" : $className;
-            $result .= $this->buildMethodPart("use {$classWithAlias};", 0);
+            $classWithAlias = is_string($alias) ? "$className $alias" : $className;
+            $result .= $this->buildMethodPart("use $classWithAlias;", 0);
         }
 
         return $result;
@@ -185,7 +194,7 @@ class TokenMatcherGenerator
                 continue;
             }
             $result .=
-                $this->buildMethodPart("if (\$context->getMode() == '{$mode}') {") .
+                $this->buildMethodPart("if (\$context->getMode() == '$mode') {") .
                 $this->buildFsmEntry($mode, 3) .
                 $this->buildMethodPart("}");
         }
@@ -373,7 +382,7 @@ class TokenMatcherGenerator
 
         foreach ($this->conditionFunctions as $method => $conditionList) {
             $result .=
-                "\n    private function {$method}(int \$char): bool\n    {\n" .
+                "\n    private function $method(int \$char): bool\n    {\n" .
                 $this->buildMethodPart("return") .
                 $this->buildMethodPart(rtrim($conditionList) . ';') .
                 "    }\n";

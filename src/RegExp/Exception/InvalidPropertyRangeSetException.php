@@ -15,12 +15,12 @@ use function is_object;
 final class InvalidPropertyRangeSetException extends UnexpectedValueException implements ExceptionInterface
 {
     public function __construct(
-        private string $propertyName,
-        private string $propertyFile,
-        private mixed $rangeSet,
+        private readonly string $propertyName,
+        private readonly string $propertyFile,
+        private readonly mixed $rangeSet,
         ?Throwable $previous = null,
     ) {
-        parent::__construct($this->buildMessage(), 0, $previous);
+        parent::__construct($this->buildMessage(), previous: $previous);
     }
 
     private function buildMessage(): string

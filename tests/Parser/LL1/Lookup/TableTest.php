@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace Remorhaz\UniLex\Test\Parser\LL1\Lookup;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\Parser\LL1\Lookup\Table;
 
-/**
- * @covers \Remorhaz\UniLex\Parser\LL1\Lookup\Table
- */
+#[CoversClass(Table::class)]
 class TableTest extends TestCase
 {
     /**

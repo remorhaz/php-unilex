@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Remorhaz\UniLex\Test\RegExp\FSM;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\IntRangeSets\RangeInterface;
 use Remorhaz\IntRangeSets\RangeSetInterface;
@@ -17,9 +19,7 @@ use Remorhaz\UniLex\RegExp\FSM\TransitionMap;
 
 use function array_map;
 
-/**
- * @covers \Remorhaz\UniLex\RegExp\FSM\LanguageBuilder
- */
+#[CoversClass(LanguageBuilder::class)]
 class LanguageBuilderTest extends TestCase
 {
     /**
@@ -65,16 +65,13 @@ class LanguageBuilderTest extends TestCase
     }
 
     /**
-     * @param array $firstTransitionData
-     * @param array $secondTransitionData
-     * @param array $expectedValue
      * @throws UniLexException
-     * @dataProvider providerAddTransitionCalledTwiceTransitions
      */
+    #[DataProvider('providerAddTransitionCalledTwiceTransitions')]
     public function testAddTransition_TransitionWithSameRangeAdded_TransitionMapContainsMatchingList(
         array $firstTransitionData,
         array $secondTransitionData,
-        array $expectedValue
+        array $expectedValue,
     ): void {
         $symbolTable = new SymbolTable();
         $transitionMap = new TransitionMap($this->createStateMap());
@@ -112,20 +109,15 @@ class LanguageBuilderTest extends TestCase
     }
 
     /**
-     * @param array $firstTransitionData
-     * @param array $secondTransitionData
-     * @param array $firstRangeData
-     * @param array $secondRangeData
-     * @param array $expectedValue
      * @throws UniLexException
-     * @dataProvider providerAddTransitionCalledTwiceSymbols
      */
+    #[DataProvider('providerAddTransitionCalledTwiceSymbols')]
     public function testAddTransition_TransitionWithSameRangeAdded_GetSymbolMapReturnsMatchingValue(
         array $firstTransitionData,
         array $secondTransitionData,
         array $firstRangeData,
         array $secondRangeData,
-        array $expectedValue
+        array $expectedValue,
     ): void {
         $symbolTable = new SymbolTable();
         $transitionMap = new TransitionMap($this->createStateMap());
@@ -134,13 +126,13 @@ class LanguageBuilderTest extends TestCase
         $languageBuilder->addTransition(
             $stateIn,
             $stateOut,
-            ...array_map([$this, 'importRange'], $firstRangeData)
+            ...array_map($this->importRange(...), $firstRangeData),
         );
         [$stateIn, $stateOut] = $secondTransitionData;
         $languageBuilder->addTransition(
             $stateIn,
             $stateOut,
-            ...array_map([$this, 'importRange'], $secondRangeData)
+            ...array_map($this->importRange(...), $secondRangeData),
         );
         $actualValue = $this->exportSymbolMap($symbolTable->getRangeSetList());
         self::assertEquals($expectedValue, $actualValue);
@@ -190,41 +182,55 @@ class LanguageBuilderTest extends TestCase
     }
 
     /**
-     * @param RangeSetInterface[] $symbolMap
-     * @return array
+     * @param array<int, RangeSetInterface> $symbolMap
+     * @return array<int, list<array{int, int}>>
      */
     private function exportSymbolMap(array $symbolMap): array
     {
         $result = [];
         foreach ($symbolMap as $symbolId => $rangeSet) {
             $result[$symbolId] = array_map(
-                function (RangeInterface $range): array {
-                    return [$range->getStart(), $range->getFinish()];
-                },
-                $rangeSet->getRanges()
+                fn (RangeInterface $range): array => [$range->getStart(), $range->getFinish()],
+                $rangeSet->getRanges(),
             );
         }
 
         return $result;
     }
 
+    /**
+     * @param array{int, int|null} $rangeData
+     * @return RangeInterface
+     */
     private function importRange(array $rangeData): RangeInterface
     {
         return new Range(...$rangeData);
     }
 
+    /**
+     * @param list<array{int, int|null}> ...$rangeDataList
+     * @return list<RangeInterface>
+     */
     private function importRanges(array ...$rangeDataList): array
     {
-        return array_map([$this, 'importRange'], $rangeDataList);
+        return array_map($this->importRange(...), $rangeDataList);
     }
 
+    /**
+     * @param RangeInterface $range
+     * @return array{int, int}
+     */
     private function exportRange(RangeInterface $range): array
     {
         return [$range->getStart(), $range->getFinish()];
     }
 
+    /**
+     * @param RangeSetInterface $rangeSet
+     * @return list<array<int, int>>
+     */
     private function exportRangeSet(RangeSetInterface $rangeSet): array
     {
-        return array_map([$this, 'exportRange'], $rangeSet->getRanges());
+        return array_map($this->exportRange(...), $rangeSet->getRanges());
     }
 }

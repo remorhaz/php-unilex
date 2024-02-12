@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Remorhaz\UniLex\Test\Parser\LL1\Lookup;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Parser\LL1\Lookup\First;
 
-/**
- * @covers \Remorhaz\UniLex\Parser\LL1\Lookup\First
- */
+#[CoversClass(First::class)]
 class FirstTest extends TestCase
 {
     public function testGetProductionTokens_Constructed_ReturnsEmptyArray(): void
@@ -66,19 +66,19 @@ class FirstTest extends TestCase
     }
 
     /**
-     * @dataProvider providerMergeProductionTokens
      * @param int $sourceProductionId
      * @param list<int> $sourceTokenIdList
      * @param int $targetProductionId
      * @param list<int> $targetTokenIdList
      * @param list<int> $expectedValue
      */
+    #[DataProvider('providerMergeProductionTokens')]
     public function testMergeProductionTokens_TokensSet_TargetGetTokensReturnsMergedTokens(
         int $sourceProductionId,
         array $sourceTokenIdList,
         int $targetProductionId,
         array $targetTokenIdList,
-        array $expectedValue
+        array $expectedValue,
     ): void {
         $lookupFirst = new First();
         $lookupFirst->addToken($sourceProductionId, ...$sourceTokenIdList);

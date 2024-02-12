@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Remorhaz\UniLex\Test\Lexer;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\IO\CharBufferInterface;
@@ -17,9 +18,7 @@ use Remorhaz\UniLex\Unicode\Grammar\TokenType;
 use Remorhaz\UniLex\Unicode\Grammar\TokenFactory;
 use Remorhaz\UniLex\Unicode\Grammar\Utf8TokenMatcher;
 
-/**
- * @covers \Remorhaz\UniLex\Lexer\TokenReader
- */
+#[CoversClass(TokenReader::class)]
 class TokenReaderTest extends TestCase
 {
     /**
@@ -128,7 +127,7 @@ class TokenReaderTest extends TestCase
 
     private function createFailingMatcher(): TokenMatcherInterface
     {
-        return new class implements TokenMatcherInterface
+        return new class () implements TokenMatcherInterface
         {
             public function getToken(): Token
             {
@@ -144,7 +143,7 @@ class TokenReaderTest extends TestCase
 
     private function createFailingAtEndMatcher(): TokenMatcherInterface
     {
-        return new class implements TokenMatcherInterface
+        return new class () implements TokenMatcherInterface
         {
             public function getToken(): Token
             {

@@ -11,7 +11,7 @@ class FirstBuilder
     private ?FirstInterface $first = null;
 
     public function __construct(
-        private GrammarInterface $grammar,
+        private readonly GrammarInterface $grammar,
     ) {
     }
 

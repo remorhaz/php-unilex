@@ -17,7 +17,7 @@ class StringBuffer implements CharBufferInterface, TokenExtractInterface
     private int $previewOffset = 0;
 
     public function __construct(
-        private string $data,
+        private readonly string $data,
     ) {
         $this->length = strlen($data);
     }

@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 namespace Remorhaz\UniLex\Test\Parser\LL1\Lookup;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Parser\LL1\Lookup\Follow;
+use Remorhaz\UniLex\Parser\LL1\Lookup\Set;
 
-/**
- * @covers \Remorhaz\UniLex\Parser\LL1\Lookup\Follow
- * @covers \Remorhaz\UniLex\Parser\LL1\Lookup\Set
- */
+#[
+    CoversClass(Follow::class),
+    CoversClass(Set::class),
+]
 class FollowTest extends TestCase
 {
     public function testGetTokens_Constructed_ReturnsEmptyArray(): void
@@ -21,8 +24,8 @@ class FollowTest extends TestCase
 
     /**
      * @param list<int> $tokenIdList
-     * @dataProvider providerAddTokenCalledOnce
      */
+    #[DataProvider('providerAddTokenCalledOnce')]
     public function testAddToken_CalledOnce_GetTokenReturnsAddedTokens(array $tokenIdList): void
     {
         $lookupFirst = new Follow();
@@ -48,12 +51,12 @@ class FollowTest extends TestCase
      * @param list<int> $firstTokenIdList
      * @param list<int> $secondTokenIdList
      * @param list<int> $expectedValue
-     * @dataProvider providerAddTokenCalledTwice
      */
+    #[DataProvider('providerAddTokenCalledTwice')]
     public function testAddToken_CalledTwice_GetTokenReturnsMergedTokens(
         array $firstTokenIdList,
         array $secondTokenIdList,
-        array $expectedValue
+        array $expectedValue,
     ): void {
         $lookupFirst = new Follow();
         $lookupFirst->addToken(1, ...$firstTokenIdList);
@@ -67,12 +70,12 @@ class FollowTest extends TestCase
      * @param list<int> $firstTokenIdList
      * @param list<int> $secondTokenIdList
      * @param list<int> $mergedList
-     * @dataProvider providerAddTokenCalledTwice
      */
+    #[DataProvider('providerAddTokenCalledTwice')]
     public function testAddToken_CalledTwice_GetChangeCountReturnsMergedTokensAmount(
         array $firstTokenIdList,
         array $secondTokenIdList,
-        array $mergedList
+        array $mergedList,
     ): void {
         $lookupFirst = new Follow();
         $lookupFirst->addToken(1, ...$firstTokenIdList);
@@ -112,19 +115,19 @@ class FollowTest extends TestCase
     }
 
     /**
-     * @dataProvider providerMergeTokens
      * @param int $sourceProductionId
      * @param list<int> $sourceTokenIdList
      * @param int $targetProductionId
      * @param list<int> $targetTokenIdList
      * @param list<int> $expectedValue
      */
+    #[DataProvider('providerMergeTokens')]
     public function testMergeTokens_TokensSet_TargetGetTokensReturnsMergedTokens(
         int $sourceProductionId,
         array $sourceTokenIdList,
         int $targetProductionId,
         array $targetTokenIdList,
-        array $expectedValue
+        array $expectedValue,
     ): void {
         $lookupFirst = new Follow();
         $lookupFirst->addToken($sourceProductionId, ...$sourceTokenIdList);

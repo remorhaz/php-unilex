@@ -12,7 +12,7 @@ use Remorhaz\UniLex\RegExp\AST\NodeType;
 class ProductionTranslationScheme
 {
     public function __construct(
-        private Tree $tree,
+        private readonly Tree $tree,
     ) {
     }
 

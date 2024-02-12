@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace Remorhaz\UniLex\Test\AST;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\AST\Tree;
 use Remorhaz\UniLex\Exception as UniLexException;
 
-/**
- * @covers \Remorhaz\UniLex\AST\Tree
- */
+#[CoversClass(Tree::class)]
 class TreeTest extends TestCase
 {
     /**

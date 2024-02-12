@@ -14,7 +14,7 @@ class TransitionMap
     private array $transitionMap = [];
 
     public function __construct(
-        private StateMapInterface $stateMap,
+        private readonly StateMapInterface $stateMap,
     ) {
     }
 

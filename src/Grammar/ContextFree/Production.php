@@ -6,6 +6,8 @@ namespace Remorhaz\UniLex\Grammar\ContextFree;
 
 use Stringable;
 
+use function array_values;
+
 class Production implements Stringable
 {
     /**
@@ -14,14 +16,14 @@ class Production implements Stringable
     private array $symbolList;
 
     public function __construct(
-        private int $headerId,
-        private int $index,
+        private readonly int $headerId,
+        private readonly int $index,
         int ...$symbolList,
     ) {
-        $this->symbolList = $symbolList;
+        $this->symbolList = array_values($symbolList);
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return "$this->headerId:$this->index";
     }

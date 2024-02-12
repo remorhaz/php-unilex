@@ -7,7 +7,7 @@ namespace Remorhaz\UniLex\RegExp\FSM;
 class NfaCalc
 {
     public function __construct(
-        private Nfa $nfa,
+        private readonly Nfa $nfa,
     ) {
     }
 

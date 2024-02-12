@@ -11,8 +11,8 @@ use Remorhaz\UniLex\Exception as UniLexException;
 class LanguageBuilder
 {
     public function __construct(
-        private SymbolTable $symbolTable,
-        private TransitionMap $transitionMap,
+        private readonly SymbolTable $symbolTable,
+        private readonly TransitionMap $transitionMap,
     ) {
     }
 

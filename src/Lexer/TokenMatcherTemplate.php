@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Remorhaz\UniLex\Lexer;
 
-use Closure;
 use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\IO\CharBufferInterface;
 use Remorhaz\UniLex\IO\TokenExtractInterface;
@@ -38,7 +37,7 @@ abstract class TokenMatcherTemplate implements TokenMatcherInterface
         $onSetMode = function (string $mode): void {
             $this->mode = $mode;
         };
-        $onGetMode = fn (): string =>  $this->mode;
+        $onGetMode = fn (): string => $this->mode;
 
         return new class (
             $buffer,
@@ -50,24 +49,24 @@ abstract class TokenMatcherTemplate implements TokenMatcherInterface
         ) implements TokenMatcherContextInterface
         {
             /**
-             * @var Closure(int):void
+             * @var callable(int):void
              */
-            private Closure $onSetNewToken;
+            private mixed $onSetNewToken;
 
             /**
-             * @var Closure():Token
+             * @var callable():Token
              */
-            private Closure $onGetToken;
+            private mixed $onGetToken;
 
             /**
-             * @var Closure(string):void
+             * @var callable(string):void
              */
-            private Closure $onSetMode;
+            private mixed $onSetMode;
 
             /**
-             * @var Closure():string
+             * @var callable():string
              */
-            private Closure $onGetMode;
+            private mixed $onGetMode;
 
             /**
              * @param CharBufferInterface   $buffer
@@ -78,17 +77,17 @@ abstract class TokenMatcherTemplate implements TokenMatcherInterface
              * @param callable():string     $onGetMode
              */
             public function __construct(
-                private CharBufferInterface $buffer,
+                private readonly CharBufferInterface $buffer,
                 callable $onConstruct,
                 callable $onSetNewToken,
                 callable $onGetToken,
                 callable $onSetMode,
-                callable $onGetMode
+                callable $onGetMode,
             ) {
-                $this->onSetNewToken = Closure::fromCallable($onSetNewToken);
-                $this->onGetToken = Closure::fromCallable($onGetToken);
-                $this->onSetMode = Closure::fromCallable($onSetMode);
-                $this->onGetMode = Closure::fromCallable($onGetMode);
+                $this->onSetNewToken = $onSetNewToken;
+                $this->onGetToken = $onGetToken;
+                $this->onSetMode = $onSetMode;
+                $this->onGetMode = $onGetMode;
                 $onConstruct();
             }
 

@@ -24,8 +24,8 @@ class Node implements StackableSymbolInterface
     private array $childMap = [];
 
     public function __construct(
-        private int $id,
-        private string $name,
+        private readonly int $id,
+        private readonly string $name,
     ) {
     }
 
@@ -121,8 +121,8 @@ class Node implements StackableSymbolInterface
      */
     public function getChild(int $index): Node
     {
-        return $this->childMap[$index]
-            ?? throw new UniLexException("Child node at index {$index} in node {$this->getId()} is not defined");
+        return $this->childMap[$index] ??
+            throw new UniLexException("Child node at index {$index} in node {$this->getId()} is not defined");
     }
 
     /**

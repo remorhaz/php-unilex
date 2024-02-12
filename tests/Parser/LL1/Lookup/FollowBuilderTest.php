@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Remorhaz\UniLex\Test\Parser\LL1\Lookup;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Example\SimpleExpr\Grammar\ConfigFile;
 use Remorhaz\UniLex\Example\SimpleExpr\Grammar\SymbolType;
@@ -13,9 +15,7 @@ use Remorhaz\UniLex\Grammar\ContextFree\GrammarLoader;
 use Remorhaz\UniLex\Parser\LL1\Lookup\FirstBuilder;
 use Remorhaz\UniLex\Parser\LL1\Lookup\FollowBuilder;
 
-/**
- * @covers \Remorhaz\UniLex\Parser\LL1\Lookup\FollowBuilder
- */
+#[CoversClass(FollowBuilder::class)]
 class FollowBuilderTest extends TestCase
 {
     /**
@@ -23,12 +23,12 @@ class FollowBuilderTest extends TestCase
      * @param int $symbolId
      * @param list<int> $expectedValue
      * @throws UnilexException
-     * @dataProvider providerValidGrammars
      */
+    #[DataProvider('providerValidGrammars')]
     public function testGetFollow_ValidGrammar_ResultGetReturnsMatchingValue(
         string $configFile,
         int $symbolId,
-        array $expectedValue
+        array $expectedValue,
     ): void {
         $grammar = GrammarLoader::loadFile($configFile);
         $first = (new FirstBuilder($grammar))->getFirst();

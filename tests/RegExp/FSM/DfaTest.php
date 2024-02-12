@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace Remorhaz\UniLex\Test\RegExp\FSM;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\RegExp\FSM\Dfa;
 use Remorhaz\UniLex\RegExp\FSM\SymbolTable;
 
-/**
- * @covers \Remorhaz\UniLex\RegExp\FSM\Dfa
- */
+#[CoversClass(Dfa::class)]
 class DfaTest extends TestCase
 {
     public function testGetStateMap_CalledTwice_ReturnsSameInstance(): void

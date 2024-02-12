@@ -1,6 +1,9 @@
 /build
 /vendor
 /composer.lock
+/tools/
+/vendor-bin/**/vendor/
+/vendor-bin/**/composer.lock
 /phpunit.xml
 /infection.json
 .phpunit.result.cache

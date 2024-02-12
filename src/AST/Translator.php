@@ -12,8 +12,8 @@ class Translator
     private SymbolStack $stack;
 
     public function __construct(
-        private Tree $tree,
-        private TranslatorListenerInterface $listener,
+        private readonly Tree $tree,
+        private readonly TranslatorListenerInterface $listener,
     ) {
         $this->stack = new SymbolStack();
     }

@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace Remorhaz\UniLex\Test\AST;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\AST\Exception\InvalidAttributeException;
 use Remorhaz\UniLex\AST\Node;
 use Remorhaz\UniLex\Exception as UniLexException;
 
-/**
- * @covers \Remorhaz\UniLex\AST\Node
- */
+#[CoversClass(Node::class)]
 class NodeTest extends TestCase
 {
     public function testGetId_ConstructedWithValue_ReturnsSameValue(): void

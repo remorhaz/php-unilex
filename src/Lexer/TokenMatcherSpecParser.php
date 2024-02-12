@@ -25,31 +25,41 @@ class TokenMatcherSpecParser
     private const LEX_TOKEN_REGEXP = 'token_regexp';
     private const LEX_TOKEN_CONTEXT = 'token_context';
 
-    private $source;
+    private ?TokenMatcherSpec $matcherSpec = null;
 
-    private $matcherSpec;
+    private ?string $targetClassName = null;
 
-    private $targetClassName;
+    private ?string $templateClassName = null;
 
-    private $templateClassName;
+    private ?DocBlockFactoryInterface $docBlockFactory = null;
 
-    private $docBlockFactory;
+    /**
+     * @var array<string, string>
+     */
+    private array $codeBlockList = [];
 
-    private $codeBlockList = [];
+    private ?string $codeBlockKey = null;
 
-    private $codeBlockKey;
+    /**
+     * @var list<string>
+     */
+    private array $codeBlockStack = [];
 
-    private $codeBlockStack = [];
+    private bool $skipToken = false;
 
-    private $skipToken = false;
+    /**
+     * @var array<int|string, string>
+     */
+    private array $usedClassList = [];
 
-    private $usedClassList = [];
+    /**
+     * @var array<string, array<string, TokenSpec>>
+     */
+    private array $tokenSpecList = [];
 
-    private $tokenSpecList = [];
-
-    public function __construct(string $source)
-    {
-        $this->source = $source;
+    public function __construct(
+        private readonly string $source,
+    ) {
     }
 
     /**
@@ -60,11 +70,10 @@ class TokenMatcherSpecParser
     public static function loadFromFile(string $fileName): self
     {
         $source = @file_get_contents($fileName);
-        if (false === $source) {
-            throw new Exception("Failed to read lexer specification from file {$fileName}");
-        }
 
-        return new self($source);
+        return false === $source
+            ? throw new Exception("Failed to read lexer specification from file {$fileName}")
+            : new self($source);
     }
 
     /**
@@ -74,11 +83,7 @@ class TokenMatcherSpecParser
      */
     public function getMatcherSpec(): TokenMatcherSpec
     {
-        if (!isset($this->matcherSpec)) {
-            $this->matcherSpec = $this->buildMatcherSpec();
-        }
-
-        return $this->matcherSpec;
+        return $this->matcherSpec ??= $this->buildMatcherSpec();
     }
 
     /**
@@ -171,7 +176,7 @@ class TokenMatcherSpecParser
 
     /**
      * @param string $usedClass
-     * @return array
+     * @return array{string, string|null}
      * @throws Exception
      */
     private function parseUsedClass(string $usedClass): array
@@ -308,11 +313,7 @@ class TokenMatcherSpecParser
 
     private function getDocBlockFactory(): DocBlockFactoryInterface
     {
-        if (!isset($this->docBlockFactory)) {
-            $this->docBlockFactory = DocBlockFactory::createInstance();
-        }
-
-        return $this->docBlockFactory;
+        return $this->docBlockFactory ??= DocBlockFactory::createInstance();
     }
 
     private function switchCurrentCodeBlock(string $key): void

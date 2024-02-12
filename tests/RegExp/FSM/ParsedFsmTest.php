@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Remorhaz\UniLex\Test\RegExp\FSM;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\IntRangeSets\RangeInterface;
 use Remorhaz\IntRangeSets\RangeSetInterface;
@@ -15,24 +17,18 @@ use Remorhaz\UniLex\Unicode\CharBufferFactory;
 
 use function array_map;
 
-/**
- * @covers \Remorhaz\UniLex\RegExp\FSM\NfaBuilder
- */
+#[CoversClass(NfaBuilder::class)]
 class ParsedFsmTest extends TestCase
 {
     /**
-     * @dataProvider providerRegExpStateMaps
-     * @param string $text
-     * @param array $expectedSymbolTransitionList
-     * @param array $expectedEpsilonTransitionList
-     * @param array $expectedSymbolTable
      * @throws UniLexException
      */
+    #[DataProvider('providerRegExpStateMaps')]
     public function testStateMapBuilder_ValidAST_BuildsMatchingStateMap(
         string $text,
         array $expectedSymbolTransitionList,
         array $expectedEpsilonTransitionList,
-        array $expectedSymbolTable
+        array $expectedSymbolTable,
     ): void {
         $buffer = CharBufferFactory::createFromString($text);
         $tree = new Tree();
@@ -47,31 +43,29 @@ class ParsedFsmTest extends TestCase
     }
 
     /**
-     * @return iterable<string, array{string, array, array, array>}>
+     * @return iterable<string, array{string, array, array, array}>
      */
     public static function providerRegExpStateMaps(): iterable
     {
-        $data = [];
-
         $rangeTransitionList = [];
         $epsilonTransitionList = [];
         $epsilonTransitionList[1][2] = true;
         $symbolTable = [];
-        $data["Empty string"] = ['', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
+        yield "Empty string" => ['', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
 
         $rangeTransitionList = [];
         $rangeTransitionList[1][2] = [0];
         $epsilonTransitionList = [];
         $symbolTable = [];
         $symbolTable[0] = [[0x61, 0x61]];
-        $data["Single symbol"] = ['a', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
+        yield "Single symbol" => ['a', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
 
         $rangeTransitionList = [];
         $rangeTransitionList[1][2] = [0];
         $epsilonTransitionList = [];
         $symbolTable = [];
         $symbolTable[0] = [[0x00, 0x10FFFF]];
-        $data["Single dot"] = ['.', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
+        yield "Single dot" => ['.', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
 
         $rangeTransitionList = [];
         $rangeTransitionList[3][4] = [0];
@@ -84,7 +78,7 @@ class ParsedFsmTest extends TestCase
         $symbolTable = [];
         $symbolTable[0] = [[0x61, 0x61]];
         $symbolTable[1] = [[0x62, 0x62]];
-        $data["Alternative of two symbols"] = ['a|b', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
+        yield "Alternative of two symbols" => ['a|b', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
 
         $rangeTransitionList = [];
         $rangeTransitionList[3][4] = [0];
@@ -96,7 +90,7 @@ class ParsedFsmTest extends TestCase
         $epsilonTransitionList[6][2] = true;
         $symbolTable = [];
         $symbolTable[0] = [[0x61, 0x61]];
-        $data["Alternative of symbol and empty string"] =
+        yield "Alternative of symbol and empty string" =>
             ['a|', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
 
         $rangeTransitionList = [];
@@ -112,7 +106,7 @@ class ParsedFsmTest extends TestCase
         $epsilonTransitionList[8][2] = true;
         $symbolTable = [];
         $symbolTable[0] = [[0x61, 0x61]];
-        $data["Alternative of symbol and two empty strings"] =
+        yield "Alternative of symbol and two empty strings" =>
             ['|a|', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
 
         $rangeTransitionList = [];
@@ -122,7 +116,7 @@ class ParsedFsmTest extends TestCase
         $symbolTable = [];
         $symbolTable[0] = [[0x61, 0x61]];
         $symbolTable[1] = [[0x62, 0x62]];
-        $data["Concatenation of two symbols"] = ['ab', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
+        yield "Concatenation of two symbols" => ['ab', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
 
         $rangeTransitionList = [];
         $rangeTransitionList[1][3] = [0];
@@ -132,13 +126,13 @@ class ParsedFsmTest extends TestCase
         $symbolTable = [];
         $symbolTable[0] = [[0x61, 0x61]];
         $symbolTable[1] = [[0x62, 0x62]];
-        $data["Concatenation of symbol and repeated symbol"] =
+        yield "Concatenation of symbol and repeated symbol" =>
             ['ab{2}', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
 
         $rangeTransitionList = [];
         $epsilonTransitionList = [];
         $symbolTable = [];
-        $data["Single zero repeat"] = ['a{0}', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
+        yield "Single zero repeat" => ['a{0}', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
 
         $rangeTransitionList = [];
         $rangeTransitionList[1][3] = [0];
@@ -155,7 +149,7 @@ class ParsedFsmTest extends TestCase
         $symbolTable[1] = [[0x62, 0x62]];
         $symbolTable[2] = [[0x63, 0x63]];
         $symbolTable[3] = [[0x64, 0x64]];
-        $data["Concatenation of two symbols and grouped alternative of two symbols"] =
+        yield "Concatenation of two symbols and grouped alternative of two symbols" =>
             ['a(b|c)d', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
 
         $rangeTransitionList = [];
@@ -170,7 +164,7 @@ class ParsedFsmTest extends TestCase
         $epsilonTransitionList[6][2] = true;
         $symbolTable = [];
         $symbolTable[0] = [[0x61, 0x61]];
-        $data["Symbol with finite limit"] = ['a{2,5}', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
+        yield "Symbol with finite limit" => ['a{2,5}', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
 
         $rangeTransitionList = [];
         $rangeTransitionList[1][2] = [0];
@@ -178,7 +172,7 @@ class ParsedFsmTest extends TestCase
         $epsilonTransitionList[1][2] = true;
         $symbolTable = [];
         $symbolTable[0] = [[0x61, 0x61]];
-        $data["Optional symbol"] = ['a?', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
+        yield "Optional symbol" => ['a?', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
 
         $rangeTransitionList = [];
         $rangeTransitionList[1][3] = [0];
@@ -191,7 +185,7 @@ class ParsedFsmTest extends TestCase
         $epsilonTransitionList[6][5] = true;
         $symbolTable = [];
         $symbolTable[0] = [[0x61, 0x61]];
-        $data["Symbol with infinite limit"] = ['a{2,}', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
+        yield "Symbol with infinite limit" => ['a{2,}', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
 
         $rangeTransitionList = [];
         $rangeTransitionList[3][4] = [0];
@@ -202,49 +196,49 @@ class ParsedFsmTest extends TestCase
         $epsilonTransitionList[4][3] = true;
         $symbolTable = [];
         $symbolTable[0] = [[0x61, 0x61]];
-        $data["Kleene star applied to symbol"] = ['a*', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
+        yield "Kleene star applied to symbol" => ['a*', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
 
         $rangeTransitionList = [];
         $rangeTransitionList[1][2] = [0];
         $epsilonTransitionList = [];
         $symbolTable = [];
         $symbolTable[0] = [[0x61, 0x61]];
-        $data["Escaped Unicode symbol"] = ['\\u0061', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
+        yield "Escaped Unicode symbol" => ['\\u0061', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
 
         $rangeTransitionList = [];
         $rangeTransitionList[1][2] = [0];
         $epsilonTransitionList = [];
         $symbolTable = [];
         $symbolTable[0] = [[0x7F, 0x7F]];
-        $data["Escaped Unicode symbol"] = ['\\c?', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
+        yield "Escaped control symbol" => ['\\c?', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
 
         $rangeTransitionList = [];
         $rangeTransitionList[1][2] = [0];
         $epsilonTransitionList = [];
         $symbolTable = [];
         $symbolTable[0] = [[0x07, 0x07]];
-        $data["Escaped non-printable symbol"] = ['\\a', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
+        yield "Escaped non-printable symbol" => ['\\a', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
 
         $rangeTransitionList = [];
         $rangeTransitionList[1][2] = [0];
         $epsilonTransitionList = [];
         $symbolTable = [];
         $symbolTable[0] = [[0x46, 0x46]];
-        $data["Escaped arbitrary symbol"] = ['\\F', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
+        yield "Escaped arbitrary symbol" => ['\\F', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
 
         $rangeTransitionList = [];
         $rangeTransitionList[1][2] = [0];
         $epsilonTransitionList = [];
         $symbolTable = [];
         $symbolTable[0] = [[0x2E, 0x2E]];
-        $data["Escaped meta-symbol"] = ['\\.', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
+        yield "Escaped meta-symbol" => ['\\.', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
 
         $rangeTransitionList = [];
         $rangeTransitionList[1][2] = [0];
         $epsilonTransitionList = [];
         $symbolTable = [];
         $symbolTable[0] = [[0x61, 0x62]];
-        $data["Two neighbour symbols in a class"] =
+        yield "Two neighbour symbols in a class" =>
             ['[ab]', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
 
         $rangeTransitionList = [];
@@ -252,14 +246,14 @@ class ParsedFsmTest extends TestCase
         $epsilonTransitionList = [];
         $symbolTable = [];
         $symbolTable[0] = [[0x61, 0x61]];
-        $data["Two equal symbols in a class"] = ['[aa]', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
+        yield "Two equal symbols in a class" => ['[aa]', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
 
         $rangeTransitionList = [];
         $rangeTransitionList[1][2] = [0];
         $epsilonTransitionList = [];
         $symbolTable = [];
         $symbolTable[0] = [[0x61, 0x61], [0x63, 0x63]];
-        $data["Two not neighbour symbols in a class in inverted order"] =
+        yield "Two not neighbour symbols in a class in inverted order" =>
             ['[ca]', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
 
         $rangeTransitionList = [];
@@ -267,14 +261,14 @@ class ParsedFsmTest extends TestCase
         $epsilonTransitionList = [];
         $symbolTable = [];
         $symbolTable[0] = [[0x00, 0x60], [0x62, 0x62], [0x64, 0x10FFFF]];
-        $data["Two symbols in inverted class"] = ['[^ac]', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
+        yield "Two symbols in inverted class" => ['[^ac]', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
 
         $rangeTransitionList = [];
         $rangeTransitionList[1][2] = [0];
         $epsilonTransitionList = [];
         $symbolTable = [];
         $symbolTable[0] = [[0x61, 0x63]];
-        $data["Single range between symbols in class"] =
+        yield "Single range between symbols in class" =>
             ['[a-c]', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
 
         $rangeTransitionList = [];
@@ -282,7 +276,7 @@ class ParsedFsmTest extends TestCase
         $epsilonTransitionList = [];
         $symbolTable = [];
         $symbolTable[0] = [[0x46, 0x4B]];
-        $data["Single range between ordinary escape and symbol in class"] =
+        yield "Single range between ordinary escape and symbol in class" =>
             ['[\\F-K]', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
 
         $rangeTransitionList = [];
@@ -290,7 +284,7 @@ class ParsedFsmTest extends TestCase
         $epsilonTransitionList = [];
         $symbolTable = [];
         $symbolTable[0] = [[0x7F, 0x0429]];
-        $data["Single range between control and Unicode escapes in class"] =
+        yield "Single range between control and Unicode escapes in class" =>
             ['[\\c?-\\u0429]', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
 
         $rangeTransitionList = [];
@@ -298,7 +292,7 @@ class ParsedFsmTest extends TestCase
         $epsilonTransitionList = [];
         $symbolTable = [];
         $symbolTable[0] = [[0x0410, 0x0429]];
-        $data["Single range between ordinary non-ASCII escape and raw non-ASCII symbol in class"] =
+        yield "Single range between ordinary non-ASCII escape and raw non-ASCII symbol in class" =>
             ['[\\А-Щ]', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
 
         $rangeTransitionList = [];
@@ -306,7 +300,7 @@ class ParsedFsmTest extends TestCase
         $epsilonTransitionList = [];
         $symbolTable = [];
         $symbolTable[0] = [[0x09, 0x7A]];
-        $data["Two intersecting ranges in class"] =
+        yield "Two intersecting ranges in class" =>
             ['[\\t-aA-z]', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
 
         $rangeTransitionList = [];
@@ -322,25 +316,21 @@ class ParsedFsmTest extends TestCase
         $symbolTable[0] = [[0x35, 0x35]];
         $symbolTable[1] = [[0x61, 0x61]];
         $symbolTable[2] = [[0x30, 0x34], [0x36, 0x39]];
-        $data["One alternative is a part of another's class"] =
+        yield "One alternative is a part of another's class" =>
             ['5|a[0-9]', $rangeTransitionList, $epsilonTransitionList, $symbolTable];
-
-        return $data;
     }
 
     /**
-     * @param RangeSetInterface[] $rangeSetList
-     * @return array
+     * @param array<int, RangeSetInterface> $rangeSetList
+     * @return array<int, list<array{int, int}>>
      */
     private function exportRangeSetList(array $rangeSetList): array
     {
         $result = [];
         foreach ($rangeSetList as $symbolId => $rangeSet) {
             $result[$symbolId] = array_map(
-                function (RangeInterface $range): array {
-                    return [$range->getStart(), $range->getFinish()];
-                },
-                $rangeSet->getRanges()
+                fn (RangeInterface $range): array => [$range->getStart(), $range->getFinish()],
+                $rangeSet->getRanges(),
             );
         }
         return $result;

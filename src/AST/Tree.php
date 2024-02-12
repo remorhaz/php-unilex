@@ -30,8 +30,8 @@ class Tree
      */
     public function getNode(int $id): Node
     {
-        return $this->nodeMap[$id]
-            ?? throw new Exception("Node $id is not defined in syntax tree");
+        return $this->nodeMap[$id] ??
+            throw new Exception("Node $id is not defined in syntax tree");
     }
 
     /**

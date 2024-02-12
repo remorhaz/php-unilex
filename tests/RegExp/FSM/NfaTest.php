@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace Remorhaz\UniLex\Test\RegExp\FSM;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\RegExp\FSM\Nfa;
 
-/**
- * @covers \Remorhaz\UniLex\RegExp\FSM\Nfa
- */
+#[CoversClass(Nfa::class)]
 class NfaTest extends TestCase
 {
     public function testGetStateMap_CalledTwice_ReturnsSameInstance(): void

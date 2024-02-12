@@ -50,8 +50,8 @@ class TokenMatcherSpec
     private array $tokenSpecList = [];
 
     public function __construct(
-        private string $targetClassName,
-        private string $templateClassName,
+        private readonly string $targetClassName,
+        private readonly string $templateClassName,
     ) {
     }
 

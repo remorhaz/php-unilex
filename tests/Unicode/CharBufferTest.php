@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Remorhaz\UniLex\Test\Unicode;
 
 use Exception;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\IO\CharBufferInterface;
@@ -16,9 +17,7 @@ use Remorhaz\UniLex\Unicode\CharBuffer;
 use Remorhaz\UniLex\Unicode\Grammar\TokenAttribute;
 use Remorhaz\UniLex\Unicode\Grammar\TokenType;
 
-/**
- * @covers \Remorhaz\UniLex\Unicode\CharBuffer
- */
+#[CoversClass(CharBuffer::class)]
 class CharBufferTest extends TestCase
 {
     public function testIsEnd_EmptySourceBuffer_ReturnsTrue(): void
@@ -371,7 +370,7 @@ class CharBufferTest extends TestCase
 
     private function createTokenMatcherThatNeverMatches(): TokenMatcherInterface
     {
-        return new class implements TokenMatcherInterface
+        return new class () implements TokenMatcherInterface
         {
             public function match(CharBufferInterface $buffer, TokenFactoryInterface $tokenFactory): bool
             {
@@ -379,7 +378,6 @@ class CharBufferTest extends TestCase
             }
 
             /**
-             * @return Token
              * @throws Exception
              */
             public function getToken(): Token
@@ -391,7 +389,7 @@ class CharBufferTest extends TestCase
 
     private function createTokenFactoryThatCreatesInvalidBytesTokens(): TokenFactoryInterface
     {
-        return new class implements TokenFactoryInterface
+        return new class () implements TokenFactoryInterface
         {
             public function createToken(int $tokenId): Token
             {
@@ -399,7 +397,6 @@ class CharBufferTest extends TestCase
             }
 
             /**
-             * @return Token
              * @throws Exception
              */
             public function createEoiToken(): Token

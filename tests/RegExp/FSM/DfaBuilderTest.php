@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Remorhaz\UniLex\Test\RegExp\FSM;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\IntRangeSets\Range;
 use Remorhaz\IntRangeSets\RangeInterface;
@@ -16,9 +17,7 @@ use Remorhaz\UniLex\RegExp\FSM\Nfa;
 
 use function array_map;
 
-/**
- * @covers \Remorhaz\UniLex\RegExp\FSM\DfaBuilder
- */
+#[CoversClass(DfaBuilder::class)]
 class DfaBuilderTest extends TestCase
 {
     /**

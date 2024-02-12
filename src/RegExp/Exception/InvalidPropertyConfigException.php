@@ -12,11 +12,11 @@ use function gettype;
 final class InvalidPropertyConfigException extends DomainException implements ExceptionInterface
 {
     public function __construct(
-        private string $propertyName,
-        private mixed $propertyFile,
+        private readonly string $propertyName,
+        private readonly mixed $propertyFile,
         ?Throwable $previous = null,
     ) {
-        parent::__construct($this->buildMessage(), 0, $previous);
+        parent::__construct($this->buildMessage(), previous: $previous);
     }
 
     private function buildMessage(): string

@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace Remorhaz\UniLex\Test\Grammar\ContextFree;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\Grammar\ContextFree\Grammar;
 
-/**
- * @covers \Remorhaz\UniLex\Grammar\ContextFree\Grammar
- */
+#[CoversClass(Grammar::class)]
 class GrammarTest extends TestCase
 {
     public function testGetRootSymbol_ConstructWithValue_ReturnsSameValue(): void

@@ -10,7 +10,7 @@ use Throwable;
 class UnexpectedTokenException extends Exception
 {
     public function __construct(
-        private UnexpectedTokenErrorInterface $error,
+        private readonly UnexpectedTokenErrorInterface $error,
         int $code = 0,
         ?Throwable $previous = null,
     ) {

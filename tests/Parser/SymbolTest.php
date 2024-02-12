@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Remorhaz\UniLex\Test\Parser;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\Parser\Symbol;
 
-/**
- * @covers \Remorhaz\UniLex\Parser\Symbol
- */
+#[CoversClass(Symbol::class)]
 class SymbolTest extends TestCase
 {
     public function testGetIndex_ConstructedWithIndex_ReturnsSameValue(): void
@@ -35,8 +35,8 @@ class SymbolTest extends TestCase
 
     /**
      * @throws Exception
-     * @dataProvider providerAttribute
      */
+    #[DataProvider('providerAttribute')]
     public function testGetAttribute_AttributeSet_ReturnsSameValue(mixed $value, mixed $expectedValue): void
     {
         $symbol = new Symbol(1, 2);

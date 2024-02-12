@@ -7,7 +7,7 @@ namespace Remorhaz\UniLex\Lexer;
 class TokenFactory implements TokenFactoryInterface
 {
     public function __construct(
-        private int $eoiTokenId,
+        private readonly int $eoiTokenId,
     ) {
     }
 

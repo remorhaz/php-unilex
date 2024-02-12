@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Remorhaz\UniLex\Test\AST;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\AST\AbstractTranslatorListener;
 use Remorhaz\UniLex\AST\Node;
@@ -13,9 +14,7 @@ use Remorhaz\UniLex\AST\Tree;
 use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\Stack\PushInterface;
 
-/**
- * @covers \Remorhaz\UniLex\AST\Translator
- */
+#[CoversClass(Translator::class)]
 class TranslatorTest extends TestCase
 {
     /**
@@ -72,7 +71,7 @@ class TranslatorTest extends TestCase
         $listener
             ->expects($this->any())
             ->method('onBeginProduction')
-            ->will($this->returnCallback($onBeginProduction));
+            ->willReturnCallback($onBeginProduction);
         $listener
             ->expects($this->once())
             ->method('onSymbol')

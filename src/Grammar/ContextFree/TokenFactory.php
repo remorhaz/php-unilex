@@ -10,7 +10,7 @@ use Remorhaz\UniLex\Lexer\TokenFactoryInterface;
 class TokenFactory implements TokenFactoryInterface
 {
     public function __construct(
-        private GrammarInterface $grammar,
+        private readonly GrammarInterface $grammar,
     ) {
     }
 

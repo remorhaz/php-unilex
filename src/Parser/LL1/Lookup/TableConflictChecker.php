@@ -11,9 +11,9 @@ use Remorhaz\UniLex\Grammar\ContextFree\Production;
 class TableConflictChecker
 {
     public function __construct(
-        private GrammarInterface $grammar,
-        private FirstInterface $first,
-        private FollowInterface $follow,
+        private readonly GrammarInterface $grammar,
+        private readonly FirstInterface $first,
+        private readonly FollowInterface $follow,
     ) {
     }
 
@@ -59,9 +59,7 @@ class TableConflictChecker
      */
     private function checkMultipleEpsilons(int $symbolId, Production ...$productionList): void
     {
-        $isEpsilonProduction = function (Production $production): bool {
-            return $production->isEpsilon();
-        };
+        $isEpsilonProduction = fn (Production $production): bool => $production->isEpsilon();
 
         $epsilonProductionList = array_filter($productionList, $isEpsilonProduction);
         if (count($epsilonProductionList) > 1) {
@@ -76,7 +74,7 @@ class TableConflictChecker
     {
         $firstAlpha = $this->first->getProductionTokens(...$alpha->getSymbolList());
         $firstBeta = $this->first->getProductionTokens(...$beta->getSymbolList());
-        $message = "FIRST({$alpha})/FIRST({$beta}) conflict";
+        $message = "FIRST($alpha)/FIRST($beta) conflict";
         $this->checkConflict($firstAlpha, $firstBeta, $message);
     }
 
@@ -91,7 +89,7 @@ class TableConflictChecker
 
         $follow = $this->follow->getTokens($alpha->getHeaderId());
         $firstAlpha = $this->first->getProductionTokens(...$alpha->getSymbolList());
-        $message = "FIRST({$alpha})/FOLLOW({$alpha->getHeaderId()}) conflict (ε ∈ {$beta})";
+        $message = "FIRST($alpha)/FOLLOW({$alpha->getHeaderId()}) conflict (ε ∈ $beta)";
         $this->checkConflict($follow, $firstAlpha, $message);
     }
 
@@ -106,7 +104,7 @@ class TableConflictChecker
         $conflict = array_intersect($tokenListA, $tokenListB);
         if (!empty($conflict)) {
             $conflictText = implode(', ', $conflict);
-            throw new Exception("{$message}: {$conflictText}");
+            throw new Exception("$message: $conflictText");
         }
     }
 }

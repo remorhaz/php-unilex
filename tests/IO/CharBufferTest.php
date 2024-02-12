@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace Remorhaz\UniLex\Test\IO;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\Lexer\Token;
 use Remorhaz\UniLex\IO\CharBuffer;
 
-/**
- * @covers \Remorhaz\UniLex\IO\CharBuffer
- */
+#[CoversClass(CharBuffer::class)]
 class CharBufferTest extends TestCase
 {
     public function testIsEnd_EmptyBuffer_ReturnsTrue(): void

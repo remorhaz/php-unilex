@@ -19,23 +19,23 @@ use Throwable;
 
 class Parser
 {
-    private $lookupTable;
+    private ?TableInterface $lookupTable = null;
 
     private SymbolStack $symbolStack;
 
-    private $token;
+    private ?Token $token = null;
 
-    private $nextSymbolIndex = 0;
+    private int $nextSymbolIndex = 0;
 
     /**
-     * @var Production[]
+     * @var array<int, array{int, Production}>
      */
     private array $productionMap = [];
 
     public function __construct(
-        private GrammarInterface $grammar,
-        private TokenReaderInterface $tokenReader,
-        private ParserListenerInterface $listener,
+        private readonly GrammarInterface $grammar,
+        private readonly TokenReaderInterface $tokenReader,
+        private readonly ParserListenerInterface $listener,
     ) {
         $this->symbolStack = new SymbolStack();
     }
@@ -125,8 +125,8 @@ class Parser
      */
     private function onSymbol(Symbol $symbol): void
     {
-        [$symbolIndex, $production] = $this->productionMap[$symbol->getIndex()]
-            ?? throw new Exception("No production in map for symbol {$symbol->getIndex()}");
+        [$symbolIndex, $production] = $this->productionMap[$symbol->getIndex()] ??
+            throw new Exception("No production in map for symbol {$symbol->getIndex()}");
         $this->listener->onSymbol($symbolIndex, $production);
     }
 
@@ -179,7 +179,7 @@ class Parser
         } catch (Throwable $e) {
             $expectedTokenList = $lookupTable->getExpectedTokenList($symbol->getSymbolId());
             $error = new UnexpectedTokenError($token, $symbol, ...$expectedTokenList);
-            throw new UnexpectedTokenException($error, 0, $e);
+            throw new UnexpectedTokenException($error, previous: $e);
         }
 
         return $this->createParsedProduction($symbol, $productionIndex);

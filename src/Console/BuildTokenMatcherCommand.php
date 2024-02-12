@@ -11,6 +11,7 @@ use Remorhaz\UniLex\Lexer\TokenMatcherSpec;
 use Remorhaz\UniLex\Lexer\TokenMatcherSpecParser;
 use RuntimeException;
 use Safe;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidOptionException;
 use Symfony\Component\Console\Input\InputArgument;
@@ -21,14 +22,12 @@ use Throwable;
 
 use function array_merge;
 use function file_put_contents;
-use function realpath;
 use function strlen;
 use function substr_count;
 
+#[AsCommand('build-token-matcher')]
 final class BuildTokenMatcherCommand extends Command
 {
-    protected static $defaultName = 'build-token-matcher';
-
     protected function configure(): void
     {
         $this

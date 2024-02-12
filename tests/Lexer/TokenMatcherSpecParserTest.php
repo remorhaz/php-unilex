@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Remorhaz\UniLex\Test\Lexer;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use ReflectionException;
 use Remorhaz\UniLex\Exception as UniLexException;
@@ -11,9 +12,7 @@ use Remorhaz\UniLex\Lexer\TokenMatcherInterface;
 use Remorhaz\UniLex\Lexer\TokenMatcherSpecParser;
 use Remorhaz\UniLex\Lexer\TokenMatcherTemplate;
 
-/**
- * @covers \Remorhaz\UniLex\Lexer\TokenMatcherSpecParser
- */
+#[CoversClass(TokenMatcherSpecParser::class)]
 class TokenMatcherSpecParserTest extends TestCase
 {
     /**

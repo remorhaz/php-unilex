@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Remorhaz\UniLex\Test\RegExp;
 
+use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Exception as UniLexException;
 use Remorhaz\UniLex\IO\CharBuffer;
@@ -14,17 +16,13 @@ use Remorhaz\UniLex\RegExp\Grammar\TokenAttribute;
 use Remorhaz\UniLex\RegExp\Grammar\TokenMatcher;
 use Remorhaz\UniLex\RegExp\Grammar\TokenType;
 
-/**
- * @coversNothing
- */
+#[CoversNothing]
 class TokenMatcherTest extends TestCase
 {
     /**
-     * @param int $expectedType
-     * @param int $symbol
-     * @dataProvider providerValidTokenType
      * @throws UniLexException
      */
+    #[DataProvider('providerValidTokenType')]
     public function testMatch_ValidBuffer_ReturnsTokenWithMatchingType(int $expectedType, int $symbol): void
     {
         $buffer = new CharBuffer($symbol);
@@ -89,10 +87,9 @@ class TokenMatcherTest extends TestCase
     }
 
     /**
-     * @param int $symbol
-     * @dataProvider providerValidTokenSymbol
      * @throws UniLexException
      */
+    #[DataProvider('providerValidTokenSymbol')]
     public function testMatch_ValidBuffer_ReturnsTokenWithMatchingSymbolAttribute(int $symbol): void
     {
         $buffer = new CharBuffer($symbol);

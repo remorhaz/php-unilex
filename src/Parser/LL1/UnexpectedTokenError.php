@@ -7,6 +7,8 @@ namespace Remorhaz\UniLex\Parser\LL1;
 use Remorhaz\UniLex\Lexer\Token;
 use Remorhaz\UniLex\Parser\Symbol;
 
+use function array_values;
+
 class UnexpectedTokenError implements UnexpectedTokenErrorInterface
 {
     /**
@@ -15,11 +17,11 @@ class UnexpectedTokenError implements UnexpectedTokenErrorInterface
     private array $expectedTokenTypeList;
 
     public function __construct(
-        private Token $unexpectedToken,
-        private Symbol $productionHeader,
+        private readonly Token $unexpectedToken,
+        private readonly Symbol $productionHeader,
         int ...$expectedTokenTypeList,
     ) {
-        $this->expectedTokenTypeList = $expectedTokenTypeList;
+        $this->expectedTokenTypeList = array_values($expectedTokenTypeList);
     }
 
     public function getUnexpectedToken(): Token

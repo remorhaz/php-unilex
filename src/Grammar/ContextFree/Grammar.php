@@ -22,9 +22,9 @@ class Grammar implements GrammarInterface
      * Constructor. Accepts non-empty maps of terminal and non-terminal productions separately.
      */
     public function __construct(
-        private int $rootSymbol,
-        private int $startSymbol,
-        private int $eoiSymbol,
+        private readonly int $rootSymbol,
+        private readonly int $startSymbol,
+        private readonly int $eoiSymbol,
     ) {
     }
 
@@ -79,7 +79,7 @@ class Grammar implements GrammarInterface
             return false;
         }
 
-        throw new Exception("Symbol {$symbolId} is not defined");
+        throw new Exception("Symbol $symbolId is not defined");
     }
 
     /**
@@ -157,8 +157,8 @@ class Grammar implements GrammarInterface
 
         $productionList = $this->getProductionList($symbolId);
 
-        return $productionList[$productionIndex]
-            ?? throw new Exception("Symbol $symbolId has no production at index $productionIndex");
+        return $productionList[$productionIndex] ??
+            throw new Exception("Symbol $symbolId has no production at index $productionIndex");
     }
 
     /**

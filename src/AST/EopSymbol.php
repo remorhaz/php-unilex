@@ -9,7 +9,7 @@ use Remorhaz\UniLex\Stack\StackableSymbolInterface;
 class EopSymbol implements StackableSymbolInterface
 {
     public function __construct(
-        private Node $node,
+        private readonly Node $node,
     ) {
     }
 

@@ -22,8 +22,8 @@ class DfaBuilder
     private array $stateBuffer = [];
 
     public function __construct(
-        private Dfa $dfa,
-        private Nfa $nfa,
+        private readonly Dfa $dfa,
+        private readonly Nfa $nfa,
     ) {
     }
 

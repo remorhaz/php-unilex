@@ -55,11 +55,7 @@ abstract class GrammarLoader
             throw new Exception("Config should be an array");
         }
 
-        if (!isset($config[$key])) {
-            throw new Exception("Key '$key' not found in config");
-        }
-
-        return $config[$key];
+        return $config[$key] ?? throw new Exception("Key '$key' not found in config");
     }
 
     /**

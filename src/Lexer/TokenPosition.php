@@ -12,15 +12,13 @@ use Remorhaz\UniLex\Exception;
 class TokenPosition
 {
     /**
-     * Constructor.
-     * .
      * @param int $startOffset  Offset of the first symbol of token.
      * @param int $finishOffset Offset of the next symbol after token.
      * @throws Exception
      */
     public function __construct(
-        private int $startOffset,
-        private int $finishOffset,
+        private readonly int $startOffset,
+        private readonly int $finishOffset,
     ) {
         if ($this->startOffset < 0) {
             throw new Exception("Negative start offset in token position: $this->startOffset");

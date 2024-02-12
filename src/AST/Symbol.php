@@ -12,8 +12,8 @@ class Symbol implements StackableSymbolInterface
     private ?Node $symbol = null;
 
     public function __construct(
-        private Node $header,
-        private int $index,
+        private readonly Node $header,
+        private readonly int $index,
     ) {
     }
 

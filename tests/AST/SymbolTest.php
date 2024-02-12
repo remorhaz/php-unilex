@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace Remorhaz\UniLex\Test\AST;
 
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\AST\Node;
 use Remorhaz\UniLex\AST\Symbol;
 use Remorhaz\UniLex\Exception;
 
-/**
- * @covers \Remorhaz\UniLex\AST\Symbol
- */
+#[CoversClass(Symbol::class)]
 class SymbolTest extends TestCase
 {
     public function testGetHeader_ConstructedWithValue_ReturnsSameValue(): void

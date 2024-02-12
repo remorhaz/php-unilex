@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Remorhaz\UniLex\Test\Parser\LL1\Lookup;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Remorhaz\UniLex\Example\SimpleExpr\Grammar\ConfigFile;
 use Remorhaz\UniLex\Example\SimpleExpr\Grammar\SymbolType;
@@ -11,22 +13,21 @@ use Remorhaz\UniLex\Example\SimpleExpr\Grammar\TokenType;
 use Remorhaz\UniLex\Exception;
 use Remorhaz\UniLex\Grammar\ContextFree\GrammarLoader;
 use Remorhaz\UniLex\Parser\LL1\Lookup\TableBuilder;
+use Remorhaz\UniLex\Parser\LL1\Lookup\TableConflictChecker;
 
-/**
- * @covers \Remorhaz\UniLex\Parser\LL1\Lookup\TableBuilder
- * @covers \Remorhaz\UniLex\Parser\LL1\Lookup\TableConflictChecker
- */
+#[
+    CoversClass(TableBuilder::class),
+    CoversClass(TableConflictChecker::class),
+]
 class TableBuilderTest extends TestCase
 {
     /**
-     * @param string $configFile
-     * @param array $expectedValue
      * @throws Exception
-     * @dataProvider providerValidGrammarTables
      */
+    #[DataProvider('providerValidGrammarTables')]
     public function testGetFirst_ValidGrammar_ResultGetTokensReturnsMatchingValue(
         string $configFile,
-        array $expectedValue
+        array $expectedValue,
     ): void {
         $grammar = GrammarLoader::loadFile($configFile);
         $actualValue = (new TableBuilder($grammar))->getTable()->exportMap();
